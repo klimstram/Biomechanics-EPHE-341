@@ -1,0 +1,609 @@
+/* ============================================================
+   EPHE 341 — Calculus and Kinematics
+   Two themes, one token set.  html[data-theme="dark"|"light"]
+   ============================================================ */
+
+/* ---------- SLATE DARK (default) ---------- */
+:root,
+html[data-theme="dark"]{
+  --bg:#0f172a;
+  --bg-2:#131f38;
+  --surface:rgba(30,41,59,.62);
+  --surface-solid:#1b2740;
+  --ink:#e8edf5;
+  --ink-strong:#f8fafc;
+  --muted:#94a3b8;
+  --rule:#2e3e59;
+  --hair:#243149;
+  --brand:#38bdf8;          /* cyan — headings, structure */
+  --brand-2:#fbbf24;        /* amber — secondary accent   */
+  --accent:#f87171;         /* coral — the "live" line    */
+  --warm:#fbbf24;           /* amber — derivative / slope  */
+  --violet:#c084fc;
+  --deep:#7dd3fc;
+  --good:#4ade80;
+  --chip:#16233c;
+  --shadow:0 2px 18px rgba(0,0,0,.34);
+  --img-card:#f7f8fa;       /* backing for white screenshots */
+  --svg-filter:invert(1) hue-rotate(180deg) saturate(.92) brightness(1.06);
+  color-scheme:dark;
+}
+
+/* ---------- EDITORIAL LIGHT ---------- */
+html[data-theme="light"]{
+  --bg:#fdfdfc;
+  --bg-2:#fdfdfc;
+  --surface:#f6f5f2;
+  --surface-solid:#f6f5f2;
+  --ink:#1c1c1a;
+  --ink-strong:#0b0b0a;
+  --muted:#6b6b66;
+  --rule:#e7e5e0;
+  --hair:#efedE8;
+  --brand:#003366;
+  --brand-2:#0b7285;
+  --accent:#c2410c;
+  --warm:#b45309;
+  --violet:#6d28d9;
+  --deep:#3d5a73;
+  --good:#2f6d4f;
+  --chip:#ffffff;
+  --shadow:0 1px 8px rgba(0,0,0,.07);
+  --img-card:transparent;
+  --svg-filter:none;
+  color-scheme:light;
+}
+
+html,body{ background:var(--bg); }
+.reveal-viewport{ background:var(--bg) !important; }
+html[data-theme="dark"] .reveal-viewport{
+  background:radial-gradient(120% 90% at 50% 0%, var(--bg-2) 0%, var(--bg) 62%) !important;
+}
+
+/* ============================================================
+   TYPE
+   ============================================================ */
+.reveal{
+  font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,
+    "Helvetica Neue",Arial,sans-serif;
+  color:var(--ink);
+  font-size:30px;
+  -webkit-font-smoothing:antialiased;
+}
+.reveal .slides{ text-align:left; }
+/* every content slide starts at the same y, so the heading never moves */
+.reveal .slides > section{ width:100%; height:100%; padding-top:4px; }
+.reveal .slides > section > h2:first-child{ margin-top:0; }
+
+.reveal h1,.reveal h2,.reveal h3,.reveal h4{
+  font-family:inherit; text-transform:none; letter-spacing:-.016em;
+  font-weight:640; color:var(--ink-strong); margin:0 0 .5em 0; line-height:1.12;
+}
+.reveal h1{ font-size:1.95em; }
+.reveal h2{
+  font-size:1.3em; margin-bottom:.5em; padding-bottom:.24em; padding-right:7.4em;
+  border-bottom:1px solid var(--rule); position:relative;
+}
+.reveal h2::after{
+  content:""; position:absolute; left:0; bottom:-1px; width:2.6em; height:2px;
+  background:var(--brand); border-radius:2px;
+}
+.reveal h3{ font-size:1.0em; color:var(--brand); font-weight:640; }
+.reveal h4{ font-size:.76em; color:var(--muted); font-weight:650;
+  text-transform:uppercase; letter-spacing:.08em; }
+
+.reveal p{ margin:0 0 .6em 0; line-height:1.45; }
+.reveal ul,.reveal ol{ display:block; margin:0 0 .6em 1.05em; }
+.reveal li{ margin:0 0 .44em 0; line-height:1.42; }
+.reveal ul ul{ margin-top:.35em; font-size:.9em; color:var(--muted); }
+.reveal .small{ font-size:.84em; }
+.reveal .tiny{ font-size:.72em; }
+.reveal .muted{ color:var(--muted); }
+.reveal .lead{
+  font-size:.9em; color:var(--muted); border-left:2px solid var(--brand);
+  padding-left:.8em; margin-bottom:1em; line-height:1.5;
+}
+.reveal strong{ color:var(--ink-strong); font-weight:650; }
+.reveal em.key{ font-style:normal; color:var(--accent); font-weight:650; }
+.reveal a{ color:var(--brand); }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.cols{ display:grid; grid-template-columns:1fr 1fr; gap:1.1em; align-items:center; }
+.cols.a{ grid-template-columns:1.05fr .95fr; }
+.cols.b{ grid-template-columns:.8fr 1.2fr; }
+.cols.c{ grid-template-columns:1.25fr .75fr; }
+.cols.top{ align-items:start; }
+.stack{ display:grid; gap:.5em; }
+.center{ text-align:center; }
+
+.fig{ text-align:center; }
+.fig img,.fig svg{ max-width:100%; max-height:64vh; height:auto; display:inline-block; }
+.cols .fig img{ width:100%; }
+.cols .fig.small img{ width:100%; max-height:29vh; object-fit:contain; }
+.fig.small img{ max-height:29vh; }
+.fig figcaption{ font-size:.62em; color:var(--muted); margin-top:.3em; }
+.reveal img{ border:0; box-shadow:none; background:none; margin:0; }
+.imgrow{ display:flex; gap:.7em; justify-content:center; align-items:center; flex-wrap:wrap; }
+.imgrow img{ max-height:52vh; }
+.cols .imgrow img{ max-height:30vh; }
+
+/* line-art figures invert for the dark theme; photos get a light card instead */
+html[data-theme="dark"] .reveal img[src^="figs/"]{ filter:var(--svg-filter); }
+html[data-theme="dark"] .reveal img[src^="assets/"]{
+  background:var(--img-card); padding:5px; border-radius:6px;
+  box-sizing:border-box; max-width:100%;
+}
+
+/* ============================================================
+   EQUATIONS  (plain HTML, no maths library)
+   ============================================================ */
+.eq{ font-family:"Cambria Math",Cambria,Georgia,serif; font-size:1.08em; letter-spacing:.01em; }
+.eq.big{ font-size:1.45em; }
+.eq sup{ font-size:.62em; top:-.55em; }
+.eq sub{ font-size:.62em; }
+.frac{ display:inline-block; vertical-align:middle; text-align:center; margin:0 .25em; }
+.frac > span{ display:block; padding:0 .35em; }
+.frac .den{ border-top:1.4px solid currentColor; }
+.transfer{ display:inline-flex; align-items:center; gap:.6em; }
+.transfer .arrow{ color:var(--accent); font-size:1.15em; }
+
+.box{ background:var(--surface); border:1px solid var(--hair); border-radius:9px; padding:.62em .85em; }
+.box.accent{ border-left:3px solid var(--accent); }
+.callout{ background:var(--surface); border-left:3px solid var(--brand);
+  border-radius:0 9px 9px 0; padding:.6em .9em; font-size:.88em; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+.reveal table{ font-size:.62em; border-collapse:collapse; margin:0 auto; }
+.reveal table th{ border-bottom:1.5px solid var(--rule); padding:.32em .7em;
+  text-align:right; font-weight:650; color:var(--ink-strong); }
+.reveal table th:first-child{ text-align:left; }
+.reveal table td{ border-bottom:1px solid var(--hair); padding:.26em .7em;
+  text-align:right; font-variant-numeric:tabular-nums; }
+.reveal table td:first-child{ text-align:left; }
+.reveal table tr:last-child td{ border-bottom:1.5px solid var(--rule); }
+
+/* ============================================================
+   TITLE + SECTION SLIDES
+   ============================================================ */
+.title-slide{ display:flex; flex-direction:column; justify-content:center;
+  height:100%; min-height:600px; }
+.title-slide .course{ font-size:.7em; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--brand); font-weight:650; margin-bottom:.9em; }
+.title-slide h1{ font-size:1.8em; margin-bottom:.35em; }
+.title-slide .sub{ font-size:.95em; color:var(--muted); max-width:20em; line-height:1.4; }
+.title-slide .rule{ width:5em; height:3px; background:var(--brand); border-radius:3px; margin:1.1em 0; }
+
+.section-slide{ display:flex; flex-direction:column; justify-content:center;
+  height:100%; min-height:600px; text-align:center; }
+.section-slide h2{ border:0; font-size:1.65em; padding-right:0; }
+.section-slide h2::after{ left:50%; transform:translateX(-50%); }
+
+/* ============================================================
+   CHROME
+   ============================================================ */
+.reveal .progress{ color:var(--brand); height:3px; background:rgba(127,127,127,.18); }
+.reveal .slide-number{ background:transparent; color:var(--muted); font-size:.5em; }
+.reveal .controls{ color:var(--brand); }
+
+/* UVic badge */
+#uvic-badge{
+  position:fixed; top:16px; right:20px; z-index:40;
+  display:flex; align-items:center; gap:9px;
+  font:650 12px/1 ui-sans-serif,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;
+  color:var(--muted); letter-spacing:.02em; opacity:.85; pointer-events:none;
+}
+#uvic-badge .mark{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:34px; height:34px; border-radius:9px;
+  background:var(--brand); color:var(--bg);
+  font-size:13px; font-weight:750; letter-spacing:-.02em;
+}
+html[data-theme="light"] #uvic-badge .mark{ background:var(--brand); color:#fff; }
+#uvic-badge img.mark{ width:auto; height:34px; border-radius:0; background:none; padding:0; }
+html[data-theme="dark"] #uvic-badge img.mark{ filter:brightness(0) invert(1); }
+#uvic-badge .who{ display:flex; flex-direction:column; gap:3px; }
+#uvic-badge .who b{ color:var(--ink); font-weight:650; font-size:12px; }
+#uvic-badge .who span{ color:var(--muted); font-weight:500; font-size:10.5px; letter-spacing:.06em; }
+
+/* ============================================================
+   FADE + SOFT LIFT
+   ============================================================ */
+@keyframes liftIn{
+  from{ opacity:0; transform:translateY(18px); }
+  to  { opacity:1; transform:none; }
+}
+@keyframes headIn{ from{ opacity:0; } to{ opacity:1; } }
+.reveal .slides > section.present > *:not(aside){
+  animation:liftIn 420ms cubic-bezier(.22,.61,.36,1) both;
+}
+.reveal .slides > section.present > h2{
+  animation:headIn 260ms ease both;     /* the heading holds still */
+}
+.reveal .slides > section.present > *:nth-child(2){ animation-delay:40ms; }
+.reveal .slides > section.present > *:nth-child(3){ animation-delay:80ms; }
+.reveal .slides > section.present > *:nth-child(4){ animation-delay:115ms; }
+.reveal .slides > section.present > *:nth-child(n+5){ animation-delay:145ms; }
+@media (prefers-reduced-motion:reduce){
+  .reveal .slides > section.present > *{ animation:none !important; }
+}
+
+/* ============================================================
+   INTERACTIVE FIGURES
+   ============================================================ */
+.iplot{ width:100%; max-width:760px; margin:0 auto; }
+.iplot.wide{ max-width:none; }
+.iwrap{ display:flex; flex-direction:column; gap:.4em; }
+.istage{ text-align:center; }
+.istage canvas{ display:inline-block; }
+
+.ictls{ display:flex; flex-direction:column; gap:.32em; font-size:.78em; }
+.ictl{ display:grid; grid-template-columns:7.6em 1fr 4.4em; align-items:center; gap:.7em; }
+.ictl-l{ color:var(--muted); text-align:right; line-height:1.2; font-weight:500; }
+.ictl-v{ font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink-strong); }
+
+.iplot input[type=range]{
+  -webkit-appearance:none; appearance:none; width:100%; height:5px;
+  background:var(--rule); border-radius:4px; outline:none;
+}
+.iplot input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none; width:19px; height:19px; border-radius:50%;
+  background:var(--accent); cursor:pointer; border:2px solid var(--bg);
+  box-shadow:0 1px 5px rgba(0,0,0,.35);
+}
+.iplot input[type=range]::-moz-range-thumb{
+  width:19px; height:19px; border-radius:50%; background:var(--accent);
+  cursor:pointer; border:2px solid var(--bg);
+}
+
+/* actions sit centred under the plot, clear of the deck toolbar corner */
+.iplot .ibtn,.iplot .iseg{ align-self:center; }
+.ibtn{
+  align-self:flex-start; font:inherit; font-size:1em; font-weight:650;
+  color:var(--bg); background:var(--brand); border:0; border-radius:7px;
+  padding:.38em 1.05em; cursor:pointer; letter-spacing:.01em;
+}
+html[data-theme="light"] .ibtn{ color:#fff; }
+.ibtn:hover{ filter:brightness(1.12); }
+
+.iseg{ display:flex; gap:.28em; align-self:flex-start; }
+.iseg-b{ font:inherit; font-size:1em; color:var(--muted); background:var(--chip);
+  border:1px solid var(--rule); border-radius:7px; padding:.3em .8em; cursor:pointer; }
+.iseg-b.on{ background:var(--brand); border-color:var(--brand); color:var(--bg); font-weight:650; }
+html[data-theme="light"] .iseg-b.on{ color:#fff; }
+
+.iread{
+  font-size:.84em; line-height:1.36; color:var(--ink);
+  background:var(--surface); border-left:3px solid var(--accent);
+  padding:.42em .7em; border-radius:0 7px 7px 0;
+}
+.iread b{ font-weight:700; color:var(--ink-strong); }
+.iread b.r{ color:var(--accent); }
+.iread b.g{ color:var(--good); }
+.iread b.k{ color:var(--ink-strong); }
+.iread .a{ color:var(--brand); }
+.iread .gap{ color:var(--muted); font-variant-numeric:tabular-nums; }
+.iread .hint{ display:block; color:var(--muted); font-size:.8em; margin-top:.25em; }
+.reveal .iplot sub,.reveal .iplot sup{ font-size:.7em; }
+
+/* chart + table pair (slide 23) */
+.iseries{ display:grid; grid-template-columns:minmax(0,1fr) 264px; gap:1.3em; align-items:start; }
+.iseries .istage{ grid-column:1; }
+.iseries-tab{ grid-column:2; padding-top:.4em; }
+.iseries .ictls{ grid-column:1 / -1; margin-top:.2em; max-width:760px; }
+.iseries-tab table{ width:100%; font-size:.47em; margin:0; }
+.iseries-tab td,.iseries-tab th{ padding:.14em .55em; }
+.iseries-tab tbody tr{ transition:opacity .18s ease,background-color .18s ease; }
+.iseries-tab tbody tr.off{ opacity:.22; }
+.iseries-tab tbody tr.now td{ background:color-mix(in srgb,var(--accent) 16%,transparent);
+  color:var(--accent); font-weight:700; }
+
+/* plot + live arithmetic pair (slide 6) */
+.isplit{ display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:1.2em; align-items:start; }
+.isplit .istage{ grid-column:1; }
+.icalc{ grid-column:2; font-size:.7em; line-height:1.38; padding-top:.2em; }
+.isplit .ictls{ grid-column:1 / -1; margin-top:.15em; }
+.icalc-h{ font-weight:700; color:var(--brand); margin-bottom:.5em; letter-spacing:-.01em; }
+.icalc-work{ background:var(--surface); border-left:3px solid var(--accent);
+  border-radius:0 7px 7px 0; padding:.6em .75em; margin-bottom:.7em; }
+.icalc-t{ color:var(--muted); font-size:.84em; margin-bottom:.35em; }
+.icalc-eq{ font-family:"Cambria Math",Cambria,Georgia,serif; font-size:1.04em;
+  color:var(--ink-strong); }
+.icalc-eq b{ color:var(--accent); font-weight:700; }
+.fr{ display:inline-block; vertical-align:middle; text-align:center; margin:0 .2em; }
+.fr > span{ display:block; padding:0 .3em; }
+.fr .dn{ border-top:1.3px solid currentColor; }
+.icalc-grid{ display:flex; flex-wrap:wrap; gap:.28em; }
+.icalc-chip{ font:inherit; font-size:.86em; cursor:pointer; display:inline-flex;
+  align-items:baseline; gap:.34em; background:var(--chip); border:1px solid var(--rule);
+  border-radius:6px; padding:.2em .48em; color:var(--ink); font-variant-numeric:tabular-nums; }
+.icalc-chip .k{ color:var(--muted); font-size:.78em; font-weight:650; }
+.icalc-chip:hover{ border-color:var(--brand); }
+.icalc-chip.on{ background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700; }
+.icalc-chip.on .k{ color:rgba(255,255,255,.78); }
+
+.sum-row{ font-family:"Cambria Math",Cambria,Georgia,serif; letter-spacing:.04em; }
+.sum-row .a{ color:var(--brand); }
+.sum-row .b{ color:var(--ink-strong); font-weight:650; }
+.axis-note{ font-size:.68em; color:var(--muted); }
+
+
+/* photo with a lifted, layered shadow (no card, no border) */
+.fig.photo img{
+  max-height:104px; width:auto !important;
+  border-radius:14px; padding:0 !important; background:none !important;
+  box-shadow:0 22px 44px -12px rgba(0,0,0,.55), 0 8px 16px -6px rgba(0,0,0,.42),
+             0 1px 0 rgba(255,255,255,.06) inset;
+}
+html[data-theme="light"] .fig.photo img{
+  box-shadow:0 20px 38px -14px rgba(17,20,26,.34), 0 6px 12px -6px rgba(17,20,26,.20);
+}
+
+/* live equation inside a figure readout */
+.iread .live-eq{ display:inline-flex; align-items:center; flex-wrap:wrap; gap:.1em;
+  font-family:"Cambria Math",Cambria,Georgia,serif; font-size:1.16em; line-height:1.1; }
+.iread .live-eq .fr{ margin:0 .3em; }
+.iread .live-eq b{ font-size:1.05em; }
+
+/* the d / v / a value strip on slide 5 */
+.icalc-vals{ display:grid; grid-template-columns:repeat(3,1fr); gap:.3em; margin-top:.2em; }
+.icalc-vals > div{ display:flex; flex-direction:column; align-items:center;
+  gap:.1em; background:var(--surface); border-radius:6px; padding:.3em .3em; }
+.icalc-vals b{ font-size:.92em; }
+.reveal ul.two{ display:grid; grid-template-columns:1fr 1fr; gap:.2em 1.6em; margin-left:1em; }
+.outcomes{ align-items:center; }
+.icalc-vals span{ color:var(--muted); font-style:italic;
+  font-family:"Cambria Math",Cambria,Georgia,serif; font-size:1.05em; }
+.icalc-vals b{ font-variant-numeric:tabular-nums; color:var(--ink-strong); }
+.icalc-h .v{ color:var(--ink-strong); font-variant-numeric:tabular-nums; }
+
+/* the three-runner summary in the slide 2 side panel */
+.isprint{ grid-template-columns:minmax(0,1fr) 268px; }
+.ictl-row{ display:flex; align-items:center; justify-content:center; gap:1em; flex-wrap:wrap; }
+.ictl-row .iseg,.ictl-row .ibtn{ align-self:center; }
+.icalc-tab{ width:100%; margin:.6em 0 0; font-size:.92em; }
+.icalc-tab th{ padding:.1em .3em; font-size:.9em; color:var(--muted); border-bottom:1px solid var(--rule); }
+.icalc-tab td{ padding:.16em .3em; border-bottom:1px solid var(--hair); font-variant-numeric:tabular-nums; }
+.icalc-tab td:first-child{ font-weight:650; }
+.icalc-tab tr:last-child td{ border-bottom:0; }
+
+/* worked lines wrap instead of running off the panel */
+.icalc-eq{ white-space:normal; }
+
+
+/* compact strips that carry the original slide wording alongside a big figure */
+.textstrip{ display:grid; grid-template-columns:1fr 1fr; gap:.7em 1.3em; margin:0 0 .55em 0; }
+.textstrip.three{ grid-template-columns:repeat(3,1fr); }
+.textstrip.four{ grid-template-columns:repeat(4,1fr); }
+.textstrip .firstcol{ color:var(--ink); border-left:2px solid var(--brand); padding-left:.7em; }
+.textstrip p{ margin:0; line-height:1.4; color:var(--muted); }
+.textstrip strong{ color:var(--ink); }
+.textstrip .eq{ display:block; margin-top:.25em; color:var(--ink); font-size:.96em; }
+.inline-list{ display:block; margin-top:.25em; color:var(--ink); }
+.steps p{ margin:0 0 .3em 0; line-height:1.35; }
+.steps strong{ color:var(--ink); }
+
+
+/* ---------- video panel ---------- */
+.ivideo{ width:100%; min-width:0; }
+.ivideo-box{ position:relative; width:100%; min-width:0; box-sizing:border-box;
+  aspect-ratio:16/9; border-radius:10px; overflow:hidden;
+  background:var(--surface-solid); border:1px solid var(--rule); background-size:cover;
+  background-position:center; box-shadow:var(--shadow); }
+.ivideo-box iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+.ivideo-facade{ cursor:pointer; }
+.ivideo-facade::after{ content:""; position:absolute; inset:0; background:rgba(8,12,20,.34); }
+.ivideo-play{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2;
+  width:76px; height:76px; border-radius:50%; border:0; cursor:pointer;
+  background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 8px 26px rgba(0,0,0,.45); transition:transform .15s ease; }
+.ivideo-play:hover{ transform:translate(-50%,-50%) scale(1.07); }
+.ivideo-play svg{ width:40px; height:40px; fill:currentColor; margin-left:4px; }
+.ivideo-meta{ display:flex; align-items:center; justify-content:space-between; gap:1em;
+  margin-top:.45em; font-size:.56em; }
+.ivideo-meta a{ color:var(--brand); text-decoration:none; }
+.ivideo-meta button{ font:inherit; background:none; border:0; color:var(--muted);
+  cursor:pointer; text-decoration:underline; }
+.ivideo-setup{ display:flex; flex-direction:column; justify-content:center; gap:.5em; min-width:0;
+  padding:1.1em 1.2em; text-align:left; }
+.ivideo-setup .ivideo-title{ font-size:.62em; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--brand); }
+.ivideo-setup p{ font-size:.55em; color:var(--muted); margin:0; line-height:1.4; max-width:26em; }
+.ivideo-row{ display:flex; gap:.5em; align-items:center; flex-wrap:wrap; min-width:0; }
+.ivideo-in{ flex:1 1 12em; min-width:0; font:inherit; font-size:.52em; padding:.5em .7em;
+  border-radius:7px; border:1px solid var(--rule); background:var(--chip); color:var(--ink); }
+.ivideo-in.bad{ border-color:var(--accent); }
+.ivideo-row .ibtn{ font-size:.52em; align-self:center; }
+.ivideo-link{ font-size:.52em; color:var(--brand); text-decoration:none; }
+
+/* ---------- growing tables inside a widget ---------- */
+.ifd{ grid-template-columns:minmax(0,1fr) 400px; }
+.grow-tab{ width:100%; font-size:.5em; margin:0; }
+.grow-tab th{ padding:.2em .45em; }
+.grow-tab td{ padding:.16em .45em; }
+.grow-tab tbody tr{ transition:opacity .18s ease, background-color .18s ease; }
+.grow-tab tbody tr.off{ opacity:.18; }
+.grow-tab tbody tr.now td{ background:color-mix(in srgb,var(--accent) 16%,transparent);
+  color:var(--accent); font-weight:700; }
+.grow-tab tbody tr.now b{ color:var(--accent); }
+
+
+/* ---------- the accelerometer trial ---------- */
+.iimu{ grid-template-columns:minmax(0,1fr) 290px; }
+.idrift{ margin-top:.7em; padding:.6em .75em; border-radius:8px;
+  background:var(--surface); border-left:3px solid var(--good); }
+.idrift.bad{ border-left-color:var(--accent); }
+.idrift span{ display:block; font-size:.86em; color:var(--muted); }
+.idrift b{ display:block; font-size:1.5em; font-weight:700; line-height:1.15;
+  font-variant-numeric:tabular-nums; color:var(--good); }
+.idrift.bad b{ color:var(--accent); }
+.idrift i{ display:block; font-style:normal; font-size:.82em; color:var(--muted); margin-top:.2em; }
+
+/* ============================================================
+   PRINT — always the light theme, no animation, no chrome
+   ============================================================ */
+@media print{
+  .reveal .slides > section{ overflow:hidden; }
+  .reveal .slides > section.present > *{ animation:none !important; }
+  .fig img{ max-height:none; }
+  #deck-tools,#deck-toast,#deck-help{ display:none !important; }
+}
+
+/* video-kinematics: label in front of the finite-difference window buttons */
+.iseg-lab { display:flex; align-items:center; gap:.5em; }
+.iseg-lab > span { font-size:.62em; letter-spacing:.04em; text-transform:uppercase;
+  color:var(--muted); font-weight:700; }
+
+/* golf swing widget: motion-capture figure beside its kinematics */
+.igolf { display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);
+  gap:1.1rem; align-items:start; width:100%; }
+.igolf > div { min-width:0; }
+.igolf canvas { display:block; }
+/* screen only: a print layout must never collapse this to one column */
+@media screen and (max-width:820px){ .igolf { grid-template-columns:1fr; } }
+
+/* ============================================================
+   ANALYTICAL-METHOD WIDGETS (graphing calculator, equation parts,
+   term splitter, curve fitting, transfer functions)
+   ============================================================ */
+.ictls.g2{ display:grid; grid-template-columns:1fr 1fr; gap:.18em 1.4em; }
+.ictls.g2 .ictl{ grid-template-columns:4.6em 1fr 3.2em; gap:.5em; }
+
+.ieqin{ display:flex; align-items:center; gap:.5em; }
+.ieqin-l{ color:var(--muted); font-weight:700; font-family:"Cambria Math",Cambria,Georgia,serif; }
+.ieqin input{
+  font:inherit; font-family:"Cambria Math",Cambria,Georgia,serif; font-size:1.05em;
+  color:var(--ink-strong); background:var(--chip); border:1px solid var(--rule);
+  border-radius:7px; padding:.22em .6em; min-width:11em; flex:0 1 16em;
+}
+.ieqin.bad input{ border-color:var(--accent); }
+.ieqin-m{ color:var(--accent); font-size:.85em; }
+
+.ieqbox{ display:flex; flex-direction:column; gap:.18em; margin:.35em 0 .1em; }
+.ieqrow{ display:flex; align-items:baseline; gap:.7em; opacity:.55; transition:opacity .22s ease; }
+.ieqrow:first-child,.ieqrow.on{ opacity:1; }
+.ieqlab{ color:var(--muted); font-size:.62em; letter-spacing:.04em; text-transform:uppercase;
+  font-weight:700; font-family:ui-sans-serif,system-ui,sans-serif; white-space:nowrap; }
+.ieqbox .eq.big{ font-size:1.25em; color:var(--ink-strong); }
+.ieqvar{ color:var(--muted); font-family:"Cambria Math",Cambria,Georgia,serif; font-size:.95em; }
+.ieqrow.curve .eq{ color:var(--brand); }
+.ieqrow.slope .eq{ color:var(--warm); }
+.ieqrow.slope.on .eq{ color:var(--warm); }
+
+/* equation that builds itself, with hover-linked meanings */
+.ieqparts{ display:flex; flex-direction:column; gap:.45em; }
+.ieqline{ display:flex; align-items:baseline; flex-wrap:wrap; gap:.12em;
+  font-family:"Cambria Math",Cambria,Georgia,serif; }
+.ieqparts .ieqline{ font-size:1.9em; color:var(--ink-strong); }
+.itok{ opacity:0; transform:translateY(7px); transition:opacity .3s ease,transform .3s ease,
+  color .15s ease,background-color .15s ease; border-radius:6px; padding:0 .06em; }
+.itok.in{ opacity:1; transform:none; }
+.itok.op{ color:var(--muted); margin:0 .22em; }
+.itok.live{ cursor:pointer; }
+.itok.live.hot{ background:color-mix(in srgb,currentColor 18%,transparent); }
+
+.ipartlist{ list-style:none; margin:0; padding:0; display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(9.5em,1fr)); gap:.2em .9em; font-size:.8em; }
+.ipart{ display:flex; align-items:baseline; gap:.45em; opacity:0; transform:translateY(5px);
+  transition:opacity .3s ease,transform .3s ease,background-color .15s ease;
+  border-radius:6px; padding:.06em .3em; cursor:pointer; }
+.ipart.in{ opacity:1; transform:none; }
+.ipart b{ font-family:"Cambria Math",Cambria,Georgia,serif; font-size:1.25em; }
+.ipart span{ color:var(--muted); }
+.ipart.hot{ background:color-mix(in srgb,currentColor 15%,transparent); }
+.ipart.hot span{ color:var(--ink); }
+
+/* one colour per symbol / per term, shared by both widgets */
+.c1{ color:var(--brand); } .c2{ color:var(--good); } .c3{ color:var(--warm); }
+.c4{ color:var(--violet); } .c5{ color:var(--accent); } .c6{ color:var(--deep); }
+
+/* term splitter */
+.itermsplit{ display:flex; flex-direction:column; gap:.4em; }
+.itermsplit .ieqline{ font-size:1.5em; color:var(--ink-strong); }
+.iterm{ border-radius:6px; padding:0 .05em; cursor:pointer; transition:background-color .15s ease; }
+.iterm.hot{ background:color-mix(in srgb,currentColor 20%,transparent); }
+.itermtab table{ width:auto; font-size:.72em; margin:0; }
+.itermtab td,.itermtab th{ padding:.1em .8em; }
+.itermtab tbody tr{ transition:background-color .15s ease; }
+.itermtab tbody tr.hot{ background:color-mix(in srgb,currentColor 16%,transparent); }
+.itermtab td:first-child{ font-size:1.15em; }
+.itok.exp{ margin-left:-.34em; }
+.ieqline2{ font-family:"Cambria Math",Cambria,Georgia,serif; color:var(--ink-strong); }
+.ieqparts{ width:100%; }
+.ipartlist{ width:100%; }
+.ifiteq{ display:block; margin-top:.22em; font-family:"Cambria Math",Cambria,Georgia,serif;
+  font-size:1.15em; color:var(--brand); }
+.iseg-b{ white-space:nowrap; }
+.iseg{ flex-wrap:wrap; }
+.iseg-lab{ flex-wrap:wrap; }
+
+/* the transfer function, animated */
+.itrans{ display:flex; flex-direction:column; gap:.3em; align-items:center; }
+/* not a flex row: <sup> only raises inside normal inline flow */
+.itrans-rule{ font-size:1.75em; color:var(--ink-strong); text-align:center; }
+.itrans-rule .arrow,.itrans-inst .arrow{ color:var(--muted); margin:0 .45em;
+  opacity:.35; transition:opacity .3s ease,color .3s ease; }
+.itrans-rule .arrow.on,.itrans-inst .arrow.on{ opacity:1; color:var(--accent); }
+.tt{ transition:opacity .3s ease,transform .3s ease,color .3s ease; display:inline-block; }
+.tt.n{ color:var(--accent); font-weight:700; }
+.tt.out{ opacity:0; transform:translateY(-.5em) scale(.7); }
+.tt.in{ opacity:1; transform:none; }
+.tt.pop{ animation:ttpop .55s ease; color:var(--accent); }
+@keyframes ttpop{ 0%{ transform:scale(1); } 40%{ transform:scale(1.55); } 100%{ transform:scale(1); } }
+.itrans-inst{ font-size:1.12em; color:var(--ink); text-align:center; }
+.itrans-inst .il{ color:var(--brand); font-weight:600; }
+.itrans-inst .im{ color:var(--muted); }
+.itrans-inst .ir{ color:var(--accent); font-weight:700; }
+
+/* the worked example, step by step */
+.itwork{ display:flex; flex-direction:column; gap:.34em; }
+.itwork-head{ font-size:1.22em; color:var(--ink-strong); }
+.itwork-lines{ display:flex; flex-direction:column; gap:.22em; }
+.itwork-l{ font-family:"Cambria Math",Cambria,Georgia,serif; font-size:.98em;
+  opacity:0; transform:translateY(5px); transition:opacity .3s ease,transform .3s ease;
+  border-radius:7px; padding:.1em .45em; }
+.itwork-l.in{ opacity:1; transform:none; }
+.itwork-l.now{ background:color-mix(in srgb,currentColor 14%,transparent); }
+.itwork-l b{ color:currentColor; font-weight:700; }
+.itwork-res{ font-size:1.3em; color:var(--accent); opacity:0; transform:translateY(6px);
+  transition:opacity .35s ease,transform .35s ease; }
+.itwork-res.in{ opacity:1; transform:none; }
+.itwork-res b{ font-weight:700; }
+.itwork-b{ color:var(--muted); font-size:.8em; }
+.itrans.sm .itrans-rule{ font-size:1.25em; }
+.itrans.sm .itrans-inst{ font-size:.95em; }
+.itrans.sm{ align-items:flex-start; gap:.12em; }
+.itrans.sm .itrans-rule,.itrans.sm .itrans-inst{ text-align:left; }
+
+/* board pages injected into the PDF export */
+.ink-boardpage{ padding:0 !important; }
+.ink-boardpage-in{ position:absolute; inset:0; }
+.ink-boardpage-tag{ position:absolute; left:14px; top:10px; font:600 11px/1 ui-sans-serif,system-ui,sans-serif;
+  letter-spacing:.07em; text-transform:uppercase; color:var(--muted); }
+
+/* ---------- sensors lecture: the gallery of sensor types ---------- */
+.sensorgrid{ display:grid; grid-template-columns:repeat(5,1fr); gap:.9em; align-items:end;
+  margin:.6em 0 .5em; }
+.sensorgrid figure{ margin:0; display:flex; flex-direction:column; align-items:center; gap:.45em; }
+.sensorgrid img{ max-height:26vh; max-width:100%; object-fit:contain; }
+.sensorgrid figcaption{ font-size:.58em; line-height:1.3; color:var(--muted); text-align:center; }
+.sensorgrid figcaption b{ display:block; color:var(--ink-strong); font-size:1.12em;
+  font-weight:650; margin-bottom:.15em; }
+
+/* the DAQ chain strip is a diagram, not a plot — no controls, so no gap below */
+.iplot[data-widget="daqchain"] .iwrap{ gap:0; }
+
+/* definitions */
+.callout p strong:first-child{ color:var(--brand); }
+
+/* a split widget in a half-width column has no room for a side panel — stack it instead */
+.iplot:not(.wide) .iwrap.isplit,
+.iplot:not(.wide) .iwrap.iimu{ grid-template-columns:minmax(0,1fr); }
+.iplot:not(.wide) .iwrap.isplit .icalc{
+  grid-column:1; padding-top:.25em; font-size:.62em;
+  display:grid; grid-template-columns:1fr 1fr; gap:.35em .9em; align-items:start; }
+.iplot:not(.wide) .iwrap.isplit .icalc > .icalc-h{ grid-column:1 / -1; margin-bottom:.1em; }
+.iplot:not(.wide) .iwrap.isplit .icalc > .idrift{ margin-top:0; }

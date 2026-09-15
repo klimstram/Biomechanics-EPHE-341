@@ -18,6 +18,16 @@
    ============================================================ */
 window.EPHE341_LECTURES = [
 
+  { n: '2', title: 'Sensors and data acquisition',
+    path: 'lectures/02-sensors-and-data-acquisition',
+    blurb: 'How a physical quantity becomes a number on a disk — the sensor, the calibration, ' +
+           'and the run of electronics in between — and what each step throws away.',
+    slides: 39, widgets: 26, updated: '2026-09-15',
+    handout: 'handout.pdf',
+    live: ['a strain gauge you can bend', 'analog against digital',
+           'calibrate a force transducer', 'many sensors on one DAQ',
+           'the three limits of an A/D', 'the sample-and-hold circuit'] },
+
   { n: '3', title: 'Calculus and kinematics',
     path: 'lectures/03-calculus-and-kinematics',
     blurb: 'How displacement, velocity and acceleration are tied together by slopes and areas — ' +
@@ -30,7 +40,6 @@ window.EPHE341_LECTURES = [
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
-  { n: '2',  title: 'Sensors and data acquisition' },
   { n: '4',  title: 'Forces' },
   { n: '5',  title: 'Signals' },
   { n: '6',  title: 'Linear kinetics 1' },

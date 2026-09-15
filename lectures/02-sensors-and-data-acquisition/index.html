@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>EPHE 341 — Sensors and Data Acquisition</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'dark';
+  try { t = localStorage.getItem('ephe341-theme') || 'dark'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <span class="mark">UVic</span>
+  <span class="who"><b>University of Victoria</b><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics · EPHE 341</div>
+    <h1>Sensors and Data Acquisition</h1>
+    <div class="rule"></div>
+    <p class="sub">How a physical quantity becomes a number on a disk — and what is lost on the way.</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Lecture objectives</h2>
+  <p class="lead">An introduction to some biomechanics methodology. We will be using different equipment during this
+     course, and the following is critical to appreciate how these devices quantify data.</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">To learn about some basics of:</p>
+      <ul class="small">
+        <li><strong>Sensors</strong> used in biomechanics</li>
+        <li><strong>Data acquisition</strong></li>
+      </ul>
+      <div class="box accent">
+        <p class="small" style="margin:0">Some important terms to look out for —</p>
+        <ul class="tiny two" style="margin-top:.4em;margin-bottom:0">
+          <li>Sensor</li><li>Data acquisition</li>
+          <li>Signal</li><li>Break-out box</li>
+          <li>Analog</li><li>Multiplexer</li>
+          <li>Digital</li><li>Amplifier</li>
+          <li>Sampling frequency (Hz)</li><li>Sample-and-hold circuit</li>
+          <li>Calibration</li><li>A/D converter</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <p class="small muted">Everything in this lecture is one chain. A physical thing happens; a sensor turns it
+         into a voltage; a run of electronics turns that voltage into numbers; software turns the numbers back into
+         units you can write in a paper.</p>
+      <p class="small muted">We will build this up one box at a time, and at each box ask the same question:
+         <strong>what does this step throw away?</strong></p>
+    </div>
+  </div>
+  <div class="iplot wide" data-widget="daqchain" data-stage="7" style="margin-top:.5em"></div>
+  <aside class="notes">In this lecture we are going to discuss some basic concepts that will be really helpful to understand biomechanics technology and methodology.
+I will cover aspects of sensors and data acquisition.
+On this page I have included some important terms to look out for during this lecture series.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Sensors</h2>
+  <div class="callout">
+    <p style="margin:0"><strong>sensor</strong> — a device that measures a physical quantity and converts it into a
+       signal which can be read by an observer or by an instrument.</p>
+  </div>
+  <p class="lead">The signal to which most sensors convert the quantities they are designed to sense is
+     <em class="key">voltage</em>.</p>
+  <div class="imgrow" style="margin-top:.4em">
+    <div class="fig photo"><img src="assets/s03_2.png" alt="Force platform coordinate diagram" style="max-height:26vh"><figcaption>force plate — force to volts</figcaption></div>
+    <div class="fig photo"><img src="assets/s03_4.png" alt="EMG electrodes on an arm wired to an amplifier" style="max-height:26vh"><figcaption>EMG — muscle activity to volts</figcaption></div>
+    <div class="fig photo"><img src="assets/s03_9.jpg" alt="Digital camera" style="max-height:26vh"><figcaption>camera — light to pixels</figcaption></div>
+  </div>
+  <aside class="notes">In science and engineering we are often dealing with sensors — devices that measure a physical quantity and convert it to a form that can be read by an observer or stored to be evaluated later.
+Examples in biomechanics: cameras that measure light and convert it into digital pixels; electromyography equipment that converts muscle contractions into voltage; force plates that convert force or strain on the plate into a voltage signal.</aside>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Sensors</h2>
+  <p class="lead">Some sensors commonly used in biomechanics — every one of them converts a physical value into an
+     electronic signal, usually measured in <strong>volts</strong> (electrical potential).</p>
+  <div class="sensorgrid">
+    <figure><img src="assets/s04_11.png" alt="S-beam load cell"><figcaption><b>Strain gauge</b>converts force along one axis to volts</figcaption></figure>
+    <figure><img src="assets/s04_15.jpg" alt="Rotary potentiometer"><figcaption><b>Potentiometer</b>converts angular displacement to volts</figcaption></figure>
+    <figure><img src="assets/s04_25.png" alt="Force platform"><figcaption><b>Force platform</b>converts force along three axes to volts</figcaption></figure>
+    <figure><img src="assets/s04_17.jpg" alt="Motion capture cameras with ring lights"><figcaption><b>Motion capture</b>converts light to volts</figcaption></figure>
+    <figure><img src="assets/s04_1026.png" alt="Xsens inertial measurement unit"><figcaption><b>IMU</b>converts accelerations to volts</figcaption></figure>
+  </div>
+  <p class="tiny muted center">When necessary I may go into greater detail on how each sensor works — but for now all
+     we need is that each one converts a physical value into an electronic signal.</p>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Sensor example: strain gauge</h2>
+  <div class="cols a top">
+    <div>
+      <p>It may be useful to talk about how a <strong>strain gauge</strong> works, to see how a physical signal
+         becomes an electrical potential.</p>
+      <p>A strain gauge is really a specially designed <strong>resistive circuit</strong> attached to a malleable
+         (bendable) object.</p>
+      <p class="small muted">Here we have four resistive circuits attached to a bendable beam, to which a force
+         will be applied.</p>
+    </div>
+    <div class="imgrow">
+      <div class="fig photo"><img src="assets/s05_8.png" alt="Four strain gauge resistors bonded to a beam" style="max-height:30vh"></div>
+      <div class="fig photo"><img src="assets/s05_10.png" alt="Strain gauge resistor foil pattern" style="max-height:34vh"><figcaption>strain gauge resistor</figcaption></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>Sensor example: strain gauge</h2>
+  <p class="lead">A current is passed in one end of the foil pattern and out the other. The <strong>resistance of
+     that path</strong> is what the gauge reports.</p>
+  <div class="cols b top" style="align-items:center">
+    <div class="steps">
+      <p class="small"><strong>Electrical current in →</strong></p>
+      <p class="small" style="margin-left:1.4em">…around a long, thin, folded conductor…</p>
+      <p class="small"><strong>← Electrical current out</strong></p>
+      <p class="small muted" style="margin-top:.6em">Stretch that conductor and it becomes longer and thinner, so
+         the current has a harder time getting through: resistance goes <strong>up</strong>. Squash it and
+         resistance goes <strong>down</strong>.</p>
+    </div>
+    <div class="fig photo"><img src="assets/s05_10.png" alt="Strain gauge resistor foil pattern" style="max-height:44vh"></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Sensor example: strain gauge</h2>
+  <div class="cols a top">
+    <div>
+      <p>When the strain gauge resistor is attached to the physical object and the object is <strong>bent</strong>,
+         the resistor bends with it.</p>
+      <p>This allows the bend of the physical object to be related to a physical <em class="key">voltage</em>.</p>
+      <p class="small muted">As seen in <strong>B</strong>, if the gauge is in <strong>tension</strong> the
+         electrical resistance to flow <strong>increases</strong>. In <strong>C</strong>, if the gauge is in
+         <strong>compression</strong> the resistance <strong>decreases</strong>.</p>
+    </div>
+    <div class="fig photo"><img src="assets/s07_6.png" alt="Strain gauge at rest, in tension, and in compression" style="max-height:60vh"></div>
+  </div>
+</section>
+
+<!-- 8 — INTERACTIVE: the strain gauge -->
+<section>
+  <h2>Sensor example: strain gauge</h2>
+  <p class="lead">We could measure the voltage in conditions where the beam was <strong>compressed</strong>, in
+     <strong>tension</strong>, or <strong>at rest</strong> — and we could watch it change as the force does.</p>
+  <div class="iplot wide" data-widget="strain"></div>
+  <aside class="notes">Drag the force slider first: positive force puts the top gauge in tension, the resistance climbs above 120 Ω, and the output voltage rises. Negative does the opposite.
+Then press "Wobble the beam": now fluctuations in force make the beam alternate between compression and tension, and the trace on the right is a signal that tells us about force application.
+Measurement devices typically emit a voltage for a change in some variable of interest. The emitted voltage is an ANALOG signal. To be stored by a computer it must be converted to a DIGITAL signal, through a process called sampling — which is where we go next.</aside>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Signals</h2>
+  <div class="callout">
+    <p style="margin:0"><strong>signal</strong> — a physical quantity or effect that can be varied in such a way as
+       to convey information. It can be either <strong>analog</strong> or <strong>digital</strong> (continuous or
+       discrete, respectively).</p>
+  </div>
+  <div class="cols a top" style="margin-top:.5em">
+    <div>
+      <p class="lead" style="margin-top:0">An <strong>analog clock</strong> displays the time continuously;
+         a <strong>digital clock</strong> displays only discrete points in time.</p>
+      <p class="small muted">The resolution of the digital clock describes the interval between those points —
+         the higher the resolution, the smaller the interval.</p>
+    </div>
+    <div class="imgrow">
+      <div class="fig photo"><img src="assets/s10_6.jpg" alt="Analog wall clock" style="max-height:30vh"><figcaption>analog clock</figcaption></div>
+      <div class="fig photo"><img src="assets/s10_8.jpg" alt="Digital alarm clock" style="max-height:24vh"><figcaption>digital clock</figcaption></div>
+    </div>
+  </div>
+  <aside class="notes">An analog clock displays the time for each instant; the hands sweep continuously around the face.
+A digital clock displays the time only at discrete points.</aside>
+</section>
+
+<!-- 10 — INTERACTIVE: analog vs digital -->
+<section>
+  <h2>Signals</h2>
+  <div class="textstrip tiny">
+    <p class="firstcol">If a signal is <strong>analog</strong> it means there are no separations, based on time,
+      between points in the signal.</p>
+    <p>If a signal is <strong>digital</strong> it means there <strong>are</strong> separations between points in
+      the signal.</p>
+  </div>
+  <div class="iplot wide" data-widget="sampling" data-fs="18" data-f="2"></div>
+  <p class="tiny muted center">Use your eyes as an example. Viewing an activity without blinking gives you a
+     continuous, connected representation. Now close and open your eyes every second, for a very short time — you
+     are only able to see <strong>samples</strong> of the activity.</p>
+  <aside class="notes">Drag the sampling rate down and ask what you would draw through the remaining dots. "Join the dots" answers it — the shape you get is not the shape that went in.
+This is the first place students meet aliasing, even though we do not name it yet.</aside>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>Sampling</h2>
+  <div class="callout">
+    <p style="margin:0"><strong>sampling</strong> — the process of converting a continuous signal into a digital
+       signal (a numeric sequence). That is, “taking samples”.</p>
+  </div>
+  <div class="cols c top" style="margin-top:.5em">
+    <div class="iplot" data-widget="sampling" data-fs="12" data-f="2" data-sigctl="0"></div>
+    <div>
+      <p class="small">Most physical signals are inherently <strong>continuous</strong>, but when we use sensors to
+         quantify the data we must convert them to a discrete digital signal by taking discrete samples.</p>
+      <p class="small">The <em class="key">sampling frequency</em> is defined as the number of samples in one
+         second, and is expressed in <strong>hertz (Hz)</strong>.</p>
+      <p class="tiny muted">12 Hz means twelve numbers per second, and 83 ms of the world that nobody wrote down
+         between each pair of them.</p>
+    </div>
+  </div>
+  <aside class="notes">Measurement devices typically emit a voltage for a change in some variable of interest; the emitted voltage is an analog signal; to be stored by a computer it must be converted to a digital signal through sampling.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Calibration</h2>
+  <div class="callout">
+    <p style="margin:0"><strong>calibration</strong> — the validation of specific measurement techniques and
+       equipment: a comparison between measurements, one of known magnitude and another of unknown magnitude.</p>
+  </div>
+  <div class="textstrip tiny three" style="margin-top:.55em;align-items:center">
+    <p class="firstcol">For a sensor’s output (usually voltage) to yield meaningful information, it must be
+      calibrated to a <strong>known magnitude</strong> of the quantity being measured.</p>
+    <p>Using our strain gauge example again: when we use the sensor we have a value in <strong>volts</strong> —
+      but what we really want is a measure in <strong>newtons</strong>. Nothing inside the instrument knows what a
+      newton is.</p>
+    <div class="box accent" style="align-self:center">
+      <p class="eq big center" style="color:var(--ink-strong);margin:0">1 volt = ? newtons</p>
+    </div>
+  </div>
+  <div class="iplot wide" data-widget="strain"></div>
+  <aside class="notes">The trace here is the same strain gauge from earlier. Point at the vertical axis: it is in volts, and nothing in the instrument knows what a newton is. The rest of this section is how we teach it.</aside>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Sensor calibration</h2>
+  <h3>How is a sensor calibrated? — in this example, a force transducer</h3>
+  <div class="cols a top">
+    <div>
+      <p class="small">We could take the force transducer we used earlier and apply various <strong>known
+         forces</strong> to it. Then we graph the value of the force against the voltage the sensor outputs.</p>
+      <p class="small">If the relationship is <strong>linear</strong>, we can fit a linear equation to determine
+         the force for any measured voltage.</p>
+      <p class="eq big center" style="margin:.5em 0">y = mx + b</p>
+      <div class="box">
+        <p class="small" style="margin:0">where <strong>y</strong> is the voltage &nbsp;·&nbsp;
+           <strong>m</strong> is the slope &nbsp;·&nbsp; <strong>x</strong> is force &nbsp;·&nbsp;
+           <strong>b</strong> is the offset</p>
+      </div>
+    </div>
+    <div class="iplot" data-widget="calib"></div>
+  </div>
+  <aside class="notes">Hang the weights one at a time. One point gives nothing — the widget says so. Two points give a slope. Three lets you claim the relationship really is linear.
+These are the numbers from the worked example on the next slide: 25 N → 5.0 V, 50 N → 6.5 V, 75 N → 8.0 V.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Sensor calibration</h2>
+  <h3>For example</h3>
+  <p class="lead">Below are the applied force and voltage output pairs for a given sensor.
+     <strong>Determine the slope and the offset.</strong></p>
+  <div class="cols a top">
+    <div style="padding-top:.6em">
+      <table>
+        <tr><th>Applied force (N)</th><th>Voltage output (V)</th></tr>
+        <tr><td>25</td><td>5.0</td></tr>
+        <tr><td>50</td><td>6.5</td></tr>
+        <tr><td>75</td><td>8.0</td></tr>
+      </table>
+    </div>
+    <div class="iplot" data-widget="calib"></div>
+  </div>
+  <aside class="notes">Give them a minute with the table before pressing the buttons. By plotting the data we would be able to determine that the relationship between applied force and voltage output is linear.</aside>
+</section>
+
+<!-- 15 -->
+<section>
+  <h2>Sensor calibration</h2>
+  <h3>Solution — the slope</h3>
+  <div class="cols a top">
+    <div>
+      <p class="small">By plotting the given data we can see the relationship between applied force and voltage
+         output is <strong>linear</strong>.</p>
+      <p class="small">We calculate the slope by determining the ratio of <strong>rise to run</strong>.</p>
+      <div class="box accent">
+        <p class="eq" style="margin:0">slope = <span class="frac"><span>Δy</span><span class="den">Δx</span></span>
+          = <span class="frac"><span>6.5 − 5.0</span><span class="den">50 − 25</span></span>
+          = <strong>0.06 V/N</strong></p>
+      </div>
+      <p class="small" style="margin-top:.7em">Next we calculate the <strong>offset</strong> (also called the
+         y-intercept) by plugging our known values into the equation for a line.</p>
+      <div class="box accent">
+        <p class="eq" style="margin:0 0 .25em">y = mx + b</p>
+        <p class="eq" style="margin:0 0 .25em">5 = (0.06)(25) + b</p>
+        <p class="eq" style="margin:0"><strong>b = 3.5 V</strong></p>
+      </div>
+    </div>
+    <div class="iplot" data-widget="calib"></div>
+  </div>
+  <aside class="notes">We can plug in any of our known force–voltage pairs for x and y and get the same b. Try it with 50 and 6.5.</aside>
+</section>
+
+<!-- 16 — INTERACTIVE: using the calibration -->
+<section>
+  <h2>Sensor calibration</h2>
+  <h3>Now use the sensor</h3>
+  <p class="lead">With the slope and the offset we can determine the force for any voltage output —
+     the sensor is said to be <strong>calibrated</strong>. Plug a measured voltage into the equation for a line,
+     using our calculated slope and offset.</p>
+  <div class="textstrip tiny three" style="align-items:center">
+    <p class="firstcol">Record the three points first, then slide the voltage. The green lines are the arithmetic
+      on the right, drawn.</p>
+    <div class="box accent">
+      <p class="tiny muted" style="margin:0 0 .25em">e.g. for an output of 6 volts, the force would be:</p>
+      <p class="eq" style="margin:0 0 .15em">y = mx + b</p>
+      <p class="eq" style="margin:0">6 V = (0.06 V/N) x + 3.5 V</p>
+    </div>
+    <p class="eq big center" style="color:var(--ink-strong);margin:0">x = 41.6 N</p>
+  </div>
+  <div class="iplot wide" data-widget="calib" data-use="1"></div>
+  <aside class="notes">Take the three points, then set the voltage slider to 6.00 V and read 41.6 N off the panel. Same number, done graphically.
+Worth saying out loud: every force number in every paper you will read this term came out of an equation like this one.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Sensor calibration</h2>
+  <h3>When the relationship is not a straight line</h3>
+  <div class="textstrip tiny three" style="align-items:center">
+    <p class="firstcol">If the relationship between applied force and voltage output is
+      <strong>non-linear</strong>, the data are fitted to a <strong>polynomial</strong> equation.</p>
+    <p>In such cases we need more than just the slope and offset — we need the <strong>coefficients</strong> that
+      describe the polynomial. This calibration equation can then be used to convert from a measured voltage to a
+      force in newtons.</p>
+    <p class="eq big center" style="color:var(--ink-strong);margin:0">y = −0.1x² + 1.2x</p>
+  </div>
+  <div class="iplot wide" data-widget="calib" data-mode="poly" data-use="1"></div>
+  <aside class="notes">The dashed grey curve is what the sensor actually does. Take the three points and a straight line is fitted to them — it agrees at the points and is wrong everywhere else. That is the argument for the polynomial, made by demonstration rather than assertion.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Sensor calibration</h2>
+  <h3>Hysteresis</h3>
+  <div class="callout">
+    <p style="margin:0">The influence of the <strong>previous history</strong> of a system on its subsequent
+       response to a given stimulus.</p>
+  </div>
+  <div class="cols a top" style="margin-top:.5em">
+    <div>
+      <p class="small">Hysteresis occurs when a <strong>different force-to-voltage relationship</strong> exists
+         when the force is incrementally increased, compared with when it is incrementally decreased.</p>
+      <p class="small">Hysteresis is undesirable because it would require different calibration coefficients — or
+         different equations — for <strong>loading</strong> and <strong>unloading</strong>.</p>
+    </div>
+    <div class="iplot" data-widget="hysteresis"></div>
+  </div>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Sensor calibration</h2>
+  <h3>Drift</h3>
+  <div class="callout">
+    <p style="margin:0">A gradual change in a transducer’s voltage output <strong>without an accompanying change
+       in the applied force</strong>.</p>
+  </div>
+  <div class="cols a top" style="margin-top:.5em">
+    <div>
+      <p class="small">Drift can occur as a result of the transducer warming up, or as an effect of continued use.</p>
+      <p class="small">If the drift is <strong>linear</strong>, the slope can be determined and the voltage output
+         can be adjusted.</p>
+      <p class="tiny muted">Throughout the figure the applied force is <strong>constant</strong>.</p>
+    </div>
+    <div class="iplot" data-widget="drift"></div>
+  </div>
+  <aside class="notes">Turn the correction on and off. This is the same idea as the accelerometer drift in the kinematics lecture — a small, slow error that integrates into a large one.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>How are data collected from a sensor?</h3>
+  <div class="iplot wide" data-widget="daqchain" data-stage="1"></div>
+  <div class="cols b top" style="margin-top:.4em">
+    <div class="imgrow">
+      <div class="fig photo"><img src="assets/s22_62.png" alt="Strain gauge sensing unit" style="max-height:15vh"><figcaption>1. sensing unit</figcaption></div>
+      <div class="fig photo"><img src="assets/s22_3.png" alt="Power supply" style="max-height:15vh"><figcaption>2. power supply</figcaption></div>
+      <div class="fig photo"><img src="assets/s22_19.png" alt="Operational amplifier chip" style="max-height:15vh"><figcaption>3. op-amp</figcaption></div>
+    </div>
+    <div>
+      <p class="small">A sensor normally includes:</p>
+      <ul class="small">
+        <li>The <strong>physical sensing unit</strong> — e.g. a strain gauge</li>
+        <li>A <strong>power supply</strong> — batteries or plug-in</li>
+        <li>An <strong>operational amplifier</strong> — a dedicated circuit that amplifies the voltage from the
+          sensor and can perform operations on the signal, from simple to complex maths</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>How are data collected from a sensor? — wireless</h3>
+  <div class="cols b top">
+    <div>
+      <p class="small">In biomechanics it is important to consider how we collect data and store it in the
+         computer.</p>
+      <p class="small muted">A wireless sensor does the first few boxes of the chain on board and sends numbers, not
+         volts. Convenient — but the sampling rate, the range and the resolution were all decided by somebody else,
+         before you switched it on.</p>
+    </div>
+    <div class="fig photo"><img src="assets/s23_2050.jpg" alt="Short range wireless communication technologies" style="max-height:48vh"></div>
+  </div>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>How are data collected from a sensor? — wired</h3>
+  <div class="iplot wide" data-widget="daqchain" data-stage="2"></div>
+  <p class="lead" style="margin-top:.5em">Each sensor gets a terminal on a <strong>break-out box</strong>, and
+     everything leaves on one cable.</p>
+  <div class="fig photo"><img src="assets/s25_3074.jpg" alt="Biomechanics laboratory with force plates and cameras" style="max-height:38vh"><figcaption>a wired lab — every one of those cables ends up in a break-out box</figcaption></div>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>Break-out box</h3>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>A plastic or metal box with one or more rows of <strong>terminals</strong> (or connectors).</li>
+        <li>A wire for each sensor connected to the break-out box is bundled into one large cable that connects to
+          the rest of the <strong>data acquisition (DAQ)</strong> system.</li>
+        <li>Can be built into a DAQ system, or it can be a stand-alone unit.</li>
+        <li>Provides a means of attaching the sensors to the DAQ system <strong>without soldering</strong>.</li>
+      </ul>
+    </div>
+    <div class="fig photo"><img src="assets/s25_43010.jpg" alt="BNC break-out box with sixteen connectors" style="max-height:44vh"></div>
+  </div>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>How are data collected from a sensor?</h3>
+  <div class="iplot wide" data-widget="daqchain" data-stage="3"></div>
+  <p class="lead" style="margin-top:.6em">In most cases we need to record from more than one sensor at a time.
+     However, <strong>DAQ units are not good at multitasking</strong>.</p>
+  <div class="textstrip tiny">
+    <p class="firstcol">We could use one DAQ system for each signal being recorded — but there is a less expensive
+      alternative: <strong>multiplexing</strong>.</p>
+    <p>Each connection to a multiplexer is called a <strong>channel</strong>.</p>
+  </div>
+</section>
+
+<!-- 25 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>Multiplexer</h3>
+  <div class="cols a top">
+    <div>
+      <p class="small">The DAQ draws the first sample from the first sensor; the multiplexer then switches the
+         circuit to receive a sample from the second sensor; once all connected sensors have been read, the
+         multiplexer switches back to the first.</p>
+      <div class="box accent">
+        <p class="small" style="margin:0">One problem with multiplexing is that the <strong>effective sampling
+           rate is decreased</strong> — by a factor of the number of channels being multiplexed.</p>
+      </div>
+      <p class="small" style="margin-top:.6em">For example, consider a DAQ with the ability to draw 100 samples per
+         second (100 Hz). If there are <strong>8 sensors</strong> connected, the multiplexer will switch between
+         the 8 channels, giving an actual sampling rate of</p>
+      <p class="eq big center" style="margin:.2em 0">100 / 8 = 12.5 Hz</p>
+    </div>
+    <div class="iplot" data-widget="multisensor" data-n="2" data-rate="100"></div>
+  </div>
+  <aside class="notes">Add channels one at a time with the + button and watch the sample count on every trace fall together. At six channels on a 100 Hz DAQ nothing is being sampled faster than about 17 Hz.
+The sensors are different on purpose — the EMG channel is the one that falls apart first, because it is the fastest signal in the set.</aside>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>Multiplexer — sampling skew</h3>
+  <div class="cols c top">
+    <div class="iplot" data-widget="multisensor" data-n="4" data-rate="100"></div>
+    <div>
+      <p class="small">A second problem with multiplexing is that, since the samples are drawn
+         <strong>sequentially</strong>, there is a delay between each one: the 8 samples are
+         <strong>not drawn simultaneously</strong>.</p>
+      <p class="small">This is called <em class="key">sampling skew</em>, and it increases with the number of
+         channels being sampled.</p>
+      <p class="tiny muted">Toggle “Skew shown” to see it. With skew hidden, every channel appears to be sampled at
+         the same instants — which is the comfortable assumption most analysis software quietly makes.</p>
+    </div>
+  </div>
+  <aside class="notes">Push the channel count to six and the DAQ rate down to 40 Hz. The last channel now lags the first by over 100 ms — which, if you are computing joint moments from a force plate and a camera, is a real error and not a rounding one.</aside>
+</section>
+
+<!-- 27 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>How are data collected from a sensor?</h3>
+  <div class="iplot wide" data-widget="daqchain" data-stage="4"></div>
+  <p class="lead" style="margin-top:.6em">Voltages generated by sensors of physiological parameters are typically
+     <strong>very small</strong> in amplitude — sometimes even after initial amplification.</p>
+  <div class="textstrip tiny three">
+    <p class="firstcol">The number of times that a signal’s amplitude is increased is called a
+      <strong>gain</strong>.</p>
+    <p>DAQ systems usually come with preset choices of gain — e.g. <strong>×1, ×10, ×100</strong>.</p>
+    <p>Noise is often introduced through the wires that bring the signal to the amplifier; a
+      <strong>preliminary amplifier</strong> located close to the sensor is therefore often used.</p>
+  </div>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>How are data collected from a sensor?</h3>
+  <div class="iplot wide" data-widget="daqchain" data-stage="5"></div>
+  <p class="lead" style="margin-top:.6em">Sample-and-hold circuit — <strong>it takes a picture.</strong></p>
+  <div class="textstrip tiny">
+    <p class="firstcol">The analog-to-digital converter works to divide the analog signal into discrete values:
+      one value at each discrete time point.</p>
+    <p>The conversion of a given voltage into a discrete value <strong>takes a certain amount of time</strong>,
+      during which the A/D tries to determine the number that most closely corresponds to the applied voltage.</p>
+  </div>
+</section>
+
+<!-- 29 — INTERACTIVE: sample-and-hold -->
+<section>
+  <h2>Sample-and-hold circuit</h2>
+  <p class="lead">To convert accurately, the voltage input <strong>must not change much</strong> — or the number
+     produced by the A/D will not be an accurate reflection of the voltage.</p>
+  <div class="iplot wide" data-widget="samplehold"></div>
+  <p class="tiny muted center">The sample-and-hold circuit is responsible for <strong>‘freezing’</strong> the
+     voltage signal while the A/D determines the correct numerical value — much like an artist takes a photograph
+     to paint a moving scene.</p>
+  <aside class="notes">Start with the hold ON: each shaded band is the converter working, and the blue line is flat across it because the voltage is being held.
+Turn the hold OFF: the voltage wanders during the conversion and the A/D lands on whatever happens to be there at the end. The red ticks are the error, and the readout gives you the worst one.
+Then lengthen the conversion time and watch the error grow. That is the whole argument for the circuit, in one slider.</aside>
+</section>
+
+<!-- 30 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>How are data collected from a sensor?</h3>
+  <div class="iplot wide" data-widget="daqchain" data-stage="6"></div>
+  <p class="lead" style="margin-top:.6em">The <strong>analog-to-digital converter</strong> makes up the most
+     important component of a DAQ system. Its purpose is to turn a continuous, analog signal into a series of
+     <strong>discrete numbers</strong>.</p>
+  <div class="box accent">
+    <p class="small" style="margin:0 0 .3em">A/D converters are limited by three things:</p>
+    <ol class="small" style="margin:0">
+      <li>The <strong>range of voltages</strong> that they can read — window and amplification</li>
+      <li>The number of <strong>magnitude options</strong> — magnitude resolution, or steps</li>
+      <li>The number of <strong>time options</strong> — temporal resolution</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 31 — INTERACTIVE: the three limits -->
+<section>
+  <h2>Analog-to-digital converter</h2>
+  <p class="lead">All three limits, in one figure. Change one at a time and watch what the stored signal loses.</p>
+  <div class="iplot wide" data-widget="adclimits" data-gain="1"></div>
+  <aside class="notes">Take them one at a time.
+RANGE — switch to 0 to 1 V and the signal is clipped to pieces; the readout counts the clipped samples. Then use the gain slider to bring the signal back inside the window, which is the point of the amplifier.
+MAGNITUDE — drop to 2 bits: four levels, and the staircase is nothing like the wave. Twelve bits and you cannot see the steps any more.
+TEMPORAL — drop the rate to 6 Hz: fine steps, plenty of range, and still no signal, because there are not enough of them.
+The lesson is that all three have to be right. Getting two of the three is a bad recording.</aside>
+</section>
+
+<!-- 32 -->
+<section>
+  <h2>Analog-to-digital converter</h2>
+  <h3>1. The range of voltages it can read</h3>
+  <div class="cols a top">
+    <div>
+      <p class="small">A/Ds can operate over only a <strong>specific range of voltages</strong> — e.g. 0 to 10 V,
+         or −5 to +5 V.</p>
+      <p class="small">If a voltage is applied beyond the upper or lower limits, the digitized signal will be
+         truncated, or <em class="key">‘clipped’</em>.</p>
+      <div class="box accent">
+        <p class="small" style="margin:0">This is why it is important to know how to <strong>amplify the
+           signal</strong>.</p>
+      </div>
+      <div class="imgrow" style="margin-top:.6em">
+        <div class="fig photo"><img src="assets/s35_17.png" alt="Signal within range" style="max-height:18vh"><figcaption>within range</figcaption></div>
+        <div class="fig photo"><img src="assets/s35_18.png" alt="Signal clipped at the limits" style="max-height:18vh"><figcaption>clipped</figcaption></div>
+      </div>
+    </div>
+    <div class="iplot" data-widget="adclimits" data-focus="range" data-gain="1"></div>
+  </div>
+  <aside class="notes">Set the range to 0 to 1 V and the clipping counter lights up. Then raise the gain and it gets worse, not better — amplification is only the answer when the signal is too small, not when it is too big.</aside>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>Analog-to-digital converter</h2>
+  <h3>2. The number of magnitude options</h3>
+  <div class="cols a top">
+    <div>
+      <p class="small">The magnitude resolution of an A/D is usually expressed in units of <strong>bits</strong>.</p>
+      <p class="small">‘Bits’ is short for ‘binary digits’, and refers to information made up of digits that can
+         exist in only one of two states — <strong>0 or 1</strong>.</p>
+      <p class="small">An 8-bit A/D has 256 (2<sup>8</sup> = 256) levels, meaning that 8 digits, or place-values, of
+         either 1 or 0 are required to represent 256 individual numbers.</p>
+      <table style="margin-top:.5em">
+        <tr><th>Bits</th><th></th><th>Number of levels</th></tr>
+        <tr><td>8</td><td>2<sup>8</sup> =</td><td>256</td></tr>
+        <tr><td>12</td><td>2<sup>12</sup> =</td><td>4 096</td></tr>
+        <tr><td>16</td><td>2<sup>16</sup> =</td><td>65 536</td></tr>
+      </table>
+    </div>
+    <div class="iplot" data-widget="adclimits" data-focus="bits"></div>
+  </div>
+  <aside class="notes">Each time an 8-bit A/D converts a voltage to one individual number, 8 bits of memory are required to store it.
+More information on the binary system is in White (2006), but an understanding of binary is outside the scope of this course.</aside>
+</section>
+
+<!-- 34 -->
+<section>
+  <h2>Analog-to-digital converter</h2>
+  <h3>Resolution — the size of one step</h3>
+  <div class="cols b top">
+    <div class="fig photo"><img src="assets/s37_12.png" alt="A/D range divided into 4096 divisions between -5 and +5 volts" style="max-height:52vh"></div>
+    <div>
+      <p class="small">An A/D’s range is divided into a specific number of <strong>equal steps</strong>. The number
+         of steps that divides the range is called the <em class="key">resolution</em>.</p>
+      <p class="small">A common number of steps is <strong>4 096</strong>, meaning a given analog signal can be
+         represented by any of 4 096 values between the limits of its range.</p>
+      <div class="box accent">
+        <p class="small" style="margin:0">For example, if the voltage range is 0 to 10 V, the amplitude between
+           each step is</p>
+        <p class="eq" style="margin:.25em 0 0">10 / 4 095 = <strong>0.002 44 V</strong></p>
+      </div>
+      <p class="small" style="margin-top:.6em">A high resolution is desirable because it allows each sample to
+         represent the analog signal at that point in time <strong>more precisely</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 35 -->
+<section>
+  <h2>Analog-to-digital converter</h2>
+  <h3>The amplifier facilitates sampling</h3>
+  <div class="cols c top">
+    <div class="iplot" data-widget="adclimits" data-focus="bits" data-gain="1"></div>
+    <div>
+      <p class="small">It does this by ensuring that the voltage input extends throughout <strong>as much of the
+         range of the A/D as possible</strong>.</p>
+      <p class="small">This increases the resolution of the sampled signal, by allowing the signal to be divided
+         into more divisions.</p>
+      <div class="box accent">
+        <p class="small" style="margin:0">The ideal gain is one that <strong>maximizes the range</strong> of the
+           A/D, but that <strong>doesn’t result in clipping</strong>.</p>
+      </div>
+      <div class="fig photo" style="margin-top:.6em"><img src="assets/s38_11.png" alt="Amplified and unamplified signal against the A/D range" style="max-height:26vh"></div>
+    </div>
+  </div>
+  <aside class="notes">Drop the bits to 4 so the steps are visible, then raise the gain from ×1: the same signal crosses more steps, so more of the A/D's vocabulary is being used to describe it. Keep going and it clips — that is the upper bound on the answer.
+Note: an unamplified signal is usually much smaller than the example shown here; amplification is therefore much more important than it appears from this diagram.</aside>
+</section>
+
+<!-- 36 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>Storage device</h3>
+  <div class="cols b top">
+    <div>
+      <p class="small">From the A/D, the digitized data — now in bits — are sent to a computer and stored in
+         memory, such as a hard disk.</p>
+      <p class="tiny muted">At this point the measurement is finished and everything that follows is arithmetic.
+         Whatever the A/D threw away is gone for good: no amount of processing puts back a sample that was never
+         taken, or a step that was too coarse.</p>
+    </div>
+    <div class="fig photo"><img src="assets/s40_10.png" alt="Magnetic bits stored on a disk platter" style="max-height:46vh"></div>
+  </div>
+</section>
+
+<!-- 37 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>The whole chain</h3>
+  <div class="iplot wide" data-widget="daqchain" data-stage="7"></div>
+  <div class="imgrow" style="margin-top:.8em">
+    <div class="fig photo"><img src="assets/s25_43010.jpg" alt="Break-out box" style="max-height:17vh"></div>
+    <div class="fig photo"><img src="assets/s39_5126.png" alt="Laptop running acquisition software" style="max-height:17vh"></div>
+    <div class="fig photo"><img src="assets/s41_1048.png" alt="Excel" style="max-height:13vh"></div>
+    <div class="fig photo"><img src="assets/s41_4098.jpg" alt="Python" style="max-height:13vh"></div>
+    <div class="fig photo"><img src="assets/s41_163.png" alt="MATLAB" style="max-height:13vh"></div>
+  </div>
+  <p class="tiny muted center">Sensor → break-out box → multiplexer → amplifier → sample-and-hold → A/D →
+     storage and analysis software.</p>
+</section>
+
+<!-- 38 -->
+<section>
+  <h2>Data acquisition</h2>
+  <h3>Software</h3>
+  <div class="cols a top">
+    <div>
+      <p class="small">The aim of any software package used to process and analyze data is to perform many
+         operations on digital signals <strong>very quickly</strong>. Examples include separating the signal into
+         channels and converting the values into physical units of measurement.</p>
+      <p class="small">Often the user will have many operations to carry out on a set of data. Lists of these
+         operations can be written in the form of a <strong>program</strong>, in one of many languages.</p>
+      <p class="small muted">We may go over some data processing examples using various programs.</p>
+    </div>
+    <div>
+      <ul class="small">
+        <li>Python</li>
+        <li>R</li>
+        <li>Matlab <span class="muted">(Mathworks)</span></li>
+        <li>LabView <span class="muted">(National Instruments)</span></li>
+        <li>Excel <span class="muted">(Microsoft)</span></li>
+      </ul>
+      <div class="imgrow" style="margin-top:.6em">
+        <img src="assets/s41_4098.jpg" alt="Python" style="max-height:12vh">
+        <img src="assets/s41_163.png" alt="MATLAB" style="max-height:12vh">
+        <img src="assets/s41_1048.png" alt="Excel" style="max-height:12vh">
+        <img src="assets/s41_1052.gif" alt="R" style="max-height:12vh">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 39 -->
+<section>
+  <h2>References</h2>
+  <ul class="small">
+    <li>Young, S.S., 2001. <em>Computerized Data Acquisition and Analysis for the Life Sciences.</em>
+      Cambridge University Press, Cambridge, UK; pp. 1–80.</li>
+    <li>White, R., 2006. <em>How Computers Work.</em> Que Publishing, Indianapolis, IN, USA; pp. 144–147.</li>
+    <li>Griffiths, I.W., 2006. <em>Principles of Biomechanics &amp; Motion Analysis.</em>
+      Lippincott Williams &amp; Wilkins, Baltimore, MD, USA; pp. 210–254.</li>
+    <li>Robertson, D.G.E. <em>Research Methods in Biomechanics.</em> Human Kinetics, Windsor, ON, Canada;
+      pp. 227–238.</li>
+  </ul>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js"></script>
+<script>
+Reveal.initialize({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+});
+</script>
+<script src="deck-core.js"></script>
+<script src="sensors.js"></script>
+<script src="deck-tools.js"></script>
+<script src="fit.js"></script>
+</body>
+</html>
