@@ -1,0 +1,53 @@
+/* ============================================================
+   EPHE 341 — the lecture list that drives the front page.
+
+   To publish a converted lecture, give its entry a `path` (the folder it
+   lives in) and it moves from the list at the bottom of the page up into
+   the cards at the top. Everything else is optional.
+
+     path    folder, relative to this file's site root
+     blurb   one or two sentences, shown on the card
+     slides  slide count
+     live    short labels for what is interactive or real in it
+     handout a PDF inside the lecture folder, if you keep one there
+     updated yyyy-mm-dd
+
+   The un-converted entries below were read straight out of
+   `2026/2020/Lectures/` and are in filename order, duplicate numbering and
+   all. Prune them to the lectures you actually teach.
+   ============================================================ */
+window.EPHE341_LECTURES = [
+
+  { n: '3', title: 'Calculus and kinematics',
+    path: 'lectures/03-calculus-and-kinematics',
+    blurb: 'How displacement, velocity and acceleration are tied together by slopes and areas — ' +
+           'and what to do when you have measured one of them and need the others.',
+    slides: 64, widgets: 54, updated: '2026-09-15',
+    handout: 'handout.pdf',
+    live: ['graphing calculator', 'curve fitting', 'a real 100 m final',
+           'a phone accelerometer trial', 'a golf swing in motion capture'] },
+
+  /* ---- still PowerPoint ---- */
+  { n: '1a', title: 'Intro and review' },
+  { n: '1b', title: 'Linear kinematics review' },
+  { n: '2',  title: 'Sensors and data acquisition' },
+  { n: '4',  title: 'Forces' },
+  { n: '5',  title: 'Signals' },
+  { n: '6',  title: 'Linear kinetics 1' },
+  { n: '7',  title: 'Linear kinetics 2' },
+  { n: '8',  title: 'Projectile motion' },
+  { n: '8',  title: 'Work, energy and power' },
+  { n: '9',  title: 'Angular kinematics' },
+  { n: '10', title: 'General kinematics' },
+  { n: '11', title: 'Muscle mechanics' },
+  { n: '12', title: 'Virtual Muscle Lab' },
+  { n: '13', title: 'Electromyography' },
+  { n: '14', title: 'Angular kinetics 1' },
+  { n: '15', title: 'Gait analysis' },
+  { n: '16', title: 'Angular kinetics 2' },
+  { n: '17', title: 'Angular kinetics 3' },
+  { n: '18', title: 'Static analysis' },
+  { n: '19', title: 'Dynamic analysis' },
+  { n: '22', title: 'Projectile motion' },
+  { n: '23', title: 'Signals and LabVIEW' }
+];
