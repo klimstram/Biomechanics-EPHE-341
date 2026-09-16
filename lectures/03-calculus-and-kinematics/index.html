@@ -1013,8 +1013,12 @@ That is why integrating accelerometers to get position is hard, and why we bothe
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
 <script src="annotate.js"></script>
+<script src="mobile.js"></script>
 <script>
-Reveal.initialize({
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
   width: 1280,
   height: 720,
   margin: 0.045,
@@ -1029,7 +1033,7 @@ Reveal.initialize({
   center: false,
   pdfSeparateFragments: false,
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
-});
+}, window.DECK_GEOM || {}));
 </script>
 <script src="data/imu.js"></script>
 <script src="data/video.js"></script>

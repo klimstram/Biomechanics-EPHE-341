@@ -583,3 +583,95 @@ html[data-theme="light"] .fig.photo img{
 .ink-boardpage-in{ position:absolute; inset:0; }
 .ink-boardpage-tag{ position:absolute; left:14px; top:10px; font:600 11px/1 ui-sans-serif,system-ui,sans-serif;
   letter-spacing:.07em; text-transform:uppercase; color:var(--muted); }
+
+/* ---------- sensors lecture: the gallery of sensor types ---------- */
+.sensorgrid{ display:grid; grid-template-columns:repeat(5,1fr); gap:.9em; align-items:end;
+  margin:.6em 0 .5em; }
+.sensorgrid figure{ margin:0; display:flex; flex-direction:column; align-items:center; gap:.45em; }
+.sensorgrid img{ max-height:26vh; max-width:100%; object-fit:contain; }
+.sensorgrid figcaption{ font-size:.58em; line-height:1.3; color:var(--muted); text-align:center; }
+.sensorgrid figcaption b{ display:block; color:var(--ink-strong); font-size:1.12em;
+  font-weight:650; margin-bottom:.15em; }
+
+/* the DAQ chain strip is a diagram, not a plot — no controls, so no gap below */
+.iplot[data-widget="daqchain"] .iwrap{ gap:0; }
+
+/* definitions */
+.callout p strong:first-child{ color:var(--brand); }
+
+/* a split widget in a half-width column has no room for a side panel — stack it instead */
+.iplot:not(.wide) .iwrap.isplit,
+.iplot:not(.wide) .iwrap.iimu{ grid-template-columns:minmax(0,1fr); }
+.iplot:not(.wide) .iwrap.isplit .icalc{
+  grid-column:1; padding-top:.25em; font-size:.62em;
+  display:grid; grid-template-columns:1fr 1fr; gap:.35em .9em; align-items:start; }
+.iplot:not(.wide) .iwrap.isplit .icalc > .icalc-h{ grid-column:1 / -1; margin-bottom:.1em; }
+.iplot:not(.wide) .iwrap.isplit .icalc > .idrift{ margin-top:0; }
+
+/* ============================================================
+   PORTRAIT PHONES
+   The deck switches to a 720 × 1080 slide (mobile.js) and sets
+   html[data-portrait]. Everything two-column becomes one column,
+   the chrome shrinks to thumb-sized icons, and image caps move
+   from vh (which measures the screen, not the slide) to slide px.
+   ============================================================ */
+html[data-portrait] #uvic-badge{ display:none; }
+html[data-portrait] .reveal{ font-size:27px; }
+html[data-portrait] .reveal h2{ padding-right:0; font-size:1.22em; margin-bottom:.42em; }
+html[data-portrait] .reveal h3{ font-size:1.02em; }
+html[data-portrait] .reveal .lead{ font-size:.95em; margin-bottom:.7em; }
+html[data-portrait] .reveal .small{ font-size:.92em; }
+html[data-portrait] .reveal .tiny{ font-size:.82em; }
+
+/* one column, everywhere */
+html[data-portrait] .cols,
+html[data-portrait] .cols.a, html[data-portrait] .cols.b, html[data-portrait] .cols.c,
+html[data-portrait] .textstrip,
+html[data-portrait] .textstrip.three,
+html[data-portrait] .textstrip.four,
+html[data-portrait] .reveal ul.two{ grid-template-columns:1fr; gap:.55em; }
+html[data-portrait] .textstrip .firstcol{ border-left:2px solid var(--brand); }
+
+html[data-portrait] .iwrap.isplit,
+html[data-portrait] .iwrap.iimu,
+html[data-portrait] .iseries,
+html[data-portrait] .isprint,
+html[data-portrait] .ifd,
+html[data-portrait] .igolf{ grid-template-columns:minmax(0,1fr); }
+html[data-portrait] .isplit .icalc,
+html[data-portrait] .iseries-tab{ grid-column:1; padding-top:.3em; }
+html[data-portrait] .iwrap.isplit .icalc{
+  font-size:.66em; display:grid; grid-template-columns:1fr 1fr; gap:.35em .9em; align-items:start; }
+html[data-portrait] .iwrap.isplit .icalc > .icalc-h{ grid-column:1 / -1; }
+html[data-portrait] .sensorgrid{ grid-template-columns:repeat(3,1fr); gap:.6em; }
+html[data-portrait] .sensorgrid img{ max-height:150px; }
+
+/* images: cap against the slide, not the screen */
+html[data-portrait] .fig img,html[data-portrait] .fig svg{ max-height:330px; }
+html[data-portrait] .fig.small img{ max-height:210px; }
+html[data-portrait] .cols .fig img{ width:auto; max-width:100%; }
+html[data-portrait] .imgrow img{ max-height:230px; }
+html[data-portrait] .cols .imgrow img{ max-height:210px; }
+html[data-portrait] .fig.photo img{ max-height:230px; }
+
+/* controls sized for a thumb */
+html[data-portrait] .ictls{ font-size:.86em; gap:.5em; }
+html[data-portrait] .ictl{ grid-template-columns:6.2em 1fr 4.2em; gap:.6em; }
+html[data-portrait] .ictls.g2{ grid-template-columns:1fr; }
+html[data-portrait] .iplot input[type=range]{ height:26px; }
+html[data-portrait] .iplot input[type=range]::-webkit-slider-thumb{ width:26px; height:26px; }
+html[data-portrait] .iplot input[type=range]::-moz-range-thumb{ width:26px; height:26px; }
+html[data-portrait] .ibtn,
+html[data-portrait] .iseg-b{ padding:.62em 1em; font-size:1.02em; }
+html[data-portrait] .ictl-row{ gap:.6em; }
+html[data-portrait] .iread{ font-size:1.02em; }
+
+/* the toolbar: icons only, tappable, always visible */
+html[data-portrait] #deck-tools{ opacity:1; left:10px; right:10px; bottom:10px;
+  justify-content:space-between; gap:8px; }
+html[data-portrait] #deck-tools button span{ display:none; }
+html[data-portrait] #deck-tools button{ padding:11px; border-radius:9px; }
+html[data-portrait] #deck-tools svg{ width:19px; height:19px; }
+
+/* a slide can drop something on a phone, where the column is too tall for it */
+html[data-portrait] .portrait-hide{ display:none !important; }

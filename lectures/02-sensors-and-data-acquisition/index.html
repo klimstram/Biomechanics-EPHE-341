@@ -68,7 +68,7 @@
          <strong>what does this step throw away?</strong></p>
     </div>
   </div>
-  <div class="iplot wide" data-widget="daqchain" data-stage="7" style="margin-top:.5em"></div>
+  <div class="iplot wide portrait-hide" data-widget="daqchain" data-stage="7" style="margin-top:.5em"></div>
   <aside class="notes">In this lecture we are going to discuss some basic concepts that will be really helpful to understand biomechanics technology and methodology.
 I will cover aspects of sensors and data acquisition.
 On this page I have included some important terms to look out for during this lecture series.</aside>
@@ -777,8 +777,12 @@ Note: an unamplified signal is usually much smaller than the example shown here;
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
 <script src="annotate.js"></script>
+<script src="mobile.js"></script>
 <script>
-Reveal.initialize({
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
   width: 1280,
   height: 720,
   margin: 0.045,
@@ -793,7 +797,7 @@ Reveal.initialize({
   center: false,
   pdfSeparateFragments: false,
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
-});
+}, window.DECK_GEOM || {}));
 </script>
 <script src="deck-core.js"></script>
 <script src="sensors.js"></script>

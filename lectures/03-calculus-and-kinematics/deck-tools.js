@@ -124,6 +124,19 @@ var boardBtn = mkBtn(ICON.board, '', 'Blank blackboard or whiteboard (D)');
 var helpBtn = mkBtn(ICON.help, '', 'Keyboard shortcuts');
 document.body.appendChild(bar);
 
+/* On a phone held upright there is no keyboard, no second screen to put the
+   presenter view on, and no sensible way to write on a slide with a fingertip
+   — and the ink is anchored to the 16:9 slide box anyway. Take those buttons
+   away rather than leaving them there to disappoint. */
+function syncPortraitTools() {
+  var p = !!window.DECK_PORTRAIT;
+  [presentBtn, inkBtn, boardBtn, helpBtn].forEach(function (b) {
+    b.style.display = p ? 'none' : '';
+  });
+}
+syncPortraitTools();
+window.addEventListener('ephe341-layout', syncPortraitTools);
+
 /* ---- the ink layer lives in annotate.js; these just drive it ---- */
 function ink() { return window.EPHE341_INK; }
 inkBtn.addEventListener('click', function () { if (ink()) ink().toggle(); inkBtn.blur(); syncInk(); });

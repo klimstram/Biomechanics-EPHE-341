@@ -31,16 +31,42 @@ function readTheme() {
 }
 readTheme();
 
-/* ---------------- tiny canvas plotting helper ---------------- */
+/* ---------------- tiny canvas plotting helper ----------------
+
+   PORTRAIT NOTE. Font sizes, paddings, line widths and dot radii in here are
+   absolute canvas pixels, so shrinking the COORDINATE BOX while leaving them
+   alone is what makes a figure legible on a phone: the same 15 px label in a
+   470-wide box instead of a 900-wide one reads nearly twice as large once the
+   canvas is stretched to the width of the slide.
+
+   A widget that draws in raw pixels rather than through X()/Y() cannot be
+   rescaled this way and should pass `fluid: false`.                        */
+var MOBILE_W = 470;
+
 function Axes(cv, o) {
   this.cv = cv; this.o = o;
-  this.W = o.w || 560; this.H = o.h || 320;
+  var w = o.w || 560, h = o.h || 320;
+  var pl = o.padl == null ? 62 : o.padl, pr = o.padr == null ? 18 : o.padr,
+      pt = o.padt == null ? 16 : o.padt, pb = o.padb == null ? 46 : o.padb;
+  var portrait = !!window.DECK_PORTRAIT;
+
+  if (portrait && o.fluid !== false && w > MOBILE_W) {
+    /* Narrow it, but keep the height: a portrait slide is 1080 tall and has
+       room to spare, whereas squeezing the height too would crush the stacked
+       panels some figures are built from. The figure ends up squarer, which is
+       the right shape for a column anyway. */
+    w = MOBILE_W;
+  }
+
+  this.W = w; this.H = h; this.portrait = portrait;
   var dpr = Math.max(2, window.devicePixelRatio || 1);
   cv.width = this.W * dpr; cv.height = this.H * dpr;
-  cv.style.width = '100%'; cv.style.maxWidth = this.W + 'px'; cv.style.height = 'auto';
+  cv.style.width = '100%';
+  var stretch = portrait && o.fluid !== false && (o.w || 560) > MOBILE_W;
+  cv.style.maxWidth = stretch ? 'none' : this.W + 'px';
+  cv.style.height = 'auto';
   this.c = cv.getContext('2d'); this.c.scale(dpr, dpr);
-  this.pl = o.padl == null ? 62 : o.padl; this.pr = o.padr == null ? 18 : o.padr;
-  this.pt = o.padt == null ? 16 : o.padt; this.pb = o.padb == null ? 46 : o.padb;
+  this.pl = pl; this.pr = pr; this.pt = pt; this.pb = pb;
   this.setRange(o.xmin, o.xmax, o.ymin, o.ymax);
 }
 Axes.prototype.setRange = function (a, b, c, d) {
@@ -2867,12 +2893,25 @@ var MAP = {
   'area-rect': W.areaRect, 'line-explorer': W.lineExplorer
 };
 
-function init() {
-  var nodes = document.querySelectorAll('.iplot');
-  Array.prototype.forEach.call(nodes, function (n) {
-    var name = n.getAttribute('data-widget');
-    if (MAP[name]) { try { MAP[name](n, n.dataset); } catch (e) { console.error(name, e); } }
+function make(n) {
+  var name = n.getAttribute('data-widget');
+  if (MAP[name]) { try { MAP[name](n, n.dataset); } catch (e) { console.error(name, e); } }
+}
+
+/* Rebuild every figure from scratch — used when the phone is turned and the
+   canvases need a different coordinate box. Stop any animation first, or its
+   requestAnimationFrame keeps drawing into a canvas that is no longer here. */
+window.EPHE341_REBOOT = function () {
+  Array.prototype.forEach.call(document.querySelectorAll('.iplot'), function (n) {
+    if (n._stop) { try { n._stop(); } catch (e) {} }
+    n._draw = n._stop = n._start = null;
+    n.innerHTML = '';
+    make(n);
   });
+};
+
+function init() {
+  Array.prototype.forEach.call(document.querySelectorAll('.iplot'), make);
   window.addEventListener('ephe341-theme', function () {
     readTheme();
     Array.prototype.forEach.call(document.querySelectorAll('.iplot'), function (n) {

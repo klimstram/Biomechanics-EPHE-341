@@ -17,6 +17,16 @@
    notes relative to the content they were drawn against. */
 var FIT_LIMIT = 676, FIT_MIN = 0.58;
 
+/* Portrait phones run a 720 × 1080 slide instead of 1280 × 720, so the budget
+   is a different number. Measure the section we are about to fit rather than
+   asking reveal for its config: the config can still be the old one while the
+   layout is being rebuilt, and getting this wrong silently floors the zoom. */
+function fitLimit(sec) {
+  var h = (sec && sec.clientHeight) || 720;
+  if (h === 720) return FIT_LIMIT;         /* the 16:9 case, unchanged */
+  return Math.round(h - 70);               /* leave the toolbar its strip */
+}
+
 function contentHeight(sec) {
   var top = sec.getBoundingClientRect().top, bot = top, i, r;
   for (i = 0; i < sec.children.length; i++) {
@@ -33,9 +43,9 @@ function fitSlide(sec) {
   if (!sec) return;
   if (sec.querySelector(':scope > .title-slide, :scope > .section-slide')) { sec.style.zoom = ''; return; }
   sec.style.zoom = '';
-  var h = contentHeight(sec);
-  if (h > FIT_LIMIT) {
-    sec.style.zoom = Math.max(FIT_MIN, FIT_LIMIT / h).toFixed(4);
+  var h = contentHeight(sec), lim = fitLimit(sec);
+  if (h > lim) {
+    sec.style.zoom = Math.max(FIT_MIN, lim / h).toFixed(4);
   }
 }
 
@@ -76,6 +86,8 @@ if (window.Reveal) {
 }
 window.addEventListener('resize', function () { fitSoon(); });
 window.addEventListener('ephe341-theme', function () { fitSoon(); });
+/* the portrait/landscape switch rebuilds every figure — re-fit after it */
+window.addEventListener('ephe341-layout', function () { setTimeout(fitAll, 120); });
 /* widgets can change height as you drag a slider — re-fit the live slide */
 document.addEventListener('input', function (e) {
   if (e.target && e.target.type === 'range' && window.Reveal) fitSoon(Reveal.getCurrentSlide());
@@ -85,7 +97,17 @@ document.addEventListener('click', function (e) {
     fitSoon(Reveal.getCurrentSlide());
   }
 });
-setTimeout(fitAll, 900);
+/* Reveal's scroll view rebuilds every section into a .scroll-page wrapper after
+   'ready', which drops the inline zoom fit.js just set. Re-fit once that has
+   settled, and again on a scroll, so a slide is always fitted before it is read. */
+[900, 1600].forEach(function (ms) { setTimeout(fitAll, ms); });
+if (window.Reveal) {
+  var vp = document.querySelector('.reveal-viewport');
+  if (vp) vp.addEventListener('scroll', function () {
+    var s = document.querySelector('.reveal .slides > section');
+    if (s && !s.style.zoom) fitSoon();
+  }, { passive: true });
+}
 if (PRINT) { [1400, 2200, 3200].forEach(function (ms) { setTimeout(fitAll, ms); }); }
 
 /* ============================================================

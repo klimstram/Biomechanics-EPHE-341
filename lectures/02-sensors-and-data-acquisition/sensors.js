@@ -40,8 +40,14 @@ D.register('strain', function (node, d) {
   u.cv.parentNode.parentNode.classList.add('isplit', 'iimu');
   var side = el('div', 'icalc');
   u.cv.parentNode.parentNode.insertBefore(side, u.ctl);
-  var ax = new Axes(u.cv, { w: 980, h: 330, padl: 0, padr: 0, padt: 0, padb: 0,
-                            xmin: 0, xmax: 980, ymin: 330, ymax: 0 });
+  /* This one draws in raw pixels rather than through the axes, so it cannot be
+     rescaled automatically. In portrait the beam goes above the trace instead
+     of beside it, in a squarer box. */
+  var TALL = D.portrait();
+  var CW = TALL ? 545 : 980, CH = TALL ? 500 : 330;
+  var ax = new Axes(u.cv, { w: CW, h: CH, padl: 0, padr: 0, padt: 0, padb: 0,
+                            fluid: false,
+                            xmin: 0, xmax: CW, ymin: CH, ymax: 0 });
   var out = readout(u.ctl);
 
   var GF = 2.0, R0 = 120, VEX = 5.0;      /* gauge factor, ohms, excitation volts */
@@ -61,7 +67,8 @@ D.register('strain', function (node, d) {
     /* ---- the beam, bent ---- */
     /* a downward tip load bends the beam down and puts the TOP fibres in tension,
        so a positive force here means "push the tip down" */
-    var bx = 46, by = 140, bw = 380, bh = 26, bend = force * 0.34;
+    var bx = TALL ? 60 : 46, by = TALL ? 120 : 140,
+        bw = TALL ? 430 : 380, bh = 26, bend = force * 0.34;
     c.save();
     c.fillStyle = K.PLATE; c.strokeStyle = K.PANEL; c.lineWidth = 1;
     c.fillRect(bx - 22, by - 44, 22, bh + 88);          /* the wall */
@@ -97,7 +104,7 @@ D.register('strain', function (node, d) {
       c.stroke(); c.restore();
       /* the legend goes under the beam, where there is room for it */
       if (Math.abs(force) > 1) {
-        var ly = 254 + (top ? 0 : 22);
+        var ly = (TALL ? 236 : 254) + (top ? 0 : 22);
         c.fillStyle = col;
         c.fillRect(bx, ly - 4, 16, 3);
         c.font = '600 12.5px ui-sans-serif,system-ui,sans-serif';
@@ -125,7 +132,8 @@ D.register('strain', function (node, d) {
     c.restore();
 
     /* ---- the voltage trace ---- */
-    var px = 500, py = 30, pw = 330, ph = 250;
+    var px = TALL ? 60 : 500, py = TALL ? 266 : 30,
+        pw = TALL ? 320 : 330, ph = TALL ? 206 : 250;
     c.save();
     c.strokeStyle = K.INK; c.lineWidth = 1.2;
     c.beginPath(); c.moveTo(px, py); c.lineTo(px, py + ph); c.lineTo(px + pw, py + ph); c.stroke();
@@ -231,7 +239,14 @@ D.register('strain', function (node, d) {
    ============================================================ */
 D.register('sampling', function (node, d) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 900, h: 300, padl: 56, padb: 42, padt: 14, xmin: 0, xmax: 1, ymin: -1.25, ymax: 1.25 });
+  /* the two panes sit side by side on a wide slide and stack on a phone */
+  var STACK = D.portrait();
+  var PL = 56, PR = 20, PT = 14, PB = 42;
+  var ax = new Axes(u.cv, STACK
+    ? { w: 470, h: 520, padl: PL, padr: PR, padb: PB, padt: PT, fluid: false,
+        xmin: 0, xmax: 1, ymin: -1.25, ymax: 1.25 }
+    : { w: 900, h: 300, padl: PL, padr: PR, padb: PB, padt: PT,
+        xmin: 0, xmax: 1, ymin: -1.25, ymax: 1.25 });
   var out = readout(u.ctl);
   var fs = parseFloat(d.fs || 20), sigF = parseFloat(d.f || 2), show = d.show || 'both';
   var joinDots = false;
@@ -244,17 +259,31 @@ D.register('sampling', function (node, d) {
     ax.clear();
     var both = show === 'both';
     var panes = both ? 2 : 1;
+    var gapX = 26, gapY = 44;
+    var halfW = (ax.W - PL - PR - gapX) / 2;
+    var halfH = (ax.H - PT - PB - gapY) / 2;
     for (var p = 0; p < panes; p++) {
       var which = both ? (p === 0 ? 'analog' : 'digital') : show;
-      var x0 = both ? (p === 0 ? 0 : 0.5) : 0;
-      ax.pl = 56 + (both ? p * 450 : 0); ax.pr = both ? (p === 0 ? 470 : 20) : 20;
-      ax.frame({ grid: false, zero: true, xticks: [0, 0.25, 0.5, 0.75, 1],
+      var last = p === panes - 1;
+      if (both && STACK) {
+        ax.pl = PL; ax.pr = PR;
+        ax.pt = PT + p * (halfH + gapY); ax.pb = ax.H - (ax.pt + halfH);
+      } else if (both) {
+        ax.pt = PT; ax.pb = PB;
+        ax.pl = PL + p * (halfW + gapX); ax.pr = ax.W - (ax.pl + halfW);
+      } else {
+        ax.pl = PL; ax.pr = PR; ax.pt = PT; ax.pb = PB;
+      }
+      ax.frame({ grid: false, zero: true,
+        xticks: (STACK && both && !last) ? [] : [0, 0.25, 0.5, 0.75, 1],
         xfmt: function (v) { return v.toFixed(2); },
-        yticks: [-1, 0, 1], xlabel: 'time (s)', ylabel: 'voltage', ysize: 13,
+        yticks: [-1, 0, 1],
+        xlabel: (STACK && both && !last) ? null : 'time (s)',
+        ylabel: 'voltage', ysize: 13,
         yfmt: function (v) { return v.toFixed(0); } });
       if (which === 'analog') {
         ax.fn(sig, { color: K.BLUE, width: 2.6, n: 900 });
-        ax.text('analog signal', ax.pl + 6, 20, { px: true, size: 13, weight: '700', color: K.BLUE, base: 'top' });
+        ax.text('analog signal', ax.pl + 6, ax.pt + 6, { px: true, size: 13, weight: '700', color: K.BLUE, base: 'top' });
       } else {
         var pts = [];
         for (i = 0; i <= Math.floor(fs * T); i++) pts.push([i / fs, sig(i / fs)]);
@@ -264,11 +293,11 @@ D.register('sampling', function (node, d) {
           ax.poly([[q[0], 0], q], { color: K.ORG, width: 1, dash: [3, 3] });
         });
         ax.dots(pts, { color: K.ORG, r: 4 });
-        ax.text('digital signal', ax.pl + 6, 20, { px: true, size: 13, weight: '700', color: K.ORG, base: 'top' });
-        ax.text(pts.length + ' samples', ax.pl + 6, 38, { px: true, size: 12.5, weight: '600', color: K.MUT, base: 'top' });
+        ax.text('digital signal', ax.pl + 6, ax.pt + 6, { px: true, size: 13, weight: '700', color: K.ORG, base: 'top' });
+        ax.text(pts.length + ' samples', ax.pl + 6, ax.pt + 24, { px: true, size: 12.5, weight: '600', color: K.MUT, base: 'top' });
       }
     }
-    ax.pl = 56; ax.pr = 20;
+    ax.pl = PL; ax.pr = PR; ax.pt = PT; ax.pb = PB;
 
     var nyq = fs / (2 * sigF);
     out.innerHTML =
@@ -448,10 +477,10 @@ D.register('multisensor', function (node, d) {
     var per = base / n, dt = 1 / base;
     ax.clear();
     var top = 12, bottom = 40, gap = 10;
-    var ph = (372 - top - bottom - gap * (n - 1)) / n;
+    var ph = (ax.H - top - bottom - gap * (n - 1)) / n;
     for (i = 0; i < n; i++) {
       var s = SENSOR_KINDS[i % SENSOR_KINDS.length];
-      ax.pt = top + i * (ph + gap); ax.pb = 372 - (ax.pt + ph);
+      ax.pt = top + i * (ph + gap); ax.pb = ax.H - (ax.pt + ph);
       ax.setRange(0, T, -1.35, 1.35);
       ax.frame({ grid: false, zero: true, xticks: i === n - 1 ? [0, 0.5, 1, 1.5, 2] : [],
         yticks: [], xlabel: i === n - 1 ? 'time (s)' : null });
@@ -822,10 +851,59 @@ D.register('daqchain', function (node, d) {
   var cv = el('canvas'); stage.appendChild(cv);
   wrap.appendChild(stage); node.appendChild(wrap);
   var lit = Math.max(1, Math.min(CHAIN.length, parseInt(d.stage || CHAIN.length, 10)));
-  var ax = new Axes(cv, { w: 1000, h: 190, padl: 0, padr: 0, padt: 0, padb: 0,
-                          xmin: 0, xmax: 1000, ymin: 190, ymax: 0 });
+  /* Seven boxes in a row need width. On a phone the chain runs down the slide
+     instead, which is the same diagram read top to bottom. */
+  var DOWN = D.portrait();
+  var CW = DOWN ? 480 : 1000, CH = DOWN ? 620 : 190;
+  var ax = new Axes(cv, { w: CW, h: CH, padl: 0, padr: 0, padt: 0, padb: 0,
+                          fluid: false,
+                          xmin: 0, xmax: CW, ymin: CH, ymax: 0 });
+
+  function drawDown() {
+    var K = C(), c = ax.c, i;
+    ax.clear();
+    var n = CHAIN.length, gap = 12, bh = (CH - 56 - gap * (n - 1)) / n;
+    var bx = 8, bw = CW - 16, top = 34;
+    c.fillStyle = K.MUT; c.font = '600 12.5px ui-sans-serif,system-ui,sans-serif';
+    c.textAlign = 'left'; c.textBaseline = 'bottom';
+    c.fillText('a physical quantity', bx, top - 8);
+    for (i = 0; i < n; i++) {
+      var y = top + i * (bh + gap), on = i < lit, now = i === lit - 1;
+      if (i < n - 1) {
+        c.strokeStyle = i < lit - 1 ? K.BLUE : K.PANEL; c.lineWidth = 2;
+        c.beginPath(); c.moveTo(bx + bw / 2, y + bh); c.lineTo(bx + bw / 2, y + bh + gap); c.stroke();
+      }
+      c.save();
+      c.globalAlpha = on ? 1 : .44;
+      c.fillStyle = now ? K.FILL2 : (on ? K.FILL0 : 'transparent');
+      c.strokeStyle = now ? K.ACC : (on ? K.BLUE : K.PANEL);
+      c.lineWidth = now ? 2.2 : 1.4;
+      var r = 9;
+      c.beginPath();
+      c.moveTo(bx + r, y); c.arcTo(bx + bw, y, bx + bw, y + bh, r);
+      c.arcTo(bx + bw, y + bh, bx, y + bh, r); c.arcTo(bx, y + bh, bx, y, r);
+      c.arcTo(bx, y, bx + bw, y, r); c.closePath();
+      c.fill(); c.stroke();
+      c.fillStyle = now ? K.ACC : (on ? K.INK : K.MUT);
+      c.font = '700 15px ui-sans-serif,system-ui,sans-serif';
+      c.textAlign = 'left'; c.textBaseline = 'middle';
+      var label = CHAIN[i].t + (CHAIN[i].t2 ? ' ' + CHAIN[i].t2 : '');
+      /* the box being introduced carries its one-line explanation inside it,
+         where there is width for it — beside it there would not be */
+      c.fillText(label, bx + 14, y + bh / 2 + (now ? -10 : 0));
+      if (now) {
+        c.fillStyle = K.MUT; c.font = '600 12.5px ui-sans-serif,system-ui,sans-serif';
+        c.fillText(CHAIN[i].s, bx + 14, y + bh / 2 + 11);
+      }
+      c.restore();
+    }
+    c.fillStyle = K.MUT; c.font = '600 12.5px ui-sans-serif,system-ui,sans-serif';
+    c.textAlign = 'left'; c.textBaseline = 'top';
+    c.fillText('numbers on a disk', bx, top + n * (bh + gap) - gap + 8);
+  }
 
   function draw() {
+    if (DOWN) return drawDown();
     var K = C(), c = ax.c, i;
     ax.clear();
     var n = CHAIN.length, pad = 8, bw = (1000 - pad * (n - 1)) / n, bh = 62, by = 46;
