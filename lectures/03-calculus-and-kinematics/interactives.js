@@ -185,15 +185,29 @@ Axes.prototype.text = function (s, x, y, o) {
 /* ---------------- UI helpers ---------------- */
 function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
 
-function slider(host, label, min, max, step, val, fmt, onChange) {
+/* opts.scale = n  puts n evenly spaced numbers under the track, so you can see
+   where in the range you are rather than only what the current value is. */
+function slider(host, label, min, max, step, val, fmt, onChange, opts) {
+  opts = opts || {};
   var row = el('div', 'ictl');
   var lab = el('label', 'ictl-l'); lab.innerHTML = label;
+  var track = el('div', 'ictl-track');
   var inp = el('input'); inp.type = 'range'; inp.min = min; inp.max = max; inp.step = step; inp.value = val;
+  track.appendChild(inp);
+  if (opts.scale) {
+    var sc = el('div', 'ictl-scale'), n = Math.max(2, opts.scale), i;
+    for (i = 0; i < n; i++) {
+      var v = min + (max - min) * i / (n - 1);
+      var t = el('span', null, (opts.tick || fmt)(v));
+      sc.appendChild(t);
+    }
+    track.appendChild(sc);
+  }
   var out = el('span', 'ictl-v');
   function up() { out.textContent = fmt(parseFloat(inp.value)); onChange(parseFloat(inp.value)); }
   function quiet(v) { if (v != null) inp.value = v; out.textContent = fmt(parseFloat(inp.value)); }
   inp.addEventListener('input', function () { up(); });
-  row.appendChild(lab); row.appendChild(inp); row.appendChild(out);
+  row.appendChild(lab); row.appendChild(track); row.appendChild(out);
   host.appendChild(row);
   return { input: inp, row: row, sync: up, quiet: quiet,
            set: function (v) { inp.value = v; up(); } };
@@ -646,7 +660,8 @@ W.finiteDiff = function (node, d) {
 
   var s = slider(u.ctl, 'Interval', 1, 10, 1, i,
     function (v) { return TS[v - 1].toFixed(1) + '→' + TS[v].toFixed(1) + ' s'; },
-    function (v) { i = v; draw(); });
+    function (v) { i = v; draw(); },
+    { scale: 6, tick: function (v) { return TS[Math.round(v) - 1].toFixed(1); } });
   var b = playBtn(u.ctl, '▶ Step through');
   b.addEventListener('click', function () {
     playing = !playing; b.textContent = playing ? '❚❚ Pause' : '▶ Step through';
@@ -713,7 +728,12 @@ W.riemann = function (node, d) {
   var u = build(node);
   var ax = new Axes(u.cv, { w: 830, h: 370, xmin: 0, xmax: 8.6, ymin: 0, ymax: 3.2, padl: 56 });
   var out = readout(u.ctl);
-  var n = parseInt(d.start || 8, 10), rule = 'mid', playing = false, raf;
+  /* data-rule picks the starting rule, data-rules="0" takes the choice away
+     (the first Riemann slide only wants plain lower rectangles), and
+     data-slow slows the shrink so the rectangles can be watched. */
+  var n = parseInt(d.start || 8, 10), rule = d.rule || 'mid', playing = false, raf;
+  var STEP = parseFloat(d.slow || 1);
+  var acc = 0;
   var TRUE = (function () { var s = 0, N = 20000, h = 8.6 / N; for (var i = 0; i < N; i++) s += bimodal((i + .5) * h) * h; return s; })();
   function draw() {
     ax.clear();
@@ -741,25 +761,29 @@ W.riemann = function (node, d) {
       ' &nbsp;·&nbsp; error <b class="' + (Math.abs(err) < 0.5 ? 'g' : 'r') + '">' + (err >= 0 ? '+' : '') + err.toFixed(2) + '%</b>' +
       '<span class="hint">thinner rectangles → less error; in the limit this is the integral</span>';
   }
-  var s = slider(u.ctl, 'Number of rectangles', 2, 160, 1, n, function (v) { return v; }, function (v) { n = v; draw(); });
-  var seg = el('div', 'iseg');
-  [['left', 'Lower'], ['right', 'Upper'], ['mid', 'Middle'], ['trap', 'Trapezoid']].forEach(function (p) {
-    var b = el('button', 'iseg-b' + (p[0] === rule ? ' on' : ''), p[1]);
-    b.addEventListener('click', function () {
-      rule = p[0];
-      Array.prototype.forEach.call(seg.children, function (x) { x.classList.remove('on'); });
-      b.classList.add('on'); draw();
+  var s = slider(u.ctl, 'Number of rectangles', 2, 160, 1, n, function (v) { return v; },
+    function (v) { n = v; draw(); }, { scale: 5, tick: function (v) { return v.toFixed(0); } });
+  if (d.rules !== '0') {
+    var seg = el('div', 'iseg');
+    [['left', 'Lower'], ['right', 'Upper'], ['mid', 'Middle'], ['trap', 'Trapezoid']].forEach(function (p) {
+      var b = el('button', 'iseg-b' + (p[0] === rule ? ' on' : ''), p[1]);
+      b.addEventListener('click', function () {
+        rule = p[0];
+        Array.prototype.forEach.call(seg.children, function (x) { x.classList.remove('on'); });
+        b.classList.add('on'); draw();
+      });
+      seg.appendChild(b);
     });
-    seg.appendChild(b);
-  });
-  u.ctl.appendChild(seg);
+    u.ctl.appendChild(seg);
+  }
   var pb = playBtn(u.ctl, '▶ Shrink the base');
   pb.addEventListener('click', function () {
     playing = !playing; pb.textContent = playing ? '❚❚ Pause' : '▶ Shrink the base';
     if (playing) { if (n > 150) { n = 2; s.set(2); } loop(); } else cancelAnimationFrame(raf);
   });
   function loop() {
-    n = Math.min(160, n + 1); s.set(n);
+    acc += STEP;
+    if (acc >= 1) { n = Math.min(160, n + Math.floor(acc)); acc -= Math.floor(acc); s.set(n); }
     if (n >= 160) { playing = false; pb.textContent = '↻ Replay'; return; }
     raf = requestAnimationFrame(loop);
   }
@@ -771,10 +795,25 @@ W.riemann = function (node, d) {
 /* --- 9. integral sum on real data --- */
 W.integralSum = function (node) {
   var u = build(node);
+  /* the table grows with the plot, a row at a time, so the arithmetic and the
+     curve are never out of step */
+  u.cv.parentNode.parentNode.classList.add('iseries');
+  var side = el('div', 'iseries-tab');
+  var tbl = el('table'), thead = el('thead'), tb = el('tbody');
+  thead.innerHTML = '<tr><th>Time (s)</th><th>v × Δt (m)</th><th>Position (m)</th></tr>';
+  tbl.appendChild(thead); tbl.appendChild(tb); side.appendChild(tbl);
+  u.cv.parentNode.parentNode.insertBefore(side, u.ctl);
+
   var ax = new Axes(u.cv, { w: 780, h: 345, xmin: -0.05, xmax: 2.15, ymin: 0, ymax: 10 });
   var out = readout(u.ctl);
   var i = 1, playing = false, raf, b0 = 0;
   var POS = (function () { var p = [0], s = 0, k; for (k = 1; k < VS.length; k++) { s += VS[k] * 0.2; p.push(s); } return p; })();
+  var rows = TS.map(function (t, k) {
+    var tr = el('tr');
+    tr.innerHTML = '<td>' + t.toFixed(1) + '</td><td>' +
+      (k === 0 ? '—' : (VS[k] * 0.2).toFixed(3)) + '</td><td class="pos"></td>';
+    tb.appendChild(tr); return tr;
+  });
   function draw() {
     ax.clear();
     ax.setRange(-0.05, 2.15, 0, 10); ax.pt = 10; ax.pb = 158;
@@ -788,8 +827,14 @@ W.integralSum = function (node) {
     var pts = POS.slice(0, i + 1).map(function (p, k) { return [TS[k], p + b0]; });
     ax.poly(pts, { color: GRN, width: 2.4 }); ax.dots(pts, { color: GRN, r: 3.8 });
     ax.pt = 10; ax.pb = 158;
-    out.innerHTML = 'area of this strip = ' + VS[i].toFixed(2) + ' × 0.2 = <b class="r">' + (VS[i] * 0.2).toFixed(3) + ' m</b>' +
-      ' &nbsp;·&nbsp; running total = <b class="g">' + (POS[i] + b0).toFixed(3) + ' m</b>' +
+    rows.forEach(function (tr, k) {
+      tr.classList.toggle('off', k > i);
+      tr.classList.toggle('now', k === i);
+      tr.querySelector('.pos').textContent = (POS[k] + b0).toFixed(3);
+    });
+    out.innerHTML = 'this strip = ' + VS[i].toFixed(2) + ' × 0.2 = <b class="r">' + (VS[i] * 0.2).toFixed(3) +
+      ' m</b> &nbsp;·&nbsp; ' + (POS[i - 1] + b0).toFixed(3) + ' + ' + (VS[i] * 0.2).toFixed(3) +
+      ' = <b class="g">' + (POS[i] + b0).toFixed(3) + ' m</b>' +
       '<span class="hint">multiply each height by Δt, then cumulatively sum — b<sub>o</sub> sets where the curve starts</span>';
   }
   var s = slider(u.ctl, 'Data point', 1, 10, 1, i, function (v) { return TS[v].toFixed(1) + ' s'; }, function (v) { i = v; draw(); });
@@ -833,21 +878,203 @@ W.initialValue = function (node) {
 /* --- 11. area of a rectangle → velocity --- */
 W.areaRect = function (node) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 780, h: 390, xmin: 0, xmax: 10.4, ymin: 0, ymax: 3.2 });
+  /* the range leaves a strip under and to the right of the rectangle so the
+     dimension brackets have somewhere to live inside the plot */
+  var ax = new Axes(u.cv, { w: 820, h: 420, xmin: 0, xmax: 12.2, ymin: -0.5, ymax: 3.3 });
   var out = readout(u.ctl);
   var a = 2, T = 10;
+
+  /* A dimension bracket, drawn the way it would be on a drawing: a line with a
+     serif at each end and the measurement sitting on it. It grows with the
+     rectangle, which is the point of the slide. */
+  function dim(x1, y1, x2, y2, label, col) {
+    var c = ax.c;
+    var X1 = ax.X(x1), Y1 = ax.Y(y1), X2 = ax.X(x2), Y2 = ax.Y(y2);
+    var vert = Math.abs(X2 - X1) < Math.abs(Y2 - Y1);
+    var s2 = 6;                                   /* serif half-length */
+    c.save();
+    c.strokeStyle = col; c.fillStyle = col; c.lineWidth = 1.6; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(X1, Y1); c.lineTo(X2, Y2); c.stroke();
+    [[X1, Y1], [X2, Y2]].forEach(function (p2) {
+      c.beginPath();
+      if (vert) { c.moveTo(p2[0] - s2, p2[1]); c.lineTo(p2[0] + s2, p2[1]); }
+      else { c.moveTo(p2[0], p2[1] - s2); c.lineTo(p2[0], p2[1] + s2); }
+      c.stroke();
+    });
+    /* arrowheads pointing outward, so it reads as a measurement */
+    [[X1, Y1, 1], [X2, Y2, -1]].forEach(function (p2) {
+      var dx = vert ? 0 : p2[2] * 7, dy = vert ? p2[2] * 7 : 0;
+      c.beginPath();
+      c.moveTo(p2[0], p2[1]);
+      c.lineTo(p2[0] + dx + (vert ? -3.6 : 0), p2[1] + dy + (vert ? 0 : -3.6));
+      c.lineTo(p2[0] + dx + (vert ? 3.6 : 0), p2[1] + dy + (vert ? 0 : 3.6));
+      c.closePath(); c.fill();
+    });
+    var mx = (X1 + X2) / 2, my = (Y1 + Y2) / 2;
+    c.font = '700 15px ui-sans-serif,system-ui,sans-serif';
+    var w2 = c.measureText(label).width;
+    c.save();
+    c.translate(mx, my);
+    if (vert) c.rotate(-Math.PI / 2);
+    c.fillStyle = PLATE; c.globalAlpha = .92;
+    c.fillRect(-w2 / 2 - 5, -10, w2 + 10, 20);      /* clear the line behind the text */
+    c.globalAlpha = 1; c.fillStyle = col;
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText(label, 0, 0);
+    c.restore();
+    c.restore();
+  }
+
   function draw() {
     ax.clear();
-    ax.frame({ grid: true, xticks: [0, 2, 4, 6, 8, 10], yticks: [0, 1, 2, 3], xlabel: 'time (s)', ylabel: 'acceleration (m/s²)' });
+    ax.frame({ grid: true, xticks: [0, 2, 4, 6, 8, 10], yticks: [0, 1, 2, 3],
+      xlabel: 'time (s)', ylabel: 'acceleration (m/s²)' });
+    ax.poly([[0, 0], [12.2, 0]], { color: MUT, width: 1 });
     ax.rect(0, 0, T, a, { fill: FILL, stroke: BLUE, width: 1.6, dash: [4, 3] });
     ax.fn(function () { return a; }, { from: 0, to: T, color: ACC, width: 3 });
-    ax.text('width = ' + T.toFixed(0) + ' s', T / 2, a / 2 + 0.32, { align: 'center', size: 16, color: INK });
-    ax.text('height = ' + a.toFixed(1), T / 2, a / 2 - 0.02, { align: 'center', size: 16, color: INK });
-    out.innerHTML = 'area = height × width = ' + a.toFixed(1) + ' × ' + T.toFixed(0) + ' = <b>' + (a * T).toFixed(1) + ' m/s</b>' +
-      '<span class="hint">the area under an acceleration–time graph is a velocity</span>';
+
+    /* w along the bottom, l up the right-hand edge — the same two letters as
+       the rectangle in the text beside it */
+    dim(0, -0.26, T, -0.26, 'w = ' + T.toFixed(1) + ' s', BLUE);
+    dim(T + 0.55, 0, T + 0.55, a, 'l = ' + a.toFixed(1) + ' m/s²', ACC);
+
+    ax.text('l × w', T / 2, a / 2 + 0.2, { align: 'center', size: 17, color: INK });
+    ax.text('= ' + (a * T).toFixed(1) + ' m/s', T / 2, a / 2 - 0.22,
+      { align: 'center', size: 17, color: INK });
+
+    out.innerHTML = 'area = l × w = ' + a.toFixed(1) + ' × ' + T.toFixed(1) +
+      ' = <b>' + (a * T).toFixed(1) + ' m/s</b>' +
+      '<span class="hint">the area under an acceleration–time graph is a velocity — ' +
+      'the height is an acceleration, the width is a time, and m/s² × s is m/s</span>';
   }
-  slider(u.ctl, 'acceleration (height)', 0.5, 3, 0.1, a, function (v) { return v.toFixed(1) + ' m/s²'; }, function (v) { a = v; draw(); });
-  slider(u.ctl, 'time (width)', 1, 10, 0.5, T, function (v) { return v.toFixed(1) + ' s'; }, function (v) { T = v; draw(); });
+  slider(u.ctl, 'acceleration — the length <i>l</i>', 0.5, 3, 0.1, a,
+    function (v) { return v.toFixed(1) + ' m/s²'; }, function (v) { a = v; draw(); },
+    { scale: 6, tick: function (v) { return v.toFixed(1); } });
+  slider(u.ctl, 'time — the width <i>w</i>', 1, 10, 0.5, T,
+    function (v) { return v.toFixed(1) + ' s'; }, function (v) { T = v; draw(); },
+    { scale: 6, tick: function (v) { return v.toFixed(0); } });
+  node._draw = draw;
+  draw();
+};
+
+/* --- what a tiny offset error costs you, twice integrated -------------------
+   The trial was recorded lying still, so the resting reading IS the error: a
+   few thousandths of a G that the sensor cannot tell from gravity. Integrate
+   it twice and the constant becomes a parabola. This is the slide that makes
+   that arithmetic concrete instead of a screenshot of a spreadsheet. --- */
+W.drift = function (node) {
+  var S = window.EPHE341_IMU;
+  if (!S) { node.innerHTML = '<p class="small muted">Trial data not loaded.</p>'; return; }
+  var u = build(node);
+  u.cv.parentNode.parentNode.classList.add('isplit', 'iimu');
+  var side = el('div', 'icalc');
+  u.cv.parentNode.parentNode.insertBefore(side, u.ctl);
+
+  var ax = new Axes(u.cv, { w: 900, h: 420, padl: 76, xmin: -0.1, xmax: 7.4, ymin: 0, ymax: 1 });
+  var out = readout(u.ctl);
+  var errMg = 0;                                  /* the offset error, in milli-G */
+  var TEND = S.t[S.t.length - 1];
+  var LAG = window.EPHE341_VIDEO ? window.EPHE341_VIDEO.imuLag : 0;
+  var vidD = videoAligned('d', LAG);
+  var P = [{ pt: 10, pb: 232 }, { pt: 206, pb: 44 }];
+
+  function draw() {
+    var eG = errMg / 1000;                        /* G */
+    var eA = -9.81 * -eG;                         /* the acceleration it fakes, m/s² */
+    var ser = imuSeries(S.rest + eG, false);
+    var n = ser.n, i, step = Math.max(1, Math.floor(n / 800));
+    ax.clear();
+
+    /* --- top: the recording, with the assumed resting line across it --- */
+    var ar = niceRange(ser.a);
+    ax.setRange(-0.1, 7.4, ar[0], ar[1]);
+    ax.pt = P[0].pt; ax.pb = P[0].pb;
+    ax.frame({ grid: true, zero: true, xticks: [0, 1, 2, 3, 4, 5, 6, 7],
+      yticks: axisTicks(ar[0], ar[1]), ylabel: 'acceleration (m/s²)', ysize: 13,
+      yfmt: function (v) { return v.toFixed(1); } });
+    var ap = [];
+    for (i = 0; i < n; i += step) ap.push([ser.t[i], ser.a[i]]);
+    ax.poly(ap, { color: BLUE, width: 1.6 });
+    ax.poly([[-0.1, 0], [7.4, 0]], { color: ACC, width: 1.8, dash: [6, 4] });
+    ax.text(errMg === 0 ? 'assumed at rest — no error' :
+            'the assumption is out by ' + (errMg > 0 ? '+' : '') + errMg.toFixed(1) + ' mG',
+      ax.pl + 8, P[0].pt + 10,
+      { px: true, size: 13, weight: '700', color: errMg === 0 ? MUT : ACC, base: 'top' });
+
+    /* --- bottom: where that says the phone went --- */
+    var dr = niceRange(ser.d.concat([0, -0.6]));
+    ax.setRange(-0.1, 7.4, dr[0], dr[1]);
+    ax.pt = P[1].pt; ax.pb = P[1].pb;
+    ax.frame({ grid: true, zero: true, xticks: [0, 1, 2, 3, 4, 5, 6, 7],
+      yticks: axisTicks(dr[0], dr[1]), xlabel: 'time (s)', ylabel: 'position (m)', ysize: 13,
+      yfmt: function (v) { return v.toFixed(1); } });
+    var dp = [];
+    for (i = 0; i < n; i += step) dp.push([ser.t[i], ser.d[i]]);
+    ax.poly(dp, { color: GRN, width: 2.4 });
+    if (vidD) {
+      var vp = [], q;
+      for (q = 0; q <= 200; q++) {
+        var tq = 7.5 * q / 200, vv = vidD(tq);
+        vp.push(vv == null ? null : [tq, vv]);
+      }
+      ax.poly(vp, { color: VIO, width: 3, dash: [7, 5] });
+      ax.text('▪ where the video says it actually went', ax.pl + 8, P[1].pt + 10,
+        { px: true, size: 13, weight: '700', color: VIO, base: 'top' });
+    }
+    ax.dots([[TEND, ser.d[n - 1]]], { color: ACC, r: 5.4 });
+    ax.pt = P[0].pt; ax.pb = P[0].pb;
+
+    /* --- the arithmetic --- */
+    var endD = ser.d[n - 1];
+    var analytic = 0.5 * eA * TEND * TEND;
+    side.innerHTML =
+      '<div class="icalc-h">an error of <span class="v">' + (errMg > 0 ? '+' : '') +
+        errMg.toFixed(1) + ' mG</span></div>' +
+      '<div class="icalc-work">' +
+        '<div class="icalc-t">is an acceleration you never had</div>' +
+        '<div class="icalc-eq">ε = <b>' + eA.toFixed(3) + '</b> m/s²</div>' +
+        '<div class="icalc-t" style="margin-top:.45em">integrate it twice over ' +
+          TEND.toFixed(2) + ' s</div>' +
+        '<div class="icalc-eq">½ ε t² = ½ · ' + pnum(+eA.toFixed(3)) + ' · ' + TEND.toFixed(2) +
+          '² = <b>' + pnum(+analytic.toFixed(2)) + '</b> m</div>' +
+      '</div>' +
+      '<div class="idrift' + (Math.abs(endD + 0.46) < 0.15 ? ' ok' : ' bad') + '">' +
+        '<span>the phone ends up at</span><b>' + endD.toFixed(2) + ' m</b>' +
+        '<i>the video says it dropped 0.46 m and stopped</i></div>';
+
+    var gap = endD + 0.46;
+    out.innerHTML =
+      'assumed resting value <b>' + (S.rest + eG).toFixed(4) + '</b> G' +
+      (errMg === 0
+        ? ' &nbsp;·&nbsp; the best value we have, and the integration still finishes <b class="r">' +
+          Math.abs(gap).toFixed(2) + ' m</b> away from where the video says it stopped'
+        : ' &nbsp;·&nbsp; out by <b class="r">' + (errMg > 0 ? '+' : '') + errMg.toFixed(1) +
+          ' mG</b> &nbsp;·&nbsp; now <b class="r">' + Math.abs(gap).toFixed(2) + ' m</b> away') +
+      '<span class="hint">a constant error in acceleration integrates into a straight line in velocity and a ' +
+      'parabola in position — which is why a few thousandths of a G, well inside the noise of the sensor, ' +
+      'is worth more than a metre after seven seconds</span>';
+  }
+
+  var row = el('div', 'ictl-row');
+  function litChip(v) {
+    Array.prototype.forEach.call(row.querySelectorAll('.iseg-b'), function (x) {
+      x.classList.toggle('on', +x.getAttribute('data-v') === v);
+    });
+  }
+  slider(u.ctl, 'Error in the resting value', -20, 20, 0.5, 0,
+    function (v) { return (v > 0 ? '+' : '') + v.toFixed(1) + ' mG'; },
+    function (v) { errMg = v; litChip(v); draw(); },
+    { scale: 5, tick: function (v) { return v.toFixed(0); } });
+  u.ctl.appendChild(row);
+  [['−5 mG', -5], ['none', 0], ['+5 mG', 5]].forEach(function (pr) {
+    var b = el('button', 'iseg-b' + (pr[1] === 0 ? ' on' : ''), pr[0]);
+    b.setAttribute('data-v', pr[1]);
+    b.addEventListener('click', function () {
+      var r = u.ctl.querySelector('input[type=range]');
+      r.value = pr[1]; r.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    row.appendChild(b);
+  });
   node._draw = draw;
   draw();
 };
@@ -1112,7 +1339,9 @@ W.slopeTransfer = function (node) {
   }
 
   var s1 = slider(u.ctl, 'Tangents drawn', 1, STOPS.length, 1, k,
-    function (v) { return v + ' / ' + STOPS.length; }, function (v) { k = v; draw(); });
+    function (v) { return v + ' / ' + STOPS.length; }, function (v) { k = v; draw(); },
+    { scale: STOPS.length > 8 ? 6 : STOPS.length,
+      tick: function (v) { return STOPS[Math.round(v) - 1].toFixed(1) + 's'; } });
   var b = playBtn(u.ctl, '▶ Draw the tangents');
   b.addEventListener('click', function () {
     playing = !playing; b.textContent = playing ? '❚❚ Pause' : '▶ Draw the tangents';
@@ -1524,6 +1753,11 @@ W.imu = function (node, d) {
   var S = window.EPHE341_IMU;
   var panels = (d.panels || 'avd').split('');
   var controls = d.controls === '1';
+  /* data-video="1" offers the video record of the same trial as an overlay,
+     read on the accelerometer's clock — the mirror of the button the video
+     slides carry for the accelerometer. */
+  var canVid = d.video === '1' && !!window.EPHE341_VIDEO;
+  var showVid = false;
   var u = build(node);
   var side = null;
   if (controls) {
@@ -1586,6 +1820,22 @@ W.imu = function (node, d) {
       var shown = pts.filter(function (p) { return p[0] <= t; });
       ax.poly(pts, { color: SOFT, width: 1.1 });
       ax.poly(shown, { color: m.col(), width: 2.2 });
+
+      /* the video record of the same trial, on the accelerometer's own clock */
+      if (showVid) {
+        var vf = videoAligned(k, window.EPHE341_VIDEO ? window.EPHE341_VIDEO.imuLag : 0);
+        if (vf) {
+          var vp = [], q;
+          for (q = 0; q <= 240; q++) {
+            var tq = -0.1 + 7.5 * q / 240, vv = vf(tq);
+            vp.push(vv == null ? null : [tq, vv]);
+          }
+          ax.poly(vp, { color: VIO, width: 2, dash: [6, 4] });
+          ax.text('▪ video', ax.W - ax.pr - 4, P[pi].pt + 12,
+            { px: true, size: 12.5, weight: '700', color: VIO, align: 'right', base: 'top' });
+        }
+      }
+
       ax.poly([[t, r[0]], [t, arr[cut]]], { color: ACC, width: 1.4, dash: [4, 3] });
       ax.dots([[t, arr[cut]]], { color: ACC, r: 5 });
     });
@@ -1646,6 +1896,18 @@ W.imu = function (node, d) {
       function (v) { return v.toFixed(4) + ' G'; }, function (v) { offset = v; draw(); });
   }
 
+  if (canVid) {
+    if (!ctlRow) { ctlRow = el('div', 'ictl-row'); u.ctl.appendChild(ctlRow); }
+    var vb = el('button', 'ibtn', 'Overlay the video');
+    vb.addEventListener('click', function () {
+      showVid = !showVid;
+      vb.classList.toggle('on', showVid);
+      vb.textContent = showVid ? 'Hide the video' : 'Overlay the video';
+      draw();
+    });
+    ctlRow.appendChild(vb);
+  }
+
   var s1 = slider(u.ctl, 'Time', 0, TEND, 0.01, t,
     function (v) { return v.toFixed(2) + ' s'; }, function (v) { t = v; draw(); });
   var b = playBtn(ctlRow || u.ctl, '▶ Replay the trial');
@@ -1672,6 +1934,21 @@ W.imu = function (node, d) {
    data-panels : any of y v a          data-controls : "1" -> side working
    data-imu    : "1" -> offer the accelerometer trial as an overlay
    ------------------------------------------------------------------ */
+/* The reverse of imuAligned: the video series read on the accelerometer's clock,
+   so the two can be drawn on one pair of axes from either side. */
+function videoAligned(kind, lag) {
+  var S = window.EPHE341_VIDEO; if (!S) return null;
+  var key = kind === 'd' ? 'y' : kind;
+  var arr = S[key]; if (!arr) return null;
+  return function (ti) {
+    var tv = ti - lag, n = S.n, dt = 1 / S.fps;
+    if (tv < 0 || tv > S.t[n - 1]) return null;
+    var i = Math.max(0, Math.min(n - 2, Math.floor(tv / dt)));
+    var f = (tv - S.t[i]) / dt;
+    return arr[i] + (arr[i + 1] - arr[i]) * f;
+  };
+}
+
 function imuAligned(kind, lag) {
   var S = window.EPHE341_IMU; if (!S) return null;
   var s = imuSeries(S.rest, false), key = kind === 'y' ? 'd' : kind;
@@ -2877,7 +3154,7 @@ var MAP = {
   secant: W.secant, sections: W.sections, tangent: W.tangent, 'tangent-travel': W.tangentTravel,
   'power-rule': W.powerRule, 'finite-diff': W.finiteDiff, cumulative: W.cumulative,
   riemann: W.riemann, 'integral-sum': W.integralSum, 'initial-value': W.initialValue,
-  'area-rect': W.areaRect, 'line-explorer': W.lineExplorer
+  'area-rect': W.areaRect, 'line-explorer': W.lineExplorer, drift: W.drift
 };
 
 function make(n) {

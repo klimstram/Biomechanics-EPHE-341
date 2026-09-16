@@ -252,7 +252,9 @@ Good one to do live: start with 6t-squared, then add minus-t-cubed and watch the
   <p class="lead">Back to the equation for a straight line, using velocity.</p>
   <div class="cols a top">
     <div class="small">
-      <p class="eq big">y = mx + b &nbsp;&nbsp;→&nbsp;&nbsp; v(t) = 2t + b</p>
+      <p class="eq big eq-in"><span>y</span><span class="op">=</span><span>mx</span><span class="op">+</span><span>b</span>
+        <span class="op" style="margin:0 .7em">→</span>
+        <span>v(t)</span><span class="op">=</span><span>2t</span><span class="op">+</span><span>b</span></p>
       <ul class="tiny">
         <li><strong>v(t)</strong> is the velocity as a function of time</li>
         <li><strong>t</strong> is time &nbsp;·&nbsp; <strong>b</strong> is zero</li>
@@ -318,16 +320,20 @@ Order 1 cannot bend. Order 2 or 3 catches the shape. Push to order 9 and R² cli
 <section>
   <h2>Calculus and kinematics</h2>
   <h3>Differentiation transfer function</h3>
-  <p class="small">To find the time derivative for a kinematic equation, apply the differentiation transfer function to <strong>each term</strong> in the equation.</p>
-  <div class="box accent center" style="margin:.6em 0">
-    <div class="iplot" data-widget="transfer" data-mode="diff" data-c="6" data-n="2"></div>
-  </div>
-  <p class="small">That is, multiply each term <span class="eq">ct<sup>n</sup></span> by <strong>n</strong>, then subtract 1 from the exponent.</p>
-  <div class="cols b top">
-    <ul class="small">
-      <li>determine an equation for <strong>velocity</strong> using displacement;</li>
-      <li>determine an equation for <strong>acceleration</strong> using velocity.</li>
-    </ul>
+  <div class="cols top">
+    <div>
+      <p class="small">To find the time derivative for a kinematic equation, apply the differentiation
+         transfer function to <strong>each term</strong> in the equation.</p>
+      <div class="box accent center" style="margin:.5em 0">
+        <div class="iplot" data-widget="transfer" data-mode="diff" data-c="6" data-n="2"></div>
+      </div>
+      <p class="small">That is, multiply each term <span class="eq">ct<sup>n</sup></span> by
+         <strong>n</strong>, then subtract 1 from the exponent — which lets you</p>
+      <ul class="small" style="margin-top:.3em">
+        <li>determine an equation for <strong>velocity</strong> using displacement;</li>
+        <li>determine an equation for <strong>acceleration</strong> using velocity.</li>
+      </ul>
+    </div>
     <div class="iplot" data-widget="power-rule" data-mode="diff"></div>
   </div>
   <aside class="notes">Press "Run the transfer" and the rule plays in beats: the exponent is spotted, it drops to the front as a multiplier, then the exponent itself steps down by one.
@@ -483,14 +489,14 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
   <div class="cols">
     <div class="box">
       <p class="small" style="margin:0 0 .3em">We know that</p>
-      <p class="eq small" style="margin:0 0 .35em">acceleration = <span class="frac"><span>change in velocity</span><span class="den">change in time</span></span></p>
-      <p class="eq small" style="margin:0 0 .35em">Therefore velocity = acceleration × time</p>
+      <p class="eq small eq-in" style="margin:0 0 .35em"><span>acceleration</span><span class="op">=</span><span class="frac"><span>change in velocity</span><span class="den">change in time</span></span></p>
+      <p class="eq small eq-in" style="margin:0 0 .35em"><span>Therefore velocity</span><span class="op">=</span><span>acceleration</span><span class="op">×</span><span>time</span></p>
       <p class="small muted" style="margin:0">This is the <strong>area under the acceleration–time graph</strong>.</p>
     </div>
     <div class="box">
       <p class="small" style="margin:0 0 .3em">We also know that</p>
-      <p class="eq small" style="margin:0 0 .35em">velocity = <span class="frac"><span>change in displacement</span><span class="den">change in time</span></span></p>
-      <p class="eq small" style="margin:0 0 .35em">Therefore displacement = velocity × time</p>
+      <p class="eq small eq-in" style="margin:0 0 .35em"><span>velocity</span><span class="op">=</span><span class="frac"><span>change in displacement</span><span class="den">change in time</span></span></p>
+      <p class="eq small eq-in" style="margin:0 0 .35em"><span>Therefore displacement</span><span class="op">=</span><span>velocity</span><span class="op">×</span><span>time</span></p>
       <p class="small muted" style="margin:0">This is the <strong>area under the velocity–time graph</strong>.</p>
     </div>
   </div>
@@ -499,13 +505,19 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
 <!-- 31 -->
 <section>
   <h2>Why is it the area from a graph?</h2>
-  <div class="cols b top">
-    <div>
-      <div class="fig small"><img src="assets/s31_25.png" alt="Rectangle with length and width labelled"></div>
-      <p class="small"><strong>Area of a rectangle</strong> = length (l) × width (w)</p>
-      <p class="small">velocity = time × acceleration</p>
-    </div>
+  <div class="cols c top">
     <div class="iplot" data-widget="area-rect"></div>
+    <div>
+      <div class="box accent">
+        <p class="small" style="margin:0 0 .3em"><strong>Area of a rectangle</strong></p>
+        <p class="eq" style="margin:0">area = length (l) × width (w)</p>
+      </div>
+      <p class="small" style="margin-top:.7em">On an acceleration–time graph the length is an
+         <strong>acceleration</strong> and the width is a <strong>time</strong>:</p>
+      <p class="eq small">velocity = time × acceleration</p>
+      <p class="tiny muted">m/s² × s = m/s. Drag either slider and watch both brackets — and the
+         answer — grow with the rectangle.</p>
+    </div>
   </div>
 </section>
 
@@ -535,15 +547,14 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
 <!-- 34 -->
 <section>
   <h2>Calculus and kinematics</h2>
-  <div class="cols a top">
-    <ul class="small">
-      <li>In the previous example it was easy to calculate the area under the curve — but how do we calculate the area under a <strong>complex</strong> plot?</li>
-      <li>Imagine filling the area under the plot with rectangles.</li>
-      <li>Calculate the sum of their areas.</li>
-      <li>But we are <strong>missing some area</strong>. What should we do?</li>
-    </ul>
-    <div class="iplot" data-widget="riemann" data-start="8"></div>
+  <div class="textstrip tiny">
+    <p class="firstcol">In the previous example the area under the curve was easy to calculate — but how do we
+      calculate the area under a <strong>complex</strong> plot? Fill it with rectangles and add them up.</p>
+    <p>But we are <strong>missing some area</strong> — every rectangle stops short of the curve. What should we
+      do about it?</p>
   </div>
+  <div class="iplot wide" data-widget="riemann" data-start="8" data-rule="left"
+       data-rules="0" data-slow="0.22"></div>
 </section>
 
 <!-- 35 -->
@@ -585,17 +596,14 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
 <!-- 38 -->
 <section>
   <h2>Integration</h2>
-  <div class="stack">
-    <p class="sum-row tiny center" style="margin:0"><span class="b">2 &nbsp;&nbsp; 4 &nbsp;&nbsp; 6 &nbsp;&nbsp; 8 &nbsp;&nbsp; 10 &nbsp;&nbsp; 12 &nbsp;&nbsp; 14 &nbsp;&nbsp; 16 &nbsp;&nbsp; 18 &nbsp;&nbsp; 20</span></p>
-    <div class="fig small"><img src="figs/s38-vel-rects.svg" alt="Velocity with cumulative rectangles"></div>
-    <p class="sum-row tiny center" style="margin:0">
-      <span class="a">2 + 4 + 6 + 8 + 10 + 12 + 14 + 16 + 18 + 20</span><br>
-      <span class="b">2 &nbsp;&nbsp; 6 &nbsp;&nbsp; 10 &nbsp;&nbsp; 18 &nbsp;&nbsp; 28 &nbsp;&nbsp; 40 &nbsp;&nbsp; 54 &nbsp;&nbsp; 70 &nbsp;&nbsp; 88 &nbsp;&nbsp; 108</span>
-      <span class="muted">&nbsp;???</span>
-    </p>
-    <div class="fig small"><img src="figs/s38-disp-curve.svg" alt="Displacement curve"></div>
-    <p class="small center" style="margin:0; color:#2f6d4f">But do we have too much area?</p>
+  <div class="textstrip tiny">
+    <p class="firstcol">Multiply each velocity by the time between samples and you get the area of one strip.
+      Add the strips up as you go — <span class="sum-row"><span class="a">2 + 4 + 6 + 8 + …</span></span> —
+      and the running total is the <strong>displacement</strong>.</p>
+    <p>Drag through the samples and watch the strips fill in above and the total climb below. But do we have
+      <strong>too much area</strong>? Every strip is a rectangle, and the curve is not.</p>
   </div>
+  <div class="iplot wide" data-widget="cumulative"></div>
 </section>
 
 <!-- 39 -->
@@ -610,7 +618,7 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
         <li>sum these areas to get the total approximate area under the curve.</li>
       </ol>
     </div>
-    <div class="fig"><img src="assets/s39_5.gif" alt="Riemann sum animation"></div>
+    <div class="iplot" data-widget="riemann" data-start="6" data-slow="0.3"></div>
   </div>
   <aside class="notes">The Riemann sum is a method in mathematics used to approximate the area under a curve. It's named after the German mathematician Bernhard Riemann. The basic idea is to divide the area under a curve into small rectangles (or sometimes trapezoids), calculate the area of each rectangle, and then sum these areas to get the total approximate area under the curve.</aside>
 </section>
@@ -618,15 +626,10 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
 <!-- 40 -->
 <section>
   <h2>Riemann rectangle and trapezoidal method</h2>
-  <div class="cols b top">
-    <p class="small">With the Riemann sum method there is a tendency to <strong>overestimate and underestimate</strong> the areas, whether using an upper, lower, middle or trapezoidal estimate.</p>
-    <div class="imgrow">
-      <img src="assets/s40_5.png" alt="Lower sum" style="max-height:22vh">
-      <img src="assets/s40_3.png" alt="Upper sum" style="max-height:22vh">
-      <img src="assets/s40_4.png" alt="Middle sum" style="max-height:22vh">
-      <img src="assets/s40_2.png" alt="Trapezoidal sum" style="max-height:22vh">
-    </div>
-  </div>
+  <p class="lead">With the Riemann sum method there is a tendency to <strong>overestimate and
+     underestimate</strong> the area, whether you use an upper, lower, middle or trapezoidal estimate.
+     Switch between the four and watch the error change sign.</p>
+  <div class="iplot wide" data-widget="riemann" data-start="7" data-rule="left" data-slow="0.3"></div>
 </section>
 
 <!-- 41 -->
@@ -638,11 +641,8 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
       <li>An <strong>integral</strong> (definite integral) represents the <em>exact</em> value of this area, and is often calculated as the limit of Riemann sums as the subdivisions become infinitely small.</li>
       <li>Integrals are denoted by the integral sign <span class="eq">∫</span>, with the function to be integrated followed by <span class="eq">dx</span>, which represents an infinitesimally small width of the subdivision.</li>
     </ul>
-    <div class="stack">
-      <img src="assets/s41_169988.png" alt="Riemann sum illustration" style="max-height:20vh">
-      <img src="assets/s41_169991.png" alt="Finer subdivisions" style="max-height:20vh">
-      <img src="assets/s41_169994.png" alt="Integral as the limit" style="max-height:20vh">
-    </div>
+    <div class="iplot" data-widget="riemann" data-start="4" data-rules="0" data-rule="mid"
+         data-slow="0.18"></div>
   </div>
   <aside class="notes">Riemann sum: a method for approximating the total area under a curve over an interval, by dividing the area into small sections and calculating the area of each. The integral is the limit of that process as the subdivisions become infinitely small.</aside>
 </section>
@@ -666,18 +666,7 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
   <h2>Example integration</h2>
   <p class="lead"><strong>Example problem:</strong> integrate the velocity vs. time curve.</p>
   <div class="cols top">
-    <div class="fig"><img src="figs/s25-vel-data.svg" alt="Velocity vs time data"></div>
-    <table>
-      <thead><tr><th>Time (s)</th><th>Velocity (m/s)</th></tr></thead>
-      <tbody>
-        <tr><td>0.0</td><td>0.00</td></tr><tr><td>0.2</td><td>3.96</td></tr>
-        <tr><td>0.4</td><td>3.02</td></tr><tr><td>0.6</td><td>3.11</td></tr>
-        <tr><td>0.8</td><td>5.53</td></tr><tr><td>1.0</td><td>8.38</td></tr>
-        <tr><td>1.2</td><td>8.21</td></tr><tr><td>1.4</td><td>6.25</td></tr>
-        <tr><td>1.6</td><td>4.56</td></tr><tr><td>1.8</td><td>1.83</td></tr>
-        <tr><td>2.0</td><td>0.00</td></tr>
-      </tbody>
-    </table>
+    <div class="iplot wide" data-widget="series-reveal" data-start="1"></div>
   </div>
   <aside class="notes">These data were sampled at 5 Hz, which leaves 0.2 s between each data point.</aside>
 </section>
@@ -686,47 +675,53 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
 <section>
   <h2>Example integration</h2>
   <h3>Solution</h3>
-  <ul class="small">
-    <li>Multiply each y-value by the time between each data point (<strong>0.2 s</strong>).</li>
-    <li>To determine each new point on the position vs. time plot, sum the products from the first point up to the new point.</li>
-    <li>The total integral ends up being <strong>8.970 m</strong> — however, we want a displacement <em>time series</em>, not a single value for the total displacement.</li>
-    <li class="muted">Note: we have calculated the <strong>change</strong> in position, but we still don't know the starting position.</li>
-  </ul>
+  <div class="cols c top">
+    <div>
+      <ul class="small">
+        <li>Multiply each y-value by the time between each data point (<strong>0.2 s</strong>).</li>
+        <li>To find each new point on the position plot, sum the products from the first point up to that one.</li>
+        <li>The total ends up being <strong>8.970 m</strong> — but we want a displacement <em>time series</em>,
+          not one number for the whole trip.</li>
+        <li class="muted">Note: this is the <strong>change</strong> in position. We still don't know where it
+          started.</li>
+      </ul>
+      <div class="box accent">
+        <p class="eq small" style="margin:0 0 .25em">v × Δt = 3.96 × 0.2 = <strong>0.792 m</strong></p>
+        <p class="eq small" style="margin:0 0 .25em">position(0.4) = 0.792 + 0.604 = <strong>1.396 m</strong></p>
+        <p class="eq small" style="margin:0">position(t<sub>i</sub>) = position(t<sub>i−1</sub>) + v<sub>i</sub> Δt</p>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Time (s)</th><th>v × Δt (m)</th><th>Position (m)</th></tr></thead>
+      <tbody>
+        <tr><td>0.0</td><td>—</td><td>0.000</td></tr>
+        <tr><td>0.2</td><td>0.792</td><td>0.792</td></tr>
+        <tr><td>0.4</td><td>0.604</td><td>1.396</td></tr>
+        <tr><td>0.6</td><td>0.622</td><td>2.018</td></tr>
+        <tr><td>0.8</td><td>1.106</td><td>3.124</td></tr>
+        <tr><td>1.0</td><td>1.676</td><td>4.800</td></tr>
+        <tr><td>1.2</td><td>1.642</td><td>6.442</td></tr>
+        <tr><td>1.4</td><td>1.250</td><td>7.692</td></tr>
+        <tr><td>1.6</td><td>0.912</td><td>8.604</td></tr>
+        <tr><td>1.8</td><td>0.366</td><td>8.970</td></tr>
+        <tr><td>2.0</td><td>0.000</td><td>8.970</td></tr>
+      </tbody>
+    </table>
+  </div>
   <aside class="notes">These data were sampled at 5 Hz, which leaves 0.2 s between each data point.</aside>
 </section>
 
 <!-- 45 -->
 <section>
   <h2>Example integration</h2>
-  <div class="cols top">
-    <div>
-      <table>
-        <thead><tr><th>Time (s)</th><th>v × Δt (m)</th><th>Position (m)</th></tr></thead>
-        <tbody>
-          <tr><td>0.0</td><td>—</td><td>0.000</td></tr>
-          <tr><td>0.2</td><td>0.792</td><td>0.792</td></tr>
-          <tr><td>0.4</td><td>0.604</td><td>1.396</td></tr>
-          <tr><td>0.6</td><td>0.622</td><td>2.018</td></tr>
-          <tr><td>0.8</td><td>1.106</td><td>3.124</td></tr>
-          <tr><td>1.0</td><td>1.676</td><td>4.800</td></tr>
-          <tr><td>1.2</td><td>1.642</td><td>6.442</td></tr>
-          <tr><td>1.4</td><td>1.250</td><td>7.692</td></tr>
-          <tr><td>1.6</td><td>0.912</td><td>8.604</td></tr>
-          <tr><td>1.8</td><td>0.366</td><td>8.970</td></tr>
-          <tr><td>2.0</td><td>0.000</td><td>8.970</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="stack">
-      <div class="iplot" data-widget="integral-sum"></div>
-      <div class="tiny muted steps">
-        <p><strong>t = 0.0 s</strong> — since we aren't given any information regarding the starting position, we must assume that the position at time 0.0 s is 0.00 m.</p>
-        <p><strong>t = 0.2 s</strong> — add the product of the velocity and time interval for t = 0.0 s and t = 0.2 s: 0.000 m + 0.792 m = 0.792 m.</p>
-        <p><strong>t = 0.4 s</strong> — 0.00 m + 0.792 m + 0.604 m = 1.396 m, and so on.</p>
-        <p>Continue this process until the position has been calculated for all time points, then plot the new data set.</p>
-      </div>
-    </div>
+  <div class="textstrip tiny">
+    <p class="firstcol"><strong>t = 0.0 s</strong> — nothing tells us where the object started, so the position
+      at 0.0 s is taken as 0.00 m. <strong>t = 0.2 s</strong> — add the velocity times the interval:
+      0.000 + 0.792 = 0.792 m.</p>
+    <p><strong>t = 0.4 s</strong> — 0.792 + 0.604 = 1.396 m, and so on to the end. The table fills in as the
+      strips are added, and b<sub>o</sub> slides the whole position curve up or down without changing its shape.</p>
   </div>
+  <div class="iplot wide" data-widget="integral-sum"></div>
   <aside class="notes">This is the plot of position vs time that we arrived at by integrating a plot of velocity vs time. We didn't lose data points, like we did when we differentiated, but we had to make assumptions about the beginning position.</aside>
 </section>
 
@@ -961,7 +956,7 @@ Then overlay the accelerometer: two instruments, same trial, same acceleration.<
 <section>
   <h2>Experimental application</h2>
   <p class="lead">An issue with integral sum is that you cumulatively sum the signal — but also <strong>any error</strong> that may be present.</p>
-  <div class="iplot wide" data-widget="imu" data-panels="avd" data-controls="1"></div>
+  <div class="iplot wide" data-widget="imu" data-panels="avd" data-controls="1" data-video="1"></div>
   <aside class="notes">Start on "Offset removed" with the slider at the resting value: the phone finishes within a few centimetres of where it started.
 Switch to "Raw signal" — gravity is still in the trace, so the double integration sends it hundreds of metres away.
 Then the real lesson: go back to "Offset removed" and nudge the assumed resting value by a few thousandths of a G.
@@ -972,22 +967,9 @@ That is why integrating accelerometers to get position is hard, and why we bothe
 <!-- 62b -->
 <section>
   <h2>Experimental application</h2>
-  <p class="lead">The same trial, as it was worked through in the spreadsheet.</p>
-  <div class="cols a top">
-    <div class="stack">
-      <div class="fig small"><img src="assets/s62_4.png" alt="Signal with drift"></div>
-      <div class="fig small"><img src="assets/s62_5.png" alt="Integrated signal with drift"></div>
-    </div>
-    <div class="stack">
-      <div class="box accent">
-        <p class="small" style="margin:0">An issue with integral sum is that you cumulatively sum the signal — but also <strong>any error</strong> that may be present.</p>
-      </div>
-      <div class="imgrow">
-        <img src="assets/s62_8.png" alt="Drift illustration" style="max-height:18vh">
-        <img src="assets/s62_1026.gif" alt="Drift animation" style="max-height:26vh">
-      </div>
-    </div>
-  </div>
+  <p class="lead">The phone was lying still, so whatever the sensor read at rest <strong>is</strong> the error —
+     a few thousandths of a G it cannot tell from gravity. Integrate that twice and see what it costs.</p>
+  <div class="iplot wide" data-widget="drift"></div>
 </section>
 
 </div>
