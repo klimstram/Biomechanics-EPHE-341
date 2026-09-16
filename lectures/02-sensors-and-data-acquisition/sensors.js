@@ -433,6 +433,7 @@ D.register('calib', function (node, d) {
   });
   labelled(row, 'record a point', chips);
   var cb = el('button', 'ibtn', 'Start over');
+  cb.setAttribute('data-reset', '1');        /* the layout pre-warm uses this to undo itself */
   cb.addEventListener('click', function () { taken = []; draw(); });
   row.appendChild(cb);
   if (d.use === '1') {
@@ -513,6 +514,7 @@ D.register('multisensor', function (node, d) {
 
   var row = el('div', 'ictl-row'); u.ctl.appendChild(row);
   var minus = el('button', 'iseg-b', '− sensor'), plus = el('button', 'iseg-b', '+ sensor');
+  minus.setAttribute('data-unsafe', '1'); plus.setAttribute('data-unsafe', '1');
   var grp = el('div', 'iseg'); grp.appendChild(minus); grp.appendChild(plus);
   labelled(row, 'channels', grp);
   minus.addEventListener('click', function () { if (n > 1) { n--; draw(); } });

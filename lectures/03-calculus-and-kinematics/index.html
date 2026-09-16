@@ -51,9 +51,10 @@
       <div class="fig photo" style="text-align:left"><img src="assets/s02_4.jpg" alt="Sprinter winning a 100 m final"></div>
     </div>
     <div>
-      <div class="iplot" data-widget="video" data-slot="race"
-           data-search="2009 Berlin World Championships 100m final Bolt 9.58 world record"></div>
-      <p class="tiny muted center" style="margin-top:.5em">Berlin, 2009 — the race behind the numbers on the next slide.</p>
+      <div class="iplot" data-widget="video" data-video="ol9fiOAditk"
+           data-title="Berlin 2009 — the 100 m final"
+           data-note="9.58 s. Opens on YouTube in a new tab."></div>
+      <p class="tiny muted center" style="margin-top:.5em">The race behind the numbers on the next slide.</p>
     </div>
   </div>
   <aside class="notes">Play the race first, then move on and take it apart.
@@ -76,7 +77,7 @@ Ask: we only ever measured distance and time. Where did the speed and accelerati
 <section>
   <h2>Relationship between displacement and velocity</h2>
   <p class="lead">Graphing can help us determine some important relationships between kinematic variables.</p>
-  <div class="cols a top">
+  <div class="cols b top">
     <div>
       <p>Here is a graph of <strong>displacement</strong> of an object with respect to time. We can use this graph to determine what the velocity of an object is over different intervals.</p>
       <p>We know:</p>
@@ -92,7 +93,7 @@ Ask: we only ever measured distance and time. Where did the speed and accelerati
 <section>
   <h2>Relationship between velocity and acceleration</h2>
   <p class="lead">Graphing can help us determine some important relationships between kinematic variables.</p>
-  <div class="cols a top">
+  <div class="cols b top">
     <div>
       <p>Here is a graph of the <strong>velocity</strong> of an object with respect to time. We can use this graph to determine what the acceleration of the object is over different intervals.</p>
       <p>We know:</p>
@@ -106,14 +107,13 @@ Ask: we only ever measured distance and time. Where did the speed and accelerati
 
 <!-- 5 -->
 <section>
-  <h2>Relationship between displacement, velocity and acceleration</h2>
-  <p class="lead">From these basic examples we can see that displacement, velocity and acceleration are all related by the <strong>slopes</strong> of their graphs.</p>
-  <div class="textstrip tiny">
-    <p>Therefore, the slope between two points on a <strong>displacement vs. time</strong> graph is equal to the <strong>average velocity</strong> between those two points.</p>
-    <p>Therefore, the slope between two points on a <strong>velocity vs. time</strong> graph is equal to the <strong>average acceleration</strong> between those two points.</p>
-  </div>
+  <h2>Displacement, velocity and acceleration</h2>
+  <p class="lead">All three are related by the <strong>slopes</strong> of their graphs: the slope of the
+     displacement graph is the average <strong>velocity</strong>, and the slope of the velocity graph is the
+     average <strong>acceleration</strong>.</p>
   <div class="iplot wide" data-widget="triple-slope"></div>
-  <aside class="notes">Sweep the cursor and watch all three move together.
+  <aside class="notes">Therefore, the slope between two points on a displacement vs. time graph is equal to the average velocity between those two points — and the slope between two points on a velocity vs. time graph is equal to the average acceleration between those two points.
+Sweep the cursor and watch all three move together.
 Where the displacement graph is steepest, velocity peaks. Where displacement turns over at t = 4 s, velocity crosses zero.
 Acceleration is a straight line the whole way — it is the slope of a parabola, and a constant rate of change of velocity.
 Point out that we have not used a single formula yet; this is all read off the slopes.</aside>
@@ -122,12 +122,12 @@ Point out that we have not used a single formula yet; this is all read off the s
 <!-- 6 -->
 <section>
   <h2>Average and instantaneous</h2>
-  <div class="textstrip tiny four">
-    <p class="firstcol">The kinematics equations that we use only take 2 values (final and initial), so we are only taking an <strong>average</strong> and finding the slope over the 2 values.</p>
-    <p>However, this may <strong>misrepresent</strong> what is happening. What if we took the average velocity of the whole trip?
-      <span class="eq">v = Δd/Δt = (d<sub>final</sub> − d<sub>initial</sub>) / (t<sub>final</sub> − t<sub>initial</sub>) = 0 / 6 = 0 m/s</span></p>
-    <p>It is correct to say that the average velocity is zero, but it doesn't help to accurately represent the trip. <strong>To be more… instantaneous</strong> is simply just to take averages over smaller time intervals. And <strong>to be even more… instantaneous</strong>, smaller still.</p>
-    <p>What if we broke the trip up into <strong>2 sections</strong> and took an average for each? Or 3… 4… 5… 6… How many sections do we need to break it up so that we can find the <em class="key">instantaneous</em> velocity at any point?</p>
+  <div class="textstrip tiny">
+    <p class="firstcol">The kinematics equations take only two values, final and initial, so they give an
+      <strong>average</strong> — and over the whole trip that average is
+      <span class="eq">v = Δd/Δt = 0 / 6 = 0 m/s</span>, which is correct and useless.</p>
+    <p>Break the trip into <strong>2 sections</strong> and average each. Or 3… 4… 5… 6… How many sections do we
+      need before each average is the <em class="key">instantaneous</em> velocity?</p>
   </div>
   <div class="iplot wide" data-widget="sections" data-start="1"></div>
   <aside class="notes">Start at 1 section — average velocity is zero, which is correct and useless.
@@ -141,12 +141,12 @@ The question to land on: how many sections do we need? The answer is the limit �
   <h2>Calculus and kinematics</h2>
   <p>But what if we wanted to find the slope of a line over an <strong>infinitely small</strong> time interval? This is where calculus comes in handy.</p>
   <ul>
-    <li><strong>Time derivative</strong> — the instantaneous change in some quantity with respect to time; the change in a kinematic variable over the theoretically smallest change in time.</li>
-    <li><strong>Differentiation</strong> is the process of calculating derivatives. It can be accomplished using three methods:
+    <li class="fragment"><strong>Time derivative</strong> — the instantaneous change in some quantity with respect to time; the change in a kinematic variable over the theoretically smallest change in time.</li>
+    <li class="fragment"><strong>Differentiation</strong> is the process of calculating derivatives. It can be accomplished using three methods:
       <ul>
-        <li>Graphical method</li>
-        <li>Analytical method</li>
-        <li>Finite difference</li>
+        <li class="fragment">Graphical method</li>
+        <li class="fragment">Analytical method</li>
+        <li class="fragment">Finite difference</li>
       </ul>
     </li>
   </ul>
@@ -216,7 +216,7 @@ GRAPHICAL METHOD: consists of calculating the slope of tangent lines drawn at va
       <div class="iplot" data-widget="eqparts" data-of="the same line, as velocity"
            data-spec="v(t)~is the velocity|=|m~is the slope|t~is the time|+|b~is the y-intercept"></div>
     </div>
-    <div class="iplot" data-widget="line-explorer" data-m="2" data-n="1"></div>
+    <div class="iplot" data-widget="line-explorer" data-m="2" data-n="1" data-names="line"></div>
   </div>
   <aside class="notes">Both equations assemble themselves as the slide opens — let them finish before you talk over them.
 Then hover a symbol and its meaning lights up underneath; hover a meaning and the symbol lights up. Same line, two names for the axes.
@@ -291,8 +291,8 @@ Good one to do live: start with 6t-squared, then add minus-t-cubed and watch the
     <p style="margin:0 0 .3em"><strong>What is the implication of this in human movement?</strong></p>
     <p style="margin:0">If we can determine an equation for the slope of that line at any time, then we can</p>
     <ul style="margin:.3em 0 0 1em">
-      <li>solve for <strong>velocity</strong> if we have displacement;</li>
-      <li>solve for <strong>acceleration</strong> if we have velocity.</li>
+      <li class="fragment">solve for <strong>velocity</strong> if we have displacement;</li>
+      <li class="fragment">solve for <strong>acceleration</strong> if we have velocity.</li>
     </ul>
   </div>
 </section>
@@ -380,7 +380,7 @@ The equation box at the bottom is live: put any polynomial in it and the worked 
         <div class="iplot" data-widget="transfer" data-mode="diff" data-c="-1" data-n="3" data-compact="1" data-controls="0"></div>
       </div>
     </div>
-    <div class="fig"><img src="assets/s23_5.png" alt="Differentiation summary table: definition is instantaneous slope of the curve; transformation direction displacement to velocity to acceleration"></div>
+    <div class="ditable-wrap"><table class="ditable"><thead><tr><th></th><th>Integration</th><th class="lit">Differentiation</th></tr></thead><tbody><tr><th>Definition</th><td class="dim">area between the curve and the x axis</td><td class="lit">instantaneous slope of the curve</td></tr><tr><th>Transformation<br>direction</th><td class="dim"><span class="chain"><b>acceleration</b> ↓<br><b>velocity</b> ↓<br><b>displacement</b></span></td><td class="lit"><span class="chain"><b>displacement</b> ↓<br><b>velocity</b> ↓<br><b>acceleration</b></span></td></tr></tbody></table></div>
   </div>
 </section>
 
@@ -390,9 +390,10 @@ The equation box at the bottom is live: put any polynomial in it and the worked 
   <h3>3 · Finite difference equation</h3>
   <p>Using the kinematic equations (velocity, acceleration) on <strong>time-series data</strong> derived from sensors.</p>
   <div class="box" style="margin-top:.8em">
-    <p class="eq" style="margin:0">v<sub>i</sub> = <span class="frac"><span>d<sub>i+1</sub> − d<sub>i</sub></span><span class="den">t<sub>i+1</sub> − t<sub>i</sub></span></span>
-    &nbsp;&nbsp;&nbsp;&nbsp;
-    a<sub>i</sub> = <span class="frac"><span>v<sub>i+1</sub> − v<sub>i</sub></span><span class="den">t<sub>i+1</sub> − t<sub>i</sub></span></span></p>
+    <p class="eq eq-in" style="margin:0">
+      <span>v<sub>i</sub></span><span class="op">=</span><span class="frac"><span>d<sub>i+1</sub> − d<sub>i</sub></span><span class="den">t<sub>i+1</sub> − t<sub>i</sub></span></span>
+      <span style="width:2.6em"></span>
+      <span>a<sub>i</sub></span><span class="op">=</span><span class="frac"><span>v<sub>i+1</sub> − v<sub>i</sub></span><span class="den">t<sub>i+1</sub> − t<sub>i</sub></span></span></p>
   </div>
 </section>
 
@@ -414,7 +415,7 @@ The equation box at the bottom is live: put any polynomial in it and the worked 
     <li>Divide the difference in velocity by the difference in time.</li>
   </ol>
   <div class="box accent center" style="margin-top:.8em">
-    <p class="eq big" style="margin:0">a = <span class="frac"><span>Δ velocity</span><span class="den">Δ time</span></span></p>
+    <p class="eq big eq-in" style="margin:0"><span>a</span><span class="op">=</span><span class="frac"><span>Δ velocity</span><span class="den">Δ time</span></span></p>
   </div>
   <aside class="notes">These data were sampled at 5 Hz, which leaves 0.2 s between each data point.</aside>
 </section>
@@ -573,11 +574,11 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
   <p class="lead">Unless calculus can help? Of course it can.</p>
   <p class="small"><strong>Integration</strong> — "to make into a whole" — a way to determine the area under the curve. There are 3 ways to calculate it:</p>
   <ol class="small">
-    <li><strong>Riemann sum method</strong> — add up the area from rectangles.</li>
-    <li><strong>Integral sum</strong> — cumulatively sum all the points in the curve.
+    <li class="fragment"><strong>Riemann sum method</strong> — add up the area from rectangles.</li>
+    <li class="fragment"><strong>Integral sum</strong> — cumulatively sum all the points in the curve.
       <ul><li>Remember that the velocity at any point in time was the cumulative sum of the acceleration.</li></ul>
     </li>
-    <li><strong>Analytical method</strong> — using equations again.</li>
+    <li class="fragment"><strong>Analytical method</strong> — using equations again.</li>
   </ol>
 </section>
 
@@ -841,7 +842,7 @@ The equation box at the bottom is live: put any polynomial in it and the worked 
         <div class="iplot" data-widget="transfer" data-mode="int" data-c="12" data-n="1" data-compact="1" data-controls="0"></div>
       </div>
     </div>
-    <div class="fig"><img src="assets/s53_6.png" alt="Integration summary table: definition is area between the curve and the x axis; transformation direction acceleration to velocity to displacement"></div>
+    <div class="ditable-wrap"><table class="ditable"><thead><tr><th></th><th class="lit">Integration</th><th>Differentiation</th></tr></thead><tbody><tr><th>Definition</th><td class="lit">area between the curve and the x axis</td><td class="dim">instantaneous slope of the curve</td></tr><tr><th>Transformation<br>direction</th><td class="lit"><span class="chain"><b>acceleration</b> ↓<br><b>velocity</b> ↓<br><b>displacement</b></span></td><td class="dim"><span class="chain"><b>displacement</b> ↓<br><b>velocity</b> ↓<br><b>acceleration</b></span></td></tr></tbody></table></div>
   </div>
 </section>
 
@@ -866,11 +867,13 @@ The equation box at the bottom is live: put any polynomial in it and the worked 
         <p class="small" style="margin:0">Measure <strong>acceleration</strong> and find displacement using an accelerometer.</p>
       </div>
     </div>
-    <div class="imgrow">
-      <img src="assets/s55_10.png" alt="Camera setup" style="max-height:18vh">
-      <img src="assets/s55_6.png" alt="Phone accelerometer" style="max-height:18vh">
-      <img src="assets/s55_9.png" alt="Experimental rig" style="max-height:18vh">
-      <img src="assets/s55_7.png" alt="Phone" style="max-height:18vh">
+    <div class="whitecard">
+      <div class="imgrow">
+        <img src="assets/s55_10.png" alt="Camera setup" style="max-height:19vh">
+        <img src="assets/s55_6.png" alt="Phone accelerometer" style="max-height:19vh">
+        <img src="assets/s55_9.png" alt="Experimental rig" style="max-height:19vh">
+        <img src="assets/s55_7.png" alt="Phone" style="max-height:19vh">
+      </div>
     </div>
   </div>
 </section>
@@ -878,9 +881,11 @@ The equation box at the bottom is live: put any polynomial in it and the worked 
 <!-- 56 -->
 <section>
   <h2>Experimental application</h2>
-  <div class="imgrow">
-    <img src="assets/s56_9.png" alt="Experimental setup photo">
-    <img src="assets/s56_10.png" alt="Experimental setup photo">
+  <div class="whitecard" style="max-width:62em;margin:0 auto">
+    <div class="imgrow" style="gap:1.1em">
+      <img src="assets/s56_9.png" alt="Experimental setup photo" style="max-height:46vh">
+      <img src="assets/s56_10.png" alt="Experimental setup photo" style="max-height:46vh">
+    </div>
   </div>
 </section>
 
@@ -911,17 +916,11 @@ The equation box at the bottom is live: put any polynomial in it and the worked 
 <!-- 59 -->
 <section>
   <h2>Experimental application</h2>
-  <div class="cols top">
-    <div>
-      <h4>Accelerometer → displacement<br>(integral sum method)</h4>
-      <div class="iplot" data-widget="imu" data-panels="d"></div>
-    </div>
-    <div>
-      <h4>Displacement data from video</h4>
-      <div class="iplot" data-widget="vkin" data-panels="y"></div>
-    </div>
-  </div>
-  <p class="center" style="margin-top:.5em"><strong>Ok… so what went wrong?</strong></p>
+  <p class="lead">Both instruments, one pair of axes, lined up on the same clock: the
+     <strong>video</strong> measured where the phone was, and the <strong>accelerometer</strong> was
+     integrated twice to say where it thought it was.</p>
+  <div class="iplot wide" data-widget="vkin" data-panels="y" data-imu="1" data-overlay="1"></div>
+  <p class="center" style="margin-top:.35em"><strong>Ok… so what went wrong?</strong></p>
   <aside class="notes">Right-hand plot is the video record itself — 92 frames at 30 fps, digitised from the Tracker output, so you can scrub through it.
 The phone falls 0.46 m and stays there. The accelerometer, integrated twice, says something different.
 "Ok, so what went wrong?" — the answer is the next three slides.</aside>
@@ -930,16 +929,9 @@ The phone falls 0.46 m and stays there. The accelerometer, integrated twice, say
 <!-- 60 -->
 <section>
   <h2>Experimental application</h2>
-  <div class="cols top">
-    <div>
-      <h4>Acceleration from accelerometer data</h4>
-      <div class="iplot" data-widget="imu" data-panels="a"></div>
-    </div>
-    <div>
-      <h4>Video displacement → acceleration<br>(finite difference)</h4>
-      <div class="iplot" data-widget="vkin" data-panels="a" data-imu="1"></div>
-    </div>
-  </div>
+  <p class="lead"><strong>Acceleration</strong>, both ways: the video positions differentiated twice
+     by finite difference, and the accelerometer's own reading over the identical three seconds.</p>
+  <div class="iplot wide" data-widget="vkin" data-panels="a" data-imu="1" data-overlay="1"></div>
   <aside class="notes">Same trial, two instruments. Press "Overlay accelerometer" and the dashed red trace is the phone's own sensor over the identical three seconds — the two land on top of each other.
 That is the point: differentiating video positions twice gives you the same acceleration the accelerometer measured directly.
 "Recompute from y" does the finite difference live, so you can show it is our arithmetic and not Tracker's magic.</aside>
@@ -948,16 +940,9 @@ That is the point: differentiating video positions twice gives you the same acce
 <!-- 61 -->
 <section>
   <h2>Experimental application</h2>
-  <div class="cols top">
-    <div>
-      <h4>Velocity from accelerometer using integral sum</h4>
-      <div class="iplot" data-widget="imu" data-panels="v"></div>
-    </div>
-    <div>
-      <h4>Video displacement → velocity<br>(finite difference)</h4>
-      <div class="iplot" data-widget="vkin" data-panels="v" data-imu="1"></div>
-    </div>
-  </div>
+  <p class="lead"><strong>Velocity</strong>, both ways: the video positions differentiated once, and the
+     accelerometer integrated once. The gap that opens up at the end is the drift.</p>
+  <div class="iplot wide" data-widget="vkin" data-panels="v" data-imu="1" data-overlay="1"></div>
   <aside class="notes">Velocity from the video is a clean single dip to −0.92 m/s and back to zero — the phone stops.
 Overlay the accelerometer and you can see the integrated velocity does not quite come back to zero. That leftover is the drift.</aside>
 </section>

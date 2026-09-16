@@ -235,9 +235,55 @@ W.secant = function (node, d) {
   var isVel = d.var === 'v';
   var f = isVel ? V : D;
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 560, h: 300, xmin: 0, xmax: 6.4, ymin: isVel ? -42 : -4.5, ymax: isVel ? 16 : 36 });
+  var ax = new Axes(u.cv, { w: 660, h: 352, xmin: 0, xmax: 6.4,
+                            ymin: isVel ? -42 : -4.5, ymax: isVel ? 16 : 36 });
   var out = readout(u.ctl);
   var t2 = parseFloat(d.start || 2), playing = false, raf, dir = 1;
+
+  var sym = isVel ? 'a' : 'v', top = isVel ? 'Δv' : 'Δd', unit = isVel ? 'm/s²' : 'm/s';
+
+  /* The equation is built ONCE and its numbers replaced in place, so (a) it can
+     animate in beat by beat the way the transfer-function rule does later in the
+     deck, and (b) the readout never changes height under the slider. */
+  function fr(a2, b2, cls) {
+    return '<span class="fr"><span' + (cls ? ' class="' + cls + '"' : '') + '>' + a2 +
+           '</span><span class="dn' + (cls ? ' ' + cls : '') + '">' + b2 + '</span></span>';
+  }
+  /* Two deliberate lines — the definition, then the arithmetic. Left to wrap on
+     its own the equation is one line at some slider values and two at others,
+     which is exactly the kind of resize that makes the controls below it jump. */
+  out.innerHTML =
+    '<span class="live-eq">' +
+      '<span class="tt beat" data-beat="0">' + sym + ' = ' + fr(top, 'Δt') + '</span>' +
+      '<span class="tt beat" data-beat="1"> = ' + fr('rise', 'run') + '</span>' +
+    '</span>' +
+    '<span class="live-eq">' +
+      '<span class="tt beat" data-beat="2">= ' + fr('<i class="n2"></i> − <i class="n1"></i>',
+                                                    '<i class="nt"></i> − 0.00') + '</span>' +
+      '<span class="tt beat" data-beat="3"> = ' + fr('<i class="nr"></i>', '<i class="nt2"></i>') +
+        ' = <b class="r nm"></b> ' + unit + '</span>' +
+    '</span>' +
+    '<span class="hint">the average ' + (isVel ? 'acceleration' : 'velocity') +
+    ' between t = 0 and t = <i class="nt3"></i> s</span>';
+
+  var beats = Array.prototype.slice.call(out.querySelectorAll('.beat'));
+  var fld = {};
+  ['n1', 'n2', 'nt', 'nr', 'nt2', 'nm', 'nt3'].forEach(function (k) {
+    fld[k] = out.querySelector('.' + k);
+  });
+  var lastM = null, timers = [];
+
+  function show(all) {
+    timers.forEach(clearTimeout); timers = [];
+    beats.forEach(function (bt, i) {
+      if (all) { bt.classList.remove('out'); bt.classList.add('in'); return; }
+      bt.classList.add('out'); bt.classList.remove('in');
+      timers.push(setTimeout(function () {
+        bt.classList.remove('out'); bt.classList.add('in');
+      }, 260 + i * 340));
+    });
+  }
+
   function draw() {
     ax.clear();
     ax.frame({
@@ -245,44 +291,53 @@ W.secant = function (node, d) {
       yticks: isVel ? [-36, -24, -12, 0, 12] : [0, 8, 16, 24, 32],
       xlabel: 'time (s)', ylabel: isVel ? 'velocity (m/s)' : 'displacement (m)'
     });
-    ax.fn(f, { from: 0, to: 6, color: INK, width: 2 });
+    ax.fn(f, { from: 0, to: 6, color: INK, width: 2.4 });
     var y1 = f(0), y2 = f(t2);
     ax.poly([[0, y1], [t2, y1]], { color: ACC, width: 2, dash: [4, 4] });
     ax.poly([[t2, y1], [t2, y2]], { color: ACC, width: 2, dash: [4, 4] });
-    ax.poly([[0, y1], [t2, y2]], { color: ACC, width: 3.4 });
-    ax.dots([[0, y1], [t2, y2]], { color: ACC, r: 4.5 });
-    ax.text('run = ' + t2.toFixed(2) + ' s', t2 / 2, y1 - (isVel ? 4.6 : 3.2), { color: ACC, size: 15, align: 'center' });
-    ax.text('rise = ' + (y2 - y1).toFixed(2) + (isVel ? ' m/s' : ' m'), t2 + 0.14, (y1 + y2) / 2, { color: ACC, size: 15 });
+    ax.poly([[0, y1], [t2, y2]], { color: ACC, width: 3.6 });
+    ax.dots([[0, y1], [t2, y2]], { color: ACC, r: 5 });
+    ax.text('run = ' + t2.toFixed(2) + ' s', t2 / 2, y1 - (isVel ? 4.6 : 3.2),
+      { color: ACC, size: 15, align: 'center' });
+    ax.text('rise = ' + (y2 - y1).toFixed(2) + (isVel ? ' m/s' : ' m'), t2 + 0.14, (y1 + y2) / 2,
+      { color: ACC, size: 15 });
+
     var m = (y2 - y1) / t2;
-    var sym = isVel ? 'a' : 'v', top = isVel ? 'Δv' : 'Δd', unit = isVel ? 'm/s²' : 'm/s';
-    out.innerHTML =
-      '<span class="live-eq">' + sym + ' = ' +
-        '<span class="fr"><span>' + top + '</span><span class="dn">Δt</span></span> = ' +
-        '<span class="fr"><span>rise</span><span class="dn">run</span></span> = ' +
-        '<span class="fr"><span>' + y2.toFixed(2) + ' − ' + y1.toFixed(2) + '</span>' +
-        '<span class="dn">' + t2.toFixed(2) + ' − 0.00</span></span> = ' +
-        '<span class="fr"><span>' + (y2 - y1).toFixed(2) + '</span>' +
-        '<span class="dn">' + t2.toFixed(2) + '</span></span> = ' +
-        '<b class="r">' + m.toFixed(2) + '</b> ' + unit +
-      '</span>' +
-      '<span class="hint">the average ' + (isVel ? 'acceleration' : 'velocity') +
-      ' between t = 0 and t = ' + t2.toFixed(2) + ' s</span>';
+    fld.n1.textContent = y1.toFixed(2);
+    fld.n2.textContent = y2.toFixed(2);
+    fld.nt.textContent = t2.toFixed(2);
+    fld.nt2.textContent = t2.toFixed(2);
+    fld.nt3.textContent = t2.toFixed(2);
+    fld.nr.textContent = (y2 - y1).toFixed(2);
+    fld.nm.textContent = m.toFixed(2);
+    if (lastM !== null && Math.abs(m - lastM) > 1e-9 && !playing) {
+      fld.nm.classList.remove('pop');
+      void fld.nm.offsetWidth;                     /* restart the animation */
+      fld.nm.classList.add('pop');
+    }
+    lastM = m;
   }
-  var s = slider(u.ctl, 'Second point <i>t</i>', 0.2, 6, 0.05, t2, function (v) { return v.toFixed(2) + ' s'; },
-    function (v) { t2 = v; draw(); });
+
+  var s = slider(u.ctl, 'Second point <i>t</i>', 0.2, 6, 0.05, t2,
+    function (v) { return v.toFixed(2) + ' s'; },
+    function (v) { t2 = v; show(true); draw(); });
   var b = playBtn(u.ctl, '▶ Sweep');
   b.addEventListener('click', function () {
     playing = !playing; b.textContent = playing ? '❚❚ Pause' : '▶ Sweep';
-    if (playing) loop(); else cancelAnimationFrame(raf);
+    if (playing) { show(true); loop(); } else cancelAnimationFrame(raf);
   });
   function loop() {
     t2 += dir * 0.035; if (t2 >= 6) { t2 = 6; dir = -1; } if (t2 <= 0.2) { t2 = 0.2; dir = 1; }
     s.input.value = t2; s.sync();
     raf = requestAnimationFrame(loop);
   }
-  node._stop = function () { playing = false; b.textContent = '▶ Sweep'; cancelAnimationFrame(raf); };
+  node._start = function () { show(false); };
+  node._stop = function () {
+    playing = false; b.textContent = '▶ Sweep'; cancelAnimationFrame(raf);
+    timers.forEach(clearTimeout); timers = [];
+  };
   node._draw = draw;
-  draw();
+  draw(); show(false);
 };
 
 /* --- 2. average over N sections, with the arithmetic shown --- */
@@ -293,7 +348,7 @@ W.sections = function (node, d) {
   var side = el('div', 'icalc');
   u.cv.parentNode.parentNode.insertBefore(side, u.ctl);
 
-  var ax = new Axes(u.cv, { w: 900, h: 236, padl: 70, xmin: 0, xmax: 6.35, ymin: -2, ymax: 36 });
+  var ax = new Axes(u.cv, { w: 900, h: 300, padl: 70, xmin: 0, xmax: 6.35, ymin: -2, ymax: 36 });
   var out = readout(u.ctl);
   var n = parseInt(d.start || 1, 10), playing = false, timer, focus = 0;
 
@@ -387,7 +442,7 @@ W.sections = function (node, d) {
 /* --- 3. secant → tangent (A and B closing in) --- */
 W.tangent = function (node) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 560, h: 238, xmin: 0, xmax: 6.4, ymin: -2, ymax: 36 });
+  var ax = new Axes(u.cv, { w: 700, h: 330, xmin: 0, xmax: 6.4, ymin: -2, ymax: 36 });
   var out = readout(u.ctl);
   var h = 2.4, t0 = 1.6, playing = false, raf;
   function draw() {
@@ -424,7 +479,7 @@ W.tangent = function (node) {
 /* --- 4. tangent travelling along the curve, tracing the derivative --- */
 W.tangentTravel = function (node) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 560, h: 340, xmin: 0, xmax: 6.4, ymin: -40, ymax: 36 });
+  var ax = new Axes(u.cv, { w: 700, h: 380, xmin: 0, xmax: 6.4, ymin: -40, ymax: 36 });
   var out = readout(u.ctl);
   var t = 0.3, playing = true, raf, trace = [], showD = true;
   function draw() {
@@ -467,14 +522,18 @@ W.tangentTravel = function (node) {
 W.powerRule = function (node, d) {
   var mode = d.mode || 'diff';
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 520, h: 138, xmin: 0, xmax: 5.2, ymin: -5, ymax: 60 });
+  var ax = new Axes(u.cv, { w: 660, h: 230, xmin: 0, xmax: 5.2, ymin: -5, ymax: 60 });
   var out = readout(u.ctl);
-  var c = 1, n = 2;
+  var c = 1, n = 2, b0 = 0;
   function draw() {
     var f = function (t) { return c * Math.pow(t, n); };
+    /* Integrating leaves a constant the maths cannot recover: b_o is the value
+       the quantity already had at t = 0, and it has to come from the experiment.
+       Here it is a slider, so you can see it slide the whole curve up and down
+       without changing its shape at all. */
     var g = mode === 'diff'
       ? function (t) { return n * c * Math.pow(t, n - 1); }
-      : function (t) { return c * Math.pow(t, n + 1) / (n + 1); };
+      : function (t) { return c * Math.pow(t, n + 1) / (n + 1) + b0; };
     var lo = 0, hi = 1;
     for (var t = 0; t <= 5; t += 0.1) {
       lo = Math.min(lo, f(t), g(t)); hi = Math.max(hi, f(t), g(t));
@@ -488,11 +547,17 @@ W.powerRule = function (node, d) {
     out.innerHTML = mode === 'diff'
       ? '<b class="k">' + fmtTerm(c, n) + '</b> &nbsp;⟶&nbsp; <b class="r">' + fmtTerm(c * n, n - 1) + '</b>' +
         '<span class="hint">multiply by n, then subtract 1 from the exponent</span>'
-      : '<b class="k">' + fmtTerm(c, n) + '</b> &nbsp;⟶&nbsp; <b class="g">' + fmtTerm(c / (n + 1), n + 1) + ' + b<sub>o</sub></b>' +
-        '<span class="hint">add 1 to the exponent, then divide by n + 1</span>';
+      : '<b class="k">' + fmtTerm(c, n) + '</b> &nbsp;⟶&nbsp; <b class="g">' + fmtTerm(c / (n + 1), n + 1) +
+        ' + ' + (b0 === 0 ? 'b<sub>o</sub>' : pnum(b0)) + '</b>' +
+        '<span class="hint">add 1 to the exponent, divide by n + 1, then add the initial value b<sub>o</sub> — ' +
+        'integration cannot tell you where the quantity started, so that has to be measured</span>';
   }
   slider(u.ctl, 'coefficient <i>c</i>', -6, 6, 0.5, c, function (v) { return v; }, function (v) { c = v; draw(); });
   slider(u.ctl, 'exponent <i>n</i>', 0, 4, 1, n, function (v) { return v; }, function (v) { n = v; draw(); });
+  if (mode === 'int') {
+    slider(u.ctl, 'initial value <i>b</i><sub>o</sub>', -20, 20, 1, b0,
+      function (v) { return v; }, function (v) { b0 = v; draw(); });
+  }
   node._draw = draw;
   draw();
 };
@@ -599,7 +664,7 @@ W.finiteDiff = function (node, d) {
 /* --- 7. cumulative sum: constant acceleration → velocity --- */
 W.cumulative = function (node) {
   var u = build(node);
-  var ax1 = new Axes(u.cv, { w: 600, h: 344, xmin: 0, xmax: 10.4, ymin: 0, ymax: 25 });
+  var ax1 = new Axes(u.cv, { w: 760, h: 420, xmin: 0, xmax: 10.4, ymin: 0, ymax: 25 });
   var out = readout(u.ctl);
   var k = 3, playing = false, raf, a = 2;
   function draw() {
@@ -646,7 +711,7 @@ W.cumulative = function (node) {
 /* --- 8. Riemann sum convergence --- */
 W.riemann = function (node, d) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 620, h: 258, xmin: 0, xmax: 8.6, ymin: 0, ymax: 3.2, padl: 56 });
+  var ax = new Axes(u.cv, { w: 830, h: 370, xmin: 0, xmax: 8.6, ymin: 0, ymax: 3.2, padl: 56 });
   var out = readout(u.ctl);
   var n = parseInt(d.start || 8, 10), rule = 'mid', playing = false, raf;
   var TRUE = (function () { var s = 0, N = 20000, h = 8.6 / N; for (var i = 0; i < N; i++) s += bimodal((i + .5) * h) * h; return s; })();
@@ -706,7 +771,7 @@ W.riemann = function (node, d) {
 /* --- 9. integral sum on real data --- */
 W.integralSum = function (node) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 600, h: 252, xmin: -0.05, xmax: 2.15, ymin: 0, ymax: 10 });
+  var ax = new Axes(u.cv, { w: 780, h: 345, xmin: -0.05, xmax: 2.15, ymin: 0, ymax: 10 });
   var out = readout(u.ctl);
   var i = 1, playing = false, raf, b0 = 0;
   var POS = (function () { var p = [0], s = 0, k; for (k = 1; k < VS.length; k++) { s += VS[k] * 0.2; p.push(s); } return p; })();
@@ -746,7 +811,7 @@ W.integralSum = function (node) {
 /* --- 10. initial value constant --- */
 W.initialValue = function (node) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 560, h: 300, xmin: 0, xmax: 10.4, ymin: 0, ymax: 42 });
+  var ax = new Axes(u.cv, { w: 720, h: 360, xmin: 0, xmax: 10.4, ymin: 0, ymax: 42 });
   var out = readout(u.ctl);
   var b0 = 0;
   function draw() {
@@ -768,7 +833,7 @@ W.initialValue = function (node) {
 /* --- 11. area of a rectangle → velocity --- */
 W.areaRect = function (node) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 560, h: 290, xmin: 0, xmax: 10.4, ymin: 0, ymax: 3.2 });
+  var ax = new Axes(u.cv, { w: 780, h: 390, xmin: 0, xmax: 10.4, ymin: 0, ymax: 3.2 });
   var out = readout(u.ctl);
   var a = 2, T = 10;
   function draw() {
@@ -790,7 +855,7 @@ W.areaRect = function (node) {
 /* --- 12. straight line / quadratic explorer (slides 14, 16, 17) --- */
 W.lineExplorer = function (node, d) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 540, h: 280, xmin: 0, xmax: 10.4, ymin: 0, ymax: 120 });
+  var ax = new Axes(u.cv, { w: 620, h: 300, xmin: 0, xmax: 10.4, ymin: 0, ymax: 120 });
   var out = readout(u.ctl);
   var m = parseFloat(d.m || 2), b = 0, n = parseInt(d.n || 1, 10);
   function draw() {
@@ -802,12 +867,23 @@ W.lineExplorer = function (node, d) {
     ax.fn(f, { from: 0, to: 10, color: ACC, width: 3 });
     ax.dots([[0, b]], { color: ACC, r: 4.5 });
     out.innerHTML = '<b>v(t) = ' + m + 't' + (n > 1 ? sup(n) : '') + (b ? ' + ' + b : '') + '</b>' +
-      ' &nbsp;·&nbsp; c = ' + m + ', n = ' + n +
-      '<span class="hint">every kinematic term has the form c·t<sup>n</sup></span>';
+      (d.names === 'line'
+        ? ' &nbsp;·&nbsp; m = ' + m + ', b = ' + b +
+          '<span class="hint">y = mx + b — the slope m and the y-intercept b are the whole line</span>'
+        : ' &nbsp;·&nbsp; c = ' + m + ', n = ' + n +
+          '<span class="hint">every kinematic term has the form c·t<sup>n</sup></span>');
   }
-  slider(u.ctl, 'slope / coefficient <i>c</i>', 0.5, 5, 0.5, m, function (v) { return v; }, function (v) { m = v; draw(); });
-  slider(u.ctl, 'exponent <i>n</i>', 1, 3, 1, n, function (v) { return v; }, function (v) { n = v; draw(); });
-  slider(u.ctl, 'intercept <i>b</i>', 0, 20, 1, b, function (v) { return v; }, function (v) { b = v; draw(); });
+  /* On the straight-line slide the symbols on screen are y = mx + b, so the
+     controls carry those names and the exponent — which is 1 for a line and not
+     up for discussion there — is left out. Elsewhere it is the c·t^n form. */
+  var asLine = d.names === 'line';
+  slider(u.ctl, asLine ? 'slope <i>m</i>' : 'slope / coefficient <i>c</i>',
+    0.5, 5, 0.5, m, function (v) { return v; }, function (v) { m = v; draw(); });
+  if (!asLine) {
+    slider(u.ctl, 'exponent <i>n</i>', 1, 3, 1, n, function (v) { return v; }, function (v) { n = v; draw(); });
+  }
+  slider(u.ctl, asLine ? 'y-intercept <i>b</i>' : 'intercept <i>b</i>',
+    0, 20, 1, b, function (v) { return v; }, function (v) { b = v; draw(); });
   node._draw = draw;
   draw();
 };
@@ -831,7 +907,7 @@ W.seriesReveal = function (node, d) {
   });
   u.cv.parentNode.parentNode.insertBefore(side, u.ctl);
 
-  var ax = new Axes(u.cv, { w: 640, h: 262, padl: 68, xmin: -0.06, xmax: 2.12, ymin: 0, ymax: 10 });
+  var ax = new Axes(u.cv, { w: 760, h: 310, padl: 68, xmin: -0.06, xmax: 2.12, ymin: 0, ymax: 10 });
   var out = readout(u.ctl);
   var n = parseInt(d.start || 1, 10), playing = false, timer;
 
@@ -881,7 +957,7 @@ W.seriesReveal = function (node, d) {
 /* --- 14. tangent explorer: local zoom shows "best straight line" --- */
 W.tangentZoom = function (node) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 1060, h: 238, padl: 70, padr: 400, xmin: 0, xmax: 6.35, ymin: -2, ymax: 36 });
+  var ax = new Axes(u.cv, { w: 1100, h: 330, padl: 70, padr: 400, xmin: 0, xmax: 6.35, ymin: -2, ymax: 36 });
   var out = readout(u.ctl);
   var t = 1.8, zoom = 1.2, playing = false, raf, dir = 1;
 
@@ -968,7 +1044,7 @@ W.slopeTransfer = function (node) {
   var Vy = function (t) { return V0 - G * t; };
 
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 1080, h: 306, padl: 78, xmin: 0, xmax: 4.35, ymin: 0, ymax: 22 });
+  var ax = new Axes(u.cv, { w: 1120, h: 336, padl: 78, xmin: 0, xmax: 4.35, ymin: 0, ymax: 22 });
   var out = readout(u.ctl);
   var STOPS = [0.2, 0.6, 1.0, 1.4, 1.8, 2.04, 2.3, 2.7, 3.1, 3.5, 3.9];
   var k = 1, playing = false, timer;
@@ -1293,7 +1369,7 @@ W.tripleSlope = function (node) {
   var side = el('div', 'icalc');
   u.cv.parentNode.parentNode.insertBefore(side, u.ctl);
 
-  var ax = new Axes(u.cv, { w: 740, h: 318, padl: 68, xmin: 0, xmax: 6.3, ymin: 0, ymax: 36 });
+  var ax = new Axes(u.cv, { w: 980, h: 372, padl: 68, xmin: 0, xmax: 6.3, ymin: 0, ymax: 36 });
   var out = readout(u.ctl);
   var t = 1.4, playing = false, raf, dir = 1;
   var P = [ { pt: 8, pb: 222 }, { pt: 114, pb: 116 }, { pt: 216, pb: 42 } ];
@@ -1317,7 +1393,10 @@ W.tripleSlope = function (node) {
     ax.clear();
     var y0 = panel(0, D, V, -2, 36, [0, 16, 32], 'd (m)', INK, true);
     var y1 = panel(1, V, A, -40, 16, [-36, -12, 12], 'v (m/s)', BLUE, true);
-    var y2 = panel(2, A, function () { return -6; }, -26, 16, [-24, 0, 12], 'a (m/s²)', GRN, false);
+    /* the acceleration panel gets the red marker too: the value carried down from
+       the panel above lies exactly on the green line, so it has to be drawn last
+       or it disappears underneath it */
+    var y2 = panel(2, A, function () { return 0; }, -26, 16, [-24, 0, 12], 'a (m/s²)', GRN, true);
 
     /* arrows carrying each slope down to the next panel */
     c.save(); c.strokeStyle = ACC; c.lineWidth = 1.6; c.setLineDash([5, 4]);
@@ -1385,76 +1464,26 @@ function ytId(v) {
   return m ? m[1] : '';
 }
 W.video = function (node, d) {
-  var key = 'ephe341-video-' + (d.slot || 'main');
-  var search = d.search || '';
+  /* The 2009 Berlin final has embedding turned off by its owner, so an iframe
+     answers with "Video unavailable — error 153". A link is the honest thing:
+     the thumbnail still serves, and the race opens on YouTube in a new tab. */
+  var id = ytId(d.video || window.EPHE341_RACE_VIDEO || 'ol9fiOAditk');
+  var href = 'https://www.youtube.com/watch?v=' + id;
   var wrap = el('div', 'ivideo');
+  wrap.innerHTML =
+    '<a class="ivideo-card" target="_blank" rel="noopener" href="' + href + '">' +
+      '<span class="ivideo-thumb">' +
+        '<img src="https://img.youtube.com/vi/' + id + '/hqdefault.jpg" alt="" ' +
+             'onerror="this.style.display=\'none\'">' +
+        '<span class="ivideo-play"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>' +
+      '</span>' +
+      '<span class="ivideo-cap">' +
+        '<b>' + (d.title || 'Watch the race') + '</b>' +
+        '<i>' + (d.note || 'opens on YouTube in a new tab') + '</i>' +
+      '</span>' +
+    '</a>';
   node.appendChild(wrap);
-
-  function stored() {
-    try { return localStorage.getItem(key) || ''; } catch (e) { return ''; }
-  }
-  function save(v) { try { localStorage.setItem(key, v); } catch (e) {} }
-  function current() { return ytId(stored() || window.EPHE341_RACE_VIDEO || d.video || ''); }
-
-  function renderForm() {
-    wrap.innerHTML =
-      '<div class="ivideo-box ivideo-setup">' +
-        '<div class="ivideo-title">Race video</div>' +
-        '<p>Paste the YouTube link for the race and it will play here. Saved in this browser.</p>' +
-        '<div class="ivideo-row">' +
-          '<input type="text" class="ivideo-in" placeholder="https://www.youtube.com/watch?v=…  or the 11-character id">' +
-          '<button class="ibtn ivideo-load">Load</button>' +
-        '</div>' +
-        (search ? '<a class="ivideo-link" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=' +
-          encodeURIComponent(search) + '">Search YouTube for it ↗</a>' : '') +
-      '</div>';
-    var inp = wrap.querySelector('.ivideo-in');
-    function go() {
-      var id = ytId(inp.value);
-      if (!id) { inp.classList.add('bad'); return; }
-      save(id); render();
-    }
-    wrap.querySelector('.ivideo-load').addEventListener('click', go);
-    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
-    inp.addEventListener('input', function () { inp.classList.remove('bad'); });
-  }
-
-  function renderFacade(id) {
-    wrap.innerHTML =
-      '<div class="ivideo-box ivideo-facade" style="background-image:url(https://img.youtube.com/vi/' +
-        id + '/hqdefault.jpg)">' +
-        '<button class="ivideo-play" aria-label="Play the race video">' +
-          '<svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>' +
-        '</button>' +
-      '</div>' +
-      '<div class="ivideo-meta">' +
-        '<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=' + id + '">Open on YouTube ↗</a>' +
-        '<button class="ivideo-change">Change video</button>' +
-      '</div>';
-    wrap.querySelector('.ivideo-play').addEventListener('click', function () { renderPlayer(id); });
-    wrap.querySelector('.ivideo-change').addEventListener('click', function () { save(''); renderForm(); });
-  }
-
-  function renderPlayer(id) {
-    wrap.innerHTML =
-      '<div class="ivideo-box"><iframe src="https://www.youtube-nocookie.com/embed/' + id +
-        '?autoplay=1&rel=0&modestbranding=1" title="Race video" frameborder="0" allow="autoplay; ' +
-        'encrypted-media; picture-in-picture" allowfullscreen></iframe></div>' +
-      '<div class="ivideo-meta">' +
-        '<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=' + id + '">Open on YouTube ↗</a>' +
-        '<button class="ivideo-change">Change video</button>' +
-      '</div>';
-    wrap.querySelector('.ivideo-change').addEventListener('click', function () { save(''); renderForm(); });
-  }
-
-  function render() {
-    var id = current();
-    if (id) renderFacade(id); else renderForm();
-  }
-  /* leaving the slide stops playback */
-  node._stop = function () { var id = current(); if (id && wrap.querySelector('iframe')) renderFacade(id); };
   node._draw = function () {};
-  render();
 };
 
 /* --- 19. the phone-accelerometer trial: integrate it, and watch the error integrate too --- */
@@ -1671,8 +1700,12 @@ W.vkin = function (node, d) {
   }
 
   var multi = panels.length > 1;
-  var H = controls ? 520 : (panels.length === 1 ? 250 : (panels.length === 2 ? 320 : 380));
-  var Wd = controls ? 980 : (panels.length === 1 ? 600 : 900);
+  /* one panel on its own gets the full width of the slide — that is the case
+     where the accelerometer is overlaid on the video and the two traces are
+     the whole point of the slide. */
+  var solo = panels.length === 1 && !controls;
+  var H = controls ? 520 : (solo ? 430 : (panels.length === 2 ? 320 : 380));
+  var Wd = controls ? 980 : (solo ? 980 : 900);
   var ax = new Axes(u.cv, { w: Wd, h: H, padl: multi ? 74 : 86, xmin: -0.05, xmax: TEND + 0.05, ymin: 0, ymax: 1 });
   var out = readout(u.ctl);
 
@@ -1681,7 +1714,12 @@ W.vkin = function (node, d) {
     if (S.v[q0] != null && (kbest === null || S.v[q0] < S.v[kbest])) kbest = q0;
   }
   if (kbest !== null) k0 = kbest;
-  var k = k0, h = 2, showImu = false, derived = false;
+  /* v and a are always recomputed from the measured y by a one-frame finite
+     difference — that is the method the lecture teaches, and Tracker's own
+     columns and the wider windows were a choice nobody needed to make. */
+  /* data-overlay="1" starts with the accelerometer already drawn over the video
+     trace, time-aligned by S.imuLag — the two instruments on one pair of axes. */
+  var k = k0, h = 1, showImu = (d.overlay === '1') && canImu, derived = true;
   var playing = false, rafId = null, last = 0;
 
   var META = {
@@ -1753,7 +1791,7 @@ W.vkin = function (node, d) {
         ax.dots([[S.t[k], arr[k]]], { color: ACC, r: 5 });
       }
       if (imuF && pi === 0) {
-        ax.text('■ video (Tracker)', ax.W - ax.pr - 4, P[pi].pt + 12,
+        ax.text('■ video', ax.W - ax.pr - 4, P[pi].pt + 12,
                 { px: true, align: 'right', size: 13, color: m.col() });
         ax.text('▬ ▬ accelerometer', ax.W - ax.pr - 4, P[pi].pt + 28,
                 { px: true, align: 'right', size: 13, color: VIO });
@@ -1803,28 +1841,16 @@ W.vkin = function (node, d) {
       (has('a') || controls ? ' &nbsp;·&nbsp; a = <b>' + f(src2.a[k], 2) + '</b> m/s²' : '') +
       (controls ? '' :
         '<span class="hint">' + N + ' frames at ' + S.fps + ' fps, digitised from the Tracker plots · ' +
-        (derived ? 'v and a recomputed here from y by finite difference (±' + h + ' frames)'
+        (derived ? 'v and a computed from the measured y by finite difference over ±' + h + ' frame'
                  : 'v and a as Tracker reported them') + '</span>');
   }
 
   var row = el('div', 'ictl-row');
   u.ctl.appendChild(row);
 
-  if (panels.indexOf('v') >= 0 || panels.indexOf('a') >= 0) {
-    var seg = el('div', 'iseg');
-    [['tr', 'Tracker’s v and a'], ['de', 'Recompute from y']].forEach(function (pair) {
-      var b2 = el('button', 'iseg-b' + ((pair[0] === 'de') === derived ? ' on' : ''), pair[1]);
-      b2.addEventListener('click', function () {
-        derived = pair[0] === 'de';
-        Array.prototype.forEach.call(seg.children, function (x) { x.classList.remove('on'); });
-        b2.classList.add('on'); draw();
-      });
-      seg.appendChild(b2);
-    });
-    row.appendChild(seg);
-  }
   if (canImu) {
-    var ib = el('button', 'ibtn', 'Overlay accelerometer');
+    var ib = el('button', 'ibtn' + (showImu ? ' on' : ''),
+                showImu ? 'Hide accelerometer' : 'Overlay accelerometer');
     ib.addEventListener('click', function () {
       showImu = !showImu;
       ib.classList.toggle('on', showImu);
@@ -1833,23 +1859,6 @@ W.vkin = function (node, d) {
     });
     row.appendChild(ib);
   }
-  if (controls) {
-    var hs = el('div', 'iseg');
-    [1, 2, 3, 5].forEach(function (n) {
-      var b3 = el('button', 'iseg-b' + (n === h ? ' on' : ''), '±' + n + ' frame' + (n > 1 ? 's' : ''));
-      b3.addEventListener('click', function () {
-        h = n; DER = build_();
-        Array.prototype.forEach.call(hs.children, function (x) { x.classList.remove('on'); });
-        b3.classList.add('on'); draw();
-      });
-      hs.appendChild(b3);
-    });
-    var hw = el('div', 'iseg-lab');
-    hw.innerHTML = '<span>finite-difference window</span>';
-    hw.appendChild(hs);
-    row.appendChild(hw);
-  }
-
   var s1 = slider(u.ctl, 'Frame', 0, N - 1, 1, k,
     function (v) { return (v / S.fps).toFixed(2) + ' s'; },
     function (v) { k = Math.round(v); draw(); });
@@ -1957,7 +1966,8 @@ W.golf = function (node, d) {
   var gr  = new Axes(cvB, { w: 600, h: GH, padl: 82, padr: 14, xmin: 0, xmax: 1, ymin: 0, ymax: 1 });
   var out = readout(ctl);
 
-  var h = 2, D = golfDerive(G, h), k = G.kI, ideal = false;
+  /* start at the takeaway, not at impact — the swing should play from the top */
+  var h = 2, D = golfDerive(G, h), k = 0, ideal = false;
   var playing = false, rafId = null, last = 0, SLOMO = 8;
   var TEND = G.t[G.n - 1];
 
@@ -2142,35 +2152,9 @@ W.golf = function (node, d) {
   });
   row.appendChild(seg1);
 
-  var ib = el('button', 'ibtn', 'vs constant α');
-  ib.addEventListener('click', function () {
-    if (mode !== 'club') {
-      mode = 'club';
-      Array.prototype.forEach.call(seg1.children, function (x) {
-        x.classList.toggle('on', x.textContent.indexOf('angle') >= 0);
-      });
-    }
-    ideal = !ideal;
-    ib.classList.toggle('on', ideal);
-    ib.textContent = ideal ? 'hide constant α' : 'vs constant α';
-    draw();
-  });
-  row.appendChild(ib);
-
-  var hs = el('div', 'iseg');
-  [1, 2, 4, 8].forEach(function (n) {
-    var b3 = el('button', 'iseg-b' + (n === h ? ' on' : ''), '±' + n);
-    b3.addEventListener('click', function () {
-      h = n; D = golfDerive(G, h);
-      Array.prototype.forEach.call(hs.children, function (x) { x.classList.remove('on'); });
-      b3.classList.add('on'); draw();
-    });
-    hs.appendChild(b3);
-  });
-  var hw = el('div', 'iseg-lab');
-  hw.innerHTML = '<span>Δ window</span>';
-  hw.appendChild(hs);
-  row.appendChild(hw);
+  /* the constant-α comparison and the ±1/2/4/8 difference window were more
+     machinery than the slide needs; the curves are the measured ones, smoothed
+     over a fixed ±2-frame window. */
 
   var s1 = slider(ctl, 'Frame', 0, G.n - 1, 1, k,
     function (v) { return (v * G.dt).toFixed(2) + ' s'; },
@@ -2300,7 +2284,7 @@ W.grapher = function (node, d) {
   wrap.appendChild(stage); wrap.appendChild(eqbox); wrap.appendChild(ctl);
   node.appendChild(wrap);
 
-  var ax = new Axes(cv, { w: 560, h: 222, padl: 50, padb: 38, padt: 12,
+  var ax = new Axes(cv, { w: 690, h: 320, padl: 50, padb: 38, padt: 12,
                           xmin: -0.4, xmax: 5.2, ymin: -10, ymax: 40 });
   var K = [0, 0, 0, 0];                       /* K[p] is the coefficient of t^p */
   var showD = d.deriv !== '0';
@@ -2348,7 +2332,10 @@ W.grapher = function (node, d) {
       .replace(/<sup>/g, '^').replace(/<\/sup>/g, '').replace(/−/g, '-');
   }
 
-  var eq = eqInput(ctl, d.eq || '-t^3 + 6t^2', '-t^3 + 6t^2', function (T) { setFrom(T); });
+  /* setFrom moves the sliders with quiet(), which deliberately does not fire
+     their onChange — so the redraw has to be asked for here, or typing a new
+     equation changes the coefficients and leaves the curve where it was. */
+  var eq = eqInput(ctl, d.eq || '-t^3 + 6t^2', '-t^3 + 6t^2', function (T) { setFrom(T); draw(); });
 
   var grid = el('div', 'ictls g2'); ctl.appendChild(grid);
   var sl = ['a', 'b', 'c', 'd'].map(function (name, i) {
@@ -2593,7 +2580,7 @@ function polyFit(xs, ys, k) {
 
 W.curvefit = function (node, d) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 600, h: 268, padl: 52, padb: 40, padt: 12,
+  var ax = new Axes(u.cv, { w: 800, h: 370, padl: 52, padb: 40, padt: 12,
                             xmin: -0.3, xmax: 8.3, ymin: -2, ymax: 14 });
   var out = readout(u.ctl);
   var order = 2, seed = 7, noise = 1.3, showTrend = false;
@@ -2735,7 +2722,8 @@ W.transfer = function (node, d) {
     return '<span class="il">' + termHTML(from, true) + '</span>' +
            '<span class="arrow' + (st >= 1 ? ' on' : '') + '">⟶</span>' +
            '<span class="im">' + mid + '</span>' +
-           (st >= 3 ? '<span class="ir"> = ' + (n === 0 && mode === 'diff' ? '0' : termHTML(to, true)) + '</span>' : '');
+           (st >= 3 ? '<span class="ir"> = ' + (n === 0 && mode === 'diff' ? '0' : termHTML(to, true)) +
+              (mode === 'int' ? ' + b<sub>o</sub>' : '') + '</span>' : '');
   }
   function draw() {
     rule.innerHTML = ruleHTML(stage);
@@ -2816,27 +2804,26 @@ W.transferwork = function (node, d) {
       sp.classList.add(PARTCOL[i % 6]);
       if (step >= 1 && (step === 1 || step - 2 === i)) sp.classList.add('hot');
     });
+    /* Every line is always in the DOM; stepping through only fades them in.
+       Building them up as you go would grow the panel a line at a time and
+       shove the button underneath it down the slide on every step. */
     var html = '';
-    if (step >= 1) {
-      html += '<div class="itwork-l in"><span class="ieqlab">split into terms</span> ' +
-        T.map(function (t, i) {
-          return '<span class="iterm ' + PARTCOL[i % 6] + '">' + termHTML(t, true) + '</span>';
-        }).join(' &nbsp;and&nbsp; ') + '</div>';
-    }
+    html += '<div class="itwork-l' + (step >= 1 ? ' in' : '') +
+      '"><span class="ieqlab">split into terms</span> ' +
+      T.map(function (t, i) {
+        return '<span class="iterm ' + PARTCOL[i % 6] + '">' + termHTML(t, true) + '</span>';
+      }).join(' &nbsp;and&nbsp; ') + '</div>';
     T.forEach(function (t, i) {
-      if (step >= i + 2) {
-        var w = work(t);
-        html += '<div class="itwork-l in ' + PARTCOL[i % 6] + (step === i + 2 ? ' now' : '') + '">' + w.html + '</div>';
-      }
+      var w = work(t);
+      html += '<div class="itwork-l ' + PARTCOL[i % 6] +
+        (step >= i + 2 ? ' in' : '') + (step === i + 2 ? ' now' : '') + '">' + w.html + '</div>';
     });
     lines.innerHTML = html;
-    if (step >= maxStep()) {
-      var O = mode === 'diff' ? polyDiff(T) : polyInt(T);
-      res.innerHTML = '<span class="ieqlab">' + (mode === 'diff' ? 'this leaves' : 'this leaves') + '</span> ' +
-        (d.to || 'v(t)') + ' = <b>' + polyHTML(O) + '</b>' +
-        (mode === 'int' ? '<span class="itwork-b"> + b<sub>o</sub></span>' : '');
-      res.classList.add('in');
-    } else { res.innerHTML = ''; res.classList.remove('in'); }
+    var O = mode === 'diff' ? polyDiff(T) : polyInt(T);
+    res.innerHTML = '<span class="ieqlab">this leaves</span> ' +
+      (d.to || 'v(t)') + ' = <b>' + polyHTML(O) + '</b>' +
+      (mode === 'int' ? '<span class="itwork-b"> + b<sub>o</sub></span>' : '');
+    res.classList.toggle('in', step >= maxStep());
     nextb.textContent = step >= maxStep() ? '↻ Start again' : (step === 0 ? '▶ Work it through' : 'Next step');
   }
   function advance() {
