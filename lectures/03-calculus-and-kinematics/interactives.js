@@ -804,7 +804,11 @@ W.integralSum = function (node) {
   tbl.appendChild(thead); tbl.appendChild(tb); side.appendChild(tbl);
   u.cv.parentNode.parentNode.insertBefore(side, u.ctl);
 
-  var ax = new Axes(u.cv, { w: 780, h: 345, xmin: -0.05, xmax: 2.15, ymin: 0, ymax: 10 });
+  var ax = new Axes(u.cv, { w: 900, h: 500, padl: 74, xmin: -0.05, xmax: 2.15, ymin: 0, ymax: 10 });
+  /* two stacked panels in one canvas: velocity on top, position underneath.
+     They are drawn by moving the top and bottom padding, so the two bands must
+     not overlap — [8, 210] and [265, 452] inside a 500-tall canvas. */
+  var P_TOP = [8, 290], P_BOT = [265, 48];
   var out = readout(u.ctl);
   var i = 1, playing = false, raf, b0 = 0;
   var POS = (function () { var p = [0], s = 0, k; for (k = 1; k < VS.length; k++) { s += VS[k] * 0.2; p.push(s); } return p; })();
@@ -816,17 +820,17 @@ W.integralSum = function (node) {
   });
   function draw() {
     ax.clear();
-    ax.setRange(-0.05, 2.15, 0, 10); ax.pt = 10; ax.pb = 158;
+    ax.setRange(-0.05, 2.15, 0, 10); ax.pt = P_TOP[0]; ax.pb = P_TOP[1];
     ax.frame({ grid: true, xticks: [0, .4, .8, 1.2, 1.6, 2], yticks: [0, 5, 10], ylabel: 'velocity', xfmt: function (v) { return v.toFixed(1); } });
     for (var k = 1; k <= i; k++) ax.rect(TS[k] - 0.2, 0, TS[k], VS[k], { fill: FILL, stroke: SOFT, dash: [3, 3] });
     ax.poly(TS.map(function (t, k) { return [t, VS[k]]; }), { color: MUT, width: 2 });
     ax.dots(TS.map(function (t, k) { return [t, VS[k]]; }), { color: MUT, r: 3.2 });
     ax.rect(TS[i] - 0.2, 0, TS[i], VS[i], { fill: ACCFILL, stroke: ACC });
-    ax.setRange(-0.05, 2.15, 0, Math.max(10, b0 + 10)); ax.pt = 126; ax.pb = 46;
+    ax.setRange(-0.05, 2.15, 0, Math.max(10, b0 + 10)); ax.pt = P_BOT[0]; ax.pb = P_BOT[1];
     ax.frame({ grid: true, xticks: [0, .4, .8, 1.2, 1.6, 2], yticks: ticks(0, Math.max(10, b0 + 10), 4), xlabel: 'Time (s)', ylabel: 'position (m)', xfmt: function (v) { return v.toFixed(1); } });
     var pts = POS.slice(0, i + 1).map(function (p, k) { return [TS[k], p + b0]; });
     ax.poly(pts, { color: GRN, width: 2.4 }); ax.dots(pts, { color: GRN, r: 3.8 });
-    ax.pt = 10; ax.pb = 158;
+    ax.pt = P_TOP[0]; ax.pb = P_TOP[1];
     rows.forEach(function (tr, k) {
       tr.classList.toggle('off', k > i);
       tr.classList.toggle('now', k === i);
@@ -1134,7 +1138,7 @@ W.seriesReveal = function (node, d) {
   });
   u.cv.parentNode.parentNode.insertBefore(side, u.ctl);
 
-  var ax = new Axes(u.cv, { w: 760, h: 310, padl: 68, xmin: -0.06, xmax: 2.12, ymin: 0, ymax: 10 });
+  var ax = new Axes(u.cv, { w: 900, h: 420, padl: 88, xmin: -0.06, xmax: 2.12, ymin: 0, ymax: 10 });
   var out = readout(u.ctl);
   var n = parseInt(d.start || 1, 10), playing = false, timer;
 
@@ -1622,10 +1626,11 @@ W.tripleSlope = function (node) {
     ax.clear();
     var y0 = panel(0, D, V, -2, 36, [0, 16, 32], 'd (m)', INK, true);
     var y1 = panel(1, V, A, -40, 16, [-36, -12, 12], 'v (m/s)', BLUE, true);
-    /* the acceleration panel gets the red marker too: the value carried down from
-       the panel above lies exactly on the green line, so it has to be drawn last
-       or it disappears underneath it */
-    var y2 = panel(2, A, function () { return 0; }, -26, 16, [-24, 0, 12], 'a (m/s²)', GRN, true);
+    /* The acceleration panel gets a red tangent too, so the marker sits in front
+       of the green line instead of under it. Its slope is da/dt = −6: a(t) is
+       −6t + 12, a straight line, NOT a constant — so the tangent lies along the
+       acceleration graph itself rather than lying flat across it. */
+    var y2 = panel(2, A, function () { return -6; }, -26, 16, [-24, 0, 12], 'a (m/s²)', GRN, true);
 
     /* arrows carrying each slope down to the next panel */
     c.save(); c.strokeStyle = ACC; c.lineWidth = 1.6; c.setLineDash([5, 4]);

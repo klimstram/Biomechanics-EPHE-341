@@ -299,12 +299,12 @@ html[data-theme="light"] .iseg-b.on{ color:#fff; }
 .reveal .iplot sub,.reveal .iplot sup{ font-size:.7em; }
 
 /* chart + table pair (slide 23) */
-.iseries{ display:grid; grid-template-columns:minmax(0,1fr) 264px; gap:1.3em; align-items:start; }
+.iseries{ display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:1.3em; align-items:start; }
 .iseries .istage{ grid-column:1; }
 .iseries-tab{ grid-column:2; padding-top:.4em; }
 .iseries .ictls{ grid-column:1 / -1; margin-top:.2em; max-width:760px; }
-.iseries-tab table{ width:100%; font-size:.47em; margin:0; }
-.iseries-tab td,.iseries-tab th{ padding:.14em .55em; }
+.iseries-tab table{ width:100%; font-size:.62em; margin:0; }
+.iseries-tab td,.iseries-tab th{ padding:.2em .6em; }
 .iseries-tab tbody tr{ transition:opacity .18s ease,background-color .18s ease; }
 .iseries-tab tbody tr.off{ opacity:.22; }
 .iseries-tab tbody tr.now td{ background:color-mix(in srgb,var(--accent) 16%,transparent);

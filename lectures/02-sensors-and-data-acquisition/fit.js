@@ -32,6 +32,54 @@ function revealScale() {
   return s || 1;
 }
 
+/* ------------------------------------------------------------
+   SHRINKING A BOX
+
+   CSS zoom is the tidy way to do this — the box relaying out at the smaller
+   size is exactly what we want — but a browser does not always hit-test a
+   zoomed box where it paints it, and reveal has already put a transform on
+   the slides container above us. On a slide whose body carries a zoom, a
+   click aimed at a small target can land somewhere else entirely: the
+   equation field on the grapher slide could not be typed into at all, while
+   the identical field on a slide that happened to need no zoom was fine.
+
+   So a body that holds something you have to click INTO is scaled with a
+   transform instead, which is hit-tested reliably everywhere. A transform
+   does not relayout, so the box is widened by the same factor first (which
+   puts the content back across the full slide width once it is scaled down)
+   and then given its visual height back, so whatever follows still flows.
+   Everything else keeps using zoom.
+   ------------------------------------------------------------ */
+var TYPEABLE = 'input[type="text"],input:not([type]),input[type="number"],' +
+               'textarea,[contenteditable="true"]';
+
+function clearScale(el) {
+  if (!el) return;
+  el.style.zoom = '';
+  el.style.transform = '';
+  el.style.transformOrigin = '';
+  el.style.width = '';
+  el.style.height = '';
+}
+
+function setScale(el, s) {
+  if (!el) return;
+  if (!el.querySelector(TYPEABLE)) {
+    el.style.transform = ''; el.style.transformOrigin = '';
+    el.style.width = ''; el.style.height = '';
+    el.style.zoom = s.toFixed(4);
+    return;
+  }
+  el.style.zoom = '';
+  el.style.transformOrigin = 'top left';
+  el.style.transform = 'none';
+  el.style.height = '';
+  el.style.width = (100 / s).toFixed(3) + '%';
+  var natH = el.offsetHeight;                 /* laid out at the wider width */
+  el.style.transform = 'scale(' + s.toFixed(4) + ')';
+  el.style.height = Math.ceil(natH * s) + 'px';
+}
+
 /* ============================================================
    2. RESERVE THE SPACE BEFORE ANYONE TOUCHES ANYTHING
 
@@ -210,13 +258,13 @@ function fitSlide(sec) {
   }
 
   sec.style.zoom = '';
-  body.style.zoom = '';
+  clearScale(body);
   var sr = sec.getBoundingClientRect(), br = body.getBoundingClientRect();
   var headH = (br.top - sr.top) / scale;
   var bodyH = br.height / scale;
   var budget = fitLimit(sec) - headH;
   if (budget > 60 && bodyH > budget) {
-    body.style.zoom = Math.max(FIT_MIN, budget / bodyH).toFixed(4);
+    setScale(body, Math.max(FIT_MIN, budget / bodyH));
   }
 }
 
