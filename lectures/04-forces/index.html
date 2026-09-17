@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a2e">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Forces</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'dark';
+  try { t = localStorage.getItem('ephe341-theme') || 'dark'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <span class="mark">UVic</span>
+  <span class="who"><b>University of Victoria</b><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics · EPHE 341</div>
+    <h1>Forces</h1>
+    <div class="rule"></div>
+    <p class="sub">What a push or a pull actually is, how to add several of them together,
+       and how we measure the ones we cannot see.</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Force</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Biomechanics is the study of the effects of <strong>internal and external
+         forces</strong> on the human body in movement and rest.</p>
+      <p class="small">Simply defined, a force is a <strong>push or a pull</strong>.</p>
+      <ul class="small">
+        <li>A force is a <em class="key">vector</em> quantity.</li>
+        <li>It can change an object's state of motion — start, stop, speed up, slow down,
+            or change direction.</li>
+        <li>It can <strong>accelerate</strong> and/or <strong>deform</strong> an object.</li>
+        <li>It comes in pairs: action and reaction.</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/force-examples.jpg" alt="Everyday examples of forces acting on objects"></div>
+  </div>
+  <aside class="notes">Push or pull is the whole definition. Everything else in this lecture is bookkeeping: how to describe one, how to add several, how to measure them.
+Ask for examples of a force that deforms rather than accelerates — a hand pressing a table, a foot flattening a shoe sole.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Force vectors</h2>
+  <p class="lead">A force needs four things said about it before it is fully described.
+     Drag the arrow and watch which of the four each control changes.</p>
+  <div class="cols a top">
+    <ul class="small">
+      <li><strong>Magnitude</strong> — the length of the arrow</li>
+      <li><strong>Direction</strong> — relative to an axis</li>
+      <li><strong>Line of action</strong> — the shaft of the arrow, extended both ways</li>
+      <li><strong>Point of application</strong> — where it acts on the object</li>
+    </ul>
+    <div class="iplot" data-widget="vector"></div>
+  </div>
+  <aside class="notes">Magnitude and direction make it a vector. Line of action and point of application are what make it a force acting on a body rather than an abstract vector.
+Move the point of application off the centre: same magnitude, same direction, same line of action — different effect. That is the seed of the moment of force, later in the course.</aside>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Force — units</h2>
+  <p class="lead">The <strong>newton (N)</strong> is the SI unit of force. One newton is the force
+     required to accelerate a 1 kg mass at 1 m/s².</p>
+  <div class="iplot wide" data-widget="fma"></div>
+  <aside class="notes">1 N = (1.0 kg)(1.0 m/s²). Set both sliders to one and the figure says so.
+F = ma is the whole of this lecture's arithmetic. Everything measured later is either a force we push through this equation, or an acceleration we got out of it.</aside>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Internal forces</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Internal forces act <strong>within</strong> an object or system —
+         <strong>compressive</strong> (pushing) and <strong>tensile</strong> (pulling).</p>
+      <p class="small">When you land from a jump there is a force from your lower leg on your upper
+         leg through your knee, and an equal and opposite force from your upper leg on your lower
+         leg through the same joint.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/knee-anatomy.jpg" alt="Anatomy of the right knee">
+      <img src="assets/squat-muscles.jpg" alt="Muscles acting across the knee during a squat">
+    </div>
+  </div>
+  <aside class="notes">Internal forces always come in pairs across a joint — this is Newton's third law inside the body, and it is why a free body diagram has to say where you cut.</aside>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>Measuring internal forces</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">It is difficult to measure internal forces in human biomechanics
+         <strong>directly</strong>.</p>
+      <p class="small">One invasive option is strain gauges in <strong>cadaver limbs</strong>, used
+         to study how injuries happen and how they might be prevented.</p>
+      <p class="tiny muted">The strain gauge is the same device as in lecture 2 — a resistance that
+         changes when the material it is bonded to deforms.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/knee-ligaments.jpg" alt="Ligaments of the right knee">
+      <img src="assets/cadaver-knee.jpg" alt="Instrumented cadaver knee preparation">
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Measuring internal forces</h2>
+  <div class="cols a top">
+    <div>
+      <p class="small">A strain gauge or optical fibre on or in a human or animal <strong>tendon</strong>
+         can measure the <strong>magnitude</strong> of the muscle force.</p>
+      <p class="small">But what about the <em class="key">direction</em>?</p>
+      <p class="tiny muted">A gauge tells you how hard the tendon is being pulled along its own
+         length. It says nothing about where that pull points once the joint moves.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/tendon-traces.jpg" alt="Strain gauge output for three loading conditions">
+      <img src="assets/horse-tendon.jpg" alt="Strain gauge fitted to a horse's tendon">
+      <img src="assets/calf-anatomy.jpg" alt="Calf muscles and the Achilles tendon">
+    </div>
+  </div>
+  <aside class="notes">This is the hinge into the next four slides: we have magnitudes from the gauges and angles from the anatomy, and we want one resultant force.</aside>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Internal force vector resolution</h2>
+  <p class="lead">Fibre optic force measurement gives the individual quadriceps forces during a squat.
+     <strong>Find the resultant quadriceps force.</strong></p>
+  <div class="iplot wide" data-widget="vecsum" data-step="2"></div>
+  <aside class="notes">VL = 350 N at 60°, VI = 450 N at 80°, VM = 375 N at 80°.
+Step 1 is deciding what is being asked; step 2 is drawing what you know. Both are worth slowing down on — most wrong answers in this course start with a diagram that was never drawn.
+Ask before moving on: will the answer be bigger or smaller than 1175 N?</aside>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Internal force vector resolution</h2>
+  <p class="lead"><strong>Step 3.</strong> Isolate each force and find its components with the
+     trig functions. Pick a muscle and watch its two components appear.</p>
+  <div class="iplot wide" data-widget="vecsum" data-step="3"></div>
+  <aside class="notes">Fx = F cos θ, Fy = F sin θ, with θ measured from the same axis every time. The sign comes out of the cosine — you do not have to decide it separately, and that is the point of using the angle from the positive x axis.</aside>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Internal force vector resolution</h2>
+  <p class="lead"><strong>Step 4.</strong> Add the components — horizontal with horizontal, vertical
+     with vertical. The same table you used for linear kinematics.</p>
+  <div class="iplot wide" data-widget="vecsum" data-step="4"></div>
+  <aside class="notes">Rx = Σ horizontal = −175 − 78.1 + 65.1 = −188.8 N.
+Ry = Σ vertical = 303 + 443 + 369 = 1115 N.
+The horizontal pulls very nearly cancel, which is the anatomy doing its job: VM balances VL and VI so the patella tracks straight.</aside>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>Internal force vector resolution</h2>
+  <p class="lead"><strong>Step 5.</strong> Pythagoras for the magnitude, the tangent for the
+     direction — and then check which quadrant the answer is actually in.</p>
+  <div class="iplot wide" data-widget="vecsum" data-step="5"></div>
+  <aside class="notes">R² = Rx² + Ry², so R = 1130.9 N — less than the 1175 N you get by adding the magnitudes, because the sideways pulls partly cancel.
+tan θ = Ry/Rx = 1115 / −188.8. A calculator returns −80.4°, which points down and to the right. Rx is negative and Ry is positive, so the resultant points up and to the left: 99.6° from the positive x axis. Make them check the quadrant every time.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>External forces</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Forces that act on an object as a result of its <strong>surroundings</strong>.
+         Two kinds:</p>
+      <ul class="small">
+        <li><strong>Non-contact</strong> — gravity, magnetic, electrical</li>
+        <li><strong>Contact</strong> — between objects touching each other, solid or fluid</li>
+      </ul>
+      <p class="small">Air resistance and water resistance are fluid contact forces. Contact forces
+         occur in pairs: action and reaction.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/earth.jpg" alt="Earth">
+      <img src="assets/magnet.jpg" alt="Horseshoe magnet">
+      <img src="assets/electrical.jpg" alt="Electrical hazard symbol">
+    </div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Gravity and contact forces</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">The force of gravity acting on us is what causes us to
+         <strong>contact the ground</strong> — and the ground pushes back.</p>
+      <p class="small">In the water or in the air, the contact force is spread over the whole
+         surface of the body instead of the soles of the feet.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/runner.jpg" alt="Runner">
+      <img src="assets/swimmer.jpg" alt="Swimmer">
+    </div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Gravity</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">We experience gravity as <strong>weight</strong>.</p>
+      <p class="small">All objects with mass attract other objects with mass. The magnitude depends
+         on both masses and the distance between them. The Earth attracts you, and you attract the
+         Earth with an equal and opposite force.</p>
+      <p class="small">The result is a constant force on us, pointed at the centre of the Earth and
+         acting through our <strong>centre of mass</strong>.</p>
+    </div>
+    <div class="fig"><img src="assets/gravitation.jpg" alt="Newton's law of universal gravitation"></div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section>
+  <h2>Gravity and weight</h2>
+  <p class="lead">Weight is the <strong>force</strong> of gravity acting on an object:
+     <span class="eq">W = mg</span>, with <span class="eq">g = 9.81 m/s²</span>.
+     So — what is your weight in newtons?</p>
+  <div class="cols a top">
+    <div class="iplot" data-widget="weight"></div>
+    <div class="fig"><img src="assets/earth-mars.jpg" alt="The same 50 kg body weighs 110 lb on Earth and 42 lb on Mars"></div>
+  </div>
+  <aside class="notes">Mass is how much of you there is; weight is how hard the planet pulls. A 70 kg student weighs about 687 N — the number to keep in your head is "kilograms times ten".
+The Mars panel is the quickest way to make the distinction stick: the mass on the slide is 50 kg in both pictures.</aside>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>Gravity and the normal force</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Gravity acts on us towards the Earth, through our centre of mass. That causes
+         us to contact the ground — and the ground must push back to hold us up.</p>
+      <p class="small">The component of the ground's force acting <strong>perpendicular to the
+         contact surface</strong> is called the <em class="key">normal force</em>.</p>
+      <p class="small">On a surface parallel to the horizontal, the normal force is
+         <strong>equal in magnitude and opposite in direction</strong> to the force of gravity.</p>
+    </div>
+    <div class="iplot" data-widget="incline" data-angle="0" data-mass="4" data-calc="0"></div>
+  </div>
+  <aside class="notes">Start here with the slope at zero, so the equal-and-opposite case is the one they see first. Everything from here is what happens when that convenient arrangement is taken away.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>On a slanted surface</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">On a slope the force of gravity <strong>still points straight at the centre
+         of the Earth</strong> — it does not tilt with the ground.</p>
+      <p class="small">But the normal force stays <strong>perpendicular to the contact surface</strong>,
+         so it is no longer equal and opposite to gravity.</p>
+      <p class="small">So how do we calculate the normal force?</p>
+    </div>
+    <div class="fig"><img src="assets/slope-diagram.jpg" alt="Force diagram for a cyclist coasting down a 20 degree slope"></div>
+  </div>
+  <aside class="notes">The figure on the right is the worked case from the original slide: a 1000 N weight on a 20° slope gives 940 N perpendicular and 342 N parallel. The interactive version on the next slides reproduces it — try 102 kg at 20°.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Tilt the axes, not gravity</h2>
+  <p class="lead">With contact forces it is customary to build an axis system that is
+     <strong>parallel and perpendicular to the contact surface</strong>. Then every force in the
+     problem is resolved along those two axes.</p>
+  <div class="cols b top">
+    <ul class="small">
+      <li><strong>Perpendicular</strong> to the surface — the <em class="key">compression</em> axis</li>
+      <li><strong>Parallel</strong> to the surface — the <em class="key">shear</em> axis</li>
+      <li>The normal force is equal and opposite to the component of gravity that is
+          perpendicular to the surface</li>
+    </ul>
+    <div class="iplot" data-widget="incline" data-angle="20" data-mass="4" data-calc="0"></div>
+  </div>
+  <aside class="notes">The axes are drawn before any force, deliberately. Choosing the axis system is the decision that makes the rest of the problem arithmetic rather than geometry.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Worked example — 4 kg on a 20° slope</h2>
+  <p class="lead">We need the angle of the slant (20°) and the mass of the object (4 kg). Draw the
+     diagram and the axes, find the weight, then resolve it along the axes.</p>
+  <div class="iplot wide" data-widget="incline" data-angle="20" data-mass="4"></div>
+  <aside class="notes">W = mg = 4 × 9.81 = 39.24 N.
+Perpendicular (adjacent) = W cos 20° = 36.87 N — and the normal force equals it.
+Parallel (opposite) = W sin 20° = 13.42 N — and something has to hold that, or the block slides.
+Drag the angle from 0 to 45 and watch the two numbers trade places. At 45° they are equal.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>The general rule</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">For any incline of angle <span class="eq">θ</span>, the two components of the
+         weight are always:</p>
+      <p class="eq eq-in"><span>parallel</span><span class="op">=</span><span>mg sin θ</span></p>
+      <p class="eq eq-in"><span>perpendicular</span><span class="op">=</span><span>mg cos θ</span></p>
+      <p class="small muted">Where <span class="eq">mg</span> is the weight of the object.
+         At θ = 0 the whole weight is perpendicular; at θ = 90° all of it is shear.</p>
+    </div>
+    <div class="iplot" data-widget="incline" data-angle="30" data-mass="4" data-calc="0"></div>
+  </div>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Friction</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">The parallel component of gravity tends to pull the block
+         <strong>down the surface</strong>.</p>
+      <p class="small">Friction force must be <strong>equal and opposite</strong> to the parallel
+         force, or the block would slide.</p>
+      <p class="small">Friction is proportional to the <strong>normal force</strong> and acts
+         parallel to the surface. More on friction in a following lecture.</p>
+    </div>
+    <div class="iplot" data-widget="incline" data-angle="25" data-mass="4" data-friction="1" data-calc="0"></div>
+  </div>
+  <aside class="notes">Steepen the slope: the shear grows and the normal force — which is what friction has to work with — shrinks at the same time. That is why there is an angle beyond which nothing stays put.</aside>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Forces in 3D</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">When we move we exert force in <strong>all directions</strong>.</p>
+      <p class="small">Both internal and external forces are resolved into components with reference
+         to <strong>anatomical planes</strong> and axis systems.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/skeleton.jpg" alt="Skeleton in the anatomical planes">
+      <img src="assets/axes3d.jpg" alt="Three dimensional axis system">
+    </div>
+  </div>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>One step, three components</h2>
+  <p class="lead">In the sagittal plane, the force we exert on the ground is not just downward —
+     part of it is parallel to the surface. In the frontal plane there is a third, sideways part.</p>
+  <div class="iplot wide" data-widget="grf3d"></div>
+  <aside class="notes">The vertical component is the one everybody quotes and the one that looks impressive. The fore–aft component is a twentieth of it and tells you far more: it is negative through the first half of stance (the ground braking you) and positive through the second (pushing you along). The crossing point is mid-stance.
+Press "take a step" and watch the sign flip.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Walking, seen from two planes</h2>
+  <div class="cols top">
+    <div class="fig"><img src="assets/walk-sagittal.jpg" alt="Ground reaction force vectors in the sagittal plane while walking"></div>
+    <div class="fig"><img src="assets/walk-frontal.jpg" alt="Ground reaction force vectors in the frontal plane"></div>
+  </div>
+  <p class="small muted center">The same force, drawn twice: once as it appears looking from the side
+     (x and z), once from behind (y and z).</p>
+</section>
+
+<!-- 25 -->
+<section>
+  <h2>Measuring external force</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>Strain gauges</li>
+        <li>Force transducers</li>
+        <li>Force plates</li>
+        <li>Load cells</li>
+        <li>Springs</li>
+        <li>Piezoelectric crystals</li>
+        <li>Dynamometers</li>
+      </ul>
+      <p class="tiny muted">An applied force deforms something, and that deformation is measured and
+         amplified by the electronics. Every device on this list is a way of making a deformation
+         into a voltage.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/loadcell-s.jpg" alt="S-type load cell">
+      <img src="assets/loadcell-disc.jpg" alt="Disc load cell">
+      <img src="assets/grip-dynamometer.jpg" alt="Grip dynamometer">
+      <img src="assets/forceplate.jpg" alt="Force plate">
+    </div>
+  </div>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Single-axis devices</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">In many clinical settings force transducers are simple
+         <strong>single-axis</strong> devices.</p>
+      <p class="small">A hand-held dynamometer is a good example, used to determine muscle strength
+         capabilities and weaknesses.</p>
+      <p class="tiny muted">One axis means one number — and it is only the right number if the
+         device is held along the line of the force you meant to measure.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/microfet.jpg" alt="Hand-held dynamometer">
+      <img src="assets/dynamometer-test.jpg" alt="Hand-held dynamometer in use">
+    </div>
+  </div>
+</section>
+
+<!-- 27 -->
+<section>
+  <h2>Force plates and instrumented treadmills</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">The gold standard measurement of force in biomechanics.</p>
+      <div class="ditable-wrap">
+        <table class="ditable">
+          <thead><tr><th>Pros</th><th>Cons</th></tr></thead>
+          <tbody>
+            <tr><td>Accurate measure of ground reaction force</td><td>Difficult to use in the field</td></tr>
+            <tr><td>Reliable</td><td>Cannot measure pressure distribution under the foot</td></tr>
+            <tr><td>Multidimensional — all three components</td><td>One or two contacts per trial</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="imgrow">
+      <img src="assets/treadmill-schematic.jpg" alt="Instrumented treadmill with front and back force sensors">
+      <img src="assets/mocap-plate.jpg" alt="Motion capture skeleton over a force plate">
+    </div>
+  </div>
+  <aside class="notes">These are ideal and accurate but impractical for field-based measurement. That single limitation is what the rest of the lecture is about.</aside>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Pressure — the cheap alternative</h2>
+  <p class="lead">Often it is not feasible to measure external force directly. Pressure is the
+     <strong>force per unit area</strong> directed perpendicular to a surface:
+     <span class="eq">P = F / A</span>.</p>
+  <div class="iplot wide" data-widget="pressure"></div>
+  <aside class="notes">Same body, same weight, wildly different pressure — because the area changed, not the force. The spike is the extreme case: a whole body weight through under a square centimetre.
+The lesson for the rest of the lecture: a pressure sensor gives you force only if you also know the area it is acting over, and under a real foot that area is changing every millisecond.</aside>
+</section>
+
+<!-- 29 -->
+<section>
+  <h2>How pressure sensors work</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Most common pressure sensors use the <strong>piezoresistive effect</strong>.</p>
+      <ul class="small">
+        <li><em>Piezo</em> — to squeeze or press</li>
+        <li>The piezoresistive effect is a change in the electrical resistivity of a semiconductor
+            or metal when mechanical strain is applied</li>
+      </ul>
+      <p class="tiny muted">A piezoresistive sensor can be very thin, light and flexible, and many
+         can be tiled together to make a matrix.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/piezoresistive.jpg" alt="A load changing the resistance of a sensing element">
+      <img src="assets/fsr.jpg" alt="Force sensing resistors">
+      <img src="assets/pressure-3d.jpg" alt="Pressure field rendered as a 3D surface">
+    </div>
+  </div>
+</section>
+
+<!-- 30 -->
+<section>
+  <h2>Pressure sensing under the foot</h2>
+  <div class="cols b top">
+    <div>
+      <div class="ditable-wrap">
+        <table class="ditable">
+          <thead><tr><th>Pros</th><th>Cons</th></tr></thead>
+          <tbody>
+            <tr><td>Portable, thin, flexible, lightweight</td><td>Unidimensional — vertical loading only</td></tr>
+            <tr><td>Approximation of force</td><td>Precision, accuracy and reliability need testing</td></tr>
+            <tr><td>Accurate for the <em>timing</em> of foot loading</td><td>Calibration drifts with use</td></tr>
+            <tr><td>Measures the distribution a force plate cannot</td><td>Sensor array is coarse</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="imgrow">
+      <img src="assets/pressure-mat.jpg" alt="Pressure sensing mat">
+      <img src="assets/pressure-feet.jpg" alt="Plantar pressure maps of both feet">
+    </div>
+  </div>
+  <aside class="notes">Many sensors have been made and there are important capabilities and limitations to their use. Timing is the thing they are genuinely good at; absolute force is the thing they are not.</aside>
+</section>
+
+<!-- 31 -->
+<section>
+  <h2>Insole systems</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">There are many insole <strong>plantar pressure measurement systems</strong>
+         (PPMS). They offer the possibility of measuring external pressure — and calculating an
+         approximate external force — outside the lab.</p>
+      <p class="tiny muted">Research grade, commercial and one-off engineering builds. Even Nike
+         made one. All of them trade accuracy for the ability to walk out of the door.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/pedar.jpg" alt="Pedar insole system in a shoe">
+      <img src="assets/insole-green.jpg" alt="Instrumented insoles with a sensor array">
+      <img src="assets/shoe-insole.jpg" alt="Pressure sensing insole fitted to a shoe">
+    </div>
+  </div>
+</section>
+
+<!-- 32 -->
+<section>
+  <h2>Centre of pressure</h2>
+  <p class="lead">The centre of pressure is the <strong>instantaneous point of application</strong>
+     of the ground reaction force. Watch where it goes during one step.</p>
+  <div class="iplot wide" data-widget="cop"></div>
+  <aside class="notes">Not where the pressure is highest — the average of the whole field, weighted by pressure. It starts on the heel, runs forward along the lateral border, crosses to the met heads and leaves under the big toe.
+Measuring how that path moves tells us about the GRF vector and how the foot is being used. A wobbling COP in quiet standing is the standard measure of balance.</aside>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>Insoles against force plates</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">A pressure-sensing insole with a limited sensor array can still determine
+         centre of pressure comparably to a force plate.</p>
+      <p class="small">Correlations of <strong>0.87 in x</strong> and <strong>0.99 in y</strong>,
+         with RMS errors of about 11 mm and 17 mm.</p>
+      <p class="tiny muted">Good enough to track the path; not good enough to replace the plate
+         where the absolute force matters.</p>
+    </div>
+    <div class="fig"><img src="assets/cop-compare.jpg" alt="Centre of pressure path from an insole compared with a force plate"></div>
+  </div>
+  <aside class="notes">Dyer and Bamberg, "Instrumented insole vs. force plate: a comparison of center of plantar pressure". The y direction — heel to toe — is the easy one; side to side is where a sparse array struggles.</aside>
+</section>
+
+<!-- 34 -->
+<section>
+  <h2>Instrumented devices</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Force and pressure sensors can be added to mobility devices so that the object
+         itself becomes <strong>instrumented</strong>, and we can measure the forces an individual
+         produces during real activity.</p>
+      <p class="tiny muted">Pedals, handrims, crutches, walker handles — anywhere a person pushes on
+         equipment is somewhere a transducer can go.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/bicycle.jpg" alt="Bicycle">
+      <img src="assets/treadmill-walker.jpg" alt="Instrumented treadmill and walking frame">
+    </div>
+  </div>
+</section>
+
+<!-- 35 -->
+<section>
+  <h2>Force plate application — running</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Two things get compared:</p>
+      <ul class="small">
+        <li><strong>Running style</strong> — heel strike or forefoot strike</li>
+        <li><strong>Footwear</strong> — barefoot, shoes, minimal shoes</li>
+      </ul>
+      <p class="small">Lieberman et al., <em>Foot strike patterns and collision forces in habitually
+         barefoot versus shod runners</em>, <em>Nature</em> 463, 2010.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/vibram.jpg" alt="Minimal footwear">
+      <img src="assets/treadmill-schematic.jpg" alt="Instrumented treadmill used in the study">
+    </div>
+  </div>
+</section>
+
+<!-- 36 -->
+<section>
+  <h2>What the force trace shows</h2>
+  <p class="lead">Every style lands on about the same peak force. What separates them is the
+     <strong>spike in the first 50 milliseconds</strong> — and how fast the load arrives.</p>
+  <div class="iplot wide" data-widget="grf"></div>
+  <aside class="notes">Turn the traces on one at a time. A shod heel strike has a visible impact transient; a bare heel strike has a bigger, sharper one; a forefoot strike has none at all, because the ankle and the calf absorb the collision instead of the heel pad.
+Point at the rate column, not the peak column. Two runners can have identical peak forces and a threefold difference in loading rate, and it is the rate that is associated with injury in the literature.
+These traces are modelled on the published curves, not measured here.</aside>
+</section>
+
+<!-- 37 -->
+<section>
+  <h2>The published traces</h2>
+  <div class="cols top">
+    <div class="fig"><img src="assets/lieberman-a.jpg" alt="Vertical ground reaction force for a shod heel strike, showing the impact transient"></div>
+    <div class="fig"><img src="assets/lieberman-b.jpg" alt="Vertical ground reaction force for a barefoot heel strike"></div>
+  </div>
+  <p class="small muted center">Lieberman et al., <em>Nature</em> 463, 531–535 (2010).
+     The arrow marks the impact transient.</p>
+</section>
+
+<!-- 38 -->
+<section>
+  <h2>Pressure follows the same story</h2>
+  <div class="cols a top">
+    <div>
+      <p class="small">Important changes in the <strong>force profile</strong> and in the
+         <strong>kinematics</strong> can both be linked to what the plantar pressure is doing.</p>
+      <p class="small">A forefoot strike puts the first load under the metatarsal heads; a heel
+         strike puts it under a heel pad a few centimetres behind the ankle, with the leg almost
+         straight.</p>
+      <p class="tiny muted">Daniel Lieberman's group keeps its material at
+         barefootrunning.fas.harvard.edu</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/pressure-foot.jpg" alt="Plantar pressure distribution under one foot">
+      <img src="assets/cop-outline.jpg" alt="Centre of pressure path with gait events marked">
+    </div>
+  </div>
+</section>
+
+<!-- 39 -->
+<section>
+  <h2>Back to the inside</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Force plates and pressure sensors measure <strong>external</strong> forces.
+         It remains difficult to measure the forces at the bones, joints and tendons directly.</p>
+      <p class="small">But we can <strong>approximate</strong> the internal forces:</p>
+      <ul class="small">
+        <li><strong>Inverse dynamics</strong> — work backwards from the measured external force and
+            the measured motion</li>
+        <li><strong>Electromyography</strong> — measure the electrical activity of the muscles that
+            produced them</li>
+      </ul>
+    </div>
+    <div class="imgrow">
+      <img src="assets/joint-forces.jpg" alt="Compressive, shear and joint reaction forces at the knee">
+      <img src="assets/emg.jpg" alt="Electromyography recording">
+    </div>
+  </div>
+  <aside class="notes">Both are later lectures. What matters here is that neither is a measurement of the internal force — they are inferences, and every assumption in the model ends up inside the answer.</aside>
+</section>
+
+<!-- 40 -->
+<section>
+  <h2>What to take away</h2>
+  <ul class="small">
+    <li>A force is a <strong>push or a pull</strong> — a vector with a magnitude, a direction, a
+        line of action and a point of application.</li>
+    <li><span class="eq">F = ma</span>, and weight is just gravity's version:
+        <span class="eq">W = mg</span>.</li>
+    <li>Several forces are combined by <strong>resolving each into components</strong>, adding the
+        components, and rebuilding one resultant. Check the quadrant.</li>
+    <li>On a slope, gravity does not tilt — the <strong>axes</strong> do. The perpendicular component
+        is <span class="eq">mg cos θ</span> and the shear is <span class="eq">mg sin θ</span>.</li>
+    <li>External force is measured well by <strong>force plates</strong> and approximated cheaply by
+        <strong>pressure sensors</strong>, which measure distribution and timing rather than force.</li>
+    <li>Internal forces are mostly <strong>inferred</strong>, not measured.</li>
+  </ul>
+</section>
+
+<!-- 41 -->
+<section>
+  <h2>References and reading</h2>
+  <ul class="small">
+    <li>McGinnis, <em>Biomechanics of Sport and Exercise</em>, Chapter 1, pp. 20–32 and 39.</li>
+    <li>Lieberman, D. E. et al. (2010). Foot strike patterns and collision forces in habitually
+        barefoot versus shod runners. <em>Nature</em> <strong>463</strong>, 531–535.</li>
+    <li>Dyer, P. S. &amp; Bamberg, S. J. M. Instrumented insole vs. force plate: a comparison of
+        centre of plantar pressure. <em>IEEE EMBC</em>.</li>
+    <li>Harvard Skeletal Biology Lab — barefootrunning.fas.harvard.edu</li>
+  </ul>
+  <p class="tiny muted">The running force traces in this deck are modelled on the published curves —
+     peak, timing and loading rate follow Lieberman et al. They are for illustration, not data.</p>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js"></script>
+<script src="mobile.js"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="deck-core.js"></script>
+<script src="forces.js"></script>
+<script src="deck-tools.js"></script>
+<script src="fit.js"></script>
+</body>
+</html>

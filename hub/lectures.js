@@ -37,10 +37,20 @@ window.EPHE341_LECTURES = [
     live: ['graphing calculator', 'curve fitting', 'a real 100 m final',
            'a phone accelerometer trial', 'a golf swing in motion capture'] },
 
+  { n: '4', title: 'Forces',
+    path: 'lectures/04-forces',
+    blurb: 'What a push or a pull actually is, how to add several of them into one, and how we ' +
+           'measure the forces we can reach — and approximate the ones we cannot.',
+    slides: 41, widgets: 16, updated: '2026-09-17',
+    handout: 'handout.pdf',
+    live: ['anatomy of a force vector', 'F = ma', 'resolve the quadriceps forces',
+           'weight on four worlds', 'a block on a slope you can tilt',
+           'pressure against contact area', 'centre of pressure through a step',
+           'heel strike against forefoot strike'] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
-  { n: '4',  title: 'Forces' },
   { n: '5',  title: 'Signals' },
   { n: '6',  title: 'Linear kinetics 1' },
   { n: '7',  title: 'Linear kinetics 2' },
