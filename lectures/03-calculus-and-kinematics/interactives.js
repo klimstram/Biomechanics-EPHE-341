@@ -114,7 +114,11 @@ Axes.prototype.frame = function (opt) {
   }
   if (opt.ylabel) {
     var ys = opt.ysize || 16.5;
-    c.save(); c.translate(opt.ysize ? 11 : 13, (this.pt + this.H - this.pb) / 2); c.rotate(-Math.PI / 2);
+    /* ylabelx: where the rotated label sits. Panels drawn SIDE BY SIDE inside
+       one canvas each need their own x, or both labels land on the left edge
+       on top of each other. */
+    c.save(); c.translate(opt.ylabelx != null ? opt.ylabelx : (opt.ysize ? 11 : 13),
+                          (this.pt + this.H - this.pb) / 2); c.rotate(-Math.PI / 2);
     c.textAlign = 'center'; c.textBaseline = 'top'; c.fillStyle = INK;
     c.font = '700 ' + ys + 'px ui-sans-serif,system-ui,sans-serif';
     c.fillText(opt.ylabel, 0, 0); c.restore();
@@ -289,6 +293,9 @@ W.secant = function (node, d) {
 
   function show(all) {
     timers.forEach(clearTimeout); timers = [];
+    /* data-anim="0": the slide animates its own equation in the text column,
+       and two things building themselves at once is one too many. */
+    if (d.anim === '0') all = true;
     beats.forEach(function (bt, i) {
       if (all) { bt.classList.remove('out'); bt.classList.add('in'); return; }
       bt.classList.add('out'); bt.classList.remove('in');
@@ -362,7 +369,7 @@ W.sections = function (node, d) {
   var side = el('div', 'icalc');
   u.cv.parentNode.parentNode.insertBefore(side, u.ctl);
 
-  var ax = new Axes(u.cv, { w: 900, h: 300, padl: 70, xmin: 0, xmax: 6.35, ymin: -2, ymax: 36 });
+  var ax = new Axes(u.cv, { w: 900, h: 400, padl: 70, xmin: 0, xmax: 6.35, ymin: -2, ymax: 36 });
   var out = readout(u.ctl);
   var n = parseInt(d.start || 1, 10), playing = false, timer, focus = 0;
 
@@ -381,12 +388,16 @@ W.sections = function (node, d) {
       var m = (D(b) - D(a)) / (b - a);
       vals.push(m);
       var on = (i === focus);
-      ax.poly([[a, D(a)], [b, D(b)]], { color: on ? ACC : MUTED_ACC, width: on ? 3.6 : 2.2 });
+      /* Every chord is drawn in full colour, not a faded one: against the
+         white curve underneath, a translucent red read as if it were behind.
+         The chord being averaged is told apart by weight and by its rise and
+         run, which is what the panel beside it is talking about anyway. */
+      ax.poly([[a, D(a)], [b, D(b)]], { color: ACC, width: on ? 4.2 : 2.6 });
       if (on) {
         ax.poly([[a, D(a)], [b, D(a)]], { color: ACC, width: 1.5, dash: [4, 3] });
         ax.poly([[b, D(a)], [b, D(b)]], { color: ACC, width: 1.5, dash: [4, 3] });
       }
-      ax.dots([[a, D(a)], [b, D(b)]], { color: on ? ACC : MUTED_ACC, r: on ? 4.6 : 3.2 });
+      ax.dots([[a, D(a)], [b, D(b)]], { color: ACC, r: on ? 5 : 3.4 });
     }
 
     // arithmetic panel
@@ -776,18 +787,182 @@ W.riemann = function (node, d) {
     });
     u.ctl.appendChild(seg);
   }
-  var pb = playBtn(u.ctl, '▶ Shrink the base');
-  pb.addEventListener('click', function () {
+  /* data-play="0": some slides want the slider and nothing else. */
+  var pb = d.play === '0' ? null : playBtn(u.ctl, '▶ Shrink the base');
+  if (pb) pb.addEventListener('click', function () {
     playing = !playing; pb.textContent = playing ? '❚❚ Pause' : '▶ Shrink the base';
     if (playing) { if (n > 150) { n = 2; s.set(2); } loop(); } else cancelAnimationFrame(raf);
   });
   function loop() {
     acc += STEP;
     if (acc >= 1) { n = Math.min(160, n + Math.floor(acc)); acc -= Math.floor(acc); s.set(n); }
-    if (n >= 160) { playing = false; pb.textContent = '↻ Replay'; return; }
+    if (n >= 160) { playing = false; if (pb) pb.textContent = '↻ Replay'; return; }
     raf = requestAnimationFrame(loop);
   }
-  node._stop = function () { playing = false; cancelAnimationFrame(raf); pb.textContent = '▶ Shrink the base'; };
+  node._stop = function () { playing = false; cancelAnimationFrame(raf); if (pb) pb.textContent = '▶ Shrink the base'; };
+  node._draw = draw;
+  draw();
+};
+
+
+/* --- 8b. squeezing the area between a lower and an upper sum ---
+
+   The point these three slides are making is not "rectangles approximate an
+   area". It is that a Riemann sum gives you a number you can TRUST: build the
+   rectangles so they all fit UNDER the curve and you have a floor; build them
+   so they all poke OVER it and you have a ceiling. The true area is somewhere
+   between, always, and the only question worth asking is how few rectangles
+   it takes before that gap is small enough to stop.
+
+   So the figure shows both sums at once — the solid block is the lower sum,
+   the paler band on top is what the upper sum adds — and beside it a second
+   panel plots the two bounds against the number of rectangles, pinching in on
+   the true area. Pick a tolerance and it marks the n where the gap closes.  */
+W.bracket = function (node, d) {
+  var u = build(node);
+  var wide = d.conv !== '0';
+  var W0 = wide ? 1000 : 640, H0 = wide ? 430 : 400;
+  var ax = new Axes(u.cv, { w: W0, h: H0, xmin: 0, xmax: 8.6, ymin: 0, ymax: 3.25, padl: 56 });
+  var out = readout(u.ctl);
+  var NMAX = 200;
+  var n = Math.max(2, Math.min(NMAX, parseInt(d.start || 6, 10)));
+  var tol = d.tol ? parseFloat(d.tol) : 10;     /* per cent of the true area */
+  var showTol = wide && d.tolpick !== '0';
+
+  var TRUE = (function () {
+    var s = 0, N = 40000, h = 8.6 / N, i;
+    for (i = 0; i < N; i++) s += bimodal((i + 0.5) * h) * h;
+    return s;
+  })();
+
+  /* lowest and highest the curve gets inside one rectangle's base */
+  function span(x0, x1) {
+    var lo = Infinity, hi = -Infinity, k, y;
+    for (k = 0; k <= 24; k++) {
+      y = bimodal(x0 + (x1 - x0) * k / 24);
+      if (y < lo) lo = y;
+      if (y > hi) hi = y;
+    }
+    return [lo, hi];
+  }
+  function sums(m) {
+    var w = 8.6 / m, L = 0, U = 0, i, sp;
+    for (i = 0; i < m; i++) {
+      sp = span(i * w, (i + 1) * w);
+      L += sp[0] * w; U += sp[1] * w;
+    }
+    return [L, U];
+  }
+  /* the fewest rectangles whose bracket is inside the tolerance */
+  function needed(pc) {
+    var m, g;
+    for (m = 1; m <= NMAX; m++) {
+      g = sums(m); if ((g[1] - g[0]) / TRUE * 100 <= pc) return m;
+    }
+    return null;
+  }
+
+  var CURVE = [];                                  /* cached convergence data */
+  (function () { var m; for (m = 1; m <= NMAX; m++) CURVE.push(sums(m)); })();
+
+  function draw() {
+    var g = CURVE[n - 1], L = g[0], U = g[1], w = 8.6 / n, i, sp;
+    ax.clear();
+
+    /* ---------- left: the rectangles ---------- */
+    ax.pl = 56; ax.pr = wide ? W0 - 498 : 18;
+    ax.setRange(0, 8.6, 0, 3.25);
+    ax.frame({ grid: true, xticks: [0, 2, 4, 6, 8], yticks: [0, 1, 2, 3],
+               xlabel: 'Time (s)', ylabel: 'Acceleration (m/s²)' });
+    for (i = 0; i < n; i++) {
+      sp = span(i * w, (i + 1) * w);
+      /* the overhang first, then the block that is certainly under the curve */
+      ax.rect(i * w, sp[0], (i + 1) * w, sp[1], { fill: ACCFILL, stroke: MUTED_ACC });
+      ax.rect(i * w, 0, (i + 1) * w, sp[0], { fill: FILL2, stroke: SOFT });
+    }
+    ax.fn(bimodal, { from: 0, to: 8.6, color: INK, width: 2.4 });
+    ax.text('every rectangle fits under the curve', 0.25, 3.08,
+            { color: BLUE, size: 13, weight: '700' });
+    ax.text('…and this much is the overshoot', 0.25, 2.86,
+            { color: ACC, size: 13, weight: '700' });
+
+    /* ---------- right: the two bounds closing in ---------- */
+    if (wide) {
+      var need = showTol ? needed(tol) : null;
+      ax.pl = 590; ax.pr = 26;
+      var YLO = 0, YHI = CURVE[2][1] * 1.06;      /* the n = 3 ceiling is the top of the picture */
+      ax.setRange(0, NMAX, YLO, YHI);
+      ax.frame({ grid: true, xticks: [2, 50, 100, 150, 200],
+                 yticks: ticks(YLO, YHI, 4),
+                 xlabel: 'number of rectangles', ylabel: 'estimated area',
+                 ylabelx: ax.pl - 66,
+                 xfmt: function (v) { return v.toFixed(0); },
+                 yfmt: function (v) { return v.toFixed(1); } });
+      /* the band of everything the sum has not ruled out yet. Clipped to the
+         panel: at one or two rectangles the ceiling is far off the top of any
+         sensible scale, and letting that run would squash everything else. */
+      var c = ax.c;
+      c.save();
+      c.beginPath();
+      c.rect(ax.pl, ax.pt, ax.W - ax.pr - ax.pl, ax.H - ax.pb - ax.pt);
+      c.clip();
+      c.fillStyle = ACCFILL; c.beginPath();
+      CURVE.forEach(function (p, k) {
+        var X = ax.X(k + 1), Y = ax.Y(p[1]);
+        if (!k) c.moveTo(X, Y); else c.lineTo(X, Y);
+      });
+      for (i = CURVE.length - 1; i >= 0; i--) c.lineTo(ax.X(i + 1), ax.Y(CURVE[i][0]));
+      c.closePath(); c.fill();
+      ax.poly([[0, TRUE], [NMAX, TRUE]], { color: GRN, width: 2, dash: [6, 4] });
+      ax.poly(CURVE.map(function (p, k) { return [k + 1, p[1]]; }), { color: ACC, width: 2.2 });
+      ax.poly(CURVE.map(function (p, k) { return [k + 1, p[0]]; }), { color: BLUE, width: 2.2 });
+      ax.poly([[n, Math.max(L, YLO)], [n, Math.min(U, YHI)]], { color: INK, width: 1.6, dash: [3, 3] });
+      if (U <= YHI) ax.dots([[n, U]], { color: ACC, r: 4.6 });
+      ax.dots([[n, L]], { color: BLUE, r: 4.6 });
+      if (need) {
+        ax.poly([[need, YLO], [need, YHI]], { color: ORG, width: 1.6, dash: [5, 4] });
+      }
+      c.restore();
+      ax.text('true area ' + TRUE.toFixed(2), NMAX - 1, TRUE + YHI * 0.045,
+              { color: GRN, size: 13, align: 'right' });
+      if (need) {
+        ax.text(need + ' rectangles', Math.min(need + 4, NMAX - 62), YHI * 0.93,
+                { color: ORG, size: 13 });
+      }
+    }
+    ax.pl = 56; ax.pr = wide ? W0 - 560 : 18;
+
+    var gap = U - L, pc = gap / TRUE * 100;
+    out.innerHTML =
+      n + ' rectangle' + (n === 1 ? '' : 's') +
+      ' &nbsp;·&nbsp; lower <b class="b">' + L.toFixed(3) + '</b>' +
+      ' &nbsp;≤&nbsp; true area <b class="g">' + TRUE.toFixed(3) + '</b>' +
+      ' &nbsp;≤&nbsp; upper <b class="r">' + U.toFixed(3) + '</b>' +
+      ' &nbsp;·&nbsp; the answer is pinned to <b>' + gap.toFixed(3) + '</b> (' + pc.toFixed(1) + '%)' +
+      '<span class="hint">the true area is never outside the bracket — more rectangles only ' +
+      'narrow it' + (showTol ? ', and the marker shows how few it takes to get inside ' + tol + '%' : '') +
+      '</span>';
+  }
+
+  var s = slider(u.ctl, 'Number of rectangles', 2, NMAX, 1, Math.max(2, n),
+    function (v) { return v; }, function (v) { n = v; draw(); },
+    { scale: 5, tick: function (v) { return v.toFixed(0); } });
+
+  if (wide && showTol) {
+    var row = el('div', 'icalc-chips');
+    [20, 10, 5].forEach(function (pc) {
+      var b = el('button', 'icalc-chip' + (pc === tol ? ' on' : ''), 'within ' + pc + '%');
+      b.addEventListener('click', function () {
+        tol = pc;
+        Array.prototype.forEach.call(row.children, function (x) { x.classList.remove('on'); });
+        b.classList.add('on');
+        var m = needed(pc);
+        if (m) s.set(m); else draw();
+      });
+      row.appendChild(b);
+    });
+    u.ctl.appendChild(row);
+  }
   node._draw = draw;
   draw();
 };
@@ -1445,6 +1620,8 @@ W.sprint = function (node) {
   u.cv.parentNode.parentNode.classList.add('isplit', 'isprint');
   var side = el('div', 'icalc');
   u.cv.parentNode.parentNode.insertBefore(side, u.ctl);
+  var tab = el('div', 'isp-tab');
+  u.cv.parentNode.parentNode.insertBefore(tab, u.ctl);
 
   var TMAX = 9.84;
   var ax = new Axes(u.cv, { w: 940, h: 380, padl: 64, padr: 70, xmin: -0.1, xmax: 10.1, ymin: 0, ymax: 100 });
@@ -1547,6 +1724,32 @@ W.sprint = function (node) {
       html += '</tbody></table>';
     }
     side.innerHTML = html;
+
+    /* ---------- the measurement itself ----------
+       Everything above is calculated. This is the only thing anybody wrote
+       down at the track: the clock reading at each 10 m mark. The segment
+       time and segment speed beside it are the first two arithmetic steps,
+       so the table is also the first slope on the slide. Rows light up as
+       the race reaches them. */
+    var B = RUNNERS[0], prev = 0, k, tk, seg;
+    var rD = '', rT = '', rS = '', rV = '';
+    for (k = 0; k < B.splits.length; k++) {
+      tk = B.splits[k]; seg = tk - prev;
+      var cls = t >= tk ? (t < (B.splits[k + 1] || 1e9) ? ' class="now"' : '') : ' class="off"';
+      rD += '<th' + cls + '>' + SPLIT_D[k] + '</th>';
+      rT += '<td' + cls + '>' + tk.toFixed(2) + '</td>';
+      rS += '<td' + cls + '>' + seg.toFixed(2) + '</td>';
+      rV += '<td' + cls + '>' + (10 / seg).toFixed(2) + '</td>';
+      prev = tk;
+    }
+    tab.innerHTML =
+      '<div class="isp-h">Bolt\u2019s 10 m splits <span>Berlin 2009 \u2014 the only thing anyone measured</span></div>' +
+      '<table><tbody>' +
+      '<tr><th class="lab">distance (m)</th>' + rD + '</tr>' +
+      '<tr><th class="lab">clock (s)</th>' + rT + '</tr>' +
+      '<tr><th class="lab">\u0394t for the 10 m (s)</th>' + rS + '</tr>' +
+      '<tr><th class="lab">10 / \u0394t (m/s)</th>' + rV + '</tr>' +
+      '</tbody></table>';
 
     var lead = Math.max.apply(null, RUNNERS.map(function (r) { return runD(r, t); }));
     var gap = lead - d;
@@ -1778,6 +1981,10 @@ W.imu = function (node, d) {
   var out = readout(u.ctl);
 
   var N = S.t.length, TEND = S.t[N - 1];
+  /* data-scrub="0" drops the time slider and the replay button (the whole
+     trial is shown at once); data-rawpick="0" drops the raw/offset choice,
+     leaving the assumed resting value as the only thing to play with. */
+  var scrub = d.scrub !== '0', rawpick = d.rawpick !== '0';
   var offset = S.rest, raw = (d.mode === 'raw'), t = TEND, series;
   var playing = false, rafId = null, last = 0;
 
@@ -1883,7 +2090,7 @@ W.imu = function (node, d) {
   }
 
   var ctlRow = null;
-  if (controls) {
+  if (controls && rawpick) {
     var seg = el('div', 'iseg');
     [['off', 'Offset removed'], ['raw', 'Raw signal']].forEach(function (pair) {
       var btn = el('button', 'iseg-b' + ((pair[0] === 'raw') === raw ? ' on' : ''), pair[1]);
@@ -1897,8 +2104,11 @@ W.imu = function (node, d) {
     ctlRow = el('div', 'ictl-row');
     u.ctl.appendChild(ctlRow);
     ctlRow.appendChild(seg);
+  }
+  if (controls) {
     slider(u.ctl, 'Assumed resting value', S.rest - 0.02, S.rest + 0.02, 0.0005, S.rest,
-      function (v) { return v.toFixed(4) + ' G'; }, function (v) { offset = v; draw(); });
+      function (v) { return v.toFixed(4) + ' G'; }, function (v) { offset = v; draw(); },
+      { scale: 5, tick: function (v) { return v.toFixed(3); } });
   }
 
   if (canVid) {
@@ -1913,10 +2123,10 @@ W.imu = function (node, d) {
     ctlRow.appendChild(vb);
   }
 
-  var s1 = slider(u.ctl, 'Time', 0, TEND, 0.01, t,
+  var s1 = !scrub ? null : slider(u.ctl, 'Time', 0, TEND, 0.01, t,
     function (v) { return v.toFixed(2) + ' s'; }, function (v) { t = v; draw(); });
-  var b = playBtn(ctlRow || u.ctl, '▶ Replay the trial');
-  b.addEventListener('click', function () {
+  var b = !scrub ? null : playBtn(ctlRow || u.ctl, '▶ Replay the trial');
+  if (b) b.addEventListener('click', function () {
     playing = !playing; b.textContent = playing ? '❚❚ Pause' : '▶ Replay the trial';
     if (playing) { if (t >= TEND) { t = 0; s1.set(0); } last = 0; rafId = requestAnimationFrame(loop); }
     else cancelAnimationFrame(rafId);
@@ -1925,10 +2135,10 @@ W.imu = function (node, d) {
     if (!last) last = ts;
     t = Math.min(TEND, t + (ts - last) / 1000);
     last = ts; s1.input.value = t; s1.sync();
-    if (t >= TEND) { playing = false; b.textContent = '↻ Replay'; return; }
+    if (t >= TEND) { playing = false; if (b) b.textContent = '↻ Replay'; return; }
     rafId = requestAnimationFrame(loop);
   }
-  node._stop = function () { playing = false; cancelAnimationFrame(rafId); b.textContent = '▶ Replay the trial'; };
+  node._stop = function () { playing = false; cancelAnimationFrame(rafId); if (b) b.textContent = '▶ Replay the trial'; };
   node._draw = draw;
   draw();
 };
@@ -2001,7 +2211,10 @@ W.vkin = function (node, d) {
      columns and the wider windows were a choice nobody needed to make. */
   /* data-overlay="1" starts with the accelerometer already drawn over the video
      trace, time-aligned by S.imuLag — the two instruments on one pair of axes. */
-  var k = k0, h = 1, showImu = (d.overlay === '1') && canImu, derived = true;
+  /* data-scrub="0": no frame slider and no play button — the whole trace is
+     shown at once and the only control left is the accelerometer overlay. */
+  var scrub = d.scrub !== '0';
+  var k = scrub ? k0 : N - 1, h = 1, showImu = (d.overlay === '1') && canImu, derived = true;
   var playing = false, rafId = null, last = 0;
 
   var META = {
@@ -2068,7 +2281,7 @@ W.vkin = function (node, d) {
       ax.poly(all, { color: SOFT, width: 1.1 });
       ax.poly(shown, { color: m.col(), width: 2.2 });
       ax.dots(shown.filter(function (p, i2) { return i2 % 1 === 0; }), { color: m.col(), r: 2.2 });
-      if (arr[k] != null && isFinite(arr[k])) {
+      if (scrub && arr[k] != null && isFinite(arr[k])) {
         ax.poly([[S.t[k], r[0]], [S.t[k], arr[k]]], { color: ACC, width: 1.4, dash: [4, 3] });
         ax.dots([[S.t[k], arr[k]]], { color: ACC, r: 5 });
       }
@@ -2117,10 +2330,14 @@ W.vkin = function (node, d) {
     }
 
     out.innerHTML =
-      'frame <b>' + k + '</b> &nbsp;·&nbsp; t = <b>' + S.t[k].toFixed(2) + '</b> s' +
-      (has('y') || controls ? ' &nbsp;·&nbsp; y = <b>' + f(S.y[k]) + '</b> m' : '') +
-      (has('v') || controls ? ' &nbsp;·&nbsp; v = <b>' + f(src2.v[k]) + '</b> m/s' : '') +
-      (has('a') || controls ? ' &nbsp;·&nbsp; a = <b>' + f(src2.a[k], 2) + '</b> m/s²' : '') +
+      (scrub ? 'frame <b>' + k + '</b> &nbsp;·&nbsp; t = <b>' + S.t[k].toFixed(2) + '</b> s'
+             : 'the whole drop, end to end') +
+      (!scrub ? '' :
+      (has('y') || controls ? ' &nbsp;·&nbsp; y = <b>' + f(S.y[k]) + '</b> m' : '')) +
+      (!scrub ? '' :
+      (has('v') || controls ? ' &nbsp;·&nbsp; v = <b>' + f(src2.v[k]) + '</b> m/s' : '')) +
+      (!scrub ? '' :
+      (has('a') || controls ? ' &nbsp;·&nbsp; a = <b>' + f(src2.a[k], 2) + '</b> m/s²' : '')) +
       (controls ? '' :
         '<span class="hint">' + N + ' frames at ' + S.fps + ' fps, digitised from the Tracker plots · ' +
         (derived ? 'v and a computed from the measured y by finite difference over ±' + h + ' frame'
@@ -2141,11 +2358,11 @@ W.vkin = function (node, d) {
     });
     row.appendChild(ib);
   }
-  var s1 = slider(u.ctl, 'Frame', 0, N - 1, 1, k,
+  var s1 = !scrub ? null : slider(u.ctl, 'Frame', 0, N - 1, 1, k,
     function (v) { return (v / S.fps).toFixed(2) + ' s'; },
     function (v) { k = Math.round(v); draw(); });
-  var pb = playBtn(row, '▶ Play the drop');
-  pb.addEventListener('click', function () {
+  var pb = !scrub ? null : playBtn(row, '▶ Play the drop');
+  if (pb) pb.addEventListener('click', function () {
     playing = !playing; pb.textContent = playing ? '❚❚ Pause' : '▶ Play the drop';
     if (playing) { if (k >= N - 1) { k = 0; s1.set(0); } last = 0; rafId = requestAnimationFrame(loop); }
     else cancelAnimationFrame(rafId);
@@ -2154,11 +2371,11 @@ W.vkin = function (node, d) {
     if (!last) last = ts;
     if (ts - last >= 1000 / S.fps) {
       last = ts; k = Math.min(N - 1, k + 1); s1.input.value = k; s1.sync();
-      if (k >= N - 1) { playing = false; pb.textContent = '↻ Replay'; return; }
+      if (k >= N - 1) { playing = false; if (pb) pb.textContent = '↻ Replay'; return; }
     }
     rafId = requestAnimationFrame(loop);
   }
-  node._stop = function () { playing = false; cancelAnimationFrame(rafId); pb.textContent = '▶ Play the drop'; };
+  node._stop = function () { playing = false; cancelAnimationFrame(rafId); if (pb) pb.textContent = '▶ Play the drop'; };
   node._draw = draw;
   draw();
 };
@@ -3158,13 +3375,27 @@ var MAP = {
   'series-reveal': W.seriesReveal,
   secant: W.secant, sections: W.sections, tangent: W.tangent, 'tangent-travel': W.tangentTravel,
   'power-rule': W.powerRule, 'finite-diff': W.finiteDiff, cumulative: W.cumulative,
-  riemann: W.riemann, 'integral-sum': W.integralSum, 'initial-value': W.initialValue,
+  riemann: W.riemann, bracket: W.bracket, 'integral-sum': W.integralSum, 'initial-value': W.initialValue,
   'area-rect': W.areaRect, 'line-explorer': W.lineExplorer, drift: W.drift
 };
+
+/* Reveal listens for a drag anywhere on the deck so a swipe changes slide, and
+   on a touch screen it calls preventDefault() on the first pointermove of every
+   gesture. That also cancels the click the browser would otherwise synthesise,
+   so a tap on a text field never focuses it and the keyboard never opens — the
+   f(t) box could not be typed into on a phone at all. data-prevent-swipe is
+   reveal's own opt-out: it leaves the controls alone. Swiping anywhere else on
+   the slide, including across the graph, still turns the page. */
+function noSwipe(root) {
+  Array.prototype.forEach.call(
+    root.querySelectorAll('.ieqin, .ictls, .ictl, input, textarea, select'),
+    function (e) { e.setAttribute('data-prevent-swipe', ''); });
+}
 
 function make(n) {
   var name = n.getAttribute('data-widget');
   if (MAP[name]) { try { MAP[name](n, n.dataset); } catch (e) { console.error(name, e); } }
+  noSwipe(n);
 }
 
 /* Rebuild every figure from scratch — used when the phone is turned and the

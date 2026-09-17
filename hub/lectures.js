@@ -22,7 +22,7 @@ window.EPHE341_LECTURES = [
     path: 'lectures/02-sensors-and-data-acquisition',
     blurb: 'How a physical quantity becomes a number on a disk — the sensor, the calibration, ' +
            'and the run of electronics in between — and what each step throws away.',
-    slides: 39, widgets: 26, updated: '2026-09-15',
+    slides: 39, widgets: 26, updated: '2026-09-17',
     handout: 'handout.pdf',
     live: ['a strain gauge you can bend', 'analog against digital',
            'calibrate a force transducer', 'many sensors on one DAQ',
@@ -32,7 +32,7 @@ window.EPHE341_LECTURES = [
     path: 'lectures/03-calculus-and-kinematics',
     blurb: 'How displacement, velocity and acceleration are tied together by slopes and areas — ' +
            'and what to do when you have measured one of them and need the others.',
-    slides: 64, widgets: 54, updated: '2026-09-15',
+    slides: 62, widgets: 55, updated: '2026-09-17',
     handout: 'handout.pdf',
     live: ['graphing calculator', 'curve fitting', 'a real 100 m final',
            'a phone accelerometer trial', 'a golf swing in motion capture'] },

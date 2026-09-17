@@ -245,9 +245,22 @@ function axisTicks(lo, hi) {
 var MAP = {};
 function register(name, fn) { MAP[name] = fn; }
 
+/* Reveal listens for a drag anywhere on the deck so a swipe changes slide, and
+   on a touch screen it calls preventDefault() on the first pointermove of every
+   gesture — which also cancels the click the browser would otherwise synthesise,
+   so a tap on a control can fail to take. data-prevent-swipe is reveal's own
+   opt-out and leaves the controls alone; a swipe anywhere else still turns the
+   page. */
+function noSwipe(root) {
+  Array.prototype.forEach.call(
+    root.querySelectorAll('.ieqin, .ictls, .ictl, input, textarea, select'),
+    function (e) { e.setAttribute('data-prevent-swipe', ''); });
+}
+
 function make(n) {
   var name = n.getAttribute('data-widget');
   if (MAP[name]) { try { MAP[name](n, n.dataset); } catch (e) { console.error(name, e); } }
+  noSwipe(n);
 }
 
 /* Rebuild every figure from scratch — used when the phone is turned and the

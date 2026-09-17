@@ -2,7 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a2e">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
 <title>EPHE 341 — Calculus and Kinematics</title>
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
@@ -81,10 +91,10 @@ Ask: we only ever measured distance and time. Where did the speed and accelerati
     <div>
       <p>Here is a graph of <strong>displacement</strong> of an object with respect to time. We can use this graph to determine what the velocity of an object is over different intervals.</p>
       <p>We know:</p>
-      <p class="eq">velocity = <span class="frac"><span>Δ displacement</span><span class="den">Δ time</span></span> = <span class="frac"><span>rise</span><span class="den">run</span></span></p>
+      <p class="eq eq-in"><span>velocity</span><span class="op">=</span><span class="frac"><span>Δ displacement</span><span class="den">Δ time</span></span><span class="op">=</span><span class="frac"><span>rise</span><span class="den">run</span></span></p>
       <p>Therefore velocity is the <em class="key">slope</em> of the displacement graph.</p>
     </div>
-    <div class="iplot" data-widget="secant" data-var="d" data-start="2"></div>
+    <div class="iplot" data-widget="secant" data-var="d" data-start="2" data-anim="0"></div>
   </div>
   <aside class="notes">d(t) = −t³ + 6t². The red secant from t = 0 to t = 2 has rise 16 m over run 2 s → average velocity 8 m/s.</aside>
 </section>
@@ -97,10 +107,10 @@ Ask: we only ever measured distance and time. Where did the speed and accelerati
     <div>
       <p>Here is a graph of the <strong>velocity</strong> of an object with respect to time. We can use this graph to determine what the acceleration of the object is over different intervals.</p>
       <p>We know:</p>
-      <p class="eq">acceleration = <span class="frac"><span>Δ velocity</span><span class="den">Δ time</span></span> = <span class="frac"><span>rise</span><span class="den">run</span></span></p>
+      <p class="eq eq-in"><span>acceleration</span><span class="op">=</span><span class="frac"><span>Δ velocity</span><span class="den">Δ time</span></span><span class="op">=</span><span class="frac"><span>rise</span><span class="den">run</span></span></p>
       <p>Therefore acceleration is the <em class="key">slope</em> of the velocity graph.</p>
     </div>
-    <div class="iplot" data-widget="secant" data-var="v" data-start="2"></div>
+    <div class="iplot" data-widget="secant" data-var="v" data-start="2" data-anim="0"></div>
   </div>
   <aside class="notes">v(t) = −3t² + 12t, the derivative of the displacement curve on the previous slide.</aside>
 </section>
@@ -434,11 +444,7 @@ The equation box at the bottom is live: put any polynomial in it and the worked 
 </section>
 
 <!-- 28 -->
-<section>
-  <h2>Sample differentiation</h2>
-  <p class="lead">Velocity in, acceleration out.</p>
-  <div class="iplot" data-widget="finite-diff"></div>
-</section>
+
 
 <!-- 29 -->
 <section>
@@ -526,22 +532,15 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
   <h2>Calculus and kinematics</h2>
   <div class="cols b top">
     <div class="small">
-      <p>This only provides the <strong>final</strong> velocity as a factor of the acceleration acting over an amount of time.</p>
+      <p>The kinematics equation only provides the <strong>final</strong> velocity as a factor of the
+         acceleration acting over an amount of time.</p>
       <p>What if we want to know the velocity at <strong>different times along the way</strong>?</p>
+      <p class="fragment">Drag through the samples: the velocity at any point is the
+         <strong>cumulative sum</strong> of all the acceleration values up to that time.</p>
     </div>
     <div class="iplot" data-widget="cumulative"></div>
   </div>
-</section>
-
-<!-- 33 -->
-<section>
-  <h2>Calculus and kinematics</h2>
-  <div class="cols b top">
-    <div class="small">
-      <p>Notice that the velocity at any point is the <strong>cumulative sum</strong> of all the acceleration values up to that time.</p>
-    </div>
-    <div class="iplot" data-widget="cumulative"></div>
-  </div>
+  <aside class="notes">Same figure, two questions. First: the equation only ever gives you the end point. Then: what the running total actually is — every acceleration value so far, added up.</aside>
 </section>
 
 <!-- 34 -->
@@ -564,7 +563,7 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
     <li>The <strong>thinner</strong> the rectangles, the less error there is in the estimate of the total area under the curve.</li>
     <li>As the rectangles become <strong>infinitely thinner</strong>, the estimate becomes more accurate.</li>
   </ul>
-  <div class="iplot" data-widget="riemann" data-start="24"></div>
+  <div class="iplot" data-widget="riemann" data-start="24" data-rules="0" data-play="0"></div>
   <aside class="notes">Therefore, when calculating a Riemann sum, we always want to use rectangles of the smallest possible base. What is the smallest base that we can use? Consider the following example…</aside>
 </section>
 
@@ -575,7 +574,7 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
     <li>This is closer to the actual area…</li>
     <li>But how can we keep doing this?</li>
   </ul>
-  <div class="iplot" data-widget="riemann" data-start="60"></div>
+  <div class="iplot" data-widget="riemann" data-start="60" data-rules="0" data-play="0"></div>
   <aside class="notes">Therefore, when calculating a Riemann sum, we always want to use rectangles of the smallest possible base. What is the smallest base that we can use?</aside>
 </section>
 
@@ -611,25 +610,32 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
   <h2>Riemann sum</h2>
   <div class="cols a top">
     <div class="small">
-      <p>The Riemann sum is a method used to <strong>approximate</strong> the area under a curve. The basic idea is to:</p>
+      <p>A <strong>Riemann sum</strong> approximates the area under a curve by filling it with
+         rectangles. The useful trick is to do it <strong>twice</strong>:</p>
       <ol>
-        <li>divide the area under a curve into small rectangles (or sometimes trapezoids);</li>
-        <li>calculate the area of each rectangle;</li>
-        <li>sum these areas to get the total approximate area under the curve.</li>
+        <li>make every rectangle short enough to fit <strong>under</strong> the curve — that total
+            is too small, so it is a <em class="key">floor</em>;</li>
+        <li>make every rectangle tall enough to poke <strong>over</strong> it — that total is too
+            big, so it is a <em class="key">ceiling</em>;</li>
+        <li>the real area has to be somewhere between the two.</li>
       </ol>
+      <p class="muted">The solid block below is the floor. The pale band on top is the difference
+         the ceiling adds.</p>
     </div>
-    <div class="iplot" data-widget="riemann" data-start="6" data-slow="0.3"></div>
+    <div class="iplot" data-widget="bracket" data-start="5" data-conv="0"></div>
   </div>
-  <aside class="notes">The Riemann sum is a method in mathematics used to approximate the area under a curve. It's named after the German mathematician Bernhard Riemann. The basic idea is to divide the area under a curve into small rectangles (or sometimes trapezoids), calculate the area of each rectangle, and then sum these areas to get the total approximate area under the curve.</aside>
+  <aside class="notes">Named after Bernhard Riemann. Do not let the class settle for "it's roughly the area" — the point is that two sums, one deliberately too small and one deliberately too big, trap the answer between them. Drag the slider from 1 and watch the pale band thin out.</aside>
 </section>
 
 <!-- 40 -->
 <section>
-  <h2>Riemann rectangle and trapezoidal method</h2>
-  <p class="lead">With the Riemann sum method there is a tendency to <strong>overestimate and
-     underestimate</strong> the area, whether you use an upper, lower, middle or trapezoidal estimate.
-     Switch between the four and watch the error change sign.</p>
-  <div class="iplot wide" data-widget="riemann" data-start="7" data-rule="left" data-slow="0.3"></div>
+  <h2>How few rectangles do we need?</h2>
+  <p class="lead">Neither sum is ever the answer — but together they <strong>bracket</strong> it.
+     Add rectangles and the floor rises, the ceiling falls, and the gap between them is exactly how
+     much we still do not know.</p>
+  <div class="iplot wide" data-widget="bracket" data-start="4" data-tol="20"></div>
+  <aside class="notes">The right-hand panel is the whole argument on one picture: the blue line is the lower sum, the red the upper, the shaded region everything still possible, and the green dashed line the true area they are closing in on.
+Press "within 5%" and it jumps to the fewest rectangles that get the bracket that tight — then 1% and watch how many more it costs. That is the real engineering question: not "is it exact" but "is it close enough yet".</aside>
 </section>
 
 <!-- 41 -->
@@ -637,14 +643,18 @@ Make the point about spacing: the strobe on the previous slide bunches near the 
   <h2>Riemann sum and integral sum</h2>
   <div class="cols a top">
     <ul class="small">
-      <li>A <strong>Riemann sum</strong> is an approximation method for calculating the area under a curve.</li>
-      <li>An <strong>integral</strong> (definite integral) represents the <em>exact</em> value of this area, and is often calculated as the limit of Riemann sums as the subdivisions become infinitely small.</li>
-      <li>Integrals are denoted by the integral sign <span class="eq">∫</span>, with the function to be integrated followed by <span class="eq">dx</span>, which represents an infinitesimally small width of the subdivision.</li>
+      <li>Keep narrowing the rectangles and the floor and the ceiling are squeezed together until
+          there is only <strong>one number</strong> left between them.</li>
+      <li>That number is the <strong>integral</strong> — the exact area, defined as the limit the
+          two Riemann sums close in on.</li>
+      <li>It is written <span class="eq">∫ f(t) dt</span>, where <span class="eq">dt</span> is the
+          width of a rectangle taken to be infinitely small.</li>
+      <li class="muted">In practice we stop long before infinity: we stop when the bracket is
+          narrower than we care about.</li>
     </ul>
-    <div class="iplot" data-widget="riemann" data-start="4" data-rules="0" data-rule="mid"
-         data-slow="0.18"></div>
+    <div class="iplot" data-widget="bracket" data-start="30" data-conv="0"></div>
   </div>
-  <aside class="notes">Riemann sum: a method for approximating the total area under a curve over an interval, by dividing the area into small sections and calculating the area of each. The integral is the limit of that process as the subdivisions become infinitely small.</aside>
+  <aside class="notes">The integral is the limit of the Riemann sums as the subdivisions become infinitely small. Worth saying out loud: nobody ever takes that limit with real data — the sample rate sets the thinnest rectangle you can build, which is the next slide.</aside>
 </section>
 
 <!-- 42 -->
@@ -912,7 +922,7 @@ The equation box at the bottom is live: put any polynomial in it and the worked 
   <p class="lead">Both instruments, one pair of axes, lined up on the same clock: the
      <strong>video</strong> measured where the phone was, and the <strong>accelerometer</strong> was
      integrated twice to say where it thought it was.</p>
-  <div class="iplot wide" data-widget="vkin" data-panels="y" data-imu="1" data-overlay="1"></div>
+  <div class="iplot wide" data-widget="vkin" data-scrub="0" data-panels="y" data-imu="1" data-overlay="1"></div>
   <p class="center" style="margin-top:.35em"><strong>Ok… so what went wrong?</strong></p>
   <aside class="notes">Right-hand plot is the video record itself — 92 frames at 30 fps, digitised from the Tracker output, so you can scrub through it.
 The phone falls 0.46 m and stays there. The accelerometer, integrated twice, says something different.
@@ -924,7 +934,7 @@ The phone falls 0.46 m and stays there. The accelerometer, integrated twice, say
   <h2>Experimental application</h2>
   <p class="lead"><strong>Acceleration</strong>, both ways: the video positions differentiated twice
      by finite difference, and the accelerometer's own reading over the identical three seconds.</p>
-  <div class="iplot wide" data-widget="vkin" data-panels="a" data-imu="1" data-overlay="1"></div>
+  <div class="iplot wide" data-widget="vkin" data-scrub="0" data-panels="a" data-imu="1" data-overlay="1"></div>
   <aside class="notes">Same trial, two instruments. Press "Overlay accelerometer" and the dashed red trace is the phone's own sensor over the identical three seconds — the two land on top of each other.
 That is the point: differentiating video positions twice gives you the same acceleration the accelerometer measured directly.
 "Recompute from y" does the finite difference live, so you can show it is our arithmetic and not Tracker's magic.</aside>
@@ -935,7 +945,7 @@ That is the point: differentiating video positions twice gives you the same acce
   <h2>Experimental application</h2>
   <p class="lead"><strong>Velocity</strong>, both ways: the video positions differentiated once, and the
      accelerometer integrated once. The gap that opens up at the end is the drift.</p>
-  <div class="iplot wide" data-widget="vkin" data-panels="v" data-imu="1" data-overlay="1"></div>
+  <div class="iplot wide" data-widget="vkin" data-scrub="0" data-panels="v" data-imu="1" data-overlay="1"></div>
   <aside class="notes">Velocity from the video is a clean single dip to −0.92 m/s and back to zero — the phone stops.
 Overlay the accelerometer and you can see the integrated velocity does not quite come back to zero. That leftover is the drift.</aside>
 </section>
@@ -944,7 +954,7 @@ Overlay the accelerometer and you can see the integrated velocity does not quite
 <section>
   <h2>Experimental application</h2>
   <p class="lead">The video analysis, one frame at a time: <strong>y</strong> is measured, <strong>v</strong> and <strong>a</strong> are calculated from it.</p>
-  <div class="iplot wide" data-widget="vkin" data-panels="yva" data-controls="1" data-imu="1"></div>
+  <div class="iplot wide" data-widget="vkin" data-scrub="0" data-panels="yva" data-controls="1" data-imu="1"></div>
   <aside class="notes">This is the whole video analysis in one place. Only the top panel is measured — v and a are finite differences of it, and the side panel shows the arithmetic for the frame under the cursor.
 Change the step from ±1 to ±5 frames: ±1 is noisy because it divides a small position change by a small time; widening the window smooths the noise but flattens the peak. That trade-off is the practical face of "the derivative is a limit".
 Then overlay the accelerometer: two instruments, same trial, same acceleration.</aside>
@@ -954,7 +964,7 @@ Then overlay the accelerometer: two instruments, same trial, same acceleration.<
 <section>
   <h2>Experimental application</h2>
   <p class="lead">An issue with integral sum is that you cumulatively sum the signal — but also <strong>any error</strong> that may be present.</p>
-  <div class="iplot wide" data-widget="imu" data-panels="avd" data-controls="1" data-video="1"></div>
+  <div class="iplot wide" data-widget="imu" data-scrub="0" data-rawpick="0" data-panels="avd" data-controls="1" data-video="1"></div>
   <aside class="notes">Start on "Offset removed" with the slider at the resting value: the phone finishes within a few centimetres of where it started.
 Switch to "Raw signal" — gravity is still in the trace, so the double integration sends it hundreds of metres away.
 Then the real lesson: go back to "Offset removed" and nudge the assumed resting value by a few thousandths of a G.

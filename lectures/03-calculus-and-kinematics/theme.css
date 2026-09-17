@@ -293,6 +293,7 @@ html[data-theme="light"] .iseg-b.on{ color:#fff; }
 .iread b.r{ color:var(--accent); }
 .iread b.g{ color:var(--good); }
 .iread b.k{ color:var(--ink-strong); }
+.iread b.b{ color:var(--brand); }
 .iread .a{ color:var(--brand); }
 .iread .gap{ color:var(--muted); font-variant-numeric:tabular-nums; }
 .iread .hint{ display:block; color:var(--muted); font-size:.8em; margin-top:.25em; }
@@ -732,3 +733,35 @@ html[data-theme="dark"] .reveal .whitecard img[src^="assets/"]{
   letter-spacing:-.01em; }
 .ictl-scale span{ flex:0 0 auto; }
 html[data-portrait] .ictl-scale{ font-size:.8em; }
+
+/* ---- the sprint split table: the measurement the whole slide is built on ---- */
+.isp-tab{ grid-column:1 / -1; margin:.2em 0 .1em; }
+.isp-h{ font-size:.5em; font-weight:700; color:var(--brand); letter-spacing:-.01em;
+        margin-bottom:.3em; }
+.isp-h span{ font-weight:400; color:var(--muted); letter-spacing:0; }
+.isp-tab table{ width:100%; margin:0; font-size:.5em; font-variant-numeric:tabular-nums;
+                border-collapse:collapse; table-layout:fixed; }
+.reveal .isp-tab th,.reveal .isp-tab td{ padding:.18em .1em; text-align:center; border:0;
+                         border-bottom:1px solid var(--hair); transition:opacity .18s ease; }
+.reveal .isp-tab th.lab{ width:11em; text-align:right; padding-right:.7em; color:var(--muted);
+                 font-weight:500; white-space:nowrap; }
+.reveal .isp-tab tr:first-child th{ color:var(--ink-strong); font-weight:700; }
+.reveal .isp-tab tr:last-child td{ border-bottom:0; }
+.isp-tab .off{ opacity:.25; }
+.isp-tab .now{ background:color-mix(in srgb,var(--accent) 16%,transparent); color:var(--accent); }
+html[data-portrait] .isp-tab table{ font-size:.62em; }
+html[data-portrait] .isp-tab th.lab{ width:7.4em; }
+
+/* a row of chips inside a control strip (the Riemann tolerance picker) */
+.ictls .icalc-chips{ display:flex; flex-wrap:wrap; gap:.4em; justify-content:center;
+                     margin-top:.1em; }
+
+/* ---- running as an installed web app: keep the chrome clear of the notch ---- */
+@supports (padding: env(safe-area-inset-top)) {
+  html[data-portrait] #deck-tools{
+    bottom:calc(10px + env(safe-area-inset-bottom));
+    left:calc(10px + env(safe-area-inset-left));
+    right:calc(10px + env(safe-area-inset-right));
+  }
+  html[data-portrait] #uvic-badge{ top:calc(10px + env(safe-area-inset-top)); }
+}

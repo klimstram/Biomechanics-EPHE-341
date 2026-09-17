@@ -294,6 +294,18 @@ function say(html, ms) {
 function isFull() {
   return !!(document.fullscreenElement || document.webkitFullscreenElement);
 }
+function canFull() {
+  var el = document.documentElement;
+  return !!(el.requestFullscreen || el.webkitRequestFullscreen);
+}
+/* An iPhone has no Fullscreen API at all — Safari only exposes it on iPad and
+   the desktop. The honest answer there is Add to Home Screen, which launches
+   the deck without any browser chrome because of the apple-mobile-web-app
+   meta tags in the page head, so say that rather than doing nothing. */
+function standalone() {
+  return (window.matchMedia && window.matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches) ||
+         window.navigator.standalone === true;
+}
 function enterFull(el) {
   el = el || document.documentElement;
   var r = el.requestFullscreen || el.webkitRequestFullscreen;
@@ -306,12 +318,18 @@ function exitFull() {
   return Promise.resolve();
 }
 function syncFsBtn() {
-  if (isFull()) setBtn(fsBtn, ICON.exit, 'Exit full screen', 'Exit full screen (F or Esc)');
+  if (isFull() || standalone()) setBtn(fsBtn, ICON.exit, 'Exit full screen', 'Exit full screen (F or Esc)');
   else setBtn(fsBtn, ICON.enter, 'Full screen', 'Full screen (F)');
+  if (standalone() && !canFull()) fsBtn.style.display = 'none';   /* already there */
 }
 fsBtn.addEventListener('click', function () {
-  if (isFull()) exitFull(); else enterFull();
   fsBtn.blur();
+  if (isFull()) { exitFull(); return; }
+  if (canFull()) { enterFull(); return; }
+  if (standalone()) { say('This is already running full screen.'); return; }
+  say('This browser has no full-screen button to press — on an iPhone or iPad, ' +
+      'tap <b>Share</b> and then <b>Add to Home Screen</b>. Opening the deck from that ' +
+      'icon runs it full screen, with no address bar.', 9000);
 });
 ['fullscreenchange', 'webkitfullscreenchange'].forEach(function (ev) {
   document.addEventListener(ev, syncFsBtn);
