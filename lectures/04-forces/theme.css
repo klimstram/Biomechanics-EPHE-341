@@ -765,3 +765,27 @@ html[data-portrait] .isp-tab th.lab{ width:7.4em; }
   }
   html[data-portrait] #uvic-badge{ top:calc(10px + env(safe-area-inset-top)); }
 }
+
+/* ---- video slides -------------------------------------------------
+   The clips are 720p captures of the runner with the force trace printed
+   underneath, so they are nearly square. Fixing the aspect ratio in CSS
+   keeps the slide the same height before the metadata has loaded, which is
+   what stops the auto-fit changing its mind halfway through. */
+.ivid{ text-align:center; }
+.ivid video{
+  width:100%; max-width:470px; aspect-ratio:16/18; display:block; margin:0 auto;
+  background:#000; border:1px solid var(--rule); border-radius:10px;
+}
+.ivid .cap{ font-size:.62em; color:var(--muted); margin:.45em 0 0; }
+
+.vidgrid{ display:grid; grid-template-columns:repeat(4,1fr); gap:.8em; align-items:start; }
+.vidgrid figure{ margin:0; }
+.vidgrid video{
+  width:100%; aspect-ratio:16/18; display:block;
+  background:#000; border:1px solid var(--rule); border-radius:8px;
+}
+.vidgrid figcaption{ font-size:.55em; color:var(--muted); margin-top:.3em; text-align:center; }
+html[data-portrait] .vidgrid{ grid-template-columns:repeat(2,1fr); }
+html[data-portrait] .ivid video{ max-width:100%; }
+/* a video prints as its poster frame; the controls are noise on paper */
+.pdf-page .ivid video,.pdf-page .vidgrid video{ pointer-events:none; }
