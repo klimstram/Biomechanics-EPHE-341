@@ -71,11 +71,32 @@ window.EPHE341_LECTURES = [
            'conservation in two dimensions', 'normal and tangent axes',
            'action and reaction on two different bodies'] },
 
+  { n: '7', title: 'Linear kinetics 2',
+    path: 'lectures/07-linear-kinetics-2',
+    blurb: 'Impulse \u2014 the time side of force \u2014 read straight off a jump that reproduces the ' +
+           'lecture\u2019s own numbers, and friction from a stuck crate to a hiker on a 35\u00b0 trail.',
+    slides: 48, widgets: 9, updated: '2026-09-18',
+    handout: 'handout.pdf',
+    live: ['impulse as an area you can reshape', 'a countermovement jump in four steps',
+           'ten activities on one force plate', 'static giving way to kinetic friction',
+           'a free-body diagram on a slope you can tilt', 'the angle where the hiker slips'] },
+
+  { n: '8', title: 'Projectile motion',
+    path: 'lectures/08-projectile-motion',
+    blurb: 'Why anything thrown on earth follows a parabola, the six equations that come out of ' +
+           'integrating gravity twice, and every worked example from the hammer to the home run.',
+    slides: 49, widgets: 15, updated: '2026-09-18',
+    handout: 'handout.pdf',
+    live: ['a parabola you can reshape, with the components drawn on it',
+           'the straight-up toss as three stacked equations',
+           '45\u00b0 for distance and 90\u00b0 for height, on one figure',
+           'the hammer throw against the world record', 'the high jump, two ways',
+           'the soccer ball step by step', 'Abreu\u2019s home run, rise and fall separately',
+           'the platform jump and its two roots'] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
-  { n: '7',  title: 'Linear kinetics 2' },
-  { n: '8',  title: 'Projectile motion' },
   { n: '8',  title: 'Work, energy and power' },
   { n: '9',  title: 'Angular kinematics' },
   { n: '10', title: 'General kinematics' },

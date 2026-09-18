@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a2e">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Linear Kinetics II</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'dark';
+  try { t = localStorage.getItem('ephe341-theme') || 'dark'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <span class="mark">UVic</span>
+  <span class="who"><b>University of Victoria</b><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Linear Kinetics</h1>
+    <div class="rule"></div>
+    <p class="sub">Impulse–momentum and friction &nbsp;·&nbsp; McGinnis Chpt 3</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Objective</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">To learn more kinetic quantities</p>
+      <ul class="small">
+        <li>Impulse momentum relationship</li>
+        <li>Friction</li>
+      </ul>
+    </div>
+    <div class="imgrow">
+      <img src="assets/jumpers.jpg" alt="Jumpers pushing against the ground">
+      <img src="assets/curling.jpg" alt="A curling rock on ice">
+    </div>
+  </div>
+  <aside class="notes">Two ideas, and they are both about what happens at the interface between a body and the world. Impulse is the time side of force; friction is what the contact can supply before it lets go.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Linear Kinetics</h2>
+  <ul class="small">
+    <li>From Newton’s first 2 laws we learned that an external force is required to change the
+        state of object motion (N1 and N2 [F=ma]) and an object in motion has momentum (N1).</li>
+    <li><strong>But how does the momentum of an object change?</strong></li>
+    <li>F=ma (N2) which means that a force will cause an object to accelerate.</li>
+    <li>Therefore force is proportional to acceleration</li>
+    <li>change in velocity is the area under an acceleration time graph.</li>
+    <li>The time that the object is accelerating and the magnitude of the acceleration will
+        determine the velocity of the object</li>
+  </ul>
+  <aside class="notes">The last two lines are the whole lecture in advance. We already know from the calculus lecture that the area under an acceleration–time graph is a change in velocity. Multiply that graph by mass and it becomes a force–time graph, and its area becomes a change in momentum.</aside>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Linear Kinetics</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>If we want to consider change in momentum we need to multiply both sides by mass</li>
+        <li>We know that mΔv is momentum and F = ma</li>
+        <li>Therefore</li>
+      </ul>
+      <p class="eq">F = ma &nbsp;→&nbsp; Ft = mΔv</p>
+      <ul class="small">
+        <li>Impulse is a measure of a force applied for a certain amount of time</li>
+        <li>Impulse = Force × time</li>
+        <li><strong>I = Ft</strong></li>
+        <li>The net force acting over some time will cause a change in momentum.</li>
+        <li>impulse is the area under a force time graph</li>
+      </ul>
+    </div>
+    <div class="box accent">
+      <p class="small" style="margin-bottom:.35em"><strong>a = Δv / t</strong></p>
+      <p class="small" style="margin-bottom:.35em">F = m(Δv / t)</p>
+      <p class="small" style="margin-bottom:0">Ft = mΔv</p>
+    </div>
+  </div>
+  <aside class="notes">F = ma, and a is Δv over t. Multiply both sides by t and the t cancels on the right: Ft = mΔv. The left side has a name — impulse — and the right side is a change in momentum.</aside>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Impulse–momentum relationship</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">changes in the momentum of a system depend on:</p>
+      <ol class="small">
+        <li>the magnitude of external forces, and</li>
+        <li>the time over which the forces act</li>
+      </ol>
+      <p class="small">Therefore an impulse can cause a change in momentum</p>
+      <div class="callout small">
+        <p style="margin-bottom:0"><strong>SI Units: N·s</strong> &nbsp;·&nbsp; Impulse is a vector</p>
+      </div>
+    </div>
+    <div class="box accent">
+      <p class="eq" style="margin-bottom:.3em">Ft = mΔv</p>
+      <p class="eq" style="margin-bottom:0">Ft = (mv)<sub>final</sub> − (mv)<sub>initial</sub></p>
+    </div>
+  </div>
+  <aside class="notes">Both halves matter. A small force for a long time and a large force for a short time can produce exactly the same change in momentum — the next figure is that sentence.</aside>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>Impulse is an area</h2>
+  <div class="iplot wide" data-widget="impulse"></div>
+  <aside class="notes">Drag the force and the time and watch the area. The three chips all carry very different forces but the middle two carry the same area, and therefore the same change in velocity. This is why a follow-through in throwing matters, and why a crash mat works.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Example Problem</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">During a bobsled race, two crew members push a 90 kg sled with an average
+         force of 100 N over a period of 7 s before jumping in. Assuming that the sled started at
+         rest, what is the bobsled’s velocity after 7 seconds?</p>
+    </div>
+    <div class="fig"><img src="assets/bobsled.jpg" alt="A bobsled crew pushing at the start"></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Solution</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">given in this question:</p>
+      <ul class="small">
+        <li>F = 100 N</li>
+        <li>t = 7 s</li>
+        <li>m = 90 kg</li>
+      </ul>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.3em">Ft = (mv)<sub>final</sub> – (mv)<sub>initial</sub></p>
+        <p class="eq" style="margin-bottom:.3em">(100 N)(7 s) = (90 kg)v – (90 kg)(0 m/s)</p>
+        <p class="eq" style="margin-bottom:0">v = <strong>7.78 m/s</strong></p>
+      </div>
+      <p class="small">The bobsled’s velocity is 7.78 m/s in the direction of force application</p>
+    </div>
+    <div class="fig"><img src="assets/bobsled.jpg" alt="A bobsled crew pushing at the start"></div>
+  </div>
+  <aside class="notes">700 N·s of impulse into a 90 kg sled that started at rest. The initial momentum term is zero, so the whole impulse becomes the final momentum, and dividing by mass gives 7.78 m/s.</aside>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Impulse in human movement</h2>
+  <div class="cols b top">
+    <div>
+      <div class="box accent">
+        <p class="small" style="margin-bottom:.2em"><strong>Impulse = Force × time</strong></p>
+        <p class="small" style="margin-bottom:0">= Δmomentum</p>
+      </div>
+      <ul class="small">
+        <li>During human movement we are constantly trying to change the velocity of something.</li>
+        <li>Walking (change the velocity of our center of gravity)</li>
+        <li>Sports (change the velocity of our whole body or object)</li>
+        <li>In these activities the force profiles can be explained by the impulse momentum
+            relationship.</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/run-walk-forces.jpg" alt="Ground reaction force profiles for walking and running"><figcaption>Neptune &amp; McGowan, J Biomech 2011</figcaption></div>
+  </div>
+  <aside class="notes">Every one of these traces is a force–time graph, so every one of them has an area, and that area is a change in momentum. Reading the shape is reading the movement.</aside>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Positions during a jump</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Here are some basic positions during a jump that we will use to discuss
+         kinetic and kinematic data during jumping</p>
+      <p class="tiny muted">Linthorne, Am. J. Phys. 2001</p>
+    </div>
+    <div class="fig"><img src="assets/jump-positions.jpg" alt="Body positions through a countermovement jump"></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>The jump: force</h2>
+  <div class="fig"><img src="assets/jump-grf.jpg" alt="Vertical ground reaction force during a countermovement jump"></div>
+  <p class="tiny muted center">Linthorne, Am. J. Phys. 2001</p>
+  <aside class="notes">Read it left to right against the positions on the previous slide: the dip is the countermovement, the peak is the push, and the record falls to zero at take-off.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>The jump: velocity</h2>
+  <div class="cols top">
+    <div class="fig"><img src="assets/jump-velocity.jpg" alt="Vertical velocity during the jump"></div>
+    <div class="fig"><img src="assets/jump-height.jpg" alt="Vertical displacement during the jump"></div>
+  </div>
+  <p class="tiny muted center">Linthorne, Am. J. Phys. 2001</p>
+  <aside class="notes">Velocity is the integral of the acceleration, and displacement the integral of the velocity — exactly the chain from the calculus lecture. Note where velocity peaks: at take-off, not at the peak of the force.</aside>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Example Problem</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Using the force data of a jump from the following slides, If the jumper has a
+         mass of 66.6 kg, what is his vertical velocity at the instant of take-off? What is the
+         maximum height jumped?</p>
+    </div>
+    <div class="fig"><img src="assets/jump-positions.jpg" alt="Positions through a jump"></div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>First: subtract body weight</h2>
+  <div class="iplot wide" data-widget="jump" data-step="1"></div>
+  <aside class="notes">first, we want to subtract the jumper’s body weight from the force vs time data. The distance from the axis to the dashed line is equal to the jumper’s body weight — 653 N for a 66.6 kg jumper.
+
+The trace here is reconstructed so that its three areas are the lecture’s published impulses exactly, so every number the following slides quote comes out of this figure.</aside>
+</section>
+
+<!-- 15 -->
+<section>
+  <h2>What is left is the net force</h2>
+  <div class="iplot wide" data-widget="jump" data-step="2"></div>
+  <aside class="notes">Now zero on the axis means "body weight", and everything above the line is accelerating the jumper up while everything below it is accelerating him down.</aside>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>The three phases</h2>
+  <ol class="small">
+    <li>Weight &gt; ground reaction force = negative change in momentum</li>
+    <li>positive impulse which stops the downward motion and then, results in a positive change in
+        momentum = vertical velocity that results in the jump.</li>
+    <li>negative impulse slows the upward motion of the jumper just prior to take-off.</li>
+  </ol>
+  <div class="callout small">
+    <p style="margin-bottom:0">The height the individual jumps is determined by the <strong>net
+       impulse</strong>: That is, the difference between the total positive impulse and the total
+       negative impulse.</p>
+  </div>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Why add up all three?</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>So why do we add up the 3 different impulses?</li>
+        <li>Why not just the positive one?</li>
+        <li>We need to account for all of the prior impulse to determine what will happen</li>
+      </ul>
+      <p class="small muted">The first negative impulse has already given the jumper downward
+         momentum. Part of the positive impulse is spent undoing it before any of it goes into
+         going up.</p>
+    </div>
+    <div class="fig"><img src="assets/jump-velocity.jpg" alt="Velocity through the jump"><figcaption>Linthorne, Am. J. Phys. 2001</figcaption></div>
+  </div>
+  <aside class="notes">Point at the velocity trace: it goes negative first. The positive impulse has to pay that back before it does anything useful, which is exactly why only the net counts.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Next: take the area of each phase</h2>
+  <p class="small">Next, we want to calculate the area under the force vs time graph (the impulse)
+     for all three phases of the jump. We do this by multiplying each force data point by the time
+     interval between points and then summing all areas (remember integral sum)</p>
+  <div class="iplot wide" data-widget="jump" data-step="3"></div>
+  <aside class="notes">This is the Riemann sum from the calculus lecture, applied to a real record. Each sample contributes force × Δt, and the three runs of constant sign give the three impulses.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>The three impulses</h2>
+  <div class="cols b top">
+    <div>
+      <table class="ditable small">
+        <tbody>
+          <tr><td>1st Negative Impulse</td><td>−86.6 N·s</td></tr>
+          <tr><td>Positive Impulse</td><td>204.1 N·s</td></tr>
+          <tr><td>2nd Negative Impulse</td><td>−15.0 N·s</td></tr>
+          <tr><td><strong>Net Impulse</strong></td><td><strong>102.5 N·s</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="fig"><img src="assets/jump-grf.jpg" alt="The jump force trace with its three phases"></div>
+  </div>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Example Problem (continued)</h2>
+  <ul class="small">
+    <li>since impulse is equal to the change in momentum, we can think of the jump in this way:</li>
+  </ul>
+  <p class="eq">Ft = (mv)<sub>2</sub> − (mv)<sub>1</sub></p>
+  <ul class="small">
+    <li>since the mass of the jumper doesn’t change, we can factor it out to simplify the
+        equation:</li>
+  </ul>
+  <p class="eq">Ft = m(v<sub>2</sub> – v<sub>1</sub>)</p>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Example Problem (continued)</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">we know that the jumper begins at rest (v<sub>1</sub> = 0); therefore,</p>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.3em">Ft = m(v<sub>2</sub> – 0)</p>
+        <p class="eq" style="margin-bottom:.3em">Ft = mv<sub>2</sub></p>
+        <p class="eq" style="margin-bottom:.3em">102.5 N·s = (66.6 kg) v<sub>2</sub></p>
+        <p class="eq" style="margin-bottom:0">v<sub>2</sub> = <strong>1.54 m/s</strong></p>
+      </div>
+      <p class="tiny muted">where v<sub>2</sub> is the velocity the instant before take-off. The
+         102.5 N·s is the <strong>net impulse</strong>.</p>
+    </div>
+    <div class="fig"><img src="assets/jump-velocity.jpg" alt="Velocity reaching its peak at take-off"></div>
+  </div>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Example Problem (continued)</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">to calculate the maximum height jumped, we have to use one of the Equations
+         of Constant Acceleration (we will cover this in projectile motion)</p>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.3em">v<sub>y</sub>(t) = −9.81t + v<sub>oy</sub></p>
+        <p class="tiny" style="margin-bottom:.3em">at the maximum height, the jumper will be at rest
+           (v<sub>f</sub> = 0)</p>
+        <p class="eq" style="margin-bottom:.3em">0 = −9.81t + 1.54 &nbsp;→&nbsp; t = 0.157</p>
+        <p class="eq" style="margin-bottom:.3em">d<sub>y</sub>(t) = (−9.81/2)t² + v<sub>oy</sub>t +
+           d<sub>oy</sub></p>
+        <p class="eq" style="margin-bottom:.3em">d<sub>y</sub>(t) = (−4.905)(0.157)² + (1.54)(0.157) + 0</p>
+        <p class="eq" style="margin-bottom:.3em">d<sub>y</sub>(t) = −0.12 + 0.24</p>
+        <p class="eq" style="margin-bottom:0">d<sub>y</sub>(t) = <strong>0.12 m</strong></p>
+      </div>
+      <p class="small">The jumper’s vertical velocity at the instant of take-off was 1.54 m/s and
+         the maximum height reached was 0.12 m (or 12 cm).</p>
+    </div>
+    <div class="fig"><img src="assets/jump-height.jpg" alt="Displacement through the jump and flight"></div>
+  </div>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>The whole calculation</h2>
+  <div class="iplot wide" data-widget="jump" data-step="4"></div>
+  <aside class="notes">All four steps in one figure, with the jumper’s mass on a slider. Worth doing live: increase the mass and every impulse scales with it, but the take-off velocity — impulse over mass — barely moves. A bigger athlete needs a proportionally bigger impulse to jump the same height.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Reading activity off a force profile</h2>
+  <p class="lead">Understanding impulse/momentum and how it relates to the force time graph gives us
+     the ability to interpret activity from the force profiles.</p>
+  <div class="cols top">
+    <div class="fig"><img src="assets/activity-trace.jpg" alt="Force record of ten activities in sequence"></div>
+    <div class="fig"><img src="assets/activity-legend.jpg" alt="Legend for the activity record"></div>
+  </div>
+  <p class="tiny muted center">Headon and Curwen 2001 &nbsp;·&nbsp; Stand, Sit, Drop-landing, Jump,
+     Crouch, Rise to stand, partial weight (feet only), unloaded</p>
+</section>
+
+<!-- 25 -->
+<section>
+  <h2>Reading activity off a force profile</h2>
+  <div class="cols top">
+    <div class="fig"><img src="assets/activity-trace2.jpg" alt="A second activity record"></div>
+  </div>
+  <p class="tiny muted center">Headon and Curwen 2001 &nbsp;·&nbsp; Stand, Sit, Drop-landing, Jump,
+     Crouch, Rise to stand, partial weight (feet only), unloaded</p>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Name the activity</h2>
+  <div class="iplot wide" data-widget="activity"></div>
+  <aside class="notes">Run the cursor along before pressing reveal and ask the room. The giveaways: a section pinned at zero can only be flight or the plate unloaded; a single tall narrow spike after zero is a landing; a slow decline that never returns is sitting down.
+
+The trace is drawn to the segment boundaries and levels of the published record rather than being the record itself.</aside>
+</section>
+
+<!-- 27 -->
+<section>
+  <h2>Friction</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small"><strong>Friction:</strong> The force resisting the relative motion of solid
+         surfaces.</p>
+      <ul class="small">
+        <li>Results from the interaction of the surface area of objects in contact</li>
+        <li><strong>Dry Friction</strong> — Static, kinetic</li>
+        <li>Fluid</li>
+        <li>Lubricated</li>
+        <li>Skin</li>
+        <li>Internal</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/friction-surfaces.jpg" alt="Two surfaces in contact magnified"></div>
+  </div>
+  <aside class="notes">Note the plural. Most of what students think of as "friction" is the dry case, but skin friction on a blister and the lubricated friction inside a joint are the same physics with very different coefficients.</aside>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Friction</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Friction is important when considering interaction and mobility of the whole
+         body with the surroundings as well as proper functioning of internal anatomical
+         structures.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0"><strong>Tribology</strong> – the science and engineering of
+           interacting surfaces in relative motion</p>
+      </div>
+    </div>
+    <div class="imgrow">
+      <img src="assets/climber.jpg" alt="A climber relying on friction">
+      <img src="assets/running-shoes.jpg" alt="Running shoe outsoles">
+      <img src="assets/knee-oa.jpg" alt="A knee joint">
+    </div>
+  </div>
+</section>
+
+<!-- 29 -->
+<section>
+  <h2>Static Friction</h2>
+  <ul class="small">
+    <li>a force that acts at the surface of contact between two bodies opposite in the direction of
+        motion or impending motion</li>
+    <li>consider a crate sitting on the ground:</li>
+    <li>when a small force is applied to one side of the crate, it remains motionless</li>
+    <li>the force that opposes the applied force pushing the box forward is the force of static
+        friction</li>
+  </ul>
+  <p class="eq">F<sub>applied</sub> &nbsp;⟷&nbsp; F<sub>sfr</sub></p>
+  <aside class="notes">The key word is "opposite in the direction of motion or impending motion" — friction does not have a direction of its own, it takes the opposite of whatever is trying to happen.</aside>
+</section>
+
+<!-- 30 -->
+<section>
+  <h2>Static Friction</h2>
+  <ul class="small">
+    <li>as F<sub>applied</sub> increases, F<sub>sfr</sub> increases until a critical point is
+        reached</li>
+    <li>at the critical point, F<sub>sfr</sub> is called the force of <strong>maximum static
+        friction</strong> (F<sub>msfr</sub>)</li>
+    <li>if F<sub>applied</sub> increases further, the box will begin to slide</li>
+  </ul>
+  <aside class="notes">Static friction is not a number you look up — it is whatever it needs to be, up to a ceiling. Only the ceiling is a property of the two surfaces.</aside>
+</section>
+
+<!-- 31 -->
+<section>
+  <h2>Static Friction</h2>
+  <div class="cols b top">
+    <div>
+      <p class="eq">F<sub>msfr</sub> = μ<sub>s</sub>N</p>
+      <p class="small">where:</p>
+      <ul class="small">
+        <li><strong>μ<sub>s</sub></strong> is the coefficient of static friction</li>
+        <li><strong>N</strong> is the force that is normal (perpendicular) to the surface of
+            contact</li>
+        <li><strong>F<sub>msfr</sub></strong> is the force of maximum static friction</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">the coefficient of friction indicates the ease of sliding — the
+           greater μ, the less easily one surface will slide on another</p>
+      </div>
+    </div>
+    <div class="fig"><img src="assets/boot.jpg" alt="A boot sole on a surface"></div>
+  </div>
+</section>
+
+<!-- 32 -->
+<section>
+  <h2>Static Friction</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>the normal force (N) is equal but opposite the component of the object’s weight acting
+            perpendicular to the surface on which the object is sitting</li>
+        <li>The force of friction acts parallel to the surface</li>
+      </ul>
+      <p class="eq">mg = −N</p>
+      <table class="ditable small">
+        <thead><tr><th colspan="2">Approximate Coefficients of Static Friction (dry)</th></tr></thead>
+        <tbody>
+          <tr><td>steel &amp; steel</td><td>0.8</td></tr>
+          <tr><td>glass &amp; glass</td><td>0.94</td></tr>
+          <tr><td>concrete &amp; rubber</td><td>1.0</td></tr>
+          <tr><td>steel &amp; ice</td><td>0.005</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="fig"><img src="assets/slope-fbd.jpg" alt="Normal force and friction force on a surface"></div>
+  </div>
+  <aside class="notes">Two hundred-fold between the top and the bottom of that table. Everything a shoe company does is an attempt to move a number in that column.</aside>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>Kinetic Friction</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>once the box is in motion the frictional force acting on the box is called kinetic
+            friction (F<sub>kfr</sub>)</li>
+        <li>as F<sub>applied</sub> continues to increase, F<sub>kfr</sub> remains constant</li>
+      </ul>
+      <p class="eq">F<sub>kfr</sub> = μ<sub>k</sub>N</p>
+      <p class="small">where:</p>
+      <ul class="small">
+        <li><strong>μ<sub>k</sub></strong> is the coefficient of kinetic friction</li>
+        <li><strong>N</strong> is the force that is normal (perpendicular) to the surface of
+            contact</li>
+        <li><strong>F<sub>kfr</sub></strong> is the force of kinetic friction</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/curling.jpg" alt="A curling rock sliding on ice"></div>
+  </div>
+</section>
+
+<!-- 34 -->
+<section>
+  <h2>Static and kinetic friction together</h2>
+  <div class="iplot wide" data-widget="friction"></div>
+  <aside class="notes">The diagonal is static friction matching the push newton for newton. The drop at the critical point is why a heavy object that has just begun to slide seems to leap away — the resistance falls while the push does not.</aside>
+</section>
+
+<!-- 35 -->
+<section>
+  <h2>Example Problem</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">The coefficient of static friction between a 90 N curling rock and the ice is
+         0.3 and the coefficient of kinetic friction is 0.05. How much force is required to start
+         the rock in motion? How much force is required to keep the rock in motion?</p>
+    </div>
+    <div class="fig"><img src="assets/curling.jpg" alt="A curler delivering a rock"></div>
+  </div>
+</section>
+
+<!-- 36 -->
+<section>
+  <h2>Solution</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">in this question, we are given: μ<sub>s</sub> = 0.3, μ<sub>k</sub> = 0.05,
+         N = 90 N</p>
+      <div class="box accent">
+        <p class="tiny" style="margin-bottom:.3em">first, calculate the force of maximum static
+           friction:</p>
+        <p class="eq" style="margin-bottom:.2em">F<sub>msfr</sub> = μ<sub>s</sub>N = (0.3)(90 N) =
+           <strong>27 N</strong></p>
+        <p class="tiny" style="margin:.5em 0 .3em">next, calculate the force of kinetic friction:</p>
+        <p class="eq" style="margin-bottom:0">F<sub>kfr</sub> = μ<sub>k</sub>N = (0.05)(90 N) =
+           <strong>4.5 N</strong></p>
+      </div>
+      <p class="small">Just greater than 27 N are required to start the rock in motion and 4.5 N are
+         required to keep it in motion.</p>
+    </div>
+    <div class="fig"><img src="assets/curling.jpg" alt="A curling rock"></div>
+  </div>
+  <aside class="notes">Six times more force to break it loose than to keep it going. Note the 90 N is a weight, not a mass — it is already the normal force.</aside>
+</section>
+
+<!-- 37 -->
+<section>
+  <h2>Friction on a slope</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>Remember from our forces lecture, we calculated the perpendicular, and parallel
+            components of gravity on a slant surface</li>
+        <li>The parallel component of gravity will tend to pull the block down the surface.</li>
+        <li>Friction force is required to be equal and opposite of the parallel force or the block
+            would slide down the slope</li>
+        <li>Friction force is proportional to the normal force and acts perpendicular to it.</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/slope-fbd.jpg" alt="Gravity, normal and friction forces on a slope"></div>
+  </div>
+</section>
+
+<!-- 38 -->
+<section>
+  <h2>Components on any incline</h2>
+  <p class="small">For any incline of a certain angle the parallel and perpendicular components of
+     force will be</p>
+  <div class="cols b top">
+    <div class="box accent">
+      <p class="eq" style="margin-bottom:.3em">Perpendicular Force &nbsp; F<sub>pd</sub> = mg·(cos θ)</p>
+      <p class="eq" style="margin-bottom:.3em">Normal Force &nbsp; N = −mg·(cos θ)</p>
+      <p class="eq" style="margin-bottom:.3em">Parallel Force &nbsp; F<sub>pl</sub> = mg·(sin θ)</p>
+      <p class="eq" style="margin-bottom:0">Friction Force &nbsp; F<sub>fr</sub> = −mg·(sin θ)</p>
+    </div>
+    <div>
+      <p class="small muted">The perpendicular axis is the <strong>compression axis</strong>; the
+         parallel axis is the <strong>shear axis</strong>.</p>
+      <p class="small muted">Friction and the normal force are the reactions: each one is equal and
+         opposite to the component of gravity along its own axis.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 39 -->
+<section>
+  <h2>Worked example: 4 kg at 20°</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">How to determine the force of friction on a slant surface. We need to know
+         the angle of the slant (20°) and the mass of the object (4 kg).</p>
+      <ol class="small">
+        <li>Draw a diagram — the axis system, and all known and to be determined forces</li>
+        <li>Solve for the magnitude of the force of gravity<br>
+            W = mg = 4 kg × −9.81 m/s² = <strong>−39.24 N</strong></li>
+        <li>Solve for the direction of the force of gravity relative to the axis system</li>
+        <li>Solve for the parallel and perpendicular components of force</li>
+      </ol>
+    </div>
+    <div class="fig"><img src="assets/slope-fbd.jpg" alt="Free body diagram on a 20 degree slope"></div>
+  </div>
+</section>
+
+<!-- 40 -->
+<section>
+  <h2>Worked example: the components</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small"><strong>4th</strong> — Solve for the parallel and perpendicular components
+         of force</p>
+      <div class="box accent">
+        <p class="tiny" style="margin-bottom:.2em">Parallel component</p>
+        <p class="eq" style="margin-bottom:.2em">Opposite = H·sin20° = −39.24·sin20° =
+           <strong>−13.42 N</strong></p>
+        <p class="tiny" style="margin:.5em 0 .2em">Perpendicular component</p>
+        <p class="eq" style="margin-bottom:0">adjacent = H·cos20° = −39.24·cos20° =
+           <strong>−36.87 N</strong></p>
+      </div>
+    </div>
+    <div>
+      <p class="small"><strong>5th</strong> — Solve for the Normal and friction forces</p>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.2em">Parallel component = 13.42 N</p>
+        <p class="eq" style="margin-bottom:.5em">Friction force = −F<sub>pl</sub> =
+           <strong>−13.42 N</strong></p>
+        <p class="eq" style="margin-bottom:.2em">Perpendicular component = −36.87 N</p>
+        <p class="eq" style="margin-bottom:0">Normal force = −F<sub>pd</sub> =
+           <strong>36.87 N</strong></p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Note what this does and does not tell you. It gives the friction force the slope demands — 13.42 N — but says nothing yet about whether the surfaces can supply it. That needs μs, and it is the next problem.</aside>
+</section>
+
+<!-- 41 -->
+<section>
+  <h2>Example Problem</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">An 80 kg hiker is standing on a sloped trail at an angle of 35° above
+         horizontal. If the coefficient of static friction between the hiker’s boot and the trail is
+         0.83, does the hiker slip?</p>
+    </div>
+    <div class="fig"><img src="assets/boot.jpg" alt="A hiking boot on a sloped trail"></div>
+  </div>
+</section>
+
+<!-- 42 -->
+<section>
+  <h2>1 — Draw a free-body diagram</h2>
+  <div class="iplot wide" data-widget="slopefric" data-step="1"></div>
+  <aside class="notes">Fw straight down, resolved onto the two axes of the slope: Fpd into the surface and Fpl down the slope. N and Ffr are the reactions to those.</aside>
+</section>
+
+<!-- 43 -->
+<section>
+  <h2>2 — Resolve the weight</h2>
+  <div class="cols b top">
+    <div>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.2em">F<sub>w</sub> = mg = (80 kg)(−9.81 m/s²) =
+           <strong>−784.8 N</strong></p>
+        <p class="eq" style="margin-bottom:.2em">F<sub>pd</sub> = W (cos 35°) =
+           <strong>−642.9 N</strong></p>
+        <p class="eq" style="margin-bottom:0">F<sub>pl</sub> = W (sin 35°) =
+           <strong>450.1 N</strong></p>
+      </div>
+      <div class="box accent" style="margin-top:.5em">
+        <p class="eq" style="margin-bottom:.2em">N = −F<sub>pd</sub> = −(−642.9 N) =
+           <strong>642.9 N</strong></p>
+        <p class="eq" style="margin-bottom:0">F<sub>fr</sub> = −F<sub>pl</sub> = −(450.1 N) =
+           <strong>−450.1 N</strong></p>
+      </div>
+      <p class="tiny muted">This is the magnitude of frictional force required to maintain the boot
+         on the slope.</p>
+    </div>
+    <div class="fig"><img src="assets/slope-fbd.jpg" alt="The resolved forces on the slope"></div>
+  </div>
+</section>
+
+<!-- 44 -->
+<section>
+  <h2>3 — What can the boot supply?</h2>
+  <div class="cols b top">
+    <div>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.2em">F<sub>msfr</sub> = μ<sub>s</sub>N</p>
+        <p class="eq" style="margin-bottom:.2em">F<sub>msfr</sub> = (0.83)(642.9 N)</p>
+        <p class="eq" style="margin-bottom:0">F<sub>msfr</sub> = <strong>−533.6 N</strong></p>
+      </div>
+      <div class="callout small" style="margin-top:.6em">
+        <p style="margin-bottom:.2em">F<sub>fr</sub> = −450.1 N</p>
+        <p style="margin-bottom:.2em">F<sub>msfr</sub> = −533.6 N</p>
+        <p style="margin-bottom:.2em"><strong>F<sub>fr</sub> &lt; F<sub>msfr</sub></strong></p>
+        <p style="margin-bottom:0">Therefore, the hiker will not slip down the trail.</p>
+      </div>
+    </div>
+    <div class="fig"><img src="assets/slope-fbd.jpg" alt="Required versus available friction"></div>
+  </div>
+</section>
+
+<!-- 45 -->
+<section>
+  <h2>How steep before the hiker slips?</h2>
+  <div class="iplot wide" data-widget="slopefric"></div>
+  <aside class="notes">Take the slope slider up and watch the two numbers close on each other: the shear the slope demands rises while the normal force, and therefore the friction available, falls. They cross where tanθ = μs — 39.7° for this boot. The mass slider changes neither, because m cancels out of the comparison entirely.</aside>
+</section>
+
+<!-- 46 -->
+<section>
+  <h2>Friction application</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small"><strong>Investigation of the Frictional Response of Osteoarthritic Human
+         Tibiofemoral Joints and the Potential Beneficial Tribological Effect of Healthy Synovial
+         Fluid</strong></p>
+      <p class="tiny muted">Caligaris et al. Osteoarthritis Cartilage. 2009 October; 17(10):
+         1327–1332.</p>
+      <p class="small">This study tests the hypothesis that the natural progression of osteoarthritis
+         (OA) in human joints leads to an increase in the friction coefficient and that healthy
+         synovial fluid (SF) may help mitigate the increase in the friction coefficient in diseased
+         joints.</p>
+    </div>
+    <div class="fig"><img src="assets/knee-oa.jpg" alt="A tibiofemoral joint"></div>
+  </div>
+</section>
+
+<!-- 47 -->
+<section>
+  <h2>Friction application</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">The friction coefficient of human tibiofemoral joints with varying degrees of
+         OA was measured in healthy bovine SF and physiological buffered saline (PBS).</p>
+      <p class="small">No statistical differences were found in the friction coefficient with
+         increasing OA; however, the friction coefficient was significantly lower in SF than PBS in
+         both configurations.</p>
+    </div>
+    <div class="fig"><img src="assets/oa-friction.jpg" alt="Friction coefficients measured in synovial fluid and saline"><figcaption>Caligaris et al., Osteoarthritis Cartilage 2009</figcaption></div>
+  </div>
+  <aside class="notes">Worth noting the direction of the surprise: the disease did not change the coefficient, the lubricant did. Healthy cartilage in saline is worse than osteoarthritic cartilage in synovial fluid.</aside>
+</section>
+
+<!-- 48 -->
+<section>
+  <h2>Summary</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li><strong>Impulse</strong> = Force × time = the area under a force–time graph</li>
+        <li>Ft = mΔv — an impulse causes a change in momentum. SI units N·s, and it is a vector</li>
+        <li>Jump height is decided by the <strong>net</strong> impulse, not the positive one</li>
+        <li><strong>Static friction</strong> matches the applied force up to
+            F<sub>msfr</sub> = μ<sub>s</sub>N</li>
+        <li><strong>Kinetic friction</strong> is constant at F<sub>kfr</sub> = μ<sub>k</sub>N</li>
+        <li>On a slope, friction must supply mg·sinθ while the normal force falls to mg·cosθ —
+            sliding begins where tanθ = μ<sub>s</sub></li>
+      </ul>
+    </div>
+    <div class="imgrow">
+      <img src="assets/jumpers.jpg" alt="Jumping">
+      <img src="assets/baseball.jpg" alt="A bat striking a ball">
+      <img src="assets/soccer.jpg" alt="A bicycle kick">
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js"></script>
+<script src="mobile.js"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="deck-core.js"></script>
+<script src="impulse.js"></script>
+<script src="deck-tools.js"></script>
+<script src="fit.js"></script>
+</body>
+</html>

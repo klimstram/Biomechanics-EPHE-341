@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a2e">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Projectile Motion</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'dark';
+  try { t = localStorage.getItem('ephe341-theme') || 'dark'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <span class="mark">UVic</span>
+  <span class="who"><b>University of Victoria</b><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Projectile motion</h1>
+    <div class="rule"></div>
+    <p class="sub">McGinnis Chpt 2 pg 62–73</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Projectile Motion</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">A <strong>projectile</strong> is any object, not in contact with the ground,
+         that is allowed to move under the influence of gravity and no other external force.</p>
+      <ul class="small">
+        <li>the acceleration of the object is constant (uniform acceleration)</li>
+        <li>The human body can be considered a projectile whenever it is airborne (running,
+            jumping, falling, etc.)</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Because everything on earth has the same acceleration due to
+           gravity we can use equations to predict where an object that is in flight will be if we
+           know certain variables</p>
+      </div>
+    </div>
+    <div class="fig"><img src="assets/water-jump.jpg" alt="Three people jumping from a cliff into water"></div>
+  </div>
+  <aside class="notes">"No other external force" is doing a lot of work in that definition. It means we are ignoring air resistance, which is a good approximation for a shot put and a poor one for a badminton shuttle.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Projectile Motion</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>An object in flight on earth will always follow a <strong>parabolic path</strong>.</li>
+        <li>We can use calculus to derive the equations of motion and then use these equations to
+            solve for an object’s kinematic values as it travels through space</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/water-parabola.jpg" alt="An arc of water forming a parabola"><figcaption>Parábola Hídrica</figcaption></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Projectile Motion</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>A parabola is a <strong>symmetrical</strong> curve.</li>
+        <li>That is, it has a peak (also called <strong>apex</strong>) in the middle and the curve
+            is the same on both sides of the peak</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/apex-path.png" alt="The path of a projectile with the apex marked"></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Why a parabola?</h2>
+  <ul class="small">
+    <li>Why do objects on earth follow a parabolic path when thrown?</li>
+    <li>We need to think about force vectors and derive equations of motion</li>
+    <li>We know that when we throw an object it will follow a path like the one below. Assume that
+        the blue vector is the initial velocity.</li>
+    <li>When the object is released or thrown it has only one force of gravity acting on it.</li>
+  </ul>
+  <div class="fig"><img src="assets/apex-path.png" alt="A projectile path" style="max-height:24vh"></div>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>The two components, separately</h2>
+  <div class="iplot wide" data-widget="parabola"></div>
+  <aside class="notes">Drag "along the path" and watch the two arrows. The horizontal one never changes; the vertical one shrinks to nothing at the apex and grows again on the way down. That is the whole of projectile motion, and everything after this is arithmetic.
+
+Worth doing live: set the angle to 89° and the figure becomes the straight-up problem on the next few slides.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Projectile Motion</h2>
+  <ul class="small">
+    <li>Consider the x (horizontal) and y (vertical) components <strong>separately</strong>.</li>
+    <li>Suppose a ball was thrown straight up and the vertical displacement was determined at
+        different times.</li>
+    <li><strong>How would we find out the initial velocity if we knew that it took 6 seconds for the
+        object to leave the ground and then land?</strong></li>
+  </ul>
+  <div class="iplot wide" data-widget="vertical" data-step="1"></div>
+  <aside class="notes">Take the question to the room before showing anything else. Most will reach for the displacement equation; the point of the next few slides is that the velocity equation is the easier route once you know where the apex is.</aside>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Some important questions</h2>
+  <ul class="small">
+    <li>if an object is thrown vertically upward?</li>
+    <li>What would be the equation to describe it’s acceleration?</li>
+    <li>If you have the equation for acceleration how would you determine it’s equation for velocity
+        and displacement? <em class="key">(Hint: use calculus)</em></li>
+  </ul>
+  <div class="callout small">
+    <p style="margin-bottom:0">Same chain as the calculus lecture: differentiate to go down,
+       integrate to come back up.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Deriving the vertical equations</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>Due to gravity the vertical acceleration of a projectile is −9.81 m/s²</li>
+        <li>Therefore we can make an equation for acceleration for the vertical motion of any object
+            in free flight</li>
+      </ul>
+      <p class="eq">a<sub>y</sub>(t) = −9.81</p>
+      <ul class="small">
+        <li>to find the equation for velocity we need to take the <strong>integral</strong>. When we
+            do this we get the equation</li>
+      </ul>
+      <p class="eq">v<sub>y</sub>(t) = −9.81t + v<sub>oy</sub></p>
+      <ul class="small">
+        <li>to find the equation for displacement we find the integral again</li>
+      </ul>
+      <p class="eq">d<sub>y</sub>(t) = (−9.81/2)t² + v<sub>oy</sub>t + d<sub>oy</sub></p>
+      <p class="tiny muted">We add unknowns to represent the initial values</p>
+    </div>
+    <div class="iplot" data-widget="vertical" data-step="3"></div>
+  </div>
+  <aside class="notes">The constants of integration are not bookkeeping — they are the initial velocity and the initial position, and every projectile problem in this lecture comes down to knowing or finding those two.</aside>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Back to the question</h2>
+  <ul class="small">
+    <li>For an object thrown vertically how would we find out the initial velocity if we knew that it
+        took 6 seconds for the object to leave the ground and then land?</li>
+    <li>We derived the equations of motion, lets look at them to see which can help us solve this
+        problem</li>
+    <li><strong>Which equation(s) would you use to solve this problem? What information do you need
+        to know?</strong></li>
+  </ul>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>Which equation?</h2>
+  <ul class="small">
+    <li>Since we are looking for initial velocity the equation below would be the simplest one to
+        solve</li>
+  </ul>
+  <p class="eq">v<sub>y</sub>(t) = −9.81t + v<sub>oy</sub></p>
+  <ul class="small">
+    <li>But we only know t and so we need to find out what v<sub>y</sub>(t) is.</li>
+    <li>Maybe some information about projectiles may help us solve the problem</li>
+  </ul>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Important features of projectiles</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>At the <strong>apex the vertical velocity is zero</strong></li>
+        <li>Also the apex is the highest point achieved</li>
+        <li>If a projectile takes off and lands at the same height then the apex occurs at
+            <strong>½ the total flight time</strong></li>
+        <li>The vertical component of velocity at the beginning of the flight is equal but opposite
+            to the vertical component at the end of the flight</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/apex-path.png" alt="Projectile path split into two equal half-times"></div>
+  </div>
+  <aside class="notes">All three of these follow from one fact: the vertical acceleration is constant, so the velocity–time graph is a straight line and the displacement–time graph is a symmetric parabola.</aside>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Solving for the initial velocity</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>So now we can use that information to solve for the initial velocity… how?</li>
+        <li>if we solve for the following equation at the apex then we know
+            t = ½(6 s) = 3 s and v<sub>y</sub>(t) = 0 m/s</li>
+      </ul>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.3em">v<sub>y</sub>(t) = −9.81t + v<sub>oy</sub></p>
+        <p class="eq" style="margin-bottom:.3em">0 = −9.81(3) + v<sub>oy</sub></p>
+        <p class="eq" style="margin-bottom:0">v<sub>oy</sub> = <strong>29.43 m/s</strong></p>
+      </div>
+      <p class="small muted">That leaves us with one unknown… the initial velocity</p>
+    </div>
+    <div class="iplot" data-widget="vertical" data-step="2"></div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>And the maximum height</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>Now we can find some other values as well, such as what is the maximum height
+            achieved</li>
+        <li>To find the highest vertical displacement we need to solve for the d<sub>y</sub>(t) at
+            the apex</li>
+        <li>We know t at the apex is ½(6) = 3 s and if we assume d<sub>oy</sub> = 0</li>
+      </ul>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.3em">d<sub>y</sub>(t) = (−9.81/2)t² + v<sub>oy</sub>t +
+           d<sub>oy</sub></p>
+        <p class="eq" style="margin-bottom:.3em">d<sub>y</sub>(3) = (−9.81/2)(3)² + 29.43(3) + 0</p>
+        <p class="eq" style="margin-bottom:.3em">d<sub>y</sub>(3) = −44.145 + 88.29</p>
+        <p class="eq" style="margin-bottom:0">d<sub>y</sub>(3) = <strong>44.145 m</strong></p>
+      </div>
+    </div>
+    <div class="iplot" data-widget="vertical" data-step="3"></div>
+  </div>
+  <aside class="notes">Drag the flight time on the figure. Double it and the initial velocity doubles, but the height goes up by a factor of four — height goes as v², which is why a small gain in take-off velocity is worth so much in jumping.</aside>
+</section>
+
+<!-- 15 -->
+<section>
+  <h2>Horizontal kinematics</h2>
+  <ul class="small">
+    <li>Now that we understand the vertical acceleration, velocity and displacement of a projectile
+        lets talk about the <strong>horizontal</strong> kinematics</li>
+    <li>When an object is not in contact with the ground it’s horizontal acceleration is
+        <strong>zero</strong></li>
+    <li>Remember that the acceleration due to gravity only acts vertically downward</li>
+  </ul>
+  <p class="eq">a<sub>x</sub>(t) = 0</p>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>Deriving the horizontal equations</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>Then we can determine the equations for horizontal velocity and displacement</li>
+      </ul>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.3em">a<sub>x</sub>(t) = 0</p>
+        <p class="tiny" style="margin-bottom:.3em">to find the equation for velocity we need to take
+           the integral. When we do this we get the equation</p>
+        <p class="eq" style="margin-bottom:.3em">v<sub>x</sub>(t) = v<sub>ox</sub></p>
+        <p class="tiny" style="margin-bottom:.3em">to find the equation for displacement we find the
+           integral</p>
+        <p class="eq" style="margin-bottom:0">d<sub>x</sub>(t) = v<sub>ox</sub>t + d<sub>ox</sub></p>
+      </div>
+    </div>
+    <div>
+      <p class="small"><strong>Why are horizontal projectile kinematics important?</strong></p>
+      <ul class="small">
+        <li>The horizontal velocity stays constant throughout the flight. This results in a
+            horizontal displacement defined by <strong>the time that it takes the object to rise and
+            fall vertically</strong></li>
+        <li>It is both the vertical and horizontal kinematics of a projectile that defines the
+            parabolic flight path.</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">This is the sentence to hang the whole lecture on: the vertical problem decides how long, the horizontal problem turns that time into a distance, and the only thing the two share is t.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Adding the components back together</h2>
+  <p class="lead">If we consider the horizontal and vertical velocity vector components together
+     they demonstrate why the object has a parabolic path. If we add the components we can see that
+     the resultant velocity vector is in the direction of the parabolic flight (as we would
+     expect)</p>
+  <div class="iplot wide" data-widget="parabola"></div>
+  <aside class="notes">The violet arrow is the resultant, and it is always tangent to the path. At the apex it is horizontal, because the vertical component has gone to zero — the object is momentarily in level flight.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>The angle of release</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>The optimal angle of release for <strong>height</strong> is different than the optimal
+            angle of release for <strong>distance</strong>.</li>
+        <li>Assuming you cannot change the magnitude of the velocity</li>
+        <li>The optimal angle for height is <strong>90 degrees</strong> or straight up.</li>
+        <li>The optimal angle for distance is <strong>45 degrees</strong></li>
+        <li>This concept can be proved by looking at the components of the initial velocity to
+            optimize both time in the air and horizontal displacement.</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/cannon-angles.jpg" alt="Trajectories fired at 15, 30, 45, 60 and 75 degrees"></div>
+  </div>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>45° for distance, 90° for height</h2>
+  <div class="iplot wide" data-widget="angle"></div>
+  <aside class="notes">The range curve is symmetric about 45°, so 30° and 60° carry the same distance — a nice thing to ask before revealing it.
+
+Then press the shot-put chip. Releasing from 2.1 m above the ground drops the best angle to about 42°, because the extra height buys flight time without costing any horizontal speed. Real shot putters release lower still, around 37°, because they cannot generate the same speed at a high angle.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Two more equations</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>I always prefer to use the derived equations of motion but here are two more equations
+            that you can use to solve projectile motion problems</li>
+        <li><strong>But… where did they come from?</strong></li>
+      </ul>
+    </div>
+    <div>
+      <div class="box accent">
+        <p class="eq big" style="margin-bottom:.4em">d = ½(v<sub>0</sub> + v<sub>f</sub>)t</p>
+        <p class="eq big" style="margin-bottom:0">v<sub>f</sub>² = v<sub>0</sub>² + 2ad</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Where d = ½(v₀ + v𝒇)t comes from</h2>
+  <ul class="small">
+    <li>Let's see if we can find out where this equation came from. It is similar to the equation for
+        displacement</li>
+  </ul>
+  <div class="box accent">
+    <p class="eq" style="margin-bottom:.25em">d<sub>y</sub>(t) = ½ at² + v<sub>oy</sub>t +
+       d<sub>oy</sub></p>
+    <p class="tiny" style="margin-bottom:.25em">If we assume that d<sub>oy</sub> = 0</p>
+    <p class="eq" style="margin-bottom:.25em">d<sub>y</sub>(t) = ½ at(t) + v<sub>oy</sub>t</p>
+    <p class="tiny" style="margin-bottom:.25em">a = v/t, or v = at, or v<sub>f</sub> −
+       v<sub>o</sub> = at</p>
+    <p class="eq" style="margin-bottom:.25em">d<sub>y</sub>(t) = ½ (v<sub>f</sub> −
+       v<sub>o</sub>)t + v<sub>oy</sub>t</p>
+    <p class="eq" style="margin-bottom:.25em">2d<sub>y</sub>(t) − 2v<sub>oy</sub>t =
+       (v<sub>f</sub> − v<sub>o</sub>)t</p>
+    <p class="eq" style="margin-bottom:.25em">2d<sub>y</sub>(t) = v<sub>f</sub>t −
+       v<sub>o</sub>t + 2v<sub>oy</sub>t</p>
+    <p class="eq" style="margin-bottom:0">d<sub>y</sub>(t) = <strong>½ (v<sub>oy</sub> +
+       v<sub>fy</sub>)t</strong></p>
+  </div>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Where v𝒇² = v₀² + 2ad comes from</h2>
+  <ul class="small">
+    <li>Let's see if we can find out where this equation came from. Let's start with 2 equations that
+        we already know</li>
+  </ul>
+  <div class="cols top">
+    <div class="box accent">
+      <p class="eq" style="margin-bottom:.25em">v<sub>y</sub>(t) = at + v<sub>oy</sub></p>
+      <p class="eq" style="margin-bottom:0">d<sub>y</sub>(t) = ½ at² + v<sub>oy</sub>t +
+         d<sub>oy</sub></p>
+    </div>
+    <div class="box accent">
+      <p class="tiny" style="margin-bottom:.25em">And solve for t in the first one</p>
+      <p class="eq" style="margin-bottom:.25em">v<sub>fy</sub> = at + v<sub>oy</sub></p>
+      <p class="eq" style="margin-bottom:.25em">t = (v<sub>fy</sub> − v<sub>oy</sub>)/a</p>
+      <p class="tiny" style="margin-bottom:0">Then sub in the equation for t into the second
+         equation</p>
+    </div>
+  </div>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Where v𝒇² = v₀² + 2ad comes from</h2>
+  <div class="box accent">
+    <p class="eq tiny" style="margin-bottom:.22em">d<sub>y</sub>(t) = ½ at² + v<sub>oy</sub>t +
+       d<sub>oy</sub> &nbsp; and &nbsp; t = (v<sub>fy</sub> − v<sub>oy</sub>)/a</p>
+    <p class="eq tiny" style="margin-bottom:.22em">d<sub>yf</sub> = ½ a[(v<sub>fy</sub> −
+       v<sub>oy</sub>)/a]² + v<sub>oy</sub>[(v<sub>fy</sub> − v<sub>oy</sub>)/a] +
+       d<sub>oy</sub></p>
+    <p class="eq tiny" style="margin-bottom:.22em">d<sub>yf</sub> = ½ (v<sub>fy</sub>² −
+       2v<sub>fy</sub>v<sub>oy</sub> + v<sub>oy</sub>²)/a + (v<sub>oy</sub>v<sub>fy</sub> −
+       v<sub>oy</sub>²)/a + d<sub>oy</sub></p>
+    <p class="eq tiny" style="margin-bottom:.22em">2d<sub>yf</sub> −
+       2(v<sub>oy</sub>v<sub>fy</sub> − v<sub>oy</sub>²)/a − 2d<sub>oy</sub> = (v<sub>fy</sub>² −
+       2v<sub>fy</sub>v<sub>oy</sub> + v<sub>oy</sub>²)/a</p>
+    <p class="eq tiny" style="margin-bottom:.22em">2d<sub>yf</sub> − 2d<sub>oy</sub> =
+       (v<sub>fy</sub>² − 2v<sub>fy</sub>v<sub>oy</sub> + v<sub>oy</sub>² +
+       2v<sub>oy</sub>v<sub>fy</sub> − 2v<sub>oy</sub>²)/a</p>
+    <p class="eq tiny" style="margin-bottom:.22em">2ad<sub>yf</sub> − 2ad<sub>oy</sub> =
+       v<sub>fy</sub>² − v<sub>oy</sub>²</p>
+    <p class="small" style="margin-bottom:0"><strong>Therefore to use this equation we need to assume
+       that d<sub>oy</sub> is zero</strong></p>
+  </div>
+  <aside class="notes">That last line is the catch, and it is why the derived equations are safer. vf² = v0² + 2ad silently assumes the object starts at the origin — which is exactly the assumption that breaks in the baseball problem later, where the ball is hit from 1.2 m up.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Measuring flight time</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small"><strong>Jump mat</strong></p>
+      <ul class="small">
+        <li>Measures time in the air and outputs jump height</li>
+        <li>So then what calculations does the jump mat use to determine jump height?</li>
+        <li>What could be some errors involved in the measurements?</li>
+      </ul>
+      <p class="small"><strong>Force plate</strong> — measures time in the air and calculates initial
+         velocity</p>
+      <p class="small"><strong>iPod</strong> — jump time app; measures the period of time when the
+         accelerometer doesn’t measure any force</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/jump-mat.jpg" alt="Two people standing on a jump mat">
+      <img src="assets/jump-app.jpg" alt="A phone app reporting a maximum jump time">
+    </div>
+  </div>
+  <aside class="notes">Every one of these devices measures the same thing — time in the air — and then runs the arithmetic from slide 14 backwards: h = g t² / 8 for a flight of time t. The errors are all in the flight time: tucking the legs on landing lengthens it and flatters the jump.</aside>
+</section>
+
+<!-- 25 -->
+<section>
+  <h2>Reading the flight off the signal</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">iPod acceleration data, from “accelerometer data logger”. The flat section is
+         the flight: <strong>0.6 s</strong> with no force on the accelerometer at all.</p>
+      <p class="tiny muted">Force platform and wearable inertial unit recorded together.</p>
+    </div>
+    <div class="fig"><img src="assets/force-imu.jpg" alt="Force platform and inertial sensor traces recorded together"></div>
+  </div>
+  <aside class="notes">Tie this back to the impulse lecture: the plate trace and the accelerometer trace are the same event measured two ways. 0.6 s of flight means 0.3 s of rise, so the take-off velocity was 2.94 m/s and the jump was about 0.44 m.</aside>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Strategies to Solving Projectile Problems</h2>
+  <ol class="small">
+    <li>Determine specifically what is asked for and when necessary draw a diagram</li>
+    <li>List all known variables — include those given in the question and those that you are able to
+        figure out without calculation</li>
+    <li>Derive the equations of motion and choose the equation that allows you to use your variables
+        to solve for the answer to the question (this may take more than one step as you may have to
+        solve for other unknowns first)</li>
+    <li>Plug in your variables and solve for the answer</li>
+    <li>Do a reality check (ie: check to see if your values seem reasonable)</li>
+  </ol>
+</section>
+
+<!-- 27 -->
+<section>
+  <h2>Example Problem #1</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">An Olympic hammer thrower has one attempt left to break the current men’s
+         world record of 86.74 m. If he releases the hammer with a horizontal component of initial
+         velocity of 22.09 m/s, and the hammer has a flight time of 3.95 s, does he break the world
+         record?</p>
+    </div>
+    <div class="fig"><img src="assets/hammer.jpg" alt="An athlete throwing the hammer"></div>
+  </div>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Solution</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>Remember, horizontal displacement is determined by the horizontal velocity and the time
+            that the projectile is in the air</li>
+        <li>In this question, we are given: V<sub>0</sub> (horizontal) = 22.09 m/s, t = 3.95 s</li>
+        <li>Since we are dealing only with a horizontal velocity, we know that acceleration is zero
+            (gravity only acts on the vertical component): a = 0 m/s²</li>
+      </ul>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.3em">d<sub>x</sub>(t) = v<sub>0</sub>t + d<sub>0x</sub></p>
+        <p class="eq" style="margin-bottom:.3em">d = (22.09 m/s)(3.95 s)</p>
+        <p class="eq" style="margin-bottom:0">d = <strong>87.26 m</strong></p>
+      </div>
+      <p class="small">Yes, he breaks the world record by 0.52 m with a throw of 87.26 m</p>
+    </div>
+    <div class="fig"><img src="assets/hammer.jpg" alt="A hammer thrower"></div>
+  </div>
+</section>
+
+<!-- 29 -->
+<section>
+  <h2>Example Problem #1 — the figure</h2>
+  <div class="iplot wide" data-widget="solve" data-preset="hammer"></div>
+  <aside class="notes">A straight line, because horizontal acceleration is zero — the slope is the release velocity and nothing bends it. Everything vertical has been folded into the one number we were handed, the 3.95 s flight time.</aside>
+</section>
+
+<!-- 30 -->
+<section>
+  <h2>Example Problem #2</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">A high-jumper is attempting to break the women’s world high jump record of
+         2.09 m (6’10”). If she has a vertical component of initial velocity of 6.16 m/s, does she
+         break the world record (or at least achieve a height that would allow her to clear the
+         bar)?</p>
+    </div>
+    <div class="fig"><img src="assets/highjump.jpg" alt="A high jumper clearing the bar"></div>
+  </div>
+</section>
+
+<!-- 31 -->
+<section>
+  <h2>Solution</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>In this question, we are given: V<sub>0</sub> (vertical) = 6.16 m/s</li>
+        <li>Since we are dealing with a vertical velocity, we know that acceleration is equal to
+            gravity: a = −9.81 m/s²</li>
+        <li>We are only considering the upward path of the high jumper, therefore, the final vertical
+            velocity (at the apex of the jump) will be zero: V<sub>f</sub> (vertical) = 0 m/s</li>
+      </ul>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.3em">v<sub>y</sub>(t) = −9.81t + v<sub>oy</sub></p>
+        <p class="eq" style="margin-bottom:.3em">0 = −9.81t + 6.16 &nbsp;→&nbsp; t = 0.629 s</p>
+        <p class="eq" style="margin-bottom:.3em">d<sub>y</sub>(t) = −(½)9.81t² + v<sub>oy</sub>t +
+           d<sub>oy</sub></p>
+        <p class="eq" style="margin-bottom:.3em">d<sub>y</sub>(0.629) = −4.905(0.629)² +
+           6.16(0.629)</p>
+        <p class="eq" style="margin-bottom:.3em">d<sub>y</sub>(0.629) = −1.9406 + 3.874</p>
+        <p class="eq" style="margin-bottom:0">d<sub>y</sub>(0.629) = <strong>1.93 m</strong></p>
+      </div>
+      <p class="small">No, she does not break the world record.</p>
+    </div>
+    <div class="fig"><img src="assets/highjump.jpg" alt="A high jumper"></div>
+  </div>
+  <aside class="notes">6.16 / 9.81 is 0.628 s to three figures; the slide's 0.629 makes no difference — the height is 1.93 m either way.</aside>
+</section>
+
+<!-- 32 -->
+<section>
+  <h2>Solution (alternative way)</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>Alternatively you could use another equation; for example we could use:</li>
+      </ul>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.3em">v<sub>f</sub>² = v<sub>i</sub>² + 2ad</p>
+        <p class="eq" style="margin-bottom:.3em">(0 m/s)² = (6.16 m/s)² + (2)(−9.81 m/s²)(d)</p>
+        <p class="eq" style="margin-bottom:.3em">(19.62 m/s²)(d) = (6.16 m/s)²</p>
+        <p class="eq" style="margin-bottom:0">d = <strong>1.93 m</strong></p>
+      </div>
+      <p class="small">No, she does not break the world record.</p>
+    </div>
+    <div class="iplot" data-widget="solve" data-preset="highjump" data-side="0"></div>
+  </div>
+  <aside class="notes">Two routes, same answer. The second one has no t in it at all, which is what makes it attractive — but it only works because the jumper starts at d = 0.</aside>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>Example Problem #3</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">A soccer player kicks a ball at an angle of 25° from horizontal, with an
+         initial speed of 21 m/s. <strong>How high and far does the ball go?</strong></p>
+      <p class="small muted">First we will resolve the resultant velocity vector into its
+         components. Then we will use the vertical velocity component to calculate the height that
+         the ball reaches and the time that the ball spends in the air. Finally we will use this
+         time value and the horizontal velocity component to calculate the horizontal distance.</p>
+    </div>
+    <div class="fig"><img src="assets/soccer.jpg" alt="A player striking a football"></div>
+  </div>
+</section>
+
+<!-- 34 -->
+<section>
+  <h2>Solution — resolve the vector</h2>
+  <div class="cols top">
+    <div class="box accent">
+      <p class="small" style="margin-bottom:.3em"><strong>Vertical Component:</strong></p>
+      <p class="eq" style="margin-bottom:.22em">sinθ = Opposite / Hypotenuse</p>
+      <p class="eq" style="margin-bottom:.22em">Opposite = (Hypotenuse)(sinθ)</p>
+      <p class="eq" style="margin-bottom:.22em">Opposite = (21 m/s)(sin25°)</p>
+      <p class="eq" style="margin-bottom:0">Opposite = <strong>8.9 m/s</strong></p>
+    </div>
+    <div class="box accent">
+      <p class="small" style="margin-bottom:.3em"><strong>Horizontal Component:</strong></p>
+      <p class="eq" style="margin-bottom:.22em">cosθ = Adjacent / Hypotenuse</p>
+      <p class="eq" style="margin-bottom:.22em">Adjacent = (Hypotenuse)(cosθ)</p>
+      <p class="eq" style="margin-bottom:.22em">Adjacent = (21 m/s)(cos25°)</p>
+      <p class="eq" style="margin-bottom:0">Adjacent = <strong>19.0 m/s</strong></p>
+    </div>
+  </div>
+  <p class="small muted center" style="margin-top:.6em">21 m/s at 25° above horizontal</p>
+</section>
+
+<!-- 35 -->
+<section>
+  <h2>Solution — the path upward</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small"><strong>Time:</strong> v<sub>0</sub> (vertical) = 8.9 m/s, v<sub>f</sub>
+         (vertical) = 0 m/s, a = −9.81 m/s²</p>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.25em">v<sub>f</sub> = at + v<sub>0</sub></p>
+        <p class="eq" style="margin-bottom:.25em">(0 m/s) = (8.9 m/s) + (−9.81 m/s²)(t)</p>
+        <p class="eq" style="margin-bottom:0">t = <strong>0.91 s</strong></p>
+      </div>
+      <p class="small">Remember that this is the time taken for the ball to travel from the ground to
+         its highest point. For the way up and down, we must multiply this value by two.
+         <strong>0.91 s × 2 = 1.82 s</strong></p>
+      <p class="small"><strong>Vertical displacement:</strong></p>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.25em">d(t)<sub>y</sub> = ½at² + v<sub>0y</sub>t +
+           d<sub>0y</sub></p>
+        <p class="eq" style="margin-bottom:.25em">d(t)<sub>y</sub> = ½(−9.81)(0.91)² +
+           (8.9)(0.91) + 0</p>
+        <p class="eq" style="margin-bottom:.25em">d(t)<sub>y</sub> = −4.06 + 8.1 + 0</p>
+        <p class="eq" style="margin-bottom:0">d(t)<sub>y</sub> = <strong>4.04 m</strong></p>
+      </div>
+    </div>
+    <div>
+      <p class="small muted"><strong>Or</strong>, with the equation from slide 23:</p>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.25em">v<sub>f</sub>² = v<sub>0</sub>² + 2ad</p>
+        <p class="eq" style="margin-bottom:.25em">(0 m/s)² = (8.9 m/s)² + (2)(−9.81 m/s²)(d)</p>
+        <p class="eq" style="margin-bottom:0">d = <strong>4.04 m</strong></p>
+      </div>
+      <p class="small"><strong>Horizontal distance travelled:</strong></p>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.25em">d = v<sub>0</sub>t + d<sub>0</sub></p>
+        <p class="eq" style="margin-bottom:.25em">d = (19.0 m/s)(1.82 s)</p>
+        <p class="eq" style="margin-bottom:0">d = <strong>34.6 m</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 36 -->
+<section>
+  <h2>Example Problem #3 — the figure</h2>
+  <div class="iplot wide" data-widget="solve" data-preset="soccer"></div>
+  <aside class="notes">The chips walk the four steps. The green half of the path is the rise and the coral half is the fall — same duration, same shape, because take-off and landing are level.</aside>
+</section>
+
+<!-- 37 -->
+<section>
+  <h2>Example Problem #4</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">In the 2005 Homerun Derby, Bobby Abreu hit a baseball at an angle of 37° from
+         horizontal, with an initial speed of 120 km/hr from an initial height of 1.2 m.
+         <strong>How high and far does the ball go?</strong></p>
+      <p class="small muted">First we will convert km/hr to m/s. Next we will resolve the resultant
+         velocity vector into its components. Then we will use the vertical velocity component to
+         calculate the time that the ball spends in the air (keeping in mind that the ball was hit
+         from an additional 1.2 m from the ground). Finally we will use this time value and the
+         horizontal velocity component to calculate the horizontal distance.</p>
+    </div>
+    <div class="fig"><img src="assets/baseball.jpg" alt="A batter striking a baseball"></div>
+  </div>
+</section>
+
+<!-- 38 -->
+<section>
+  <h2>Solution — convert and resolve</h2>
+  <div class="cols top">
+    <div class="box accent">
+      <p class="small" style="margin-bottom:.3em"><strong>120 km/hr × 1000 m ÷ 3600 s =
+         33.3 m/s</strong></p>
+      <p class="small" style="margin-bottom:.3em"><strong>Vertical Component:</strong></p>
+      <p class="eq" style="margin-bottom:.22em">Opposite = (Hypotenuse)(sinθ)</p>
+      <p class="eq" style="margin-bottom:.22em">Opposite = (33.3 m/s)(sin 37°)</p>
+      <p class="eq" style="margin-bottom:0">Opposite = <strong>20.0 m/s</strong></p>
+    </div>
+    <div class="box accent">
+      <p class="small" style="margin-bottom:.3em"><strong>Horizontal Component:</strong></p>
+      <p class="eq" style="margin-bottom:.22em">cosθ = Adjacent / Hypotenuse</p>
+      <p class="eq" style="margin-bottom:.22em">Adjacent = (Hypotenuse)(cosθ)</p>
+      <p class="eq" style="margin-bottom:.22em">Adjacent = (33.3 m/s)(cos37°)</p>
+      <p class="eq" style="margin-bottom:0">Adjacent = <strong>26.6 m/s</strong></p>
+    </div>
+  </div>
+  <p class="small muted center" style="margin-top:.6em">33.3 m/s at 37° above horizontal, from
+     1.2 m</p>
+</section>
+
+<!-- 39 -->
+<section>
+  <h2>Solution — up, then down</h2>
+  <div class="cols top">
+    <div>
+      <p class="small"><strong>The Path Upward:</strong></p>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.25em">v<sub>f</sub> = at + v<sub>0</sub></p>
+        <p class="eq" style="margin-bottom:.25em">(0 m/s) = (−9.81 m/s²)(t) + (20.0 m/s)</p>
+        <p class="eq" style="margin-bottom:0">t<sub>up</sub> = <strong>2.04 s</strong></p>
+      </div>
+      <p class="tiny muted">Calculates the time for the ball to travel from the bat to the apex.</p>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.25em">d = (½)at² + v<sub>0</sub>t + d<sub>o</sub></p>
+        <p class="eq" style="margin-bottom:.25em">d = (½)(−9.81 m/s²)(2.04)² + (20 m/s)(2.04) +
+           (0 m or 1.2 m)</p>
+        <p class="eq" style="margin-bottom:0">d = <strong>20.4 m or 21.6 m</strong></p>
+      </div>
+    </div>
+    <div>
+      <p class="small"><strong>The Path Downward:</strong> the vertical distance travelled is equal
+         to that travelled during the path upward plus 1.2 m. The initial velocity is 0 m/s, but we
+         do not know the final velocity.</p>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.25em">d = (½)at² + v<sub>0</sub>t + d<sub>o</sub></p>
+        <p class="eq" style="margin-bottom:.25em">0 m = (½)(−9.81 m/s²)(t)² + (0 m/s)(t) +
+           (20.4 m + 1.2 m)</p>
+        <p class="eq" style="margin-bottom:0">t<sub>down</sub> = <strong>2.10 s</strong></p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">This is where the symmetry argument breaks. Up and down are no longer equal, because the ball lands 1.2 m below where it was hit — hence two separate calculations rather than doubling one.</aside>
+</section>
+
+<!-- 40 -->
+<section>
+  <h2>Solution — total time and distance</h2>
+  <div class="cols b top">
+    <div>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.25em">Total Time in Air = t<sub>up</sub> +
+           t<sub>down</sub></p>
+        <p class="eq" style="margin-bottom:.25em">t<sub>total</sub> = 2.04 s + 2.10 s =
+           <strong>4.14 s</strong></p>
+      </div>
+      <p class="small"><strong>The Horizontal Distance Travelled:</strong></p>
+      <div class="box accent">
+        <p class="eq" style="margin-bottom:.25em">d = (½)at² + v<sub>0</sub>t</p>
+        <p class="eq" style="margin-bottom:.25em">d = (½)(0 m/s²)(4.14 s)² + (26.6 m/s)(4.14 s)</p>
+        <p class="eq" style="margin-bottom:0">d = <strong>110.1 m</strong></p>
+      </div>
+      <p class="small">The ball reaches a height of 21.6 m and travels 110.1 m horizontally.</p>
+    </div>
+    <div class="fig"><img src="assets/baseball.jpg" alt="A baseball leaving the bat"></div>
+  </div>
+</section>
+
+<!-- 41 -->
+<section>
+  <h2>Example Problem #4 — the figure</h2>
+  <div class="iplot wide" data-widget="solve" data-preset="baseball"></div>
+  <aside class="notes">Note the asymmetry: the fall is longer than the rise, because the ball has an extra 1.2 m to travel. 110 m is a long home run but not absurd — the record is around 150 m, and this calculation ignores air resistance, which in reality takes perhaps 20 % off.</aside>
+</section>
+
+<!-- 42 -->
+<section>
+  <h2>Sample Problem</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Find the time in the air for a man jumping up on the platform and how far he
+         will travel horizontally</p>
+      <div class="callout small">
+        <p style="margin-bottom:.2em"><strong>Given:</strong></p>
+        <p style="margin-bottom:.2em">initial velocity = 6 m/s at 45°</p>
+        <p style="margin-bottom:0">height of landing = 1.8 m</p>
+      </div>
+      <p class="small muted">The jumper leaves the ground at a hip height of 1.2 m and lands on a
+         platform at 1.8 m.</p>
+    </div>
+    <div class="iplot" data-widget="solve" data-preset="platform" data-step="1" data-side="0"></div>
+  </div>
+</section>
+
+<!-- 43 -->
+<section>
+  <h2>Step 1: Derive the equations of motion</h2>
+  <p class="small">Since gravity is the only force acting on the subject, the acceleration in the y
+     direction is −9.81 m/s² and the acceleration in the x direction is 0 m/s². We use integral
+     calculus to yield the velocity and displacement equations.</p>
+  <div class="cols top">
+    <div class="box accent">
+      <p class="eq" style="margin-bottom:.25em">1) a<sub>y</sub>(t) = −9.81</p>
+      <p class="eq" style="margin-bottom:.25em">2) v<sub>y</sub>(t) = −9.81t + v<sub>oy</sub></p>
+      <p class="eq" style="margin-bottom:0">3) y(t) = (−9.81/2)t² + v<sub>oy</sub>t +
+         y<sub>o</sub></p>
+    </div>
+    <div class="box accent">
+      <p class="eq" style="margin-bottom:.25em">4) a<sub>x</sub>(t) = 0</p>
+      <p class="eq" style="margin-bottom:.25em">5) v<sub>x</sub>(t) = v<sub>ox</sub></p>
+      <p class="eq" style="margin-bottom:0">6) x(t) = v<sub>ox</sub>t + x<sub>o</sub></p>
+    </div>
+  </div>
+</section>
+
+<!-- 44 -->
+<section>
+  <h2>Step 2: Substitute known values for variables</h2>
+  <p class="small">Now we substitute the given information of this particular problem.</p>
+  <div class="cols top">
+    <div class="box accent">
+      <p class="eq" style="margin-bottom:.25em">1) a<sub>y</sub>(t) = −9.81</p>
+      <p class="eq" style="margin-bottom:.25em">2) v<sub>y</sub>(t) = −9.81t + 6sin45°</p>
+      <p class="eq" style="margin-bottom:0">3) y(t) = (−9.81/2)t² + 6sin45°t + 1.2</p>
+    </div>
+    <div class="box accent">
+      <p class="eq" style="margin-bottom:.25em">4) a<sub>x</sub>(t) = 0</p>
+      <p class="eq" style="margin-bottom:.25em">5) v<sub>x</sub>(t) = 6cos45°</p>
+      <p class="eq" style="margin-bottom:0">6) x(t) = 6cos45°t + 0</p>
+    </div>
+  </div>
+  <div class="iplot" data-widget="solve" data-preset="platform" data-step="2" data-side="0"></div>
+</section>
+
+<!-- 45 -->
+<section>
+  <h2>Step 3: Use the appropriate equations</h2>
+  <p class="small">This is the most difficult step because we must look at our six equations of
+     motion and decide which one or ones will help us find the answer to the question that we have
+     been asked. In this case we have been asked to find the time in the air. Although time is part
+     of all of the equations, we know that at the instant of landing, the vertical displacement is
+     1.8 meters. Equation [3] is the vertical displacement equation and we must use this equation to
+     solve for t when y(t) = 1.8.</p>
+  <div class="box accent">
+    <p class="eq" style="margin-bottom:.25em">y(t) = (−9.81/2)t² + 6sin45°t + 1.2</p>
+    <p class="eq" style="margin-bottom:.25em">1.8 = (−9.81/2)t² + 6sin45°t + 1.2</p>
+    <p class="eq" style="margin-bottom:0">0 = (−9.81/2)t² + 6sin45°t − 0.6 &nbsp;&nbsp;
+       <em class="key">This is a quadratic equation</em></p>
+  </div>
+</section>
+
+<!-- 46 -->
+<section>
+  <h2>Step 4: Solve for the unknown variables</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">We must use the quadratic formula to solve for the two values of t which
+         satisfy this equation. Root of a Quadratic Equation for an equation in the form
+         <strong>a·x² + b·x + c = 0</strong>, solve for x:</p>
+      <div class="box accent">
+        <p class="eq big" style="margin-bottom:.3em">x = (−b ± √(b² − 4·a·c)) / 2·a</p>
+        <p class="small" style="margin-bottom:0">In this case a = −4.905, b = 6sin45°, c = −0.6</p>
+      </div>
+      <p class="small">Solving the equation above leaves two possible answers for t (using the
+         positive and negative roots). Therefore we are left with two values of t:</p>
+      <p class="eq"><strong>t = 0.178</strong> and <strong>t = 0.687</strong></p>
+    </div>
+    <div class="iplot" data-widget="solve" data-preset="platform" data-step="4" data-side="0"></div>
+  </div>
+</section>
+
+<!-- 47 -->
+<section>
+  <h2>Which root is the landing?</h2>
+  <p class="small">Due to the parabolic path of the jumper, the jumper’s height was 1.8 meters high
+     at two instants in time (t<sub>1</sub> and t<sub>2</sub>). We want the later time
+     (t<sub>2</sub>) because that is the time of landing. At the earlier time (t<sub>1</sub>) the
+     jumper was travelling upward. If we are ever uncertain about the direction, we can substitute
+     the time into equation [2] and if velocity is positive, the motion is upward and if the velocity
+     is negative, the direction is downward. <strong>Therefore, the time in the air is 0.687
+     seconds.</strong></p>
+  <p class="small">We were also asked to calculate the horizontal displacement on landing. We can use
+     equation [6] which is the horizontal displacement function knowing the time of landing is
+     0.687 seconds.</p>
+  <div class="box accent">
+    <p class="eq" style="margin-bottom:.22em">x(t) = 6cos45°t + 0</p>
+    <p class="eq" style="margin-bottom:.22em">= 6cos45°(0.687) + 0</p>
+    <p class="eq" style="margin-bottom:0">= <strong>2.91 m</strong></p>
+  </div>
+</section>
+
+<!-- 48 -->
+<section>
+  <h2>Sample Problem — the whole thing</h2>
+  <div class="iplot wide" data-widget="solve" data-preset="platform"></div>
+  <aside class="notes">Both roots are marked on the path: the violet dot on the way up at 0.178 s and the coral one on the way down at 0.687 s. Substituting 0.178 into the velocity equation gives +2.49 m/s — positive, so still rising — which is the check the slide describes.</aside>
+</section>
+
+<!-- 49 -->
+<section>
+  <h2>Summary</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>A projectile moves under gravity alone, so a<sub>y</sub> = −9.81 m/s² and
+            a<sub>x</sub> = 0</li>
+        <li>Integrating those twice gives the six equations of motion, and the constants are the
+            initial velocity and the initial position</li>
+        <li>Vertical and horizontal are solved <strong>separately</strong> and share only
+            <strong>time</strong></li>
+        <li>At the apex v<sub>y</sub> = 0; with a level take-off and landing the apex is at half the
+            flight time</li>
+        <li>45° is best for distance from ground level, 90° for height — raise the release point and
+            the best angle for distance drops below 45°</li>
+        <li>When take-off and landing heights differ, the flight time comes from a
+            <strong>quadratic</strong>, and the later root is the landing</li>
+      </ul>
+    </div>
+    <div class="imgrow">
+      <img src="assets/soccer.jpg" alt="A football being struck">
+      <img src="assets/highjump.jpg" alt="A high jumper">
+      <img src="assets/hammer.jpg" alt="A hammer thrower">
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js"></script>
+<script src="mobile.js"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="deck-core.js"></script>
+<script src="projectile.js"></script>
+<script src="deck-tools.js"></script>
+<script src="fit.js"></script>
+</body>
+</html>
