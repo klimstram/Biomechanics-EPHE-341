@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a2e">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Signals</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'dark';
+  try { t = localStorage.getItem('ephe341-theme') || 'dark'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <span class="mark">UVic</span>
+  <span class="who"><b>University of Victoria</b><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Signals</h1>
+    <div class="rule"></div>
+    <p class="sub">Separating the true signal from the noise.</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Signals</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">In biomechanics we are dealing with values from sensors that have limitations
+         based on</p>
+      <ul class="small">
+        <li>Sampling</li>
+        <li>Sensor error</li>
+        <li>Environmental error</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">We need to be able to separate the <strong>true signal</strong>
+           from the <strong>noise</strong></p>
+      </div>
+    </div>
+    <div class="imgrow">
+      <img src="assets/head-accel.jpg" alt="Digitised acceleration of the head while running, sampled at 100 Hz">
+      <img src="assets/signal-noise.jpg" alt="A signal, and the same signal with noise added">
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Signals</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">We can minimize the noise by <strong>processing</strong> the data.</p>
+      <ul class="small">
+        <li>Sampling properly</li>
+        <li>Smoothing data</li>
+        <li>Filtering data</li>
+        <li>Fitting data</li>
+      </ul>
+      <p class="small">To inform our processing choices we need to understand some basic
+         characteristics of signals and the transformations that we intend to perform on them.</p>
+    </div>
+    <div class="fig"><img src="assets/analog-raw-diff-filtered.jpg" alt="An analog signal, its raw digitised form, a finite difference and a filtered version"></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Nyquist–Shannon Sampling Theorem</h2>
+  <p class="lead">In sampling an analog signal, the goal is to represent the original signal as
+     accurately as possible with as few discrete points as possible.
+     <strong>How high must the sampling frequency be for an analog signal to be accurately
+     represented by discrete data points?</strong></p>
+  <div class="iplot wide" data-widget="nyquist" data-freq="10" data-rate="4"></div>
+  <aside class="notes">Due to limitations in computer technology, it is best to sample as few times as possible, while still maintaining the fidelity of the original signal.
+The original slides step through 4, 5, 7, 10, 15 and 20 Hz — the chips do the same thing, and the slider fills in everything between.
+Note: there is more than one set of sine waves that could have fit the samples shown here. That is what the dashed line is.</aside>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Nyquist–Shannon Sampling Theorem</h2>
+  <p class="lead">For a digital signal to represent an analog signal perfectly, the sampling
+     frequency must be <strong>at least twice</strong> the analog signal’s highest frequency.</p>
+  <div class="iplot wide" data-widget="nyquist" data-freq="10" data-rate="20"></div>
+  <aside class="notes">A sampling frequency of twice the highest frequency in the analog signal is called the Nyquist Frequency.
+Walk the slider up from 4 Hz: below 20 Hz there is always another sine wave that fits the samples, and the dashed line is it. At 20 Hz and above there is not.</aside>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>Nyquist–Shannon Sampling Theorem</h2>
+  <p class="lead">To ensure that sharp direction changes in the signal are not missed, sampling
+     frequencies of <strong>5–10 times</strong> the Nyquist Frequency are often used.</p>
+  <div class="iplot wide" data-widget="nyquist" data-freq="10" data-rate="100"></div>
+  <aside class="notes">Sampling higher than the Nyquist Frequency does not lead to better representation of a pure sine wave, and it can slow computer processing time. Real signals are not pure sine waves — the peaks and the turns are where extra samples earn their keep.
+Turn "join the samples" off and on at 20 Hz and then at 100 Hz: the corners are the difference.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Signals</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Following data collection, “raw” data often contains noise.</p>
+      <p class="small">Processing data post collection can improve the <strong>signal to noise
+         (S/N) ratio</strong>.</p>
+      <p class="small">Smoothing, filtering and curve fitting can improve S/N ratio.</p>
+      <p class="small">Processing is necessary <strong>before calculations are performed</strong>.</p>
+    </div>
+    <div class="fig"><img src="assets/three-methods.jpg" alt="The same noisy signal after a Butterworth filter, a moving average and a polynomial fit"></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Signals</h2>
+  <p class="lead">Filtering, smoothing and fitting can improve S/N using different approaches.</p>
+  <div class="cols top">
+    <div>
+      <div class="box accent small">
+        <p><strong>Filtering:</strong></p>
+        <p style="margin-bottom:0">involves altering or removing certain frequency components from
+           a signal.</p>
+      </div>
+      <div class="box accent small" style="margin-top:.5em">
+        <p><strong>Smoothing:</strong></p>
+        <p style="margin-bottom:0">involves averaging or aggregating data points to reduce
+           short-term fluctuations and highlight longer-term trends or cycles.</p>
+      </div>
+      <div class="box accent small" style="margin-top:.5em">
+        <p><strong>Curve Fitting:</strong></p>
+        <p style="margin-bottom:0">to find a mathematical function that best represents a dataset.
+           This function may be a simple linear equation, a complex polynomial, or any other
+           mathematical form that closely matches the pattern of the data.</p>
+      </div>
+    </div>
+    <div class="fig"><img src="assets/butterworth-cutoff.jpg" alt="A noisy signal and the same signal after a Butterworth filter"></div>
+  </div>
+  <aside class="notes">Filtering removes unwanted components from a signal or dataset, such as noise or interference, and can be applied in real time to an ongoing data stream. Low-pass filters remove high-frequency components; high-pass filters remove low-frequency components; band-pass filters allow a certain range; band-stop filters block a specific range.
+Smoothing reduces short-term fluctuations to reveal the underlying trend; it is usually applied to a record you already have in full.</aside>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Smoothing</h2>
+  <p class="lead"><strong>Moving average</strong> (over a window of samples). Simple averaging gets
+     rid of noisy spikes.</p>
+  <div class="iplot wide" data-widget="smooth"></div>
+  <aside class="notes">The lecture's own example is EMG sampled at 1010 Hz with a 51-point moving average. Drag the window from 3 to 301 and watch the cost: the bursts get shorter, later and blunter as the window approaches the length of the burst itself.</aside>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Smoothing</h2>
+  <div class="cols top">
+    <div class="fig"><img src="assets/emg-rectified.jpg" alt="Full-wave rectified EMG"><figcaption>EMG (1010 Hz sampling rate)</figcaption></div>
+    <div class="fig"><img src="assets/emg-averaged.jpg" alt="The same EMG after a 51-point moving average"><figcaption>averaged EMG (moving average, 51 points)</figcaption></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>Curve fitting</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Fits a <strong>best-fitting function</strong> to the data.</p>
+      <ul class="small">
+        <li>Polynomials</li>
+        <li>Splines</li>
+        <li>linear</li>
+      </ul>
+    </div>
+    <div class="iplot" data-widget="fit"></div>
+  </div>
+  <div class="fig"><img src="assets/poly-fit.jpg" alt="A noisy signal with a degree-3 polynomial approximation" style="max-height:20vh"></div>
+  <aside class="notes">Raise the polynomial order and the residual always falls — that is arithmetic, not insight. Past a handful of terms the curve is describing this particular sample of noise.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Components of a signal</h2>
+  <p class="lead">Filtering – a process that removes some unwanted components or features from a
+     signal. Before we discuss filtering we need to talk about <strong>signal components</strong>.</p>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li><strong>frequency:</strong> the number of repeating cycles per unit time</li>
+        <li><strong>amplitude:</strong> the magnitude of change</li>
+        <li><strong>offset:</strong> the distance of the mean amplitude from zero</li>
+        <li><strong>Phase Shift:</strong> a timing offset</li>
+      </ul>
+    </div>
+    <div class="iplot" data-widget="components"></div>
+  </div>
+  <aside class="notes">All time-varying signals contain four essential components.</aside>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Components of a signal</h2>
+  <div class="fig"><img src="assets/components.jpg" alt="The four essential components of a time-varying signal"></div>
+  <p class="small muted center">The four essential components of a time-varying signal.</p>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Signals</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Signals can be <strong>decomposed and reconstructed</strong> from a number of
+         basic functions (sine waves).</p>
+      <p class="small">Once a signal is decomposed it can be represented in a frequency graph of the
+         basic sine waves.</p>
+      <p class="small muted">Time Domain &nbsp;&nbsp;→&nbsp;&nbsp; Frequency Domain</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/sine-stack.jpg" alt="A signal decomposed into sine waves from 1 to 10 Hz">
+      <img src="assets/freq-bars.jpg" alt="The same signal as amplitude against frequency">
+    </div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section>
+  <h2>Frequency domain</h2>
+  <p class="lead">A time-domain signal is converted to a frequency-domain signal with a mathematical
+     technique called a <strong>Fourier Transform</strong>.</p>
+  <div class="iplot wide" data-widget="fourier"></div>
+  <aside class="notes">The chips are the lecture's own three examples: a pure 1 Hz wave, a pure 5 Hz wave, and 2 Hz + 30 Hz. Since the first two are pure sine waves, the frequency-domain graph clearly shows that the whole signal is one frequency.
+Then turn the noise up. Noise has no single frequency, so it lifts the entire spectrum rather than making a spike — which is exactly what makes it separable.</aside>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>Fourier transform</h2>
+  <div class="cols top">
+    <div class="fig"><img src="assets/ft-illustration.jpg" alt="A complex wave decomposed into a stack of sine waves"></div>
+    <div class="fig"><img src="assets/ft-3d.jpg" alt="A square wave built out of sine waves, seen in three dimensions"></div>
+  </div>
+  <aside class="notes">Any repeating signal, however square-edged, is a sum of sine waves. The sharper the corner, the more high-frequency terms it takes.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Digital filtering</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Is a way of reducing the frequency content of the signal so that it just
+         obtains the signal you are interested in without the noise.</p>
+      <p class="small">A common use of Fourier transforms is to find the frequency components of a
+         time-domain signal that is mixed with noise.</p>
+      <p class="small">Because noise is often of a different frequency than the intended signal, a
+         filter can be used to remove the noise (ie: parts of the signal that are a certain
+         frequency).</p>
+    </div>
+    <div class="fig"><img src="assets/reconstruction.jpg" alt="A noisy signal reconstructed from its strongest frequency components"></div>
+  </div>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Digital filtering</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small"><strong>Types:</strong></p>
+      <p class="small">low-pass, high-pass, band-pass, band stop and notch (single or small
+         band-stop filter, useful for AC interference)</p>
+      <p class="small"><strong>Designs:</strong></p>
+      <p class="small">Butterworth, critically-damped, Chebyshev etc. (sharper cutoffs),
+         Generalized Cross-validation (GCV also called Woltring filter, 1986)</p>
+      <p class="small"><strong>Problems:</strong></p>
+      <p class="small">Phase distortion (usually phase-lags occur)</p>
+    </div>
+    <div class="fig"><img src="assets/after-lowpass.jpg" alt="A noisy signal and the same signal after low-pass filtering"></div>
+  </div>
+  <aside class="notes">The phase lag is why biomechanics filters forwards and then backwards — running the same filter twice in opposite directions cancels the delay exactly. The figure on the next slide does that.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Digital filtering</h2>
+  <p class="lead">Let’s say that we wanted to isolate different parts of the signal — we could use
+     different filters to do that. A <strong>low pass filter</strong> maintains low frequencies; a
+     <strong>high pass filter</strong> maintains high frequencies.</p>
+  <div class="iplot wide" data-widget="filter" data-preset="mix" data-kind="low" data-cut="10"></div>
+  <aside class="notes">The signal is the lecture's 2 Hz + 30 Hz. Low-pass at 10 Hz keeps the 2 and throws away the 30; high-pass at 10 Hz does the reverse. The spectrum underneath shows what was removed rather than asking anyone to take it on trust.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Digital filtering</h2>
+  <p class="lead">25 Hz + 50 Hz, buried in random noise <strong>ten times larger</strong> than the
+     sine waves themselves — and pulled back out again.</p>
+  <div class="iplot wide" data-widget="filter" data-preset="buried" data-kind="band" data-cut="35"></div>
+  <aside class="notes">Note that the amplitude of the noise is ten times that of the 25 Hz and 50 Hz sine waves; therefore, when the sine waves are added to the noise, they are completely buried.
+In the time domain there is nothing to see. In the frequency domain the two spikes are still standing there in plain sight, which is the whole reason for going to the frequency domain at all. Then band-pass around them.</aside>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Digital filtering</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">The most common source of noise in human motion capture data are small errors
+         in the position of the biomechanical markers during the digitization process.</p>
+      <p class="small">This noise is typically <strong>low amplitude and high frequency</strong>;
+         therefore, a low-pass filter is often used to smooth kinematic data.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">The aim of filtering is to arrive at the highest
+           <strong>signal : noise</strong> ratio</p>
+      </div>
+    </div>
+    <div class="fig"><img src="assets/mocap.jpg" alt="A marker set reconstructed from motion capture"></div>
+  </div>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Digital filtering</h2>
+  <p class="lead">Noise in motion capture data is <strong>amplified</strong> each time the data are
+     differentiated or integrated.</p>
+  <div class="iplot wide" data-widget="deriv"></div>
+  <aside class="notes">Low-amplitude noise in a displacement signal can lead to large-amplitude noise in an acceleration signal.
+In the original figure, noise with an amplitude of 0.01% of the signal was added — random numbers of ±0.0001, a signal to noise ratio of 10 000:1. The noise is so small it is not visible at the magnification of the figure, but when the signal is double-differentiated it dominates.
+Then press the low-pass button: this is why kinematic data is filtered before it is differentiated.</aside>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Digital filtering</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Filtering, smoothing and fitting can aid in signal
+         <strong>Event Detection</strong>.</p>
+      <p class="small">In many biomechanical analysis, signal processing algorithms are required.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/rowing-phases.jpg" alt="Hull acceleration through the rowing drive and recovery">
+      <img src="assets/wavelet-levels.jpg" alt="Five level wavelet decomposition of a hull acceleration signal">
+    </div>
+  </div>
+  <aside class="notes">For our next task we had to go to the scientific literature to see what others have done to determine data landmarks in sensor data. Many techniques exist but none have easily automated drive start/end algorithms.
+So we decided to try and develop our own from previous research that we did. We used wavelets as a signal processing technique to see if different decomposition levels had clearer data landmarks.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Digital filtering</h2>
+  <div class="cols top">
+    <div class="fig"><img src="assets/wavelet-detect.jpg" alt="Drive start and end detected from wavelet levels against the force curve"></div>
+    <div class="fig"><img src="assets/rowing-figure.jpg" alt="Rowing hull acceleration, force, oar angle and angular velocity"></div>
+  </div>
+  <aside class="notes">Without going into too much detail, we had good results finding data landmarks, but the process required us to compare the landmarks in the accelerometer to force data from a more comprehensive rowing device (Peach). This level of validation is important.
+Force analysis — drive initiation: rising edge of the force curve at 5% of maximum force; drive end: falling edge zero-crossing.
+Accelerometer analysis — drive initiation: negative valley associated with peak negative hull acceleration in the 1st wavelet decomposition from 5 levels; drive end: first peak in the 2nd wavelet decomposition from 9 levels.</aside>
+</section>
+
+<!-- 25 -->
+<section>
+  <h2>Signals summary</h2>
+  <ul class="small">
+    <li>It is important to know features of the signal we are collecting.</li>
+    <li>Highest natural frequency in signal helps define the <strong>minimum sampling rate</strong>.</li>
+    <li>Data processing can come in the form of <strong>Filtering, smoothing and fitting</strong>.</li>
+    <li>It is important to get rid of noise <strong>before and after</strong> data transformation.</li>
+  </ul>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js"></script>
+<script src="mobile.js"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="deck-core.js"></script>
+<script src="signals.js"></script>
+<script src="deck-tools.js"></script>
+<script src="fit.js"></script>
+</body>
+</html>

@@ -49,10 +49,20 @@ window.EPHE341_LECTURES = [
            'heel strike against forefoot strike',
            'the four running clips'] },
 
+  { n: '5', title: 'Signals',
+    path: 'lectures/05-signals',
+    blurb: 'Why a sample rate can lie to you, what a Fourier transform is actually for, and how ' +
+           'filtering, smoothing and fitting each pull a different trick on the same noise.',
+    slides: 25, widgets: 10, updated: '2026-09-18',
+    handout: 'handout.pdf',
+    live: ['sample a 10 Hz wave too slowly', 'the four components of a signal',
+           'a moving average you can widen', 'polynomial against spline',
+           'time domain beside frequency domain', 'low-pass, high-pass, band-pass',
+           '25 + 50 Hz buried in noise', 'noise amplified by differentiation'] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
-  { n: '5',  title: 'Signals' },
   { n: '6',  title: 'Linear kinetics 1' },
   { n: '7',  title: 'Linear kinetics 2' },
   { n: '8',  title: 'Projectile motion' },
