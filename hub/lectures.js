@@ -41,7 +41,7 @@ window.EPHE341_LECTURES = [
     path: 'lectures/04-forces',
     blurb: 'What a push or a pull actually is, how to add several of them into one, and how we ' +
            'measure the forces we can reach — and approximate the ones we cannot.',
-    slides: 48, widgets: 16, updated: '2026-09-18',
+    slides: 48, widgets: 19, updated: '2026-09-18',
     handout: 'handout.pdf',
     live: ['anatomy of a force vector', 'F = ma', 'resolve the quadriceps forces',
            'weight on four worlds', 'a block on a slope you can tilt',
@@ -64,7 +64,7 @@ window.EPHE341_LECTURES = [
     path: 'lectures/06-linear-kinetics-1',
     blurb: 'Newton\u2019s three laws, momentum, and what actually decides how a collision ends \u2014 ' +
            'conservation on one side and the coefficient of restitution on the other.',
-    slides: 42, widgets: 15, updated: '2026-09-18',
+    slides: 45, widgets: 15, updated: '2026-09-18',
     handout: 'handout.pdf',
     live: ['static against dynamic equilibrium', 'momentum of a player and a cyclist',
            'a collision lab with every worked example in it', 'the drop test for restitution',
@@ -75,7 +75,7 @@ window.EPHE341_LECTURES = [
     path: 'lectures/07-linear-kinetics-2',
     blurb: 'Impulse \u2014 the time side of force \u2014 read straight off a jump that reproduces the ' +
            'lecture\u2019s own numbers, and friction from a stuck crate to a hiker on a 35\u00b0 trail.',
-    slides: 48, widgets: 9, updated: '2026-09-18',
+    slides: 50, widgets: 8, updated: '2026-09-18',
     handout: 'handout.pdf',
     live: ['impulse as an area you can reshape', 'a countermovement jump in four steps',
            'ten activities on one force plate', 'static giving way to kinetic friction',
@@ -85,7 +85,7 @@ window.EPHE341_LECTURES = [
     path: 'lectures/08-projectile-motion',
     blurb: 'Why anything thrown on earth follows a parabola, the six equations that come out of ' +
            'integrating gravity twice, and every worked example from the hammer to the home run.',
-    slides: 49, widgets: 15, updated: '2026-09-18',
+    slides: 59, widgets: 14, updated: '2026-09-18',
     handout: 'handout.pdf',
     live: ['a parabola you can reshape, with the components drawn on it',
            'the straight-up toss as three stacked equations',

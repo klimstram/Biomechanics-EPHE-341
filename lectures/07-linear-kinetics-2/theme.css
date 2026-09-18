@@ -99,6 +99,14 @@ html[data-theme="dark"] .reveal-viewport{
 .reveal .small{ font-size:.84em; }
 .reveal .tiny{ font-size:.72em; }
 .reveal .muted{ color:var(--muted); }
+/* Marc's own slide grammar: the lecture section as the heading, then an
+   italic grey subhead naming the step ("Example Problem", "Solution"). */
+.subhead{ font-style:italic; color:var(--muted); font-size:.92em; font-weight:600;
+  margin:-.15em 0 .8em .2em; letter-spacing:.005em; }
+.subhead + .cols,.subhead + .box,.subhead + ul,.subhead + ol,.subhead + p{ margin-top:0; }
+/* indented working, the way the originals lay equations out under a lead-in */
+.workblock{ margin:0 0 .7em 1.4em; }
+.workblock .eq{ margin:0 0 .3em 0; }
 .reveal .lead{
   font-size:.9em; color:var(--muted); border-left:2px solid var(--brand);
   padding-left:.8em; margin-bottom:1em; line-height:1.5;
@@ -119,14 +127,20 @@ html[data-theme="dark"] .reveal-viewport{
 .center{ text-align:center; }
 
 .fig{ text-align:center; }
-.fig img,.fig svg{ max-width:100%; max-height:64vh; height:auto; display:inline-block; }
-.cols .fig img{ width:100%; }
-.cols .fig.small img{ width:100%; max-height:29vh; object-fit:contain; }
+/* Never force BOTH dimensions of a photo. width:100% together with a
+   max-height clamps the height while the width stays pinned to the
+   column, which stretches anything that is not exactly the box's
+   aspect ratio. Width is left to follow the height instead, and
+   object-fit is a backstop in case some other rule pins both. */
+.fig img,.fig svg{ max-width:100%; max-height:64vh; width:auto; height:auto;
+  object-fit:contain; display:inline-block; }
+.cols .fig img{ width:auto; max-width:100%; max-height:46vh; }
+.cols .fig.small img{ width:auto; max-width:100%; max-height:29vh; object-fit:contain; }
 .fig.small img{ max-height:29vh; }
 .fig figcaption{ font-size:.62em; color:var(--muted); margin-top:.3em; }
 .reveal img{ border:0; box-shadow:none; background:none; margin:0; }
 .imgrow{ display:flex; gap:.7em; justify-content:center; align-items:center; flex-wrap:wrap; }
-.imgrow img{ max-height:52vh; }
+.imgrow img{ max-height:52vh; max-width:100%; width:auto; height:auto; object-fit:contain; }
 .cols .imgrow img{ max-height:30vh; }
 
 /* line-art figures invert for the dark theme; photos get a light card instead */
@@ -655,7 +669,7 @@ html[data-portrait] .sensorgrid img{ max-height:150px; }
 /* images: cap against the slide, not the screen */
 html[data-portrait] .fig img,html[data-portrait] .fig svg{ max-height:330px; }
 html[data-portrait] .fig.small img{ max-height:210px; }
-html[data-portrait] .cols .fig img{ width:auto; max-width:100%; }
+html[data-portrait] .cols .fig img{ width:auto; max-width:100%; max-height:330px; }
 html[data-portrait] .imgrow img{ max-height:230px; }
 html[data-portrait] .cols .imgrow img{ max-height:210px; }
 html[data-portrait] .fig.photo img{ max-height:230px; }

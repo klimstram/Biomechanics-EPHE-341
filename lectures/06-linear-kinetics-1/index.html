@@ -316,7 +316,8 @@
 
 <!-- 16 -->
 <section>
-  <h2>Example Problem</h2>
+  <h2>Linear Kinetics</h2>
+  <p class="subhead">Example Problem</p>
   <div class="cols b top">
     <div>
       <p class="small">A 6 kg bowling ball enters an elastic collision with a 1 kg bowling pin. If
@@ -330,13 +331,40 @@
 
 <!-- 17 -->
 <section>
-  <h2>Example Problem — solution</h2>
-  <div class="iplot wide" data-widget="collide" data-preset="bowl"></div>
-  <aside class="notes">Momentum before = momentum after: (6)(5) + (1)(0) = (6)(4) + (1)v, so v = 6 m/s.
-Worth pointing out: the slide calls this "an elastic collision" but the numbers it gives are not a perfectly elastic one — with vAf fixed at 4 m/s the coefficient of restitution works out at 0.4. The figure is set to that, so the arithmetic on screen matches the arithmetic on the board.</aside>
+  <h2>Linear Kinetics</h2>
+  <div class="fig"><img src="assets/bowling-collision.png" alt="The bowling ball and pin before and after the collision" style="max-height:56vh"></div>
 </section>
 
 <!-- 18 -->
+<section>
+  <h2>Linear Kinetics</h2>
+  <p class="subhead">Solution</p>
+  <div class="cols top" style="grid-template-columns:1fr 1fr;max-width:46em;margin:0 auto .6em">
+    <p class="small center" style="margin-bottom:0"><strong><em>Before collision</em></strong></p>
+    <p class="small center" style="margin-bottom:0"><strong><em>After collision</em></strong></p>
+  </div>
+  <div class="box accent workblock" style="max-width:46em;margin-left:0">
+    <p class="eq" style="margin-bottom:.3em">(m<sub>ball1</sub>)(v<sub>ball1</sub>) +
+       (m<sub>pin1</sub>)(v<sub>pin1</sub>) = (m<sub>ball2</sub>)(v<sub>ball2</sub>) +
+       (m<sub>pin2</sub>)(v<sub>pin2</sub>)</p>
+    <p class="eq" style="margin-bottom:.3em">(6 kg)(5 m/s) + (1 kg)(0 m/s) = (6 kg)(4 m/s) +
+       (1 kg)(v<sub>pin2</sub>)</p>
+    <p class="eq" style="margin-bottom:.3em">30 kg·m/s = 24 kg·m/s + v<sub>pin2</sub>(1 kg)</p>
+    <p class="eq" style="margin-bottom:0">v<sub>pin2</sub> = <strong>6 m/s</strong></p>
+  </div>
+  <p class="small"><strong><em>After the collision, the pin has a velocity of 6 m/s in the original
+     direction of the bowling ball.</em></strong></p>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Linear Kinetics</h2>
+  <p class="subhead">The same collision, with the numbers on sliders</p>
+  <div class="iplot wide" data-widget="collide" data-preset="bowl"></div>
+  <aside class="notes">Worth pointing out: the slide calls this "an elastic collision" but the numbers it gives are not a perfectly elastic one — with v_Afinal fixed at 4 m/s the coefficient of restitution works out at 0.4. The figure is set to that, so the arithmetic on screen matches the arithmetic on the board.</aside>
+</section>
+
+<!-- 20 -->
 <section>
   <h2>Elastic collisions — equal masses</h2>
   <p class="lead">Since m is the same we can take it out of the equation. Assume v = 1 m/s and
@@ -346,7 +374,7 @@ Worth pointing out: the slide calls this "an elastic collision" but the numbers 
   <aside class="notes">v_Afinal = 1 − v_Bfinal. And e = 1 gives 1 = −1 + 2v_Bf, so v_Bf = 1 m/s and v_Af = 1 − 1 = 0 m/s.</aside>
 </section>
 
-<!-- 19 -->
+<!-- 21 -->
 <section>
   <h2>Elastic collisions — head on</h2>
   <p class="lead">Now B is coming the other way at 0.5 m/s. Same two equations, same coefficient of
@@ -356,7 +384,7 @@ Worth pointing out: the slide calls this "an elastic collision" but the numbers 
 e = 1: 1 = (−0.5 + 2v_Bf)/1.5, 1.5 = −0.5 + 2v_Bf, v_Bf = 1 m/s. Then v_Af = 0.5 − 1 = −0.5 m/s.</aside>
 </section>
 
-<!-- 20 -->
+<!-- 22 -->
 <section>
   <h2>Elastic collisions — different masses</h2>
   <p class="lead">A 2 kg object at 1 m/s meets a 1 kg object at −1 m/s. The heavier one is turned
@@ -367,7 +395,7 @@ e = 1: 1 = (1 − 3v_Af)/2, v_Af = −0.33 m/s, and v_Bf = 1 − 2(−0.33) = 1.
 This method can be used if you know the masses, the initial velocities and the coefficient of restitution. The COR was always 1 in these examples — what would happen if it were less than 1? Drag the slider and find out.</aside>
 </section>
 
-<!-- 21 -->
+<!-- 23 -->
 <section>
   <h2>Inelastic collisions</h2>
   <div class="cols b top">
@@ -385,31 +413,58 @@ This method can be used if you know the masses, the initial velocities and the c
   <aside class="notes">e = 0: 0 = 1 − 2v_Af, so v_Af = 0.5 m/s and v_Bf = 1 − 0.5 = 0.5 m/s — the same velocity, which is what "behave as one object" means.</aside>
 </section>
 
-<!-- 22 -->
+<!-- 24 -->
 <section>
-  <h2>Example Problem</h2>
+  <h2>Linear Kinetics</h2>
+  <p class="subhead">Example Problem</p>
   <div class="cols b top">
     <div>
       <p class="small">During the feature match of Wrestlemania III, Hulk Hogan and Andre the Giant
          run towards each other and collide. If Andre has a mass of 235 kg and was traveling
          1.4 m/s, and if Hulk has a mass of 115 kg and was traveling at −3.8 m/s, what is their
-         combined velocity? (assuming that they entangle and continue traveling as one)</p>
+         combined velocity? <span class="muted">(assuming that they entangle and continue traveling
+         as one)</span></p>
     </div>
     <div class="fig"><img src="assets/hulk-andre.jpg" alt="Andre the Giant and Hulk Hogan"></div>
   </div>
 </section>
 
-<!-- 23 -->
+<!-- 25 -->
 <section>
-  <h2>Example Problem — solution</h2>
-  <div class="iplot wide" data-widget="collide" data-preset="hulk"></div>
-  <aside class="notes">given: m1 = 235 kg, m2 = 115 kg, v1 = 1.4 m/s, v2 = −3.8 m/s.
-Momentum before = momentum after: (mv)1 + (mv)2 = (m1 + m2)v.
-(235)(1.4) + (115)(−3.8) = (350)v → 329 − 437 = 350v → v = −0.3 m/s.
-Their combined velocity is 0.3 m/s in Hulk Hogan's original direction.</aside>
+  <h2>Linear Kinetics</h2>
+  <p class="subhead">Solution</p>
+  <ul class="small">
+    <li>given in this question:</li>
+  </ul>
+  <div class="box accent workblock" style="max-width:26em;margin-left:1.4em">
+    <p class="eq" style="margin-bottom:.25em">m<sub>1</sub> = 235 kg &nbsp;&nbsp;&nbsp;
+       m<sub>2</sub> = 115 kg</p>
+    <p class="eq" style="margin-bottom:0">v<sub>1</sub> = 1.4 m/s &nbsp;&nbsp;&nbsp;
+       v<sub>2</sub> = −3.8 m/s</p>
+  </div>
+  <ul class="small">
+    <li>Momentum Before Collision = Momentum After Collision</li>
+  </ul>
+  <div class="box accent workblock" style="max-width:40em;margin-left:1.4em">
+    <p class="eq" style="margin-bottom:.28em">(mv)<sub>1</sub> + (mv)<sub>2</sub> = (m<sub>1</sub> +
+       m<sub>2</sub>)v</p>
+    <p class="eq" style="margin-bottom:.28em">(235 kg)(1.4 m/s) + (115 kg)(−3.8 m/s) =
+       (235 kg + 115 kg)v</p>
+    <p class="eq" style="margin-bottom:.28em">329 kg·m/s − 437 kg·m/s = (350 kg)(v)</p>
+    <p class="eq" style="margin-bottom:0">v = <strong>−0.3 m/s</strong></p>
+  </div>
+  <p class="small"><strong><em>Their combined velocity is 0.3 m/s in Hulk Hogan’s original
+     direction</em></strong></p>
 </section>
 
-<!-- 24 -->
+<!-- 26 -->
+<section>
+  <h2>Linear Kinetics</h2>
+  <p class="subhead">The same collision, with the numbers on sliders</p>
+  <div class="iplot wide" data-widget="collide" data-preset="hulk"></div>
+</section>
+
+<!-- 27 -->
 <section>
   <h2>Linear Kinetics</h2>
   <div class="cols b top">
@@ -423,7 +478,7 @@ Their combined velocity is 0.3 m/s in Hulk Hogan's original direction.</aside>
   </div>
 </section>
 
-<!-- 25 -->
+<!-- 28 -->
 <section>
   <h2>Collisions in two dimensions</h2>
   <p class="lead">For elastic collisions in two dimensions we need to break the momentum into
@@ -433,7 +488,7 @@ Their combined velocity is 0.3 m/s in Hulk Hogan's original direction.</aside>
   <aside class="notes">P₀ = P_f, and separately P₀ₓ = P_fₓ and P₀ᵧ = P_fᵧ. That split is the only new idea here.</aside>
 </section>
 
-<!-- 26 -->
+<!-- 29 -->
 <section>
   <h2>Collisions in two dimensions</h2>
   <p class="lead"><strong>P<sub>ox</sub> = P<sub>fx</sub></strong> and
@@ -443,7 +498,7 @@ Their combined velocity is 0.3 m/s in Hulk Hogan's original direction.</aside>
 y: (0.1)(0) + (0.1)(0) = (0.1)(2·sin30) + (0.1)V_Bfy → 0 = 0.1 + 0.1V_Bfy → V_Bfy = −1 m/s.</aside>
 </section>
 
-<!-- 27 -->
+<!-- 30 -->
 <section>
   <h2>Collisions in two dimensions</h2>
   <p class="lead">Put the two components back together for the magnitude and the direction.</p>
@@ -452,7 +507,7 @@ y: (0.1)(0) + (0.1)(0) = (0.1)(2·sin30) + (0.1)V_Bfy → 0 = 0.1 + 0.1V_Bfy →
 tanθ = Vᵧ/Vₓ = −1/3.3, θ = tan⁻¹(−0.303) = 16.85° below the x axis.</aside>
 </section>
 
-<!-- 28 -->
+<!-- 31 -->
 <section>
   <h2>Linear Kinetics</h2>
   <div class="cols b top">
@@ -469,7 +524,7 @@ tanθ = Vᵧ/Vₓ = −1/3.3, θ = tan⁻¹(−0.303) = 16.85° below the x axis
   </div>
 </section>
 
-<!-- 29 -->
+<!-- 32 -->
 <section>
   <h2>Normal and tangent axes</h2>
   <div class="cols b top">
@@ -485,7 +540,7 @@ tanθ = Vᵧ/Vₓ = −1/3.3, θ = tan⁻¹(−0.303) = 16.85° below the x axis
   </div>
 </section>
 
-<!-- 30 -->
+<!-- 33 -->
 <section>
   <h2>Normal and tangent components</h2>
   <p class="lead">To determine the final velocity vectors angles you need to set up a normal and
@@ -496,7 +551,7 @@ tanθ = Vᵧ/Vₓ = −1/3.3, θ = tan⁻¹(−0.303) = 16.85° below the x axis
 Then swing the line of centres: at 0° it is a head-on collision and everything is normal; at 90° they graze and nothing happens at all.</aside>
 </section>
 
-<!-- 31 -->
+<!-- 34 -->
 <section>
   <h2>Linear Kinetics</h2>
   <div class="cols b top">
@@ -510,7 +565,7 @@ Then swing the line of centres: at 0° it is a head-on collision and everything 
   </div>
 </section>
 
-<!-- 32 -->
+<!-- 35 -->
 <section>
   <h2>Transfer of momentum</h2>
   <div class="cols b top">
@@ -529,7 +584,7 @@ Then swing the line of centres: at 0° it is a head-on collision and everything 
   </div>
 </section>
 
-<!-- 33 -->
+<!-- 36 -->
 <section>
   <h2>Transfer of momentum in sit to stand</h2>
   <div class="cols b top">
@@ -544,7 +599,7 @@ Then swing the line of centres: at 0° it is a head-on collision and everything 
   </div>
 </section>
 
-<!-- 34 -->
+<!-- 37 -->
 <section>
   <h2>Horizontal momentum during sit to stand</h2>
   <div class="cols b top">
@@ -562,7 +617,7 @@ Then swing the line of centres: at 0° it is a head-on collision and everything 
   </div>
 </section>
 
-<!-- 35 -->
+<!-- 38 -->
 <section>
   <h2>Transfer of momentum in the high jump</h2>
   <div class="cols b top">
@@ -585,7 +640,7 @@ Then swing the line of centres: at 0° it is a head-on collision and everything 
   </div>
 </section>
 
-<!-- 36 -->
+<!-- 39 -->
 <section>
   <h2>Free limb relative momentum</h2>
   <div class="cols b top">
@@ -605,7 +660,7 @@ Then swing the line of centres: at 0° it is a head-on collision and everything 
   </div>
 </section>
 
-<!-- 37 -->
+<!-- 40 -->
 <section>
   <h2>Free limb relative momentum</h2>
   <div class="cols b top">
@@ -624,7 +679,7 @@ Then swing the line of centres: at 0° it is a head-on collision and everything 
   </div>
 </section>
 
-<!-- 38 -->
+<!-- 41 -->
 <section>
   <h2>2nd Law: The Law of Acceleration</h2>
   <div class="cols b top">
@@ -641,7 +696,7 @@ Then swing the line of centres: at 0° it is a head-on collision and everything 
   </div>
 </section>
 
-<!-- 39 -->
+<!-- 42 -->
 <section>
   <h2>2nd Law: The Law of Acceleration</h2>
   <div class="cols b top">
@@ -658,7 +713,7 @@ Then swing the line of centres: at 0° it is a head-on collision and everything 
   </div>
 </section>
 
-<!-- 40 -->
+<!-- 43 -->
 <section>
   <h2>Free Body Diagram</h2>
   <div class="cols top">
@@ -667,7 +722,7 @@ Then swing the line of centres: at 0° it is a head-on collision and everything 
   </div>
 </section>
 
-<!-- 41 -->
+<!-- 44 -->
 <section>
   <h2>3rd Law: The Law of Reaction</h2>
   <div class="cols b top">
@@ -688,7 +743,7 @@ Then swing the line of centres: at 0° it is a head-on collision and everything 
   </div>
 </section>
 
-<!-- 42 -->
+<!-- 45 -->
 <section>
   <h2>3rd Law: The Law of Reaction</h2>
   <div class="fig"><img src="assets/jumpers.jpg" alt="Jumpers pushing against the ground"></div>
