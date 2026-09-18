@@ -60,10 +60,20 @@ window.EPHE341_LECTURES = [
            'time domain beside frequency domain', 'low-pass, high-pass, band-pass',
            '25 + 50 Hz buried in noise', 'noise amplified by differentiation'] },
 
+  { n: '6', title: 'Linear kinetics 1',
+    path: 'lectures/06-linear-kinetics-1',
+    blurb: 'Newton\u2019s three laws, momentum, and what actually decides how a collision ends \u2014 ' +
+           'conservation on one side and the coefficient of restitution on the other.',
+    slides: 42, widgets: 15, updated: '2026-09-18',
+    handout: 'handout.pdf',
+    live: ['static against dynamic equilibrium', 'momentum of a player and a cyclist',
+           'a collision lab with every worked example in it', 'the drop test for restitution',
+           'conservation in two dimensions', 'normal and tangent axes',
+           'action and reaction on two different bodies'] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
-  { n: '6',  title: 'Linear kinetics 1' },
   { n: '7',  title: 'Linear kinetics 2' },
   { n: '8',  title: 'Projectile motion' },
   { n: '8',  title: 'Work, energy and power' },

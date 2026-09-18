@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a2e">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Linear Kinetics</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'dark';
+  try { t = localStorage.getItem('ephe341-theme') || 'dark'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <span class="mark">UVic</span>
+  <span class="who"><b>University of Victoria</b><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Linear Kinetics</h1>
+    <div class="rule"></div>
+    <p class="sub">Optional reading: McGinnis Chpt 3</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Objectives</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">To learn/review;</p>
+      <ul class="small">
+        <li>Newton’s 3 laws</li>
+        <li>Kinetics equations and relationships</li>
+        <li>Force</li>
+        <li>Momentum</li>
+        <li>Impulse</li>
+        <li>Coefficient of restitution</li>
+      </ul>
+    </div>
+    <div class="imgrow">
+      <img src="assets/cradle.jpg" alt="Newton's cradle"><img src="assets/fma-car.jpg" alt="Force, mass and acceleration"><img src="assets/tackle.jpg" alt="Action and reaction in a tackle">
+    </div>
+  </div>
+  <p class="tiny muted center">1st Law – Inertia &nbsp;·&nbsp; 2nd Law – Acceleration &nbsp;·&nbsp;
+     3rd Law – Action/Reaction</p>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Linear Kinetics</h2>
+  <div class="cols b top">
+    <div>
+      <div class="callout small">
+        <p><strong>Kinetics:</strong></p>
+        <p style="margin-bottom:0">The concepts of mass, force, and energy as they affect
+           motion.</p>
+      </div>
+    </div>
+    <div class="imgrow">
+      <img src="assets/balance-figures.jpg" alt="Balance and motion in three situations">
+      <img src="assets/earth.jpg" alt="Earth">
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Newton's 1st Law : Law of Inertia</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">An object at rest tends to stay at rest and an object in uniform motion tends
+         to stay in uniform motion unless acted upon by a <strong>net external force</strong>.</p>
+      <ul class="small">
+        <li>uniform = unchanging = consistent</li>
+        <li>Net = total after all forces are added together</li>
+      </ul>
+      <p class="small"><strong>What is Inertia?</strong></p>
+      <ul class="small">
+        <li>derived from the latin for "idleness" or "laziness"</li>
+        <li>resistance to a change in state of motion</li>
+        <li>Mass quantifies inertia (measure of inertia)</li>
+      </ul>
+    </div>
+    <div class="imgrow">
+      <img src="assets/truck.jpg" alt="A heavily loaded truck">
+      <img src="assets/cyclist.jpg" alt="A cyclist at speed">
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Static equilibrium</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">An object is at rest when the net forces acting on it sum to zero.</p>
+      <ul class="small">
+        <li>There is no motion</li>
+        <li>Gravity is acting downward</li>
+        <li>The ground contact force is acting up</li>
+        <li>The net vertical force is zero</li>
+      </ul>
+      <p class="eq small">ΣF<sub>z</sub> = 0 &nbsp; ΣF<sub>x</sub> = 0 &nbsp; ΣF<sub>y</sub> = 0</p>
+      <p class="small muted">This individual is in static equilibrium.
+         <strong>Is there such a thing as dynamic equilibrium?</strong></p>
+    </div>
+    <div>
+      <div class="iplot" data-widget="equilibrium"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>Dynamic equilibrium</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">When is an object in uniform motion? This is <strong>Dynamic
+         Equilibrium</strong>.</p>
+      <ul class="small">
+        <li>Uniform motion means constant velocity.</li>
+        <li>An object will maintain its velocity unless accelerated or decelerated.</li>
+        <li>Net forces are equal to zero but an object is in motion</li>
+      </ul>
+    </div>
+    <div>
+      <div class="iplot" data-widget="equilibrium" data-v="3" data-drift="1"></div>
+      <div class="fig"><img src="assets/uniform-motion.jpg" alt="Uniform and non-uniform motion compared" style="max-height:16vh"></div>
+    </div>
+  </div>
+  <aside class="notes">The force diagram is identical to the previous slide. That is the whole of the first law: nothing in the forces tells you whether a body is standing still or gliding at constant velocity.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Momentum</h2>
+  <p class="lead">The momentum of an object can be thought of as the tendency for an object to
+     resist change in motion and continue to move in its direction of travel.</p>
+  <div class="cols top">
+    <div class="fig"><img src="assets/football.jpg" alt="A football player being tackled"><figcaption>The football player’s momentum will resist change in the state of motion. He will be difficult to decelerate</figcaption></div>
+    <div class="fig"><img src="assets/cyclist.jpg" alt="A cyclist at speed"><figcaption>The cyclist’s momentum will resist change in the state of motion. He will keep moving forward</figcaption></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Momentum</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Momentum is related to inertia but not the same. Inertia is an object’s
+         tendency to resist change in the state of motion (at motion and rest). However during
+         motion an object has momentum.</p>
+      <p class="small">That is, an object resists its change in state of motion and this resistance
+         is related to its <strong>mass</strong> (inertia) and <strong>velocity</strong>.</p>
+      <p class="eq">P = mv</p>
+      <p class="tiny muted">where P is the object’s linear momentum, m is the object’s mass and v is
+         the object’s velocity. SI units: kg·m/s</p>
+      <p class="small">Remember that velocity is a vector quantity, so momentum will have a
+         magnitude and direction.</p>
+    </div>
+    <div class="iplot" data-widget="momentum"></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Momentum</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Understanding Momentum is really important when dealing with things that
+         collide.</p>
+      <ul class="small">
+        <li>Baseball</li>
+        <li>Soccer</li>
+        <li>Football players</li>
+      </ul>
+      <p class="small">The outcome of collisions during these sports can be explained by quantifying
+         the momentum of the system.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/football-collision.jpg" alt="A collision between football players">
+      <img src="assets/baseball.jpg" alt="A bat striking a baseball">
+      <img src="assets/soccer.jpg" alt="A bicycle kick">
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Law of Conservation of Momentum</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">In the absence of external forces, the total momentum of a given system is
+         conserved.</p>
+      <p class="eq">P<sub>before</sub> = P<sub>after</sub> &nbsp; or &nbsp;
+         (mv)<sub>before</sub> = (mv)<sub>after</sub></p>
+      <p class="small">The law of conservation of momentum helps us understand collisions — the sum
+         of the momentum before the collision must equal the sum of the momentum after the
+         collision.</p>
+      <p class="small">Collisions range between elastic and inelastic collisions:</p>
+      <ul class="small">
+        <li><strong>Elastic collisions</strong> — objects rebound off of each other</li>
+        <li><strong>Inelastic collisions</strong> — objects stick together and usually become
+            distorted and generate heat</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/elastic-sim.jpg" alt="Balls colliding and rebounding"></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>Coefficient of restitution</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Most collisions are neither perfectly elastic nor perfectly inelastic but
+         somewhere in between.</p>
+      <p class="small">The <strong>coefficient of restitution</strong> is a means of quantifying how
+         elastic the collisions are.</p>
+    </div>
+    <div class="fig"><img src="assets/elastic-sim.jpg" alt="Balls colliding"></div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Coefficient of restitution</h2>
+  <ul class="small">
+    <li>The coefficient of restitution is defined as the absolute value of the ratio of the
+        <strong>velocity of separation</strong> to the <strong>velocity of approach</strong>.</li>
+    <li>The velocity of approach is the difference between the velocities of the two colliding
+        objects just before the collision (ie how fast they are moving toward each other).</li>
+    <li>The velocity of separation is the difference between the velocities of the two colliding
+        objects just after the collision (ie how fast they are moving away from each other).</li>
+  </ul>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Coefficient of restitution</h2>
+  <div class="cols b top">
+    <div>
+      <p class="eq small">e = velocity of separation / velocity of approach</p>
+      <p class="eq small">= (V<sub>Bf</sub> – V<sub>Af</sub>) / (V<sub>Ai</sub> – V<sub>Bi</sub>)</p>
+      <p class="tiny muted">Where V<sub>Bf</sub> = final velocity of object B, V<sub>Af</sub> = final
+         velocity of object A, V<sub>Ai</sub> = initial velocity of object A, V<sub>Bi</sub> =
+         initial velocity of object B.</p>
+      <ul class="small">
+        <li>The coefficient of restitution is a ratio and therefore has no units.</li>
+        <li>For perfectly elastic collision the COR is <strong>1</strong></li>
+        <li>For perfectly inelastic collisions the COR is <strong>0</strong></li>
+      </ul>
+      <p class="small">Most rules for ball sports directly or indirectly specify what the coefficient
+         of restitution must be for the ball on the specific playing surface or implement.</p>
+    </div>
+    <div class="fig"><img src="assets/cor-formula.jpg" alt="e equals the square root of bounce height over drop height"></div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Coefficient of restitution</h2>
+  <div class="textstrip tiny">
+    <p class="firstcol">The coefficient of restitution is affected by the nature of both objects.
+       For ball sports the coefficient of restitution can be figured out using a simple equation.</p>
+    <p>If a ball is dropped from a specific height onto a fixed surface, then the height of the
+       rebound and the drop height can be used to determine the coefficient of restitution. This is a
+       measure of the bounciness of the ball and the implement or surface it strikes will greatly
+       affect the outcome.</p>
+  </div>
+  <div class="iplot wide" data-widget="drop"></div>
+</section>
+
+<!-- 15 -->
+<section>
+  <h2>Elastic collisions</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">An elastic collision occurs when the two objects collide and then bounce off
+         one another.</p>
+      <p class="small">A collision between two pool or snooker balls is a good example of an almost
+         totally elastic collision. The objects collide and then seem to bounce off of each other and
+         move separately.</p>
+      <p class="small">In a perfectly elastic collision, in a straight line, each object transfers
+         all of its momentum to the other object.</p>
+      <p class="eq small">m<sub>A</sub>v<sub>A initial</sub> + m<sub>B</sub>v<sub>B initial</sub>
+         = m<sub>A</sub>v<sub>A final</sub> + m<sub>B</sub>v<sub>B final</sub></p>
+    </div>
+    <div class="fig"><img src="assets/elastic-sim.jpg" alt="Elastic collisions between balls"></div>
+  </div>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>Example Problem</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">A 6 kg bowling ball enters an elastic collision with a 1 kg bowling pin. If
+         the bowling ball has a velocity of 5 m/s before the collision and 4 m/s after the collision,
+         what is the speed of the pin after the collision? (Assume that the speed of the pin before
+         the collision is 0 m/s)</p>
+    </div>
+    <div class="fig"><img src="assets/bowling.jpg" alt="A bowling ball striking pins"></div>
+  </div>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Example Problem — solution</h2>
+  <div class="iplot wide" data-widget="collide" data-preset="bowl"></div>
+  <aside class="notes">Momentum before = momentum after: (6)(5) + (1)(0) = (6)(4) + (1)v, so v = 6 m/s.
+Worth pointing out: the slide calls this "an elastic collision" but the numbers it gives are not a perfectly elastic one — with vAf fixed at 4 m/s the coefficient of restitution works out at 0.4. The figure is set to that, so the arithmetic on screen matches the arithmetic on the board.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Elastic collisions — equal masses</h2>
+  <p class="lead">Since m is the same we can take it out of the equation. Assume v = 1 m/s and
+     v<sub>B initial</sub> is zero. With a coefficient of restitution of 1,
+     <strong>A stops dead and B leaves at 1 m/s</strong>.</p>
+  <div class="iplot wide" data-widget="collide" data-preset="eq1"></div>
+  <aside class="notes">v_Afinal = 1 − v_Bfinal. And e = 1 gives 1 = −1 + 2v_Bf, so v_Bf = 1 m/s and v_Af = 1 − 1 = 0 m/s.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Elastic collisions — head on</h2>
+  <p class="lead">Now B is coming the other way at 0.5 m/s. Same two equations, same coefficient of
+     restitution — <strong>they swap velocities</strong>.</p>
+  <div class="iplot wide" data-widget="collide" data-preset="eq2"></div>
+  <aside class="notes">1 m/s − 0.5 m/s = v_Afinal + v_Bfinal, so v_Afinal = 0.5 − v_Bfinal.
+e = 1: 1 = (−0.5 + 2v_Bf)/1.5, 1.5 = −0.5 + 2v_Bf, v_Bf = 1 m/s. Then v_Af = 0.5 − 1 = −0.5 m/s.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Elastic collisions — different masses</h2>
+  <p class="lead">A 2 kg object at 1 m/s meets a 1 kg object at −1 m/s. The heavier one is turned
+     around; the lighter one is thrown back much faster than it arrived.</p>
+  <div class="iplot wide" data-widget="collide" data-preset="uneq"></div>
+  <aside class="notes">(2 kg)(1 m/s) + (1 kg)(−1 m/s) = (2 kg)v_Afinal + (1 kg)v_Bfinal, so 1 = 2v_Af + v_Bf and v_Bf = 1 − 2v_Af.
+e = 1: 1 = (1 − 3v_Af)/2, v_Af = −0.33 m/s, and v_Bf = 1 − 2(−0.33) = 1.66 m/s.
+This method can be used if you know the masses, the initial velocities and the coefficient of restitution. The COR was always 1 in these examples — what would happen if it were less than 1? Drag the slider and find out.</aside>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Inelastic collisions</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">An inelastic collision occurs when two objects collide and they behave as one
+         object after the collision.</p>
+      <p class="small">A common example of a perfectly inelastic collision is when two objects
+         collide and then stick together afterwards. This equation describes the conservation of
+         momentum for an inelastic collision:</p>
+      <p class="eq">m<sub>1</sub>v<sub>1</sub> + m<sub>2</sub>v<sub>2</sub> =
+         (m<sub>1</sub> + m<sub>2</sub>)v<sub>combined</sub></p>
+    </div>
+    <div class="iplot" data-widget="collide" data-preset="inel"></div>
+  </div>
+  <aside class="notes">e = 0: 0 = 1 − 2v_Af, so v_Af = 0.5 m/s and v_Bf = 1 − 0.5 = 0.5 m/s — the same velocity, which is what "behave as one object" means.</aside>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Example Problem</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">During the feature match of Wrestlemania III, Hulk Hogan and Andre the Giant
+         run towards each other and collide. If Andre has a mass of 235 kg and was traveling
+         1.4 m/s, and if Hulk has a mass of 115 kg and was traveling at −3.8 m/s, what is their
+         combined velocity? (assuming that they entangle and continue traveling as one)</p>
+    </div>
+    <div class="fig"><img src="assets/hulk-andre.jpg" alt="Andre the Giant and Hulk Hogan"></div>
+  </div>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Example Problem — solution</h2>
+  <div class="iplot wide" data-widget="collide" data-preset="hulk"></div>
+  <aside class="notes">given: m1 = 235 kg, m2 = 115 kg, v1 = 1.4 m/s, v2 = −3.8 m/s.
+Momentum before = momentum after: (mv)1 + (mv)2 = (m1 + m2)v.
+(235)(1.4) + (115)(−3.8) = (350)v → 329 − 437 = 350v → v = −0.3 m/s.
+Their combined velocity is 0.3 m/s in Hulk Hogan's original direction.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Linear Kinetics</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">You are required to be able to solve questions for conservation of momentum
+         only on a <strong>straight line</strong> — 1 dimension.</p>
+      <p class="small">However you will be expected to <strong>conceptually understand</strong>
+         simple collisions in 2 dimensions.</p>
+    </div>
+    <div class="fig"><img src="assets/twoball.jpg" alt="Two balls colliding at an angle"></div>
+  </div>
+</section>
+
+<!-- 25 -->
+<section>
+  <h2>Collisions in two dimensions</h2>
+  <p class="lead">For elastic collisions in two dimensions we need to break the momentum into
+     components. Each ball has a mass of 0.1 kg and ball B was at rest. What is the speed and
+     direction of ball B after the collision?</p>
+  <div class="iplot wide" data-widget="collide2d" data-step="1"></div>
+  <aside class="notes">P₀ = P_f, and separately P₀ₓ = P_fₓ and P₀ᵧ = P_fᵧ. That split is the only new idea here.</aside>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Collisions in two dimensions</h2>
+  <p class="lead"><strong>P<sub>ox</sub> = P<sub>fx</sub></strong> and
+     <strong>P<sub>oy</sub> = P<sub>fy</sub></strong> — one equation for each axis.</p>
+  <div class="iplot wide" data-widget="collide2d" data-step="3"></div>
+  <aside class="notes">x: (0.1)(5) + (0.1)(0) = (0.1)(2·cos30) + (0.1)V_Bfx → 0.5 = 0.17 + 0.1V_Bfx → V_Bfx = 3.3 m/s.
+y: (0.1)(0) + (0.1)(0) = (0.1)(2·sin30) + (0.1)V_Bfy → 0 = 0.1 + 0.1V_Bfy → V_Bfy = −1 m/s.</aside>
+</section>
+
+<!-- 27 -->
+<section>
+  <h2>Collisions in two dimensions</h2>
+  <p class="lead">Put the two components back together for the magnitude and the direction.</p>
+  <div class="iplot wide" data-widget="collide2d" data-step="4"></div>
+  <aside class="notes">V_Bf² = Vₓ² + Vᵧ² = (3.3)² + (−1)², so V_Bf = 3.45 m/s.
+tanθ = Vᵧ/Vₓ = −1/3.3, θ = tan⁻¹(−0.303) = 16.85° below the x axis.</aside>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Linear Kinetics</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">In the previous example we had an idea of the angle of the balls velocities
+         before and after the collision. This allowed us to determine the magnitude of the velocity.
+         However that is not always the case.</p>
+      <p class="small">To determine the angle and magnitude of the balls velocities before and after
+         the collision we need to set up a frame of reference and explore the conservation of
+         momentum in axes <strong>normal</strong> (perpendicular) and <strong>tangent</strong>
+         (parallel) to the contact surface interaction.</p>
+    </div>
+    <div class="fig"><img src="assets/normtan-diagram.jpg" alt="Normal and tangent axes at the point of contact"></div>
+  </div>
+</section>
+
+<!-- 29 -->
+<section>
+  <h2>Normal and tangent axes</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">With our original x and y axis you can see:</p>
+      <ul class="small">
+        <li>the velocities of the balls before the collision</li>
+        <li>The axis <strong>normal</strong> (perpendicular) to the contacting surfaces</li>
+        <li>The axis <strong>tangent</strong> (parallel) to the contacting surfaces</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/normtan-axes.jpg" alt="The normal and tangent axes drawn on the collision"></div>
+  </div>
+</section>
+
+<!-- 30 -->
+<section>
+  <h2>Normal and tangent components</h2>
+  <p class="lead">To determine the final velocity vectors angles you need to set up a normal and
+     tangent coordinate system. <strong>The tangential components remain unchanged</strong>;
+     conservation of linear momentum is maintained for the <strong>normal</strong> components.</p>
+  <div class="iplot wide" data-widget="normtan"></div>
+  <aside class="notes">Switch between before and after. The tangential arrow is the same length in both — the balls cannot push each other sideways, only along the line joining their centres.
+Then swing the line of centres: at 0° it is a head-on collision and everything is normal; at 90° they graze and nothing happens at all.</aside>
+</section>
+
+<!-- 31 -->
+<section>
+  <h2>Linear Kinetics</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Let’s think about that in terms of Newton’s 1st law.</p>
+      <p class="small">An object at rest tends to stay at rest and an object in motion tends to stay
+         in motion (<strong>in its component direction</strong>) unless a net external force acts
+         upon it.</p>
+    </div>
+    <div class="fig"><img src="assets/normtan-beforeafter.jpg" alt="The collision before and after in the normal and tangent frame"></div>
+  </div>
+</section>
+
+<!-- 32 -->
+<section>
+  <h2>Transfer of momentum</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Understanding Momentum is really important when dealing with the combined
+         motion of the human body and techniques to <strong>transfer momentum from one limb to
+         another</strong>.</p>
+      <p class="small">The outcome of transferring momentum from one limb to another can be
+         explained by the conservation of momentum of the system.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/football-collision.jpg" alt="A football collision">
+      <img src="assets/baseball.jpg" alt="A bat striking a baseball">
+      <img src="assets/soccer.jpg" alt="A bicycle kick">
+    </div>
+  </div>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>Transfer of momentum in sit to stand</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">The transfer of momentum during human movement can be discussed in reference
+         to simple and complex tasks.</p>
+      <p class="small">In a sit to stand task we use transfer of momentum to help us stand. By
+         leaning forward our trunk has momentum which can be used to assist in hip and leg
+         extension.</p>
+    </div>
+    <div class="fig"><img src="assets/sts-figures.jpg" alt="Three strategies for standing up from a chair"></div>
+  </div>
+</section>
+
+<!-- 34 -->
+<section>
+  <h2>Horizontal momentum during sit to stand</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Dark vertical line indicates time of occurrence of peak horizontal momentum
+         of the CM.</p>
+      <ul class="tiny">
+        <li>CMx is the horizontal momentum of whole body’s CM</li>
+        <li>TRx is the horizontal momentum of the trunk</li>
+        <li>THx is the horizontal momentum of the thigh</li>
+        <li>SHx is the horizontal momentum of the shank</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/sts-momentum.jpg" alt="Horizontal momentum of the whole body and its segments during sit to stand"></div>
+  </div>
+</section>
+
+<!-- 35 -->
+<section>
+  <h2>Transfer of momentum in the high jump</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">During a complex task such as high jump we use transfer of momentum to help
+         us increase our <strong>vertical velocity</strong>.</p>
+      <p class="small">The free limbs contribute by transferring their individual momentum to the
+         velocity of the whole body:</p>
+      <ul class="tiny">
+        <li>Contralateral arm relative momentum</li>
+        <li>Ipsilateral arm relative momentum</li>
+        <li>Lead leg relative momentum</li>
+        <li>Combined free limb relative momentum</li>
+      </ul>
+    </div>
+    <div class="imgrow">
+      <img src="assets/hj-sequence.jpg" alt="A high jump take-off sequence">
+      <img src="assets/rm-equations.jpg" alt="Relative momentum equations for the contralateral arm, ipsilateral arm and lead leg">
+    </div>
+  </div>
+</section>
+
+<!-- 36 -->
+<section>
+  <h2>Free limb relative momentum</h2>
+  <div class="cols b top">
+    <div>
+      <ul class="tiny">
+        <li>This shows that the RM of the arms are negative at touch-down as the arms are being
+            driven downwards</li>
+        <li>the leg is flexing at the knee giving its CM a net upward velocity</li>
+        <li>The RM of the leg continues to increase as it is flexed and elevated</li>
+        <li>The RM of arms becomes positive as they reach the bottom of their swing and are
+            elevated</li>
+        <li>The RM of each arm are similar and they reach their peak at approximately the same point
+            in time but that of the lead leg reaches its peak earlier than the arms</li>
+      </ul>
+    </div>
+    <div class="fig"><img src="assets/rm-graph.jpg" alt="Relative momentum of the free limbs through the take-off"></div>
+  </div>
+</section>
+
+<!-- 37 -->
+<section>
+  <h2>Free limb relative momentum</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">The combined free limb RM (CFLRM) reaches a peak just after the lead leg but
+         just before the arms. The relative momentum of all free limbs <strong>reduces at
+         take-off</strong>, illustrating the transfer of each segment momentum to the rest of the
+         body.</p>
+      <p class="small muted">The graph shows the estimated additional vertical force generated as a
+         result of the transfer of momentum.</p>
+    </div>
+    <div class="imgrow">
+      <img src="assets/rm-graph.jpg" alt="Relative momentum of the free limbs">
+      <img src="assets/hj-force.jpg" alt="Estimated additional vertical force from the transfer of momentum">
+    </div>
+  </div>
+</section>
+
+<!-- 38 -->
+<section>
+  <h2>2nd Law: The Law of Acceleration</h2>
+  <div class="cols b top">
+    <div>
+      <div class="callout small">
+        <p><strong>Law II</strong></p>
+        <p style="margin-bottom:0">“A force applied to a body causes an acceleration of that body of
+           a magnitude proportional to the force, in the direction of the force, and inversely
+           proportional to the body’s mass.”</p>
+      </div>
+      <p class="eq big" style="margin-top:.6em">F = ma</p>
+    </div>
+    <div class="fig"><img src="assets/fma-car2.jpg" alt="Force, mass and acceleration"></div>
+  </div>
+</section>
+
+<!-- 39 -->
+<section>
+  <h2>2nd Law: The Law of Acceleration</h2>
+  <div class="cols b top">
+    <div>
+      <p class="small">Newton's second law gives us the connection between <strong>force (F)</strong>
+         and <strong>motion (a)</strong>.</p>
+      <p class="small">It provides a framework for thinking about how all of the forces (internal and
+         external) can control motion.</p>
+      <p class="small">We will use this law as a basis for our discussion of static and dynamic
+         analysis including <strong>inverse dynamics</strong>.</p>
+      <p class="eq big">F = ma</p>
+    </div>
+    <div class="fig"><img src="assets/linkmodel.jpg" alt="A link segment model of the lower limb"></div>
+  </div>
+</section>
+
+<!-- 40 -->
+<section>
+  <h2>Free Body Diagram</h2>
+  <div class="cols top">
+    <div class="fig"><img src="assets/leg-skeleton.jpg" alt="The bones of the lower limb"></div>
+    <div class="fig"><img src="assets/ankle-fbd.jpg" alt="A free body diagram of the foot showing muscle, bone-on-bone, ligament and ground forces"></div>
+  </div>
+</section>
+
+<!-- 41 -->
+<section>
+  <h2>3rd Law: The Law of Reaction</h2>
+  <div class="cols b top">
+    <div>
+      <div class="callout small">
+        <p><strong>Law III</strong></p>
+        <p style="margin-bottom:0">“Every applied force is accompanied by a reaction force, equal in
+           magnitude and opposite in direction.”</p>
+      </div>
+      <ul class="small" style="margin-top:.6em">
+        <li>each force of the pair (the action force and the reaction force) is applied to a
+            <strong>different body</strong></li>
+        <li>for example, when a jumper generates a force against the ground, the ground generates an
+            equal and opposite force against the jumper, causing the jumper to accelerate upward</li>
+      </ul>
+    </div>
+    <div class="iplot" data-widget="reaction"></div>
+  </div>
+</section>
+
+<!-- 42 -->
+<section>
+  <h2>3rd Law: The Law of Reaction</h2>
+  <div class="fig"><img src="assets/jumpers.jpg" alt="Jumpers pushing against the ground"></div>
+  <p class="small muted center">When a jumper generates a force against the ground, the ground
+     generates an equal and opposite force against the jumper.</p>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js"></script>
+<script src="mobile.js"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="deck-core.js"></script>
+<script src="kinetics.js"></script>
+<script src="deck-tools.js"></script>
+<script src="fit.js"></script>
+</body>
+</html>
