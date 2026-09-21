@@ -99,6 +99,14 @@ html[data-theme="dark"] .reveal-viewport{
 .reveal .small{ font-size:.84em; }
 .reveal .tiny{ font-size:.72em; }
 .reveal .muted{ color:var(--muted); }
+/* Marc's own slide grammar: the lecture section as the heading, then an
+   italic grey subhead naming the step ("Example Problem", "Solution"). */
+.subhead{ font-style:italic; color:var(--muted); font-size:.92em; font-weight:600;
+  margin:-.15em 0 .8em .2em; letter-spacing:.005em; }
+.subhead + .cols,.subhead + .box,.subhead + ul,.subhead + ol,.subhead + p{ margin-top:0; }
+/* indented working, the way the originals lay equations out under a lead-in */
+.workblock{ margin:0 0 .7em 1.4em; }
+.workblock .eq{ margin:0 0 .3em 0; }
 .reveal .lead{
   font-size:.9em; color:var(--muted); border-left:2px solid var(--brand);
   padding-left:.8em; margin-bottom:1em; line-height:1.5;
@@ -119,14 +127,20 @@ html[data-theme="dark"] .reveal-viewport{
 .center{ text-align:center; }
 
 .fig{ text-align:center; }
-.fig img,.fig svg{ max-width:100%; max-height:64vh; height:auto; display:inline-block; }
-.cols .fig img{ width:100%; }
-.cols .fig.small img{ width:100%; max-height:29vh; object-fit:contain; }
+/* Never force BOTH dimensions of a photo. width:100% together with a
+   max-height clamps the height while the width stays pinned to the
+   column, which stretches anything that is not exactly the box's
+   aspect ratio. Width is left to follow the height instead, and
+   object-fit is a backstop in case some other rule pins both. */
+.fig img,.fig svg{ max-width:100%; max-height:64vh; width:auto; height:auto;
+  object-fit:contain; display:inline-block; }
+.cols .fig img{ width:auto; max-width:100%; max-height:46vh; }
+.cols .fig.small img{ width:auto; max-width:100%; max-height:29vh; object-fit:contain; }
 .fig.small img{ max-height:29vh; }
 .fig figcaption{ font-size:.62em; color:var(--muted); margin-top:.3em; }
 .reveal img{ border:0; box-shadow:none; background:none; margin:0; }
 .imgrow{ display:flex; gap:.7em; justify-content:center; align-items:center; flex-wrap:wrap; }
-.imgrow img{ max-height:52vh; }
+.imgrow img{ max-height:52vh; max-width:100%; width:auto; height:auto; object-fit:contain; }
 .cols .imgrow img{ max-height:30vh; }
 
 /* line-art figures invert for the dark theme; photos get a light card instead */
@@ -351,6 +365,15 @@ html[data-theme="light"] .iseg-b.on{ color:#fff; }
 html[data-theme="light"] .fig.photo img{
   box-shadow:0 20px 38px -14px rgba(17,20,26,.34), 0 6px 12px -6px rgba(17,20,26,.20);
 }
+
+/* An image sitting on a white card needs no drop shadow — the card already
+   lifts it off the slide, and the shadow just muddies the join. */
+.whitecard .fig.photo img,
+.whitecard .fig img,
+.whitecard figure img,
+.whitecard img{ box-shadow:none !important; }
+html[data-theme="light"] .whitecard .fig.photo img,
+html[data-theme="light"] .whitecard img{ box-shadow:none !important; }
 
 /* live equation inside a figure readout */
 .iread .live-eq{ display:flex; align-items:center; flex-wrap:nowrap; white-space:nowrap; gap:.1em;
@@ -646,7 +669,7 @@ html[data-portrait] .sensorgrid img{ max-height:150px; }
 /* images: cap against the slide, not the screen */
 html[data-portrait] .fig img,html[data-portrait] .fig svg{ max-height:330px; }
 html[data-portrait] .fig.small img{ max-height:210px; }
-html[data-portrait] .cols .fig img{ width:auto; max-width:100%; }
+html[data-portrait] .cols .fig img{ width:auto; max-width:100%; max-height:330px; }
 html[data-portrait] .imgrow img{ max-height:230px; }
 html[data-portrait] .cols .imgrow img{ max-height:210px; }
 html[data-portrait] .fig.photo img{ max-height:230px; }
@@ -725,6 +748,16 @@ html[data-theme="light"] .whitecard{ background:var(--surface); border:1px solid
 html[data-theme="dark"] .whitecard .reveal img,
 html[data-theme="dark"] .reveal .whitecard img[src^="assets/"]{
   background:none !important; padding:0 !important; border-radius:0 !important; }
+/* The card is light in BOTH themes, so the type on it has to be dark in both.
+   Without this the captions and the bold sensor names are white on white. */
+html[data-theme="dark"] .reveal .whitecard,
+html[data-theme="dark"] .reveal .whitecard p,
+html[data-theme="dark"] .reveal .whitecard li{ color:#26262c; }
+html[data-theme="dark"] .reveal .whitecard figcaption{ color:#5d5d66; }
+html[data-theme="dark"] .reveal .whitecard b,
+html[data-theme="dark"] .reveal .whitecard strong,
+html[data-theme="dark"] .reveal .whitecard figcaption b{ color:#0d0d12; }
+html[data-theme="dark"] .reveal .whitecard .muted{ color:#63636c; }
 
 /* numbers along a slider's track, so the range itself is readable */
 .ictl-track{ display:flex; flex-direction:column; gap:.1em; min-width:0; }

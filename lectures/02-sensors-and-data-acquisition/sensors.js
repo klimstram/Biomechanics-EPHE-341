@@ -51,7 +51,7 @@ D.register('strain', function (node, d) {
   var out = readout(u.ctl);
 
   var GF = 2.0, R0 = 120, VEX = 5.0;      /* gauge factor, ohms, excitation volts */
-  var force = 0, playing = false, raf = null, t0 = 0, vt = 0;
+  var force = 0, wobbling = false, running = false, raf = null, t0 = 0, vt = 0;
   var hist = [];                           /* [t, volts] */
   var TH = 3.2;                            /* seconds of trace */
 
@@ -199,39 +199,241 @@ D.register('strain', function (node, d) {
       'resistance changes, and V = IR turns that into a voltage you can record</span>';
   }
 
-  /* The trace runs on its own clock. While the animation plays that clock is real
-     time; while you drag the slider it advances a fixed step per change, so the
-     trace draws itself as you drag instead of leaving a gap while you think. */
+  /* The clock runs whether or not anything is happening to the beam, so the
+     trace scrolls past like a real chart recorder: a flat line when the beam is
+     still, a wave when it is wobbled. Samples are appended on a fixed interval
+     rather than once per frame, so the history stays a sensible length. */
+  var DT = 0.02;
   function push(v, at) {
-    vt = at == null ? vt + 0.05 : at;
-    hist.push([vt, v]);
-    while (hist.length > 2 && vt - hist[0][0] > TH) hist.shift();
+    if (hist.length && at - hist[hist.length - 1][0] < DT) {
+      hist[hist.length - 1][1] = v;                  /* same instant, newer value */
+      return;
+    }
+    hist.push([at, v]);
+    while (hist.length > 2 && at - hist[0][0] > TH) hist.shift();
   }
 
   var s1 = slider(u.ctl, 'Applied force', -100, 100, 1, 0,
     function (v) { return v.toFixed(0) + ' N'; },
-    function (v) { force = v; if (!playing) { push(v / 100 * 3.2); draw(); } });
+    function (v) { force = v; if (!running) { push(v / 100 * 3.2, vt); draw(); } });
 
   var row = el('div', 'ictl-row'); u.ctl.appendChild(row);
-  var pb = playBtn(row, '▶ Wobble the beam');
+  var pb = playBtn(row, '\u25b6 Wobble the beam');
   pb.addEventListener('click', function () {
-    playing = !playing;
-    pb.textContent = playing ? '❚❚ Stop' : '▶ Wobble the beam';
-    if (playing) { t0 = performance.now() - vt * 1000; loop(); }
-    else cancelAnimationFrame(raf);
+    wobbling = !wobbling;
+    pb.classList.toggle('on', wobbling);
+    pb.textContent = wobbling ? '\u275a\u275a Stop wobbling' : '\u25b6 Wobble the beam';
   });
-  function loop() {
-    var now = (performance.now() - t0) / 1000;
-    force = 82 * Math.sin(now * 2.1);
-    s1.input.value = force; s1.quiet(force);
-    push(force / 100 * 3.2, now);
+
+  function tick() {
+    vt = (performance.now() - t0) / 1000;
+    if (wobbling) { force = 82 * Math.sin(vt * 2.1); s1.quiet(force); }
+    push(force / 100 * 3.2, vt);
     draw();
-    raf = requestAnimationFrame(loop);
+    raf = requestAnimationFrame(tick);
   }
+  function start() {
+    if (running) return;
+    running = true;
+    t0 = performance.now() - vt * 1000;              /* pick the clock back up */
+    raf = requestAnimationFrame(tick);
+  }
+  function stop() { running = false; cancelAnimationFrame(raf); raf = null; }
 
   node._draw = draw;
-  node._stop = function () { playing = false; cancelAnimationFrame(raf); pb.textContent = '▶ Wobble the beam'; };
+  node._start = start;
+  node._stop = function () {
+    stop(); wobbling = false;
+    pb.classList.remove('on');
+    pb.textContent = '\u25b6 Wobble the beam';
+  };
+
   push(0, 0); draw();
+  /* deck-core fires _start on every slide CHANGE; the slide that is already
+     open when the deck boots never gets one, so start it here. */
+  var sec = node.closest ? node.closest('section') : null;
+  if (!sec || sec.classList.contains('present')) start();
+});
+
+/* ============================================================
+   1b. OHM'S LAW, WITH THE GAUGE AS THE RESISTOR
+   The strain gauge is a resistor, so V = IR is the whole sensor in one
+   equation. Stretch the foil and R rises; hold the current steady and the
+   voltage across it rises with it. Holding the VOLTAGE steady instead makes
+   the current fall, which is why a real bridge drives a constant current.
+   ============================================================ */
+D.register('ohms', function (node, d) {
+  var u = build(node);
+  var wrap = u.cv.parentNode.parentNode;
+  wrap.classList.add('isplit');
+  var side = el('div', 'icalc');
+  wrap.insertBefore(side, u.ctl);
+
+  var TALL = D.portrait();
+  var CW = TALL ? 460 : 620, CH = TALL ? 330 : 350;
+  var ax = new Axes(u.cv, { w: CW, h: CH, padl: 0, padr: 0, padt: 0, padb: 0,
+                            fluid: false, xmin: 0, xmax: CW, ymin: CH, ymax: 0 });
+  var out = readout(u.ctl);
+
+  var R0 = 120;                 /* an unstrained 120 Ω foil gauge */
+  var GF = 2.0;
+  var strain = 0;               /* microstrain */
+  var drive = 'I';              /* hold the current, or hold the voltage */
+  var I0 = 10, V0 = 1.2;        /* mA held constant, or volts held constant */
+
+  function state() {
+    var R = R0 * (1 + GF * strain * 1e-6);
+    var I, V;
+    if (drive === 'I') { I = I0; V = I * 1e-3 * R; }
+    else { V = V0; I = V / R * 1e3; }
+    return { R: R, I: I, V: V, dR: R - R0 };
+  }
+
+  function draw() {
+    var c = ax.c, K = C(), i;
+    var S = state();
+    ax.clear();
+
+    /* ---- the circuit: a source, two leads and the gauge ---- */
+    var x0 = 40, x1 = CW - 40, yTop = 78, yBot = CH - 96;
+    c.save();
+    c.strokeStyle = K.INK; c.lineWidth = 2; c.lineJoin = 'round';
+
+    /* source on the left */
+    c.beginPath(); c.moveTo(x0, yTop); c.lineTo(x0, yBot); c.stroke();
+    var my = (yTop + yBot) / 2;
+    c.lineWidth = 2.6;
+    c.beginPath(); c.moveTo(x0 - 13, my - 12); c.lineTo(x0 + 13, my - 12); c.stroke();
+    c.lineWidth = 1.6;
+    c.beginPath(); c.moveTo(x0 - 7, my - 3); c.lineTo(x0 + 7, my - 3); c.stroke();
+    c.lineWidth = 2.6;
+    c.beginPath(); c.moveTo(x0 - 13, my + 6); c.lineTo(x0 + 13, my + 6); c.stroke();
+    c.lineWidth = 1.6;
+    c.beginPath(); c.moveTo(x0 - 7, my + 15); c.lineTo(x0 + 7, my + 15); c.stroke();
+    c.fillStyle = K.MUT;
+    c.font = '600 12px ui-sans-serif,system-ui,sans-serif';
+    /* left-aligned from the frame edge: centring this on the source puts half
+       of it off the left of the canvas */
+    c.textAlign = 'left'; c.textBaseline = 'top';
+    c.fillText(drive === 'I' ? 'constant current source' : 'constant voltage source',
+               8, yBot + 12);
+
+    /* top and bottom leads */
+    c.strokeStyle = K.INK; c.lineWidth = 2;
+    var gx0 = x0 + 118, gx1 = x1 - 118;
+    c.beginPath(); c.moveTo(x0, yTop); c.lineTo(gx0, yTop); c.stroke();
+    c.beginPath(); c.moveTo(gx1, yTop); c.lineTo(x1, yTop);
+    c.lineTo(x1, yBot); c.lineTo(x0, yBot); c.stroke();
+
+    /* ---- the gauge itself: a folded foil whose zig-zag stretches ---- */
+    var stretched = strain > 2, squeezed = strain < -2;
+    var col = Math.abs(strain) < 2 ? K.MUT : (stretched ? K.ACC : K.BLUE);
+    var gw = gx1 - gx0;
+    var amp = 15 * (1 - 0.45 * (strain / 1200));        /* thinner when stretched */
+    var n = 9;
+    c.strokeStyle = col; c.lineWidth = 3.4 * (1 - 0.35 * (strain / 1200));
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    c.beginPath();
+    for (i = 0; i <= n * 2; i++) {
+      var xx = gx0 + gw * i / (n * 2);
+      var yy = yTop + ((i % 2) ? -amp : amp) * 0.62;
+      i ? c.lineTo(xx, yy) : c.moveTo(xx, yy);
+    }
+    c.stroke();
+    c.fillStyle = col;
+    c.font = '700 13px ui-sans-serif,system-ui,sans-serif';
+    c.textAlign = 'center'; c.textBaseline = 'bottom';
+    c.fillText('strain gauge  R = ' + S.R.toFixed(3) + ' Ω', (gx0 + gx1) / 2, yTop - 26);
+    c.font = '600 12px ui-sans-serif,system-ui,sans-serif';
+    c.fillStyle = K.MUT; c.textBaseline = 'top';
+    c.fillText(stretched ? 'stretched — longer and thinner'
+             : (squeezed ? 'squashed — shorter and fatter' : 'unstrained'),
+               (gx0 + gx1) / 2, yTop + 24);
+
+    /* ---- current, drawn as beads moving along the wire ---- */
+    var beads = Math.max(3, Math.round(S.I / 1.4));
+    c.fillStyle = K.GRN;
+    for (i = 0; i < beads; i++) {
+      var f = i / beads;
+      c.beginPath(); c.arc(x0 + (gx0 - x0) * f, yTop, 3.2, 0, 7); c.fill();
+    }
+    c.font = '700 12.5px ui-sans-serif,system-ui,sans-serif';
+    c.fillStyle = K.GRN; c.textAlign = 'left'; c.textBaseline = 'bottom';
+    c.fillText('I = ' + S.I.toFixed(2) + ' mA', x0 + 16, yTop - 10);
+
+    /* ---- the voltage across the gauge, as a labelled span ---- */
+    var vy = yTop + 58;
+    c.strokeStyle = K.VIO; c.lineWidth = 1.4; c.setLineDash([4, 3]);
+    c.beginPath(); c.moveTo(gx0, yTop + amp); c.lineTo(gx0, vy); c.stroke();
+    c.beginPath(); c.moveTo(gx1, yTop + amp); c.lineTo(gx1, vy); c.stroke();
+    c.setLineDash([]);
+    c.lineWidth = 2;
+    c.beginPath(); c.moveTo(gx0, vy); c.lineTo(gx1, vy); c.stroke();
+    [[gx0, 1], [gx1, -1]].forEach(function (e) {
+      c.beginPath(); c.moveTo(e[0], vy);
+      c.lineTo(e[0] + e[1] * 9, vy - 4); c.lineTo(e[0] + e[1] * 9, vy + 4);
+      c.closePath(); c.fillStyle = K.VIO; c.fill();
+    });
+    c.fillStyle = K.VIO;
+    c.font = '700 13.5px ui-sans-serif,system-ui,sans-serif';
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    c.fillText('V = ' + S.V.toFixed(4) + ' V', (gx0 + gx1) / 2, vy + 7);
+    c.restore();
+
+    /* ---- the arithmetic ---- */
+    side.innerHTML =
+      '<div class="icalc-h">V = I R</div>' +
+      '<div class="icalc-work">' +
+        '<div class="icalc-t">the gauge is just a resistor</div>' +
+        '<div class="icalc-eq">R = R₀(1 + GF·ε)</div>' +
+        '<div class="icalc-eq">R = 120(1 + 2.0 · ' + (strain * 1e-6).toFixed(6) + ')</div>' +
+        '<div class="icalc-eq">R = <b>' + S.R.toFixed(3) + '</b> Ω <span class="muted">(' +
+          (S.dR >= 0 ? '+' : '−') + Math.abs(S.dR).toFixed(3) + ')</span></div>' +
+      '</div>' +
+      '<div class="icalc-work">' +
+        '<div class="icalc-t">' + (drive === 'I'
+          ? 'hold the current steady and the voltage follows R'
+          : 'hold the voltage steady and the current falls as R rises') + '</div>' +
+        (drive === 'I'
+          ? '<div class="icalc-eq">V = I R = ' + (I0 / 1000).toFixed(3) + ' × ' +
+              S.R.toFixed(3) + '</div><div class="icalc-eq">V = <b>' + S.V.toFixed(4) + '</b> V</div>'
+          : '<div class="icalc-eq">I = V / R = ' + V0.toFixed(2) + ' / ' + S.R.toFixed(3) +
+              '</div><div class="icalc-eq">I = <b>' + S.I.toFixed(3) + '</b> mA</div>') +
+      '</div>' +
+      '<div class="icalc-vals">' +
+        '<div><span>R</span><b>' + S.R.toFixed(2) + ' Ω</b></div>' +
+        '<div><span>I</span><b>' + S.I.toFixed(2) + ' mA</b></div>' +
+        '<div><span>V</span><b>' + S.V.toFixed(3) + ' V</b></div>' +
+      '</div>';
+
+    out.innerHTML =
+      'R = <b>' + S.R.toFixed(3) + ' Ω</b> &nbsp;·&nbsp; I = <b class="g">' +
+      S.I.toFixed(2) + ' mA</b> &nbsp;·&nbsp; V = <b class="r">' + S.V.toFixed(4) + ' V</b>' +
+      '<span class="hint">' + (drive === 'I'
+        ? 'Driving a <b>constant current</b> through the gauge makes the voltage across it a ' +
+          'direct read-out of its resistance — and therefore of the strain. That is why a ' +
+          'strain gauge amplifier is a current source, not a voltage source.'
+        : 'With the <b>voltage</b> held constant instead, stretching the gauge makes the current ' +
+          'fall. The same physics, read the other way round — but a small change in a large ' +
+          'current is much harder to measure than a small change in a small voltage.') +
+      '</span>';
+  }
+
+  var row = el('div', 'ictl-row'); u.ctl.appendChild(row);
+  labelled(row, 'the source holds', seg(el('div'),
+    [['I', 'current constant'], ['V', 'voltage constant']], drive,
+    function (v) { drive = v; draw(); }));
+
+  u.ctl.classList.add('g2');
+  slider(u.ctl, 'Strain', -1200, 1200, 10, strain,
+    function (v) { return v.toFixed(0) + ' µε'; },
+    function (v) { strain = v; draw(); });
+  slider(u.ctl, 'Source', 1, 20, 0.5, I0,
+    function (v) { return drive === 'I' ? v.toFixed(1) + ' mA' : (v / 10).toFixed(2) + ' V'; },
+    function (v) { I0 = v; V0 = v / 10; draw(); });
+
+  node._draw = draw;
+  draw();
 });
 
 /* ============================================================
@@ -322,8 +524,10 @@ D.register('sampling', function (node, d) {
   });
   row.appendChild(jb);
 
-  slider(u.ctl, 'Sampling rate', 3, 60, 1, fs, function (v) { return v.toFixed(0) + ' Hz'; },
-    function (v) { fs = v; draw(); });
+  if (d.fsctl !== '0') {
+    slider(u.ctl, 'Sampling rate', 3, 60, 1, fs, function (v) { return v.toFixed(0) + ' Hz'; },
+      function (v) { fs = v; draw(); });
+  }
   if (d.sigctl !== '0') {
     slider(u.ctl, 'Signal frequency', 0.5, 12, 0.5, sigF, function (v) { return v.toFixed(1) + ' Hz'; },
       function (v) { sigF = v; draw(); });
@@ -333,115 +537,284 @@ D.register('sampling', function (node, d) {
 });
 
 /* ============================================================
-   3. CALIBRATION — volts in, newtons out
+   3. CALIBRATION — hang a known weight, read the volts, plot the pair
+   The left panel is the sensor's output in real time, exactly as the strain
+   figure shows it: hang a weight and the trace steps up and settles. The
+   right panel is the calibration graph, and it only gains a point when you
+   deliberately take a reading. The table fills at the same moment, so the
+   chain "weight on the pan → volts on the chart → a row in the table → a
+   line through the rows" happens in front of the class.
    ============================================================ */
 D.register('calib', function (node, d) {
   var u = build(node);
-  u.cv.parentNode.parentNode.classList.add('isplit', 'iimu');
+  var wrap = u.cv.parentNode.parentNode;
+  wrap.classList.add('isplit', 'iimu');
   var side = el('div', 'icalc');
-  u.cv.parentNode.parentNode.insertBefore(side, u.ctl);
-  var ax = new Axes(u.cv, { w: 780, h: 330, padl: 64, padb: 44, padt: 16, xmin: 0, xmax: 110, ymin: 0, ymax: 12 });
+  wrap.insertBefore(side, u.ctl);
+
+  var TALL = D.portrait();
+  var CW = TALL ? 470 : 920, CH = TALL ? 500 : 292;
+  var PL = 54, PR = 16, PT = 14, PB = 40;
+  var ax = new Axes(u.cv, { w: CW, h: CH, padl: PL, padr: PR, padt: PT, padb: PB,
+                            fluid: false, xmin: 0, xmax: 1, ymin: 0, ymax: 1 });
   var out = readout(u.ctl);
 
-  /* the slide's own numbers */
+  /* the slide's own numbers: 25 N -> 5.0 V, 50 N -> 6.5 V, 75 N -> 8.0 V */
   var TRUE_M = 0.06, TRUE_B = 3.5;
-  var KNOWN = [25, 50, 75];
+  var KNOWN = [0, 25, 50, 75];
   var mode = d.mode || 'linear';
-  var taken = [], useV = 6.0, applied = 25;
+  var taken = [], useV = 6.0;
+
+  var applied = 0;            /* what is on the pan right now */
+  var unknown = false;        /* is the weight one the calibration never saw? */
+  var UNKNOWN = [40, 65, 90];
+  var ch2 = null;
+  var shown = TRUE_B;         /* what the sensor is reporting right now */
+  var hist = [];              /* [t, volts] */
+  var TH = 6.0;               /* seconds of trace */
+  var vt = 0, t0 = 0, raf = null, running = false;
+  var TAU = 0.16;             /* how fast the reading settles, seconds */
 
   function volts(f) {
     if (mode === 'poly') return 2.0 + 0.16 * f - 0.0009 * f * f;
     return TRUE_M * f + TRUE_B;
   }
+  function settled() { return Math.abs(shown - volts(applied)) < 0.02; }
   function fitted() {
     if (taken.length < 2) return null;
     var n = taken.length, sx = 0, sy = 0, sxy = 0, sxx = 0;
-    taken.forEach(function (p) { sx += p[0]; sy += p[1]; sxy += p[0] * p[1]; sxx += p[0] * p[0]; });
-    var m = (n * sxy - sx * sy) / (n * sxx - sx * sx);
+    taken.forEach(function (q) { sx += q[0]; sy += q[1]; sxy += q[0] * q[1]; sxx += q[0] * q[0]; });
+    var den = n * sxx - sx * sx;
+    if (Math.abs(den) < 1e-9) return null;
+    var m = (n * sxy - sx * sy) / den;
     return { m: m, b: (sy - m * sx) / n };
   }
 
+  var VMIN = 0, VMAX = mode === 'poly' ? 12 : 11;
+  var VTICKS = mode === 'poly' ? [0, 3, 6, 9, 12] : [0, 2, 4, 6, 8, 10];
+
+  function panel(which) {
+    if (TALL) {
+      var halfH = (CH - PT - PB - 46) / 2;
+      ax.pl = PL; ax.pr = PR;
+      ax.pt = PT + (which === 'time' ? 0 : halfH + 46);
+      ax.pb = CH - (ax.pt + halfH);
+    } else {
+      var halfW = (CW - PL - PR - 74) / 2;
+      ax.pt = PT; ax.pb = PB;
+      ax.pl = PL + (which === 'time' ? 0 : halfW + 74);
+      ax.pr = CW - (ax.pl + halfW);
+    }
+  }
+
   function draw() {
-    var K = C(), f = fitted();
+    var K = C(), f = fitted(), i;
     ax.clear();
-    ax.frame({ grid: true, zero: false, xticks: [0, 25, 50, 75, 100],
-      yticks: [0, 3, 6, 9, 12], xlabel: 'applied force (N)', ylabel: 'voltage out (V)', ysize: 13,
-      yfmt: function (v) { return v.toFixed(0); } });
-    /* the sensor's real behaviour, only revealed once calibrated */
-    if (f) ax.fn(function (x) { return f.m * x + f.b; }, { color: K.BLUE, width: 2.4, from: 0, to: 110 });
-    if (mode === 'poly') ax.fn(volts, { color: K.SOFT, width: 1.4, dash: [5, 4], from: 0, to: 110 });
-    ax.dots(taken, { color: K.ACC, r: 5.5 });
-    taken.forEach(function (p) {
-      ax.poly([[p[0], 0], p], { color: K.MUTED_ACC, width: 1, dash: [3, 3] });
+
+    /* ---------- left: what the sensor is saying, as it happens ---------- */
+    panel('time');
+    var tEnd = Math.max(vt, TH), tStart = tEnd - TH;
+    ax.setRange(tStart, tEnd, VMIN, VMAX);
+    ax.frame({ grid: true, xticks: [], yticks: VTICKS,
+               xlabel: 'time →', ylabel: 'voltage out (V)', ysize: 12.5,
+               yfmt: function (v) { return v.toFixed(0); } });
+    if (hist.length > 1) ax.poly(hist, { color: K.GRN, width: 2.4 });
+    ax.dots([[tEnd, shown]], { color: settled() ? K.GRN : K.MUT, r: 5 });
+    ax.text(shown.toFixed(2) + ' V', ax.pl + 8, ax.pt + 8,
+            { px: true, size: 13.5, weight: '700', color: K.GRN, base: 'top' });
+    ax.text(applied.toFixed(0) + ' N on the pan', ax.pl + 8, ax.pt + 27,
+            { px: true, size: 12, weight: '600', color: K.MUT, base: 'top' });
+    if (!settled()) {
+      ax.text('settling…', ax.W - ax.pr - 8, ax.pt + 8,
+              { px: true, size: 12, weight: '700', color: K.ORG, base: 'top', align: 'right' });
+    }
+    /* every reading already taken, marked on the trace where it was taken */
+    taken.forEach(function (q) {
+      if (q[2] == null || q[2] < tStart) return;
+      ax.poly([[q[2], VMIN], [q[2], q[1]]], { color: K.MUTED_ACC, width: 1, dash: [3, 3] });
+      ax.dots([[q[2], q[1]]], { color: K.ACC, r: 4 });
     });
-    /* the reading being converted */
+
+    /* ---------- right: the calibration graph the readings build ---------- */
+    panel('calib');
+    ax.setRange(0, 110, VMIN, VMAX);
+    ax.frame({ grid: true, xticks: [0, 25, 50, 75, 100], yticks: VTICKS,
+               xlabel: 'applied force (N)', ylabel: 'voltage out (V)', ysize: 12.5,
+               yfmt: function (v) { return v.toFixed(0); } });
+    if (mode === 'poly') ax.fn(volts, { color: K.SOFT, width: 1.4, dash: [5, 4], from: 0, to: 110 });
+    if (f) ax.fn(function (x) { return f.m * x + f.b; },
+                 { color: K.BLUE, width: 2.4, from: 0, to: 110 });
+    taken.forEach(function (q) {
+      ax.poly([[q[0], VMIN], [q[0], q[1]]], { color: K.MUTED_ACC, width: 1, dash: [3, 3] });
+    });
+    ax.dots(taken.map(function (q) { return [q[0], q[1]]; }), { color: K.ACC, r: 5.5 });
+    /* the live reading, hovering where it would land */
+    if (settled() && !taken.some(function (q) { return q[0] === applied; })) {
+      ax.c.save(); ax.c.globalAlpha = 0.45;
+      ax.dots([[applied, shown]], { color: K.GRN, r: 5.5 });
+      ax.c.restore();
+      ax.text('take a reading → here', ax.X(applied) + 9, ax.Y(shown) - 4,
+              { px: true, size: 11.5, weight: '600', color: K.GRN, base: 'middle' });
+    }
     if (f && d.use === '1') {
       var fx = (useV - f.b) / f.m;
-      ax.poly([[0, useV], [fx, useV]], { color: K.GRN, width: 1.6, dash: [5, 4] });
-      ax.poly([[fx, 0], [fx, useV]], { color: K.GRN, width: 1.6, dash: [5, 4] });
-      ax.dots([[fx, useV]], { color: K.GRN, r: 5.5 });
+      ax.poly([[0, useV], [fx, useV]], { color: K.VIO, width: 1.6, dash: [5, 4] });
+      ax.poly([[fx, VMIN], [fx, useV]], { color: K.VIO, width: 1.6, dash: [5, 4] });
+      ax.dots([[fx, useV]], { color: K.VIO, r: 5.5 });
     }
+    panel('time');
 
+    /* ---------- the table and the arithmetic ---------- */
     var html = '';
     if (!taken.length) {
-      html = '<div class="icalc-h">nothing measured yet</div>' +
-        '<div class="icalc-work"><div class="icalc-t">Hang a known weight on the sensor and record ' +
-        'what voltage comes out. Two points is enough for a line; three is better.</div></div>';
+      html = '<div class="icalc-h">no readings yet</div>' +
+        '<div class="icalc-work"><div class="icalc-t">Hang a known weight on the sensor, wait for ' +
+        'the trace to settle, then <b>take a reading</b>. Two readings give a line; three let you ' +
+        'check it.</div></div>';
     } else {
-      html = '<div class="icalc-h"><span class="v">' + taken.length + '</span> known point' +
-             (taken.length > 1 ? 's' : '') + ' recorded</div>' +
-        '<div class="icalc-work"><table class="icalc-tab"><tr><th>force</th><th>volts</th></tr>' +
-        taken.map(function (p) {
-          return '<tr><td>' + p[0].toFixed(0) + ' N</td><td>' + p[1].toFixed(2) + ' V</td></tr>';
-        }).join('') + '</table></div>';
+      html = '<div class="icalc-h"><span class="v">' + taken.length + '</span> reading' +
+             (taken.length > 1 ? 's' : '') + ' taken</div>' +
+        '<div class="icalc-work"><table class="icalc-tab">' +
+        '<thead><tr><th>applied force</th><th>voltage out</th></tr></thead><tbody>' +
+        taken.map(function (q) {
+          return '<tr><td>' + q[0].toFixed(0) + ' N</td><td>' + q[1].toFixed(2) + ' V</td></tr>';
+        }).join('') + '</tbody></table></div>';
       if (f) {
+        var p1 = taken[0], p2 = taken[taken.length - 1];
         html += '<div class="icalc-work">' +
           '<div class="icalc-t">slope, from rise over run</div>' +
-          '<div class="icalc-eq">m = Δy/Δx = <b>' + f.m.toFixed(3) + '</b> V/N</div>' +
+          '<div class="icalc-eq">m = Δy/Δx = (' + p2[1].toFixed(2) + ' − ' +
+            p1[1].toFixed(2) + ') / (' + p2[0].toFixed(0) + ' − ' + p1[0].toFixed(0) + ')</div>' +
+          '<div class="icalc-eq">m = <b>' + f.m.toFixed(3) + '</b> V/N</div>' +
           '<div class="icalc-t" style="margin-top:.45em">offset, from y = mx + b</div>' +
           '<div class="icalc-eq">b = <b>' + f.b.toFixed(2) + '</b> V</div>' +
           '</div>';
         if (d.use === '1') {
-          html += '<div class="idrift ok"><span>reading ' + useV.toFixed(2) + ' V means</span><b>' +
-            ((useV - f.b) / f.m).toFixed(1) + ' N</b><i>x = (y − b) / m</i></div>';
+          if (unknown) {
+            var est = (shown - f.b) / f.m;
+            html += '<div class="icalc-work">' +
+              '<div class="icalc-t">an unknown weight is on the pan</div>' +
+              '<div class="icalc-eq">the sensor reads <b>' + shown.toFixed(2) + '</b> V</div>' +
+              '<div class="icalc-eq">x = (y − b) / m = (' + shown.toFixed(2) + ' − ' +
+                f.b.toFixed(2) + ') / ' + f.m.toFixed(3) + '</div>' +
+              '<div class="icalc-eq">x = <b class="r">' + est.toFixed(1) + '</b> N</div>' +
+              '</div>' +
+              '<div class="idrift ' + (Math.abs(est - applied) < 2 ? 'ok' : 'warn') +
+                '"><span>it really was</span><b>' + applied.toFixed(0) + ' N</b><i>' +
+                (est - applied >= 0 ? '+' : '−') + Math.abs(est - applied).toFixed(1) +
+                ' N out</i></div>';
+          } else {
+            html += '<div class="idrift ok"><span>reading ' + useV.toFixed(2) + ' V means</span><b>' +
+              ((useV - f.b) / f.m).toFixed(1) + ' N</b><i>x = (y − b) / m</i></div>';
+          }
         }
       } else {
-        html += '<div class="icalc-work"><div class="icalc-t">one point cannot give a slope — ' +
-                'take another at a different force</div></div>';
+        html += '<div class="icalc-work"><div class="icalc-t">one reading cannot give a slope — ' +
+                'hang a different weight and take another</div></div>';
       }
     }
     side.innerHTML = html;
 
     out.innerHTML = (f
       ? 'calibrated: <b>V = ' + f.m.toFixed(3) + ' · F + ' + f.b.toFixed(2) + '</b>'
-      : 'not calibrated yet') +
+      : 'not calibrated yet — <b>' + taken.length + '</b> of 2 readings needed') +
       '<span class="hint">' + (mode === 'poly'
-        ? 'this sensor is not linear — a straight line through two points will not describe it, which is why non-linear sensors get a polynomial instead'
-        : 'the sensor gives volts; the calibration is what turns volts into newtons') + '</span>';
+        ? 'this sensor is not linear — a straight line through the readings will not describe it, ' +
+          'which is why non-linear sensors get a polynomial instead'
+        : 'the sensor only ever gives volts. The calibration is the thing that turns volts into ' +
+          'newtons, and it comes from weights you already knew the answer to.') + '</span>';
   }
 
+  /* ---------- the clock, free-running like the strain figure ---------- */
+  var DT = 0.03;
+  function push(v, at) {
+    if (hist.length && at - hist[hist.length - 1][0] < DT) {
+      hist[hist.length - 1][1] = v; return;
+    }
+    hist.push([at, v]);
+    while (hist.length > 2 && at - hist[0][0] > TH + 1) hist.shift();
+  }
+  function tick() {
+    var now = (performance.now() - t0) / 1000;
+    var dt = Math.min(0.1, Math.max(0, now - vt));
+    vt = now;
+    var target = volts(applied);
+    shown += (target - shown) * (1 - Math.exp(-dt / TAU));
+    if (Math.abs(target - shown) < 0.002) shown = target;
+    push(shown + (Math.random() - 0.5) * 0.008, vt);
+    draw();
+    raf = requestAnimationFrame(tick);
+  }
+  function start() {
+    if (running) return;
+    running = true; t0 = performance.now() - vt * 1000;
+    raf = requestAnimationFrame(tick);
+  }
+  function stop() { running = false; cancelAnimationFrame(raf); raf = null; }
+
+  /* ---------- controls ---------- */
   var row = el('div', 'ictl-row'); u.ctl.appendChild(row);
   var chips = el('div', 'iseg');
-  KNOWN.forEach(function (f) {
-    var b = el('button', 'iseg-b', 'hang ' + f + ' N');
+  KNOWN.forEach(function (w) {
+    var b = el('button', 'iseg-b' + (w === 0 ? ' on' : ''), w === 0 ? 'nothing' : w + ' N');
     b.addEventListener('click', function () {
-      if (!taken.some(function (p) { return p[0] === f; })) taken.push([f, volts(f)]);
-      taken.sort(function (a, b2) { return a[0] - b2[0]; });
-      draw();
+      Array.prototype.forEach.call(chips.children, function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+      applied = w; unknown = false;
+      if (ch2) Array.prototype.forEach.call(ch2.children,
+        function (x) { x.classList.remove('on'); });
     });
     chips.appendChild(b);
   });
-  labelled(row, 'record a point', chips);
+  labelled(row, 'hang a known weight', chips);
+
+  var tb = el('button', 'ibtn', 'Take a reading');
+  tb.addEventListener('click', function () {
+    /* reading early just settles the trace there and then, rather than doing
+       nothing and leaving the class wondering whether the button works */
+    shown = volts(applied);
+    var exact = shown;                             /* the settled value, not the noise */
+    var at = applied;
+    taken = taken.filter(function (q) { return q[0] !== at; });
+    taken.push([at, exact, vt]);
+    taken.sort(function (q, r) { return q[0] - r[0]; });
+    draw();
+  });
+  row.appendChild(tb);
+
   var cb = el('button', 'ibtn', 'Start over');
   cb.setAttribute('data-reset', '1');        /* the layout pre-warm uses this to undo itself */
-  cb.addEventListener('click', function () { taken = []; draw(); });
+  cb.addEventListener('click', function () { taken = []; applied = 0;
+    Array.prototype.forEach.call(chips.children, function (x, i) {
+      x.classList.toggle('on', i === 0); });
+    draw(); });
   row.appendChild(cb);
+
   if (d.use === '1') {
-    slider(u.ctl, 'Now read a voltage', 3.5, 11, 0.1, useV,
+    /* the point of calibrating: put a weight on that was NOT one of the known
+       ones, and let the equation say what it was */
+    ch2 = el('div', 'iseg');
+    UNKNOWN.forEach(function (w) {
+      var b2 = el('button', 'iseg-b', w + ' N');
+      b2.addEventListener('click', function () {
+        Array.prototype.forEach.call(ch2.children, function (x) { x.classList.remove('on'); });
+        Array.prototype.forEach.call(chips.children, function (x) { x.classList.remove('on'); });
+        b2.classList.add('on');
+        applied = w; unknown = true;
+      });
+      ch2.appendChild(b2);
+    });
+    labelled(row, 'then an unknown one', ch2);
+    slider(u.ctl, 'Or just read a voltage', 3.5, 11, 0.1, useV,
       function (v) { return v.toFixed(2) + ' V'; }, function (v) { useV = v; draw(); });
   }
+
   node._draw = draw;
-  draw();
+  node._start = start;
+  node._stop = stop;
+  push(shown, 0); draw();
+  var sec = node.closest ? node.closest('section') : null;
+  if (!sec || sec.classList.contains('present')) start();
 });
 
 /* ============================================================
@@ -466,9 +839,83 @@ function sensorSig(k, t) {
   return Math.exp(-Math.pow((t % 1.6 - 0.55) / 0.26, 2)) * 1.7 - 0.85;
 }
 
+/* A small glyph for each kind of sensor, drawn in raw canvas pixels so it can
+   sit next to a channel name or inside a multiplexer diagram. Each one is
+   drawn inside a box of side 2r centred on (x, y). */
+function sensorIcon(c, kind, x, y, r, col) {
+  var i;
+  c.save();
+  c.strokeStyle = col; c.fillStyle = col;
+  c.lineWidth = Math.max(1.3, r * 0.17); c.lineCap = 'round'; c.lineJoin = 'round';
+  if (kind === 'Strain gauge' || kind === 'Load cell') {
+    /* folded foil: a flat lead, a zig-zag, a flat lead */
+    c.beginPath();
+    c.moveTo(x - r, y);
+    c.lineTo(x - r * 0.62, y);
+    for (i = 0; i < 6; i++) {
+      c.lineTo(x - r * 0.62 + r * 0.2 * (i + 0.5), y + (i % 2 ? r * 0.5 : -r * 0.5));
+    }
+    c.lineTo(x + r * 0.62, y); c.lineTo(x + r, y);
+    c.stroke();
+  } else if (kind === 'EMG') {
+    /* a burst of muscle activity */
+    var amp = [0.12, 0.2, 0.75, 0.35, 0.9, 0.28, 0.6, 0.15, 0.1];
+    c.beginPath();
+    for (i = 0; i < amp.length; i++) {
+      var xx = x - r + (2 * r) * i / (amp.length - 1);
+      var yy = y + (i % 2 ? 1 : -1) * amp[i] * r;
+      i ? c.lineTo(xx, yy) : c.moveTo(xx, yy);
+    }
+    c.stroke();
+  } else if (kind === 'Accelerometer') {
+    /* a mass on a spring inside a case */
+    c.strokeRect(x - r, y - r * 0.78, 2 * r, r * 1.56);
+    c.beginPath();
+    c.moveTo(x - r, y);
+    for (i = 0; i < 5; i++) {
+      c.lineTo(x - r + r * 0.24 * (i + 0.5), y + (i % 2 ? r * 0.36 : -r * 0.36));
+    }
+    c.lineTo(x + r * 0.2, y);
+    c.stroke();
+    c.fillRect(x + r * 0.2, y - r * 0.42, r * 0.62, r * 0.84);
+  } else if (kind === 'Goniometer') {
+    /* two arms and the angle between them */
+    c.beginPath();
+    c.moveTo(x + r, y + r * 0.7); c.lineTo(x - r * 0.75, y + r * 0.7);
+    c.lineTo(x + r * 0.5, y - r * 0.8); c.stroke();
+    c.beginPath(); c.arc(x - r * 0.75, y + r * 0.7, r * 0.66, -Math.PI / 2.35, 0); c.stroke();
+  } else if (kind === 'Force plate') {
+    /* a plate with a load coming down onto it */
+    c.strokeRect(x - r, y + r * 0.3, 2 * r, r * 0.6);
+    c.beginPath();
+    c.moveTo(x, y - r); c.lineTo(x, y + r * 0.1); c.stroke();
+    c.beginPath();
+    c.moveTo(x, y + r * 0.28); c.lineTo(x - r * 0.3, y - r * 0.18);
+    c.lineTo(x + r * 0.3, y - r * 0.18); c.closePath(); c.fill();
+  } else if (kind === 'Pressure pad') {
+    /* a grid of cells */
+    for (i = 0; i < 3; i++) {
+      for (var j = 0; j < 3; j++) {
+        var s2 = r * 0.56;
+        c.strokeRect(x - r + i * s2 * 1.2, y - r * 0.85 + j * s2 * 1.2, s2, s2);
+      }
+    }
+  } else {
+    /* thermistor and anything else: a thermometer */
+    c.beginPath(); c.arc(x, y + r * 0.55, r * 0.42, 0, 7); c.fill();
+    c.beginPath();
+    c.moveTo(x, y + r * 0.2); c.lineTo(x, y - r * 0.9); c.stroke();
+    c.beginPath();
+    c.moveTo(x + r * 0.28, y - r * 0.55); c.lineTo(x + r * 0.62, y - r * 0.55); c.stroke();
+    c.beginPath();
+    c.moveTo(x + r * 0.28, y - r * 0.1); c.lineTo(x + r * 0.62, y - r * 0.1); c.stroke();
+  }
+  c.restore();
+}
+
 D.register('multisensor', function (node, d) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 900, h: 372, padl: 26, padr: 92, padb: 40, padt: 12, xmin: 0, xmax: 2, ymin: -1.3, ymax: 1.3 });
+  var ax = new Axes(u.cv, { w: 900, h: 372, padl: 26, padr: 132, padb: 40, padt: 12, xmin: 0, xmax: 2, ymin: -1.3, ymax: 1.3 });
   var out = readout(u.ctl);
   var n = parseInt(d.n || 2, 10), base = parseFloat(d.rate || 100), showSkew = true;
   var T = 2;
@@ -485,9 +932,11 @@ D.register('multisensor', function (node, d) {
       ax.setRange(0, T, -1.35, 1.35);
       ax.frame({ grid: false, zero: true, xticks: i === n - 1 ? [0, 0.5, 1, 1.5, 2] : [],
         yticks: [], xlabel: i === n - 1 ? 'time (s)' : null });
-      ax.text(s.name, ax.W - ax.pr + 8, ax.pt + ph / 2 - 7,
+      var icr = Math.min(13, ph * 0.3);
+      sensorIcon(ax.c, s.name, ax.W - ax.pr + 8 + icr, ax.pt + ph / 2, icr, K.BLUE);
+      ax.text(s.name, ax.W - ax.pr + 12 + icr * 2, ax.pt + ph / 2 - 7,
         { px: true, size: 12.5, weight: '700', color: K.INK, base: 'middle' });
-      ax.text(s.unit, ax.W - ax.pr + 8, ax.pt + ph / 2 + 8,
+      ax.text(s.unit, ax.W - ax.pr + 12 + icr * 2, ax.pt + ph / 2 + 8,
         { px: true, size: 11, weight: '600', color: K.MUT, base: 'middle' });
       ax.fn(function (t) { return sensorSig(i, t); }, { color: K.SOFT, width: 1.2, n: 500 });
       var pts = [];
@@ -533,12 +982,213 @@ D.register('multisensor', function (node, d) {
 });
 
 /* ============================================================
+   4b. THE MULTIPLEXER ITSELF
+   One DAQ, several sensors, and a switch that can only look at one of them
+   at a time. The arm points at a channel, sits there for one sample period,
+   takes the sample, and moves on. Everything the next two slides say about
+   shared rate and sampling skew is visible in the arm going round.
+   ============================================================ */
+D.register('mux', function (node, d) {
+  var u = build(node);
+  var TALL = D.portrait();
+  var CW = TALL ? 470 : 980, CH = TALL ? 520 : 356;
+  var ax = new Axes(u.cv, { w: CW, h: CH, padl: 0, padr: 0, padt: 0, padb: 0,
+                            fluid: false, xmin: 0, xmax: CW, ymin: CH, ymax: 0 });
+  var out = readout(u.ctl);
+
+  var n = parseInt(d.n || 4, 10);
+  var base = parseFloat(d.rate || 100);     /* what the DAQ can do, in Hz */
+  var speed = 20;                           /* slowed right down so it can be watched */
+  var running = false, raf = null, t0 = 0, clock = 0;
+  var taken = [];                           /* [channel, clock] of recent samples */
+
+  function dwell() { return 1 / base; }     /* seconds the arm spends per channel */
+  function current() {
+    var slot = Math.floor(clock / (dwell() / speed));
+    return ((slot % n) + n) % n;
+  }
+
+  function draw() {
+    var c = ax.c, K = C(), i;
+    ax.clear();
+    var ch = current();
+
+    var lx = TALL ? 70 : 128;               /* where the sensor boxes sit */
+    var mx = TALL ? 250 : 430;              /* the multiplexer hub */
+    var rx = TALL ? 400 : 760;              /* the DAQ */
+    var top = 52, DIAG = CH - 104, bh = (DIAG - top) / n;   /* the strip owns the rest */
+
+    /* ---- the sensors, each with its icon ---- */
+    for (i = 0; i < n; i++) {
+      var s = SENSOR_KINDS[i % SENSOR_KINDS.length];
+      var cy = top + bh * (i + 0.5);
+      var on = i === ch;
+      c.save();
+      c.fillStyle = on ? K.ACCFILL : K.PLATE;
+      c.strokeStyle = on ? K.ACC : K.PANEL;
+      c.lineWidth = on ? 2 : 1;
+      var bw = TALL ? 150 : 176, bhh = Math.min(50, bh - 8);
+      c.beginPath();
+      if (c.roundRect) c.roundRect(lx - bw / 2, cy - bhh / 2, bw, bhh, 8);
+      else c.rect(lx - bw / 2, cy - bhh / 2, bw, bhh);
+      c.fill(); c.stroke();
+      sensorIcon(c, s.name, lx - bw / 2 + 22, cy, 13, on ? K.ACC : K.MUT);
+      c.fillStyle = on ? K.INK : K.MUT;
+      c.font = '700 12px ui-sans-serif,system-ui,sans-serif';
+      c.textAlign = 'left'; c.textBaseline = 'middle';
+      c.fillText(s.name, lx - bw / 2 + 42, cy - 6);
+      c.font = '600 10.5px ui-sans-serif,system-ui,sans-serif';
+      c.fillStyle = K.MUT;
+      c.fillText('channel ' + i, lx - bw / 2 + 42, cy + 8);
+      /* the wire to the multiplexer */
+      c.strokeStyle = on ? K.ACC : K.SOFT; c.lineWidth = on ? 2.2 : 1.2;
+      c.beginPath(); c.moveTo(lx + bw / 2, cy); c.lineTo(mx - 34, cy); c.stroke();
+      c.restore();
+    }
+
+    /* ---- the multiplexer: a hub with an arm that points at one channel ---- */
+    var my = top + (DIAG - top) / 2;
+    c.save();
+    c.fillStyle = K.PLATE; c.strokeStyle = K.BLUE; c.lineWidth = 2;
+    c.beginPath();
+    if (c.roundRect) c.roundRect(mx - 34, top - 18, 68, DIAG - top + 20, 10);
+    else c.rect(mx - 34, top - 18, 68, DIAG - top + 20);
+    c.fill(); c.stroke();
+    c.fillStyle = K.BLUE;
+    c.font = '700 12px ui-sans-serif,system-ui,sans-serif';
+    c.textAlign = 'center'; c.textBaseline = 'bottom';
+    c.fillText('multiplexer', mx, top - 24);
+
+    /* the arm */
+    var pivotX = mx + 18, pivotY = my;
+    var targetY = top + bh * (ch + 0.5);
+    c.strokeStyle = K.ACC; c.lineWidth = 3.4; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(pivotX, pivotY); c.lineTo(mx - 26, targetY); c.stroke();
+    /* the arrow head, pointing at the live channel */
+    var ang = Math.atan2(targetY - pivotY, (mx - 26) - pivotX);
+    c.fillStyle = K.ACC;
+    c.beginPath();
+    c.moveTo(mx - 26, targetY);
+    c.lineTo(mx - 26 - Math.cos(ang - 0.4) * -12, targetY - Math.sin(ang - 0.4) * -12);
+    c.lineTo(mx - 26 - Math.cos(ang + 0.4) * -12, targetY - Math.sin(ang + 0.4) * -12);
+    c.closePath(); c.fill();
+    c.beginPath(); c.arc(pivotX, pivotY, 5, 0, 7); c.fill();
+    c.restore();
+
+    /* ---- the wire out to the DAQ ---- */
+    c.save();
+    c.strokeStyle = K.ACC; c.lineWidth = 2.2;
+    c.beginPath(); c.moveTo(mx + 34, my); c.lineTo(rx - 44, my); c.stroke();
+    c.fillStyle = K.PLATE; c.strokeStyle = K.GRN; c.lineWidth = 2;
+    c.beginPath();
+    if (c.roundRect) c.roundRect(rx - 44, my - 40, 88, 80, 10);
+    else c.rect(rx - 44, my - 40, 88, 80);
+    c.fill(); c.stroke();
+    c.fillStyle = K.GRN;
+    c.font = '700 12.5px ui-sans-serif,system-ui,sans-serif';
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText('DAQ', rx, my - 16);
+    c.font = '700 15px ui-sans-serif,system-ui,sans-serif';
+    c.fillStyle = K.INK;
+    c.fillText(base.toFixed(0) + ' Hz', rx, my + 6);
+    c.font = '600 10.5px ui-sans-serif,system-ui,sans-serif';
+    c.fillStyle = K.MUT;
+    c.fillText('one sample at a time', rx, my + 24);
+    c.restore();
+
+    /* ---- the record coming out the other side ---- */
+    var ry = CH - 26, rw = CW - 40;
+    c.save();
+    c.strokeStyle = K.SOFT; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(20, ry); c.lineTo(20 + rw, ry); c.stroke();
+    c.fillStyle = K.MUT;
+    c.font = '600 11px ui-sans-serif,system-ui,sans-serif';
+    c.textAlign = 'left'; c.textBaseline = 'top';
+    c.fillText('what the DAQ actually records — one channel per sample, in turn', 20, ry + 7);
+    var NSHOW = Math.min(taken.length, Math.floor(rw / 15));
+    for (i = 0; i < NSHOW; i++) {
+      var t = taken[taken.length - NSHOW + i];
+      var bx = 20 + rw - (NSHOW - i) * 15;
+      var hue = t[0] / Math.max(1, n);
+      c.globalAlpha = 0.35 + 0.65 * (i / Math.max(1, NSHOW - 1));
+      c.fillStyle = t[0] === ch ? K.ACC : K.BLUE;
+      var bhx = 6 + 16 * (1 - hue);
+      c.fillRect(bx, ry - 6 - bhx, 11, bhx);
+      c.globalAlpha = 1;
+    }
+    c.restore();
+
+    var per = base / n, skewMs = (n - 1) / base * 1000;
+    out.innerHTML =
+      'the arm is on <b class="r">channel ' + ch + '</b> (' +
+      SENSOR_KINDS[ch % SENSOR_KINDS.length].name + ') &nbsp;·&nbsp; it stays for <b>' +
+      (dwell() * 1000).toFixed(1) + ' ms</b>, then moves on' +
+      '<span class="hint">The DAQ runs at <b>' + base.toFixed(0) + ' Hz</b>, but it has to share ' +
+      'that between <b>' + n + '</b> channels, so each sensor is really sampled at <b class="r">' +
+      per.toFixed(1) + ' Hz</b>. And because the arm visits them one after another, the last ' +
+      'channel in a round is read <b>' + skewMs.toFixed(1) + ' ms</b> after the first — the ' +
+      'samples in a set are not simultaneous. That is sampling skew.</span>';
+  }
+
+  function tick() {
+    clock = (performance.now() - t0) / 1000;
+    var slot = Math.floor(clock / (dwell() / speed));
+    var last = taken[taken.length - 1];
+    if (!last || last[1] !== slot) {
+      taken.push([current(), slot]);
+      while (taken.length > 120) taken.shift();
+    }
+    draw();
+    raf = requestAnimationFrame(tick);
+  }
+  function start() {
+    if (running) return;
+    running = true; t0 = performance.now() - clock * 1000;
+    raf = requestAnimationFrame(tick);
+  }
+  function stop() { running = false; cancelAnimationFrame(raf); raf = null; }
+
+  var row = el('div', 'ictl-row'); u.ctl.appendChild(row);
+  var minus = el('button', 'iseg-b', '− channel'), plus = el('button', 'iseg-b', '+ channel');
+  minus.setAttribute('data-unsafe', '1'); plus.setAttribute('data-unsafe', '1');
+  var grp = el('div', 'iseg'); grp.appendChild(minus); grp.appendChild(plus);
+  labelled(row, 'channels', grp);
+  minus.addEventListener('click', function () { if (n > 2) { n--; taken = []; draw(); } });
+  plus.addEventListener('click', function () { if (n < 6) { n++; taken = []; draw(); } });
+
+  var sb = el('button', 'ibtn on', '❚❚ Pause the arm');
+  sb.addEventListener('click', function () {
+    if (running) { stop(); sb.classList.remove('on'); sb.textContent = '▶ Run the arm'; }
+    else { start(); sb.classList.add('on'); sb.textContent = '❚❚ Pause the arm'; }
+  });
+  row.appendChild(sb);
+
+  u.ctl.classList.add('g2');
+  slider(u.ctl, 'DAQ rate', 20, 400, 10, base, function (v) { return v.toFixed(0) + ' Hz'; },
+    function (v) { base = v; taken = []; draw(); });
+  slider(u.ctl, 'Slow motion', 1, 60, 1, speed, function (v) { return '×' + v.toFixed(0); },
+    function (v) { speed = v; taken = []; draw(); });
+
+  node._draw = draw;
+  node._start = start;
+  node._stop = function () {
+    stop(); sb.classList.remove('on'); sb.textContent = '▶ Run the arm';
+  };
+  draw();
+  var sec = node.closest ? node.closest('section') : null;
+  if (!sec || sec.classList.contains('present')) start();
+});
+
+/* ============================================================
    5. THE THREE THINGS THAT LIMIT AN A/D
    voltage range · magnitude options · temporal options
    ============================================================ */
 D.register('adclimits', function (node, d) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 900, h: 340, padl: 60, padb: 42, padt: 14, xmin: 0, xmax: 1, ymin: -6, ymax: 6 });
+  var only0 = d.only || '';
+  var ax = new Axes(u.cv, { w: 900, h: 340, padl: 60,
+                            padr: only0 === 'bits' ? 56 : 18,
+                            padb: 42, padt: 26, xmin: 0, xmax: 1, ymin: -6, ymax: 6 });
   var out = readout(u.ctl);
   var rangeLo = -5, rangeHi = 5, bits = 3, fs = 40, gain = 1, focus = d.focus || 'all';
   var T = 1;
@@ -574,12 +1224,28 @@ D.register('adclimits', function (node, d) {
         { size: 12, weight: '700', color: K.ACC, align: 'right', base: k ? 'top' : 'bottom' });
     });
 
-    /* the magnitude steps */
+    /* the magnitude steps — every level the converter is allowed to output */
     if (focus === 'all' || focus === 'bits') {
       if (levels <= 64) {
         for (i = 0; i < levels; i++) {
-          ax.poly([[0, rangeLo + i * step], [T, rangeLo + i * step]],
-            { color: K.GRID, width: 1 });
+          var ly = rangeLo + i * step;
+          ax.poly([[0, ly], [T, ly]], { color: K.GRID, width: 1 });
+          /* a tick on the RIGHT edge with the level number beside it, so the
+             volts scale on the left stays readable and the two say the same
+             thing in different units */
+          ax.c.save();
+          ax.c.strokeStyle = K.MUT; ax.c.lineWidth = 1;
+          ax.c.beginPath();
+          ax.c.moveTo(ax.W - ax.pr, ax.Y(ly)); ax.c.lineTo(ax.W - ax.pr + 5, ax.Y(ly));
+          ax.c.stroke(); ax.c.restore();
+          if (levels <= 32) {
+            ax.text(String(i), ax.W - ax.pr + 9, ax.Y(ly),
+              { px: true, size: 10.5, weight: '600', color: K.MUT, base: 'middle' });
+          }
+        }
+        if (levels <= 32) {
+          ax.text('level stored', ax.W - ax.pr + 4, ax.pt - 13,
+            { px: true, size: 11, weight: '700', color: K.MUT, base: 'bottom' });
         }
       }
     }
@@ -617,20 +1283,32 @@ D.register('adclimits', function (node, d) {
       '</span>';
   }
 
-  var row = el('div', 'ictl-row'); u.ctl.appendChild(row);
-  labelled(row, 'A/D range', seg(row, [['10', '−5 to +5 V'], ['20', '−10 to +10 V'], ['1', '0 to 1 V']],
-    '10', function (v) {
-      if (v === '1') { rangeLo = 0; rangeHi = 1; }
-      else { rangeHi = +v / 2; rangeLo = -rangeHi; }
-      draw();
-    }));
+  /* Each slide asks one question, so each slide gets one control. "gain" fixes
+     the rate and the bit depth high and leaves only the amplifier; "bits" fixes
+     everything except the magnitude resolution. */
+  var only = d.only || '';
+  if (only === 'gain') { fs = 200; bits = 12; }
+  if (only === 'bits') { fs = 200; gain = 1; }
 
-  slider(u.ctl, 'Magnitude — bits', 1, 12, 1, bits,
-    function (v) { return v + ' bit → ' + Math.pow(2, v) + ' levels'; },
-    function (v) { bits = v; draw(); });
-  slider(u.ctl, 'Temporal — rate', 4, 200, 2, fs,
-    function (v) { return v.toFixed(0) + ' Hz'; }, function (v) { fs = v; draw(); });
-  if (d.gain === '1') {
+  var row = el('div', 'ictl-row'); u.ctl.appendChild(row);
+  if (!only) {
+    labelled(row, 'A/D range', seg(row, [['10', '−5 to +5 V'], ['20', '−10 to +10 V'], ['1', '0 to 1 V']],
+      '10', function (v) {
+        if (v === '1') { rangeLo = 0; rangeHi = 1; }
+        else { rangeHi = +v / 2; rangeLo = -rangeHi; }
+        draw();
+      }));
+  }
+  if (!only || only === 'bits') {
+    slider(u.ctl, 'Magnitude — bits', 1, 12, 1, bits,
+      function (v) { return v + ' bit → ' + Math.pow(2, v) + ' levels'; },
+      function (v) { bits = v; draw(); });
+  }
+  if (!only) {
+    slider(u.ctl, 'Temporal — rate', 4, 200, 2, fs,
+      function (v) { return v.toFixed(0) + ' Hz'; }, function (v) { fs = v; draw(); });
+  }
+  if (d.gain === '1' || only === 'gain') {
     slider(u.ctl, 'Amplifier gain', 0.5, 6, 0.5, gain,
       function (v) { return '×' + v; }, function (v) { gain = v; draw(); });
   }
@@ -644,53 +1322,137 @@ D.register('adclimits', function (node, d) {
    ============================================================ */
 D.register('samplehold', function (node, d) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 900, h: 320, padl: 60, padb: 42, padt: 26, xmin: 0, xmax: 1, ymin: -1.4, ymax: 1.4 });
+  var TALL = D.portrait();
+  var CW = TALL ? 470 : 1140, CH = TALL ? 520 : 318;
+  var PL = 56, PR = 18, PT = 24, PB = 40;
+  var ax = new Axes(u.cv, { w: CW, h: CH, padl: PL, padr: PR, padt: PT, padb: PB,
+                            fluid: false, xmin: 0, xmax: 1, ymin: -1.4, ymax: 1.4 });
   var out = readout(u.ctl);
   var fs = 12, conv = 0.045, held = true, T = 1;
 
+  /* the right-hand panel runs on a clock of its own */
+  var LIVE = 1.25;                    /* seconds visible */
+  var SLOW = 6;                       /* real time is far too fast to watch */
+  var clock = 0, t0 = 0, raf = null, running = false;
+
   function sig(t) { return Math.sin(2 * Math.PI * 2.2 * t) + 0.22 * Math.sin(2 * Math.PI * 7 * t); }
+
+  function panel(which) {
+    if (TALL) {
+      var hA = (CH - PT - PB - 46) / 2;
+      ax.pl = PL; ax.pr = PR;
+      ax.pt = PT + (which === 'left' ? 0 : hA + 46);
+      ax.pb = CH - (ax.pt + hA);
+    } else {
+      var halfW = (CW - PL - PR - 80) / 2;
+      ax.pt = PT; ax.pb = PB;
+      ax.pl = PL + (which === 'left' ? 0 : halfW + 80);
+      ax.pr = CW - (ax.pl + halfW);
+    }
+  }
 
   function draw() {
     var K = C(), i;
     ax.clear();
+
+    /* ---------- left: the whole record, laid out to be talked over ---------- */
+    panel('left');
+    ax.setRange(0, T, -1.4, 1.4);
     ax.frame({ grid: false, zero: true, xticks: [0, 0.25, 0.5, 0.75, 1],
       xfmt: function (v) { return v.toFixed(2); },
-      yticks: [-1, 0, 1], xlabel: 'time (s)', ylabel: 'volts', ysize: 13,
+      yticks: [-1, 0, 1], xlabel: 'time (s)', ylabel: 'volts', ysize: 13, ylabelx: 13,
       yfmt: function (v) { return v.toFixed(0); } });
     ax.fn(sig, { color: K.SOFT, width: 1.4, n: 700 });
 
-    var err = 0, worst = 0;
+    var worst = 0;
     for (i = 0; i * (1 / fs) <= T; i++) {
       var t = i / fs, tEnd = Math.min(T, t + conv);
       var vHold = sig(t);
-      /* the window the converter is busy in */
       ax.rect(t, -1.35, tEnd, 1.35, { fill: K.FILL0 });
       if (held) {
         ax.poly([[t, vHold], [tEnd, vHold]], { color: K.BLUE, width: 2.6 });
         ax.dots([[t, vHold]], { color: K.ACC, r: 3.6 });
       } else {
-        /* no hold: the A/D lands on whatever the signal happens to be at the end */
         var vGot = sig(tEnd);
         ax.poly([[t, vHold], [tEnd, vGot]], { color: K.SOFT, width: 1.4, dash: [3, 3] });
         ax.poly([[tEnd, vGot], [Math.min(T, tEnd + 0.004), vGot]], { color: K.ORG, width: 3 });
         ax.dots([[tEnd, vGot]], { color: K.ORG, r: 3.6 });
         ax.poly([[tEnd, vHold], [tEnd, vGot]], { color: K.ACC, width: 1.4 });
-        var e = Math.abs(vGot - vHold);
-        err += e; worst = Math.max(worst, e);
+        worst = Math.max(worst, Math.abs(vGot - vHold));
       }
     }
     ax.text(held ? 'held steady while the A/D converts' : 'not held — the voltage moves mid-conversion',
-      ax.pl + 6, 6, { px: true, size: 13, weight: '700', color: held ? K.BLUE : K.ORG, base: 'top' });
+      ax.pl + 6, PT - 20, { px: true, size: 12.5, weight: '700',
+                            color: held ? K.BLUE : K.ORG, base: 'top' });
+
+    /* ---------- right: the same thing happening, one sample at a time ---------- */
+    panel('right');
+    var now = clock / SLOW;                       /* signal time, slowed for watching */
+    var tS = Math.max(0, now - LIVE), tE = tS + LIVE;
+    ax.setRange(tS, tE, -1.4, 1.4);
+    ax.frame({ grid: false, zero: true, xticks: [], yticks: [-1, 0, 1],
+      xlabel: 'time →  (slowed ×' + SLOW + ')', ylabel: 'volts', ysize: 13, ylabelx: 13,
+      yfmt: function (v) { return v.toFixed(0); } });
+    /* the analog voltage, only as far as the present instant */
+    var pts = [];
+    for (i = 0; i <= 260; i++) {
+      var tt = tS + (Math.min(now, tE) - tS) * i / 260;
+      pts.push([tt, sig(tt)]);
+    }
+    if (pts.length > 1) ax.poly(pts, { color: K.SOFT, width: 1.6 });
+
+    /* every sample whose instant has already passed */
+    var k0 = Math.floor(tS * fs), k1 = Math.floor(now * fs);
+    for (i = k0; i <= k1; i++) {
+      if (i < 0) continue;
+      var ts = i / fs;
+      if (ts < tS) continue;
+      var vh = sig(ts);
+      var prog = Math.max(0, Math.min(1, (now - ts) / conv));   /* how far the A/D has got */
+      var tHi = ts + conv * prog;
+      /* the window the converter is busy in */
+      ax.rect(ts, -1.35, ts + conv, 1.35, { fill: K.FILL0 });
+      if (held) {
+        ax.poly([[ts, vh], [tHi, vh]], { color: K.BLUE, width: 2.6 });
+      }
+      var vFinal = held ? vh : sig(ts + conv);
+      /* THE POINT: the number is not known until the conversion finishes, so
+         the dot fades up from barely visible to solid as the A/D works */
+      ax.c.save();
+      ax.c.globalAlpha = 0.07 + 0.93 * prog * prog;
+      ax.dots([[ts + conv * (held ? 1 : 1), vFinal]],
+              { color: prog >= 1 ? (held ? K.GRN : K.ORG) : K.MUT, r: prog >= 1 ? 4.6 : 4 });
+      ax.c.restore();
+      if (prog > 0 && prog < 1) {
+        ax.poly([[ts, -1.35], [ts, 1.35]], { color: K.ACC, width: 1.2, dash: [3, 3] });
+        ax.text('converting…', ax.X(ts) + 6, ax.pt + 8,
+                { px: true, size: 11.5, weight: '700', color: K.ACC, base: 'top' });
+      }
+    }
+    ax.text('the number only becomes definite when the conversion ends',
+      ax.pl + 6, PT - 20, { px: true, size: 12.5, weight: '700', color: K.GRN, base: 'top' });
+    panel('left');
 
     out.innerHTML =
       'conversion takes <b>' + (conv * 1000).toFixed(0) + '</b> ms &nbsp;·&nbsp; sampling at <b>' +
       fs.toFixed(0) + '</b> Hz' +
       (held ? '' : ' &nbsp;·&nbsp; worst error <b class="r">' + worst.toFixed(2) + '</b> V') +
       '<span class="hint">' + (held
-        ? 'the sample-and-hold freezes the voltage the instant the sample is taken, and keeps it there until the A/D has finished deciding on a number — like photographing a moving scene before painting it'
-        : 'without the hold, the voltage drifts while the converter is still working, so the number it settles on belongs to no particular instant') +
+        ? 'the sample-and-hold freezes the voltage the instant the sample is taken, and keeps it ' +
+          'there until the A/D has finished deciding on a number — watch a dot on the right ' +
+          'fade up as its converter works, and land solid only when it is done'
+        : 'without the hold, the voltage drifts while the converter is still working, so the ' +
+          'number it settles on belongs to no particular instant') +
       '</span>';
   }
+
+  function tick() { clock = (performance.now() - t0) / 1000; draw(); raf = requestAnimationFrame(tick); }
+  function start() {
+    if (running) return;
+    running = true; t0 = performance.now() - clock * 1000;
+    raf = requestAnimationFrame(tick);
+  }
+  function stop() { running = false; cancelAnimationFrame(raf); raf = null; }
 
   var row = el('div', 'ictl-row'); u.ctl.appendChild(row);
   var hb = el('button', 'ibtn on', 'Sample-and-hold ON');
@@ -699,12 +1461,23 @@ D.register('samplehold', function (node, d) {
     hb.textContent = held ? 'Sample-and-hold ON' : 'Sample-and-hold OFF'; draw();
   });
   row.appendChild(hb);
+  var rb = el('button', 'ibtn', 'Restart the run');
+  rb.setAttribute('data-reset', '1');
+  rb.addEventListener('click', function () { clock = 0; t0 = performance.now(); draw(); });
+  row.appendChild(rb);
+
+  u.ctl.classList.add('g2');
   slider(u.ctl, 'Conversion time', 0.005, 0.08, 0.005, conv,
     function (v) { return (v * 1000).toFixed(0) + ' ms'; }, function (v) { conv = v; draw(); });
   slider(u.ctl, 'Sampling rate', 4, 24, 1, fs,
     function (v) { return v.toFixed(0) + ' Hz'; }, function (v) { fs = v; draw(); });
+
   node._draw = draw;
+  node._start = start;
+  node._stop = stop;
   draw();
+  var sec = node.closest ? node.closest('section') : null;
+  if (!sec || sec.classList.contains('present')) start();
 });
 
 /* ============================================================
@@ -714,63 +1487,154 @@ D.register('samplehold', function (node, d) {
    ============================================================ */
 D.register('hysteresis', function (node, d) {
   var u = build(node);
-  var ax = new Axes(u.cv, { w: 700, h: 330, padl: 62, padb: 44, padt: 16,
-                            xmin: 0, xmax: 100, ymin: 3, ymax: 10 });
+  var TALL = D.portrait();
+  var CW = TALL ? 470 : 1140, CH = TALL ? 520 : 348;
+  var PL = 54, PR = 18, PT = 12, PB = 40;
+  var ax = new Axes(u.cv, { w: CW, h: CH, padl: PL, padr: PR, padt: PT, padb: PB,
+                            fluid: false, xmin: 0, xmax: 100, ymin: 3, ymax: 10 });
   var out = readout(u.ctl);
   var h = 0.7, playing = false, raf = null, ph = 0;   /* ph 0..2 : up then down */
+  var CYCLE = 4.6;                                    /* seconds for load + unload */
+  var TW = 9.2;                                       /* seconds of time window */
+  var trace = [], clock = 0, t0 = 0;
 
   function up(f)   { return 3.5 + 0.06 * f - h * 0.55 * Math.sin(Math.PI * f / 100); }
   function down(f) { return 3.5 + 0.06 * f + h * 0.55 * Math.sin(Math.PI * f / 100); }
+  /* A smooth, rounded load-and-unload rather than a triangular ramp — the
+     shape a running ground reaction force actually has. sin² rises from zero
+     with zero slope, peaks at the turn, and comes back the same way, so
+     "loading" and "unloading" are still exactly the two halves. */
+  function forceAt(p) { return 100 * Math.pow(Math.sin(Math.PI * p / 2), 2); }
+  function voltAt(p)  { return p <= 1 ? up(forceAt(p)) : down(forceAt(p)); }
+
+  /* three bands: force against time, voltage against time, and the loop the
+     two of them trace out when you plot one against the other */
+  function band(which) {
+    if (TALL) {
+      var hA = (CH - PT - PB - 96) / 3;
+      ax.pl = PL; ax.pr = PR;
+      var k = which === 'force' ? 0 : (which === 'volt' ? 1 : 2);
+      ax.pt = PT + k * (hA + 48);
+      ax.pb = CH - (ax.pt + hA);
+    } else {
+      var halfW = (CW - PL - PR - 86) / 2;
+      if (which === 'loop') {
+        ax.pl = PL + halfW + 86; ax.pr = PR; ax.pt = PT; ax.pb = PB;
+      } else {
+        var hB = (CH - PT - PB - 44) / 2;
+        ax.pl = PL; ax.pr = CW - (PL + halfW);
+        ax.pt = PT + (which === 'force' ? 0 : hB + 44);
+        ax.pb = CH - (ax.pt + hB);
+      }
+    }
+  }
 
   function draw() {
-    var K = C(), i, pts;
+    var K = C(), i;
     ax.clear();
-    ax.frame({ grid: true, xticks: [0, 25, 50, 75, 100], yticks: [4, 6, 8, 10],
-      xlabel: 'force (N)', ylabel: 'voltage (V)', ysize: 13,
-      yfmt: function (v) { return v.toFixed(0); } });
+    var tEnd = Math.max(clock, TW), tStart = tEnd - TW;
+    var seen = trace.filter(function (q) { return q[0] >= tStart; });
 
+    /* ---- applied force against time ---- */
+    band('force');
+    ax.setRange(tStart, tEnd, 0, 112);
+    ax.frame({ grid: true, xticks: [], yticks: [0, 50, 100],
+               ylabel: 'force (N)', ysize: 11.5, ylabelx: 13,
+               yfmt: function (v) { return v.toFixed(0); } });
+    if (seen.length > 1) {
+      ax.poly(seen.map(function (q) { return [q[0], q[1]]; }), { color: K.ORG, width: 2.4 });
+      ax.dots([[seen[seen.length - 1][0], seen[seen.length - 1][1]]], { color: K.ORG, r: 4.5 });
+    }
+
+    /* ---- the voltage it reads back ---- */
+    band('volt');
+    ax.setRange(tStart, tEnd, 3, 10);
+    ax.frame({ grid: true, xticks: [], yticks: [4, 6, 8, 10],
+               xlabel: 'time →', ylabel: 'volts (V)', ysize: 11.5, ylabelx: 13,
+               yfmt: function (v) { return v.toFixed(0); } });
+    if (seen.length > 1) {
+      /* loading and unloading drawn in their own colours, so the two passes
+         over the SAME force are visibly different voltages */
+      var runs = [], cur = null;
+      seen.forEach(function (q) {
+        if (!cur || cur.dir !== q[3]) { cur = { dir: q[3], pts: [] }; runs.push(cur); }
+        cur.pts.push([q[0], q[2]]);
+      });
+      runs.forEach(function (r) {
+        ax.poly(r.pts, { color: r.dir ? K.BLUE : K.ACC, width: 2.4 });
+      });
+      var L = seen[seen.length - 1];
+      ax.dots([[L[0], L[2]]], { color: L[3] ? K.BLUE : K.ACC, r: 4.5 });
+    }
+
+    /* ---- and the loop the pair of them draws ---- */
+    band('loop');
+    ax.setRange(0, 100, 3, 10);
+    ax.frame({ grid: true, xticks: [0, 25, 50, 75, 100], yticks: [4, 6, 8, 10],
+      xlabel: 'force (N)', ylabel: 'voltage (V)', ysize: 12.5, ylabelx: 13,
+      yfmt: function (v) { return v.toFixed(0); } });
     ax.fn(up,   { color: K.BLUE, width: 2.6, from: 0, to: 100 });
     ax.fn(down, { color: K.ACC,  width: 2.6, from: 0, to: 100 });
-    ax.text('loading', 74, up(74) - 0.32, { size: 12.5, color: K.BLUE, base: 'top' });
-    ax.text('unloading', 26, down(26) + 0.3, { size: 12.5, color: K.ACC, align: 'right' });
-
-    /* the gap at one force */
+    ax.text('loading', 74, up(74) - 0.32, { size: 12, color: K.BLUE, base: 'top' });
+    ax.text('unloading', 26, down(26) + 0.3, { size: 12, color: K.ACC, align: 'right' });
     var f0 = 50, lo = up(f0), hi = down(f0);
     ax.poly([[f0, lo], [f0, hi]], { color: K.MUT, width: 1.4, dash: [4, 3] });
     ax.text('Δ ' + (hi - lo).toFixed(2) + ' V', f0 + 2, (lo + hi) / 2,
-      { size: 12.5, weight: '700', color: K.MUT });
-
-    if (playing) {
-      var f = ph <= 1 ? ph * 100 : (2 - ph) * 100;
-      var v = ph <= 1 ? up(f) : down(f);
-      ax.dots([[f, v]], { color: K.GRN, r: 6 });
-      ax.poly([[f, 3], [f, v]], { color: K.GRN, width: 1, dash: [3, 3] });
+      { size: 12, weight: '700', color: K.MUT });
+    if (playing || trace.length) {
+      var f = forceAt(ph), v = voltAt(ph);
+      ax.dots([[f, v]], { color: ph <= 1 ? K.BLUE : K.ACC, r: 6 });
+      ax.poly([[f, 3], [f, v]], { color: K.MUT, width: 1, dash: [3, 3] });
     }
+    band('force');
 
     var err = (down(f0) - up(f0)) / 0.06;
     out.innerHTML =
-      'at <b>50 N</b> the sensor reads <b>' + up(f0).toFixed(2) + '</b> V loading and <b>' +
-      down(f0).toFixed(2) + '</b> V unloading' +
+      'at <b>50 N</b> the sensor reads <b class="b">' + up(f0).toFixed(2) +
+      '</b> V loading and <b class="r">' + down(f0).toFixed(2) + '</b> V unloading' +
       '<span class="hint">' + (h < 0.05
-        ? 'no hysteresis — one calibration describes the sensor in both directions'
-        : 'one calibration equation, applied to both, is wrong by up to <b class="r">' +
-          Math.abs(err).toFixed(0) + ' N</b> — which is why hysteresis is undesirable') + '</span>';
+        ? 'no hysteresis — the two passes lie on top of each other and one calibration describes ' +
+          'the sensor in both directions'
+        : 'watch the middle panel: the force goes up and comes back down through exactly the same ' +
+          'values, but the voltage does not retrace its path. One calibration equation applied to ' +
+          'both is wrong by up to <b class="r">' + Math.abs(err).toFixed(0) + ' N</b>.') + '</span>';
   }
 
   var row = el('div', 'ictl-row'); u.ctl.appendChild(row);
   var pb = playBtn(row, '▶ Load and unload');
   pb.addEventListener('click', function () {
     playing = !playing;
+    pb.classList.toggle('on', playing);
     pb.textContent = playing ? '❚❚ Stop' : '▶ Load and unload';
-    if (playing) { ph = 0; loop(); } else { cancelAnimationFrame(raf); draw(); }
+    if (playing) { t0 = performance.now() - clock * 1000; loop(); }
+    else { cancelAnimationFrame(raf); draw(); }
   });
-  function loop() { ph = (ph + 0.008) % 2; draw(); raf = requestAnimationFrame(loop); }
+  var cb = el('button', 'ibtn', 'Clear the trace');
+  cb.setAttribute('data-reset', '1');
+  cb.addEventListener('click', function () { trace = []; clock = 0; ph = 0; draw(); });
+  row.appendChild(cb);
+
+  function loop() {
+    clock = (performance.now() - t0) / 1000;
+    ph = (clock * 2 / CYCLE) % 2;
+    var last = trace[trace.length - 1];
+    if (!last || clock - last[0] > 0.025) {
+      trace.push([clock, forceAt(ph), voltAt(ph), ph <= 1 ? 1 : 0]);
+      while (trace.length > 2 && clock - trace[0][0] > TW + 1) trace.shift();
+    }
+    draw();
+    raf = requestAnimationFrame(loop);
+  }
 
   slider(u.ctl, 'Hysteresis', 0, 1.5, 0.05, h, function (v) { return v.toFixed(2); },
-    function (v) { h = v; draw(); });
+    function (v) { h = v; trace = []; draw(); });
 
   node._draw = draw;
-  node._stop = function () { playing = false; cancelAnimationFrame(raf); pb.textContent = '▶ Load and unload'; };
+  node._start = function () { if (playing) { t0 = performance.now() - clock * 1000; loop(); } };
+  node._stop = function () {
+    playing = false; cancelAnimationFrame(raf);
+    pb.classList.remove('on'); pb.textContent = '▶ Load and unload';
+  };
   draw();
 });
 

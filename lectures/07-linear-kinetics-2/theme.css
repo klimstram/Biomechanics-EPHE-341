@@ -370,6 +370,15 @@ html[data-theme="light"] .fig.photo img{
   box-shadow:0 20px 38px -14px rgba(17,20,26,.34), 0 6px 12px -6px rgba(17,20,26,.20);
 }
 
+/* An image sitting on a white card needs no drop shadow — the card already
+   lifts it off the slide, and the shadow just muddies the join. */
+.whitecard .fig.photo img,
+.whitecard .fig img,
+.whitecard figure img,
+.whitecard img{ box-shadow:none !important; }
+html[data-theme="light"] .whitecard .fig.photo img,
+html[data-theme="light"] .whitecard img{ box-shadow:none !important; }
+
 /* live equation inside a figure readout */
 .iread .live-eq{ display:flex; align-items:center; flex-wrap:nowrap; white-space:nowrap; gap:.1em;
   font-family:"Cambria Math",Cambria,Georgia,serif; font-size:1.16em; line-height:1.1; }
@@ -748,6 +757,16 @@ html[data-theme="light"] .whitecard{ background:var(--surface); border:1px solid
 html[data-theme="dark"] .whitecard .reveal img,
 html[data-theme="dark"] .reveal .whitecard img[src^="assets/"]{
   background:none !important; padding:0 !important; border-radius:0 !important; }
+/* The card is light in BOTH themes, so the type on it has to be dark in both.
+   Without this the captions and the bold sensor names are white on white. */
+html[data-theme="dark"] .reveal .whitecard,
+html[data-theme="dark"] .reveal .whitecard p,
+html[data-theme="dark"] .reveal .whitecard li{ color:#26262c; }
+html[data-theme="dark"] .reveal .whitecard figcaption{ color:#5d5d66; }
+html[data-theme="dark"] .reveal .whitecard b,
+html[data-theme="dark"] .reveal .whitecard strong,
+html[data-theme="dark"] .reveal .whitecard figcaption b{ color:#0d0d12; }
+html[data-theme="dark"] .reveal .whitecard .muted{ color:#63636c; }
 
 /* numbers along a slider's track, so the range itself is readable */
 .ictl-track{ display:flex; flex-direction:column; gap:.1em; min-width:0; }

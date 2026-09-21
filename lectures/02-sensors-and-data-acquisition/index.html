@@ -93,10 +93,12 @@ On this page I have included some important terms to look out for during this le
   </div>
   <p class="lead">The signal to which most sensors convert the quantities they are designed to sense is
      <em class="key">voltage</em>.</p>
-  <div class="imgrow" style="margin-top:.4em">
+  <div class="whitecard" style="margin-top:.4em">
+  <div class="imgrow">
     <div class="fig photo"><img src="assets/s03_2.png" alt="Force platform coordinate diagram" style="max-height:26vh"><figcaption>force plate — force to volts</figcaption></div>
     <div class="fig photo"><img src="assets/s03_4.png" alt="EMG electrodes on an arm wired to an amplifier" style="max-height:26vh"><figcaption>EMG — muscle activity to volts</figcaption></div>
     <div class="fig photo"><img src="assets/s03_9.jpg" alt="Digital camera" style="max-height:26vh"><figcaption>camera — light to pixels</figcaption></div>
+  </div>
   </div>
   <aside class="notes">In science and engineering we are often dealing with sensors — devices that measure a physical quantity and convert it to a form that can be read by an observer or stored to be evaluated later.
 Examples in biomechanics: cameras that measure light and convert it into digital pixels; electromyography equipment that converts muscle contractions into voltage; force plates that convert force or strain on the plate into a voltage signal.</aside>
@@ -107,12 +109,14 @@ Examples in biomechanics: cameras that measure light and convert it into digital
   <h2>Sensors</h2>
   <p class="lead">Some sensors commonly used in biomechanics — every one of them converts a physical value into an
      electronic signal, usually measured in <strong>volts</strong> (electrical potential).</p>
+  <div class="whitecard">
   <div class="sensorgrid">
     <figure><img src="assets/s04_11.png" alt="S-beam load cell"><figcaption><b>Strain gauge</b>converts force along one axis to volts</figcaption></figure>
     <figure><img src="assets/s04_15.jpg" alt="Rotary potentiometer"><figcaption><b>Potentiometer</b>converts angular displacement to volts</figcaption></figure>
     <figure><img src="assets/s04_25.png" alt="Force platform"><figcaption><b>Force platform</b>converts force along three axes to volts</figcaption></figure>
     <figure><img src="assets/s04_17.jpg" alt="Motion capture cameras with ring lights"><figcaption><b>Motion capture</b>converts light to volts</figcaption></figure>
     <figure><img src="assets/s04_1026.png" alt="Xsens inertial measurement unit"><figcaption><b>IMU</b>converts accelerations to volts</figcaption></figure>
+  </div>
   </div>
   <p class="tiny muted center">When necessary I may go into greater detail on how each sensor works — but for now all
      we need is that each one converts a physical value into an electronic signal.</p>
@@ -130,10 +134,10 @@ Examples in biomechanics: cameras that measure light and convert it into digital
       <p class="small muted">Here we have four resistive circuits attached to a bendable beam, to which a force
          will be applied.</p>
     </div>
-    <div class="imgrow">
+    <div class="whitecard"><div class="imgrow">
       <div class="fig photo"><img src="assets/s05_8.png" alt="Four strain gauge resistors bonded to a beam" style="max-height:30vh"></div>
       <div class="fig photo"><img src="assets/s05_10.png" alt="Strain gauge resistor foil pattern" style="max-height:34vh"><figcaption>strain gauge resistor</figcaption></div>
-    </div>
+    </div></div>
   </div>
 </section>
 
@@ -151,8 +155,21 @@ Examples in biomechanics: cameras that measure light and convert it into digital
          the current has a harder time getting through: resistance goes <strong>up</strong>. Squash it and
          resistance goes <strong>down</strong>.</p>
     </div>
-    <div class="fig photo"><img src="assets/s05_10.png" alt="Strain gauge resistor foil pattern" style="max-height:44vh"></div>
+    <div class="whitecard"><div class="fig photo"><img src="assets/s05_10.png" alt="Strain gauge resistor foil pattern" style="max-height:30vh"></div></div>
   </div>
+</section>
+
+<section>
+  <h2>Sensor example: strain gauge</h2>
+  <p class="lead">Current, voltage and resistance are tied together by <strong>Ohm’s law</strong>:
+     <strong>V = I R</strong>. The gauge is the R — so a change in strain becomes a change in
+     voltage, and that is the entire sensor.</p>
+  <div class="iplot wide" data-widget="ohms"></div>
+  <aside class="notes">Three quantities, one equation. Fix any one of them and the other two are locked together.
+
+Start with the current held constant: stretch the gauge, R rises, and V rises in exact proportion — the voltmeter is now a strain meter. Then switch the source to constant voltage and stretch it again: the current falls instead. Same physics, but a tiny change riding on a large current is far harder to measure than the same change in a small voltage, which is why real strain gauge amplifiers drive a constant current.
+
+Worth saying out loud: 1200 µε is a big strain for metal, and it moves 120 Ω by less than 0.3 Ω. That is why the next thing in the chain is always an amplifier.</aside>
 </section>
 
 <!-- 7 -->
@@ -167,7 +184,7 @@ Examples in biomechanics: cameras that measure light and convert it into digital
          electrical resistance to flow <strong>increases</strong>. In <strong>C</strong>, if the gauge is in
          <strong>compression</strong> the resistance <strong>decreases</strong>.</p>
     </div>
-    <div class="fig photo"><img src="assets/s07_6.png" alt="Strain gauge at rest, in tension, and in compression" style="max-height:60vh"></div>
+    <div class="whitecard"><div class="fig photo"><img src="assets/s07_6.png" alt="Strain gauge at rest, in tension, and in compression" style="max-height:56vh"></div></div>
   </div>
 </section>
 
@@ -197,10 +214,10 @@ Measurement devices typically emit a voltage for a change in some variable of in
       <p class="small muted">The resolution of the digital clock describes the interval between those points —
          the higher the resolution, the smaller the interval.</p>
     </div>
-    <div class="imgrow">
+    <div class="whitecard"><div class="imgrow">
       <div class="fig photo"><img src="assets/s10_6.jpg" alt="Analog wall clock" style="max-height:30vh"><figcaption>analog clock</figcaption></div>
       <div class="fig photo"><img src="assets/s10_8.jpg" alt="Digital alarm clock" style="max-height:24vh"><figcaption>digital clock</figcaption></div>
-    </div>
+    </div></div>
   </div>
   <aside class="notes">An analog clock displays the time for each instant; the hands sweep continuously around the face.
 A digital clock displays the time only at discrete points.</aside>
@@ -215,7 +232,7 @@ A digital clock displays the time only at discrete points.</aside>
     <p>If a signal is <strong>digital</strong> it means there <strong>are</strong> separations between points in
       the signal.</p>
   </div>
-  <div class="iplot wide" data-widget="sampling" data-fs="18" data-f="2"></div>
+  <div class="iplot wide" data-widget="sampling" data-fs="18" data-f="2" data-fsctl="0"></div>
   <p class="tiny muted center">Use your eyes as an example. Viewing an activity without blinking gives you a
      continuous, connected representation. Now close and open your eyes every second, for a very short time — you
      are only able to see <strong>samples</strong> of the activity.</p>
@@ -231,7 +248,7 @@ This is the first place students meet aliasing, even though we do not name it ye
        signal (a numeric sequence). That is, “taking samples”.</p>
   </div>
   <div class="cols c top" style="margin-top:.5em">
-    <div class="iplot" data-widget="sampling" data-fs="12" data-f="2" data-sigctl="0"></div>
+    <div class="iplot" data-widget="sampling" data-fs="12" data-f="2"></div>
     <div>
       <p class="small">Most physical signals are inherently <strong>continuous</strong>, but when we use sensors to
          quantify the data we must convert them to a discrete digital signal by taking discrete samples.</p>
@@ -269,21 +286,15 @@ This is the first place students meet aliasing, even though we do not name it ye
 <section>
   <h2>Sensor calibration</h2>
   <h3>How is a sensor calibrated? — in this example, a force transducer</h3>
-  <div class="cols a top">
-    <div>
-      <p class="small">We could take the force transducer we used earlier and apply various <strong>known
-         forces</strong> to it. Then we graph the value of the force against the voltage the sensor outputs.</p>
-      <p class="small">If the relationship is <strong>linear</strong>, we can fit a linear equation to determine
-         the force for any measured voltage.</p>
-      <p class="eq big center" style="margin:.5em 0">y = mx + b</p>
-      <div class="box">
-        <p class="small" style="margin:0">where <strong>y</strong> is the voltage &nbsp;·&nbsp;
-           <strong>m</strong> is the slope &nbsp;·&nbsp; <strong>x</strong> is force &nbsp;·&nbsp;
-           <strong>b</strong> is the offset</p>
-      </div>
-    </div>
-    <div class="iplot" data-widget="calib"></div>
+  <div class="textstrip tiny three" style="align-items:center">
+    <p class="firstcol">We could take the force transducer we used earlier and apply various <strong>known
+       forces</strong> to it. Then we graph the value of the force against the voltage the sensor outputs.</p>
+    <p>If the relationship is <strong>linear</strong>, we can fit a linear equation to determine the force for
+       any measured voltage. <strong>y</strong> is the voltage, <strong>m</strong> the slope,
+       <strong>x</strong> the force and <strong>b</strong> the offset.</p>
+    <p class="eq big center" style="color:var(--ink-strong);margin:0">y = mx + b</p>
   </div>
+  <div class="iplot wide" data-widget="calib"></div>
   <aside class="notes">Hang the weights one at a time. One point gives nothing — the widget says so. Two points give a slope. Three lets you claim the relationship really is linear.
 These are the numbers from the worked example on the next slide: 25 N → 5.0 V, 50 N → 6.5 V, 75 N → 8.0 V.</aside>
 </section>
@@ -294,17 +305,17 @@ These are the numbers from the worked example on the next slide: 25 N → 5.0 V,
   <h3>For example</h3>
   <p class="lead">Below are the applied force and voltage output pairs for a given sensor.
      <strong>Determine the slope and the offset.</strong></p>
-  <div class="cols a top">
-    <div style="padding-top:.6em">
-      <table>
-        <tr><th>Applied force (N)</th><th>Voltage output (V)</th></tr>
-        <tr><td>25</td><td>5.0</td></tr>
-        <tr><td>50</td><td>6.5</td></tr>
-        <tr><td>75</td><td>8.0</td></tr>
-      </table>
-    </div>
-    <div class="iplot" data-widget="calib"></div>
+  <div class="cols b top" style="align-items:center;margin-bottom:.3em">
+    <table style="margin:0">
+      <tr><th>Applied force (N)</th><th>Voltage output (V)</th></tr>
+      <tr><td>25</td><td>5.0</td></tr>
+      <tr><td>50</td><td>6.5</td></tr>
+      <tr><td>75</td><td>8.0</td></tr>
+    </table>
+    <p class="small muted" style="margin:0">Hang each weight in turn, wait for the trace to settle and take a
+       reading — the three rows below should come out as the three rows above.</p>
   </div>
+  <div class="iplot wide" data-widget="calib"></div>
   <aside class="notes">Give them a minute with the table before pressing the buttons. By plotting the data we would be able to determine that the relationship between applied force and voltage output is linear.</aside>
 </section>
 
@@ -312,26 +323,21 @@ These are the numbers from the worked example on the next slide: 25 N → 5.0 V,
 <section>
   <h2>Sensor calibration</h2>
   <h3>Solution — the slope</h3>
-  <div class="cols a top">
-    <div>
-      <p class="small">By plotting the given data we can see the relationship between applied force and voltage
-         output is <strong>linear</strong>.</p>
-      <p class="small">We calculate the slope by determining the ratio of <strong>rise to run</strong>.</p>
-      <div class="box accent">
-        <p class="eq" style="margin:0">slope = <span class="frac"><span>Δy</span><span class="den">Δx</span></span>
-          = <span class="frac"><span>6.5 − 5.0</span><span class="den">50 − 25</span></span>
-          = <strong>0.06 V/N</strong></p>
-      </div>
-      <p class="small" style="margin-top:.7em">Next we calculate the <strong>offset</strong> (also called the
-         y-intercept) by plugging our known values into the equation for a line.</p>
-      <div class="box accent">
-        <p class="eq" style="margin:0 0 .25em">y = mx + b</p>
-        <p class="eq" style="margin:0 0 .25em">5 = (0.06)(25) + b</p>
-        <p class="eq" style="margin:0"><strong>b = 3.5 V</strong></p>
-      </div>
+  <p class="small" style="margin-bottom:.35em">By plotting the given data we can see the relationship is
+     <strong>linear</strong>. The slope is the ratio of <strong>rise to run</strong>; the
+     <strong>offset</strong> then comes from plugging a known pair into the equation for a line.</p>
+  <div class="cols top" style="margin-bottom:.35em">
+    <div class="box accent">
+      <p class="eq" style="margin:0">slope = <span class="frac"><span>Δy</span><span class="den">Δx</span></span>
+        = <span class="frac"><span>6.5 − 5.0</span><span class="den">50 − 25</span></span>
+        = <strong>0.06 V/N</strong></p>
     </div>
-    <div class="iplot" data-widget="calib"></div>
+    <div class="box accent">
+      <p class="eq" style="margin:0 0 .2em">y = mx + b &nbsp;→&nbsp; 5 = (0.06)(25) + b</p>
+      <p class="eq" style="margin:0"><strong>b = 3.5 V</strong></p>
+    </div>
   </div>
+  <div class="iplot wide" data-widget="calib"></div>
   <aside class="notes">We can plug in any of our known force–voltage pairs for x and y and get the same b. Try it with 50 and 6.5.</aside>
 </section>
 
@@ -381,15 +387,13 @@ Worth saying out loud: every force number in every paper you will read this term
     <p style="margin:0">The influence of the <strong>previous history</strong> of a system on its subsequent
        response to a given stimulus.</p>
   </div>
-  <div class="cols a top" style="margin-top:.5em">
-    <div>
-      <p class="small">Hysteresis occurs when a <strong>different force-to-voltage relationship</strong> exists
-         when the force is incrementally increased, compared with when it is incrementally decreased.</p>
-      <p class="small">Hysteresis is undesirable because it would require different calibration coefficients — or
-         different equations — for <strong>loading</strong> and <strong>unloading</strong>.</p>
-    </div>
-    <div class="iplot" data-widget="hysteresis"></div>
+  <div class="textstrip tiny" style="margin-top:.45em">
+    <p>Hysteresis occurs when a <strong>different force-to-voltage relationship</strong> exists
+       when the force is incrementally increased, compared with when it is incrementally decreased.</p>
+    <p>Hysteresis is undesirable because it would require different calibration coefficients — or
+       different equations — for <strong>loading</strong> and <strong>unloading</strong>.</p>
   </div>
+  <div class="iplot wide" data-widget="hysteresis"></div>
 </section>
 
 <!-- 19 -->
@@ -418,11 +422,11 @@ Worth saying out loud: every force number in every paper you will read this term
   <h3>How are data collected from a sensor?</h3>
   <div class="iplot wide" data-widget="daqchain" data-stage="1"></div>
   <div class="cols b top" style="margin-top:.4em">
-    <div class="imgrow">
-      <div class="fig photo"><img src="assets/s22_62.png" alt="Strain gauge sensing unit" style="max-height:15vh"><figcaption>1. sensing unit</figcaption></div>
-      <div class="fig photo"><img src="assets/s22_3.png" alt="Power supply" style="max-height:15vh"><figcaption>2. power supply</figcaption></div>
-      <div class="fig photo"><img src="assets/s22_19.png" alt="Operational amplifier chip" style="max-height:15vh"><figcaption>3. op-amp</figcaption></div>
-    </div>
+    <div class="whitecard"><div class="imgrow">
+      <div class="fig photo"><img src="assets/s22_62.png" alt="Strain gauge sensing unit" style="max-height:11vh"><figcaption>1. sensing unit</figcaption></div>
+      <div class="fig photo"><img src="assets/s22_3.png" alt="Power supply" style="max-height:11vh"><figcaption>2. power supply</figcaption></div>
+      <div class="fig photo"><img src="assets/s22_19.png" alt="Operational amplifier chip" style="max-height:11vh"><figcaption>3. op-amp</figcaption></div>
+    </div></div>
     <div>
       <p class="small">A sensor normally includes:</p>
       <ul class="small">
@@ -458,7 +462,10 @@ Worth saying out loud: every force number in every paper you will read this term
   <div class="iplot wide" data-widget="daqchain" data-stage="2"></div>
   <p class="lead" style="margin-top:.5em">Each sensor gets a terminal on a <strong>break-out box</strong>, and
      everything leaves on one cable.</p>
-  <div class="fig photo"><img src="assets/s25_3074.jpg" alt="Biomechanics laboratory with force plates and cameras" style="max-height:38vh"><figcaption>a wired lab — every one of those cables ends up in a break-out box</figcaption></div>
+  <div class="whitecard"><div class="imgrow">
+    <div class="fig photo"><img src="assets/s25_3074.jpg" alt="Biomechanics laboratory with force plates and cameras" style="max-height:30vh"><figcaption>a wired lab — every one of those cables ends up in a break-out box</figcaption></div>
+    <div class="fig photo"><img src="assets/s25_43010.jpg" alt="BNC break-out box with twenty-four connectors" style="max-height:30vh"><figcaption>the break-out box itself — one terminal per sensor</figcaption></div>
+  </div></div>
 </section>
 
 <!-- 23 -->
@@ -515,6 +522,17 @@ Worth saying out loud: every force number in every paper you will read this term
   </div>
   <aside class="notes">Add channels one at a time with the + button and watch the sample count on every trace fall together. At six channels on a 100 Hz DAQ nothing is being sampled faster than about 17 Hz.
 The sensors are different on purpose — the EMG channel is the one that falls apart first, because it is the fastest signal in the set.</aside>
+</section>
+
+<section>
+  <h2>Data acquisition</h2>
+  <h3>Multiplexer — one channel at a time</h3>
+  <p class="lead">Each connection to a multiplexer is called a <strong>channel</strong>. The switch
+     can only look at one of them at a time: it points at a channel, takes a sample, and moves on.</p>
+  <div class="iplot wide" data-widget="mux" data-n="4" data-rate="100"></div>
+  <aside class="notes">Slow the arm right down with the second slider so the class can watch it visit each channel in turn — at a real 100 Hz the whole round trip takes 40 ms and looks like a blur.
+
+Two things to point at. First, the arm has to come all the way round before it gets back to channel 0, so each sensor is sampled at the DAQ rate divided by the number of channels. Second, the samples in one round are taken at different instants, not together.</aside>
 </section>
 
 <!-- 26 -->
@@ -629,7 +647,7 @@ The lesson is that all three have to be right. Getting two of the three is a bad
         <div class="fig photo"><img src="assets/s35_18.png" alt="Signal clipped at the limits" style="max-height:18vh"><figcaption>clipped</figcaption></div>
       </div>
     </div>
-    <div class="iplot" data-widget="adclimits" data-focus="range" data-gain="1"></div>
+    <div class="iplot" data-widget="adclimits" data-focus="range" data-only="gain"></div>
   </div>
   <aside class="notes">Set the range to 0 to 1 V and the clipping counter lights up. Then raise the gain and it gets worse, not better — amplification is only the answer when the signal is too small, not when it is too big.</aside>
 </section>
@@ -652,7 +670,7 @@ The lesson is that all three have to be right. Getting two of the three is a bad
         <tr><td>16</td><td>2<sup>16</sup> =</td><td>65 536</td></tr>
       </table>
     </div>
-    <div class="iplot" data-widget="adclimits" data-focus="bits"></div>
+    <div class="iplot" data-widget="adclimits" data-focus="bits" data-only="bits"></div>
   </div>
   <aside class="notes">Each time an 8-bit A/D converts a voltage to one individual number, 8 bits of memory are required to store it.
 More information on the binary system is in White (2006), but an understanding of binary is outside the scope of this course.</aside>

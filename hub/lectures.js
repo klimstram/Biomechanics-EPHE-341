@@ -22,7 +22,7 @@ window.EPHE341_LECTURES = [
     path: 'lectures/02-sensors-and-data-acquisition',
     blurb: 'How a physical quantity becomes a number on a disk — the sensor, the calibration, ' +
            'and the run of electronics in between — and what each step throws away.',
-    slides: 39, widgets: 26, updated: '2026-09-17',
+    slides: 41, widgets: 28, updated: '2026-09-21',
     handout: 'handout.pdf',
     live: ['a strain gauge you can bend', 'analog against digital',
            'calibrate a force transducer', 'many sensors on one DAQ',
