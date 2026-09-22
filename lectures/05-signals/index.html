@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20260922c">
+<link rel="stylesheet" href="theme.css?v=20260922d">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -259,11 +259,16 @@ Then turn the noise up. Noise has no single frequency, so it lifts the entire sp
 <!-- 16 -->
 <section>
   <h2>Fourier transform</h2>
-  <div class="cols top">
-    <div class="fig"><img src="assets/ft-illustration.jpg" alt="A complex wave decomposed into a stack of sine waves"></div>
-    <div class="fig"><img src="assets/ft-3d.jpg" alt="A square wave built out of sine waves, seen in three dimensions"></div>
-  </div>
-  <aside class="notes">Any repeating signal, however square-edged, is a sum of sine waves. The sharper the corner, the more high-frequency terms it takes.</aside>
+  <div class="iplot wide" data-widget="synth"></div>
+  <aside class="notes">Any repeating signal, however square-edged, is a sum of sine and cosine waves at whole multiples of its own rate — 1 Hz, 2 Hz, 3 Hz and so on for a signal that repeats once a second. The Fourier transform is the arithmetic that finds how much of each, and those amplitudes are exactly what the frequency-domain graph plots. The three panels are the same numbers three ways.
+
+Start with one harmonic and walk the slider up, or press Build up. The dashed line is the real signal; the solid line is everything the terms kept so far can rebuild. The residual RMS is the gap between them.
+
+Walking GRF: six to eight harmonics carry almost all of it, which is where the usual 6 Hz low-pass cutoff for walking comes from. Switch to Running GRF and the same slider position no longer reaches — the impact is a shorter event, so its energy sits at higher frequencies, and a cutoff tuned for walking would shave the peak off. That is the whole argument for choosing a cutoff from the signal rather than from habit.
+
+Square wave is the animation this slide used to show: odd harmonics only, amplitudes falling as 1/k, and a corner that keeps ringing however many terms you add.
+
+'sin &amp; cos parts' splits each harmonic into the two waves that make it. Sines alone cannot build a signal that is not odd-symmetric about its own mean, which is why a real GRF needs the cosine terms and the offset as well.</aside>
 </section>
 
 <!-- 17 -->
@@ -399,8 +404,8 @@ Accelerometer analysis — drive initiation: negative valley associated with pea
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20260922c"></script>
-<script src="mobile.js?v=20260922c"></script>
+<script src="annotate.js?v=20260922d"></script>
+<script src="mobile.js?v=20260922d"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -422,9 +427,9 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="deck-core.js?v=20260922c"></script>
-<script src="signals.js?v=20260922c"></script>
-<script src="deck-tools.js?v=20260922c"></script>
-<script src="fit.js?v=20260922c"></script>
+<script src="deck-core.js?v=20260922d"></script>
+<script src="signals.js?v=20260922d"></script>
+<script src="deck-tools.js?v=20260922d"></script>
+<script src="fit.js?v=20260922d"></script>
 </body>
 </html>

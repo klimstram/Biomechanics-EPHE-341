@@ -866,6 +866,314 @@ D.register('deriv', function (node, d) {
   draw();
 });
 
+/* ---------------- Fourier synthesis: decomposing a signal ----------------
+
+   Slide 16's animation, made interactive. The target signal is periodic, so
+   it has an exact Fourier series: a mean plus a cosine and a sine term at
+   every whole multiple of the fundamental. Everything below is computed from
+   that series in the browser — the coefficients, the partial sum, and the
+   spectrum are the same numbers, shown three ways.                        */
+
+/* Fourier coefficients of one period of f, sampled at N points.
+   x(t) = a0 + Σ [ a_k cos(2πkt/T) + b_k sin(2πkt/T) ]
+        = a0 + Σ  A_k cos(2πkt/T − φ_k)                                    */
+function series(f, N, K) {
+  var x = [], a0 = 0, out = [], i, k;
+  for (i = 0; i < N; i++) x.push(f(i / N));
+  for (i = 0; i < N; i++) a0 += x[i];
+  a0 /= N;
+  for (k = 1; k <= K; k++) {
+    var a = 0, b = 0, th;
+    for (i = 0; i < N; i++) {
+      th = 2 * Math.PI * k * i / N;
+      a += x[i] * Math.cos(th);
+      b += x[i] * Math.sin(th);
+    }
+    a *= 2 / N; b *= 2 / N;
+    out.push({ k: k, a: a, b: b, amp: Math.hypot(a, b), ph: Math.atan2(b, a) });
+  }
+  return { a0: a0, terms: out };
+}
+
+/* Vertical ground reaction force, one gait cycle, in body weights.
+   Walking is the classic double hump over ~62 % of the cycle; running is a
+   single, taller, shorter-lived hump. Both are zero through swing, and
+   neither is symmetric about its own mean — which is why the series needs
+   cosine terms, sine terms and an offset rather than sines alone. */
+function grfWalk(p) {
+  if (p >= 0.62) return 0;
+  var u = p / 0.62;
+  return 1.29 * Math.pow(Math.sin(Math.PI * u), 0.35) *
+         (1 - 0.41 * Math.exp(-Math.pow((u - 0.5) / 0.17, 2)));
+}
+function grfRun(p) {
+  if (p >= 0.40) return 0;
+  var u = p / 0.40;
+  return 2.6 * Math.pow(Math.sin(Math.PI * u), 0.75);
+}
+function squareWave(p) { return p < 0.5 ? 1 : -1; }
+
+var TARGETS = {
+  walk:   { lab: 'Walking GRF',  f: grfWalk,   yl: 'force (BW)',  k: 10,
+            note: 'Six to eight harmonics carry almost all of a walking GRF — which ' +
+                  'is where the usual 6 Hz cutoff comes from.' },
+  run:    { lab: 'Running GRF',  f: grfRun,    yl: 'force (BW)',  k: 14,
+            note: 'One hump, twice as tall and half as long. A shorter event needs more ' +
+                  'terms, so a cutoff tuned for walking would flatten the peak.' },
+  square: { lab: 'Square wave',  f: squareWave, yl: 'amplitude',  k: 12,
+            note: 'Odd harmonics only, amplitudes falling as 1/k, and a corner that never ' +
+                  'quite settles however many terms you add.' }
+};
+
+/* a small key drawn straight onto the canvas: [colour, dash, text] rows */
+function legend(c, x, y, rows) {
+  var K = C(), lh = 16, wide = 0;
+  c.save(); c.font = '600 11.5px ui-sans-serif,system-ui,sans-serif';
+  rows.forEach(function (r) { wide = Math.max(wide, c.measureText(r[2]).width); });
+  c.restore();
+  c.save(); c.globalAlpha = 0.86; c.fillStyle = K.PLATE;
+  c.fillRect(x - 6, y - 10, wide + 40, rows.length * lh + 4); c.restore();
+  rows.forEach(function (r, i) {
+    var yy = y + i * lh;
+    c.save();
+    c.strokeStyle = r[0]; c.lineWidth = 2.2;
+    if (r[1]) c.setLineDash(r[1]);
+    c.beginPath(); c.moveTo(x, yy); c.lineTo(x + 22, yy); c.stroke();
+    c.restore();
+    label(c, r[2], x + 28, yy, { color: K.MUT, size: 11.5, weight: '600', plate: true });
+  });
+}
+
+D.register('synth', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 470 : 980, h: port ? 780 : 424,
+                            padl: 58, padr: 20, padt: 18, padb: 46 });
+  var out = readout(u.ctl);
+
+  var KMAX = 16, N = 512;
+  var key = d.target && TARGETS[d.target] ? d.target : 'walk';
+  var K = parseInt(d.terms || TARGETS[key].k, 10);
+  var view = 'combined';
+  var timer = null;
+
+  var S = series(TARGETS[key].f, N, KMAX);
+  function reseries() { S = series(TARGETS[key].f, N, KMAX); }
+
+  /* the partial sum at time t (in cycles), using the first n harmonics */
+  function recon(t, n) {
+    var v = S.a0, i;
+    for (i = 0; i < n; i++) {
+      v += S.terms[i].a * Math.cos(2 * Math.PI * S.terms[i].k * t) +
+           S.terms[i].b * Math.sin(2 * Math.PI * S.terms[i].k * t);
+    }
+    return v;
+  }
+
+  function rms() {
+    var e = 0, i, t;
+    for (i = 0; i < N; i++) { t = i / N; e += Math.pow(TARGETS[key].f(t) - recon(t, K), 2); }
+    return Math.sqrt(e / N);
+  }
+
+  /* ---- panel B: the terms themselves, stacked back to front ----
+     Drawn in raw pixels rather than through the axes, because the point of
+     the picture is the receding stack, not a coordinate system. */
+  function drawStack(x0, x1, ytop, ybot) {
+    var c = ax.c, K2 = C(), i;
+    /* One row per harmonic either way. In the combined view the row holds the
+       single wave A_k cos(2\u03c0kt \u2212 \u03c6_k); in the split view it holds the two
+       waves that add up to it, a_k cos and b_k sin, sharing a baseline. */
+    var rows = [], sincos = view === 'sincos';
+    for (i = 0; i < K; i++) {
+      var t0 = S.terms[i];
+      rows.push(sincos
+        ? { k: t0.k, waves: [{ amp: t0.a, ph: 0, col: 'cos' },
+                             { amp: t0.b, ph: Math.PI / 2, col: 'sin' }] }
+        : { k: t0.k, waves: [{ amp: t0.amp, ph: t0.ph, col: 'both' }] });
+    }
+    var shown = Math.min(rows.length, 15);
+    /* the front wave is the tallest, so its swing is reserved at the bottom
+       before the rows are spaced out in whatever is left */
+    var ampPx = 24;
+    var base = ybot - 8 - ampPx, top = ytop + 16;
+    var dy = Math.max(6, Math.min(22, (base - top) / Math.max(shown - 1, 1)));
+    if (dy <= 6.01) { ampPx = 16; base = ybot - 6 - ampPx; }
+    var dx = 4, labw = 62;
+    var wavew = x1 - x0 - shown * dx - labw;
+    var maxA = 1e-9;
+    rows.forEach(function (r) {
+      r.waves.forEach(function (w) { maxA = Math.max(maxA, Math.abs(w.amp)); });
+    });
+    var pxu = ampPx / maxA;
+
+    for (i = shown - 1; i >= 0; i--) {
+      var r = rows[i], yb = base - i * dy, xo = x0 + i * dx;
+      c.save();
+      c.globalAlpha = 0.45 + 0.55 * (1 - i / Math.max(shown - 1, 1));
+      c.strokeStyle = K2.GRID; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(xo, yb + .5); c.lineTo(xo + wavew, yb + .5); c.stroke();
+      r.waves.forEach(function (w) {
+        c.strokeStyle = w.col === 'cos' ? K2.ORG : (w.col === 'sin' ? K2.GRN : K2.BLUE);
+        c.lineWidth = 1.9; c.beginPath();
+        for (var j = 0; j <= 220; j++) {
+          var t = j / 220 * 2;             /* two periods, same as panel A */
+          var y = yb - w.amp * Math.cos(2 * Math.PI * r.k * t - w.ph) * pxu;
+          var xx = xo + wavew * j / 220;
+          if (j === 0) c.moveTo(xx, y); else c.lineTo(xx, y);
+        }
+        c.stroke();
+      });
+      c.globalAlpha = 0.92;
+      label(c, r.k + ' Hz', xo + wavew + 7, yb,
+            { color: K2.MUT, size: 11.5, weight: '650' });
+      c.restore();
+    }
+    if (rows.length > shown) {
+      label(c, '+ ' + (rows.length - shown) + ' more', x0, ytop + 6,
+            { color: C().MUT, size: 11.5, weight: '600', base: 'top' });
+    }
+    var K3 = C();
+    if (view === 'sincos') {
+      /* one centred line in three colours, so the pieces have to be measured
+         and laid end to end rather than positioned by eye */
+      var bits = [['each harmonic is a ', K3.MUT, '600'],
+                  ['cosine part', K3.ORG, '750'],
+                  [' plus a ', K3.MUT, '600'],
+                  ['sine part', K3.GRN, '750']], tot = 0;
+      c.save(); c.font = '600 12px ui-sans-serif,system-ui,sans-serif';
+      bits.forEach(function (b) { b[3] = c.measureText(b[0]).width; tot += b[3]; });
+      c.restore();
+      var cx = (x0 + x1) / 2 - tot / 2;
+      bits.forEach(function (b) {
+        label(c, b[0], cx, ybot + 22, { color: b[1], size: 12, weight: b[2] });
+        cx += b[3];
+      });
+    } else {
+      label(c, 'the harmonics that add up to it, tallest at the front',
+            (x0 + x1) / 2, ybot + 22, { color: K3.MUT, size: 12, align: 'center' });
+    }
+  }
+
+  function draw() {
+    var c = ax.c, K2 = C(), i;
+    ax.clear();
+    var T = TARGETS[key];
+
+    var lo = 1e9, hi = -1e9;
+    for (i = 0; i <= 240; i++) {
+      var t = i / 240 * 2;
+      lo = Math.min(lo, T.f(t % 1), recon(t, K));
+      hi = Math.max(hi, T.f(t % 1), recon(t, K));
+    }
+    /* extra headroom at the top so the key has somewhere to sit */
+    var span = hi - lo; lo -= span * 0.12; hi += span * 0.46;
+
+    /* ---- panel A: the signal and what the first K terms rebuild ---- */
+    var aL = 74, aR, aT, aB, sx0, sx1, sT, sB, fL, fT, fB;
+    if (port) {
+      aR = 18;  aT = 16;  aB = ax.H - 196;
+      sx0 = 58; sx1 = ax.W - 18;      sT = 236; sB = 452;
+      fL = 74;  fT = 512; fB = 46;
+    } else {
+      aR = ax.W - 540; aT = 16; aB = ax.H - 194;
+      sx0 = 58; sx1 = 540; sT = 220; sB = 374;
+      fL = 618; fT = 18; fB = 46;
+    }
+
+    ax.pl = aL; ax.pr = aR; ax.pt = aT; ax.pb = aB;
+    ax.setRange(0, 2, lo, hi);
+    ax.frame({ grid: true, xticks: [0, 0.5, 1, 1.5, 2], yticks: axisTicks(lo, hi, 4),
+               ylabel: T.yl, ysize: 15, zero: true,
+               xfmt: function (v) { return v.toFixed(1); },
+               yfmt: function (v) { return v.toFixed(1); } });
+    ax.fn(function (t) { return T.f(t % 1); }, { color: K2.MUT, width: 1.8, dash: [5, 4], n: 600 });
+    ax.fn(function (t) { return recon(t, K); }, { color: K2.ACC, width: 2.6, n: 600 });
+    label(c, 'Time domain \u2014 two cycles', (ax.pl + ax.W - ax.pr) / 2, aT + 9,
+          { color: K2.MUT, size: 12.5, align: 'center' });
+    legend(c, ax.pl + 10, aT + 26,
+           [[K2.MUT, [5, 4], 'the signal'],
+            [K2.ACC, null, 'sum of the first ' + K + ' harmonic' + (K === 1 ? '' : 's')]]);
+
+    /* ---- panel B: the terms ---- */
+    drawStack(sx0, sx1, sT, sB);
+
+    /* ---- panel C: the frequency domain ---- */
+    ax.pl = fL; ax.pr = port ? 18 : 26; ax.pt = fT; ax.pb = fB;
+    var amax = Math.max(S.a0, 1e-6);
+    S.terms.forEach(function (t2) { amax = Math.max(amax, t2.amp); });
+    amax *= 1.18;
+    ax.setRange(-1, KMAX + 1, 0, amax);
+    ax.frame({ grid: true, xticks: [0, 4, 8, 12, 16], yticks: axisTicks(0, amax, 4),
+               ylabel: 'amplitude', ylabelx: port ? 13 : fL - 46,
+               yfmt: function (v) { return v.toFixed(1); } });
+    ax.rect(-1, 0, K + 0.5, amax, { fill: K2.FILL0 });
+    /* the mean is the k = 0 term */
+    ax.poly([[0, 0], [0, S.a0]], { color: K2.MUT, width: 4 });
+    S.terms.forEach(function (t2, i2) {
+      var on = i2 < K;
+      ax.poly([[t2.k, 0], [t2.k, t2.amp]],
+              { color: on ? K2.ACC : K2.PANEL, width: 4 });
+    });
+    label(c, 'Frequency domain', (ax.pl + ax.W - ax.pr) / 2, fT + 9,
+          { color: K2.MUT, size: 12.5, align: 'center' });
+    label(c, 'Frequency (Hz)', (ax.pl + ax.W - ax.pr) / 2, ax.H - ax.pb + 26,
+          { color: K2.INK, size: 13, align: 'center', base: 'top' });
+    if (S.a0 > amax * 0.06)
+      label(c, 'offset', ax.X(0), ax.Y(S.a0) - 10,
+            { color: K2.MUT, size: 11, align: 'center', plate: true });
+
+    /* ---- the series, written out ---- */
+    var txt = '<b class="k">x(t)</b> &asymp; <b>' + fmt(S.a0, 2) + '</b>';
+    for (i = 0; i < Math.min(K, 3); i++) {
+      var t3 = S.terms[i];
+      txt += (t3.a >= 0 ? ' + ' : ' &minus; ') + '<b>' + fmt(Math.abs(t3.a), 2) +
+             '</b> cos(2&pi;&middot;' + t3.k + 't)';
+      txt += (t3.b >= 0 ? ' + ' : ' &minus; ') + '<b>' + fmt(Math.abs(t3.b), 2) +
+             '</b> sin(2&pi;&middot;' + t3.k + 't)';
+    }
+    if (K > 3) txt += ' &hellip;';
+    out.innerHTML = txt +
+      '<span class="hint"><b>' + K + '</b> harmonic' + (K === 1 ? '' : 's') +
+      ' &mdash; every whole multiple of the 1 Hz fundamental up to <b>' + K +
+      ' Hz</b>. Residual RMS <b>' + fmt(rms(), 3) + '</b>. ' + TARGETS[key].note +
+      '</span>';
+  }
+
+  /* ---- controls ---- */
+  /* everything but the slider shares one row: the handout prints a single
+     sheet per slide and a third control row pushes the slider off it */
+  var row = ctlRow(u.ctl);
+  chips(row, [['walk', 'Walking GRF'], ['run', 'Running GRF'], ['square', 'Square wave']],
+    key, function (v) { key = v; reseries(); K = Math.min(K, KMAX); sl.quiet(K); draw(); });
+  /* fit.js presses every segmented control while it works out how tall the
+     figure gets, and only restores one group. This one chooses WHAT is drawn,
+     not how tall it is, so it opts out and the slide opens on the combined
+     view every time. */
+  var sg = seg(row, [['combined', 'one wave per harmonic'], ['sincos', 'sin &amp; cos parts']], view,
+    function (v) { view = v; draw(); });
+  Array.prototype.forEach.call(sg.children, function (b) { b.setAttribute('data-unsafe', '1'); });
+  var play = playBtn(row, '▶ Build up');
+  var sl = slider(u.ctl, 'Harmonics kept', 1, KMAX, 1, K,
+    function (v) { return v + ' of ' + KMAX; }, function (v) { K = v; draw(); });
+
+  function stop() { if (timer) { clearInterval(timer); timer = null; } play.textContent = '▶ Build up'; }
+  play.setAttribute('data-unsafe', '1');
+  play.addEventListener('click', function () {
+    if (timer) { stop(); return; }
+    K = 1; sl.quiet(1); draw();
+    play.textContent = '■ Stop';
+    timer = setInterval(function () {
+      if (K >= KMAX) { stop(); return; }
+      K++; sl.quiet(K); draw();
+    }, 520);
+  });
+
+  node._draw = draw;
+  node._stop = stop;
+  draw();
+});
+
 D.boot();
 
 })();
