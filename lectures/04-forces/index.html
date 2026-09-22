@@ -62,7 +62,7 @@
         <p style="margin-bottom:0">comes in pairs: action and reaction</p>
       </div>
     </div>
-    <div class="fig"><img src="assets/force-examples.jpg" alt="Everyday examples of forces acting on objects"></div>
+    <div class="whitecard"><div class="fig"><img src="assets/force-examples.jpg" alt="Everyday examples of forces acting on objects" style="max-height:58vh"></div></div>
   </div>
 </section>
 
@@ -109,10 +109,10 @@
          leg through your knee and an equal and opposite force from your upper leg to your lower leg
          through your knee.</p>
     </div>
-    <div class="imgrow">
-      <img src="assets/knee-anatomy.jpg" alt="Anatomy of the right knee">
-      <img src="assets/squat-muscles.jpg" alt="Muscles acting across the knee during a squat">
-    </div>
+    <div class="whitecard"><div class="imgrow">
+      <img src="assets/knee-anatomy.jpg" alt="Anatomy of the right knee" style="max-height:48vh">
+      <img src="assets/squat-muscles.jpg" alt="Muscles acting across the knee during a squat" style="max-height:48vh">
+    </div></div>
   </div>
 </section>
 
@@ -125,10 +125,10 @@
       <p class="small">An invasive option is to use <strong>strain gauges in cadaver limbs</strong>
          to conduct testing of injury occurrence and prevention.</p>
     </div>
-    <div class="imgrow">
-      <img src="assets/knee-ligaments.jpg" alt="Ligaments of the right knee">
-      <img src="assets/cadaver-knee.jpg" alt="Instrumented cadaver knee preparation">
-    </div>
+    <div class="whitecard"><div class="imgrow">
+      <img src="assets/knee-ligaments.jpg" alt="Ligaments of the right knee" style="max-height:48vh">
+      <img src="assets/cadaver-knee.jpg" alt="Instrumented cadaver knee preparation" style="max-height:48vh">
+    </div></div>
   </div>
 </section>
 
@@ -151,6 +151,18 @@
 
 <!-- 8 -->
 <section>
+  <h2>Measuring internal forces in biomechanics</h2>
+  <p class="subhead">A buckle transducer or an optical fibre in the Achilles tendon</p>
+  <p class="small">The sensor gives the <strong>magnitude</strong> of the tension in the tendon.
+     Change the ankle angle and that number does not move — but the line the tendon pulls along
+     does, and with it every component of the force at the joint. The other half of the vector has
+     to come from the anatomy.</p>
+  <div class="iplot wide" data-widget="tendon"></div>
+  <aside class="notes">This is the bridge into vector resolution: one measured magnitude plus a measured direction is a force vector, and a force vector is what you can resolve, add and use in an equation of motion.</aside>
+</section>
+
+<!-- 9 -->
+<section>
   <h2>Internal force vector resolution</h2>
   <p class="subhead">Step 1: Determine what the question is asking for &nbsp;·&nbsp; Step 2: Draw a diagram with all known values</p>
   <div class="cols b top">
@@ -165,33 +177,49 @@
         <p class="eq" style="margin-bottom:0">VM = 375 N &nbsp;&nbsp;&nbsp; 80°</p>
       </div>
     </div>
-    <div class="iplot" data-widget="vecsum" data-step="2"></div>
+    <div class="whitecard"><div class="fig"><img src="assets/quad-knee.jpg"
+      alt="The quadriceps pulling on the patella: three force arrows drawn on the knee, with the x and y axes through the joint centre"
+      style="max-height:52vh"></div></div>
   </div>
   <aside class="notes">Ask before moving on: will the answer be bigger or smaller than 1175 N?</aside>
 </section>
 
-<!-- 9 -->
+<!-- 10 -->
 <section>
   <h2>Internal force vector resolution</h2>
   <p class="subhead">Step 3: Isolate the forces and determine force components using trig functions</p>
   <p class="small">It is easiest to isolate each muscle force and then determine the separate
      components.</p>
-  <div class="cols b top">
-    <div>
-      <table class="ditable small">
-        <thead><tr><th></th><th>horizontal</th><th>vertical</th></tr></thead>
-        <tbody>
-          <tr><td>VL &nbsp;350 N at 60°</td><td>−175 N</td><td>303 N</td></tr>
-          <tr><td>VI &nbsp;450 N at 80°</td><td>−78.1 N</td><td>443 N</td></tr>
-          <tr><td>VM &nbsp;375 N at 80°</td><td>65.1 N</td><td>369 N</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="iplot" data-widget="vecsum" data-step="3"></div>
-  </div>
+  <div class="whitecard"><div class="fig"><img src="assets/quad-isolate.jpg"
+    alt="Each of the three muscle forces drawn on its own set of axes with its horizontal and vertical components"
+    style="max-height:50vh"></div></div>
 </section>
 
-<!-- 10 -->
+<!-- 11 -->
+<section>
+  <h2>Internal force vector resolution</h2>
+  <p class="subhead">Step 3: Isolate the forces and determine force components using trig functions</p>
+  <div class="cols b top">
+    <div>
+      <div class="box accent workblock" style="margin-left:0">
+        <p class="eq" style="margin-bottom:.25em">VL<sub>x</sub> = −350cos60° = <strong>−175 N</strong></p>
+        <p class="eq" style="margin-bottom:0">VL<sub>y</sub> = 350sin60° = <strong>303 N</strong></p>
+      </div>
+      <div class="box accent workblock" style="margin-left:0">
+        <p class="eq" style="margin-bottom:.25em">VI<sub>x</sub> = −450cos80° = <strong>−78.1 N</strong></p>
+        <p class="eq" style="margin-bottom:0">VI<sub>y</sub> = 450sin80° = <strong>443 N</strong></p>
+      </div>
+      <div class="box accent workblock" style="margin-left:0;margin-bottom:0">
+        <p class="eq" style="margin-bottom:.25em">VM<sub>x</sub> = 375cos80° = <strong>65.1 N</strong></p>
+        <p class="eq" style="margin-bottom:0">VM<sub>y</sub> = 375sin80° = <strong>369 N</strong></p>
+      </div>
+    </div>
+    <div class="iplot" data-widget="vecsum" data-step="3" data-work="0"></div>
+  </div>
+  <aside class="notes">One muscle at a time — the picture only ever carries one force and its two components, so nobody loses track of which angle belongs to which line.</aside>
+</section>
+
+<!-- 12 -->
 <section>
   <h2>Internal force vector resolution</h2>
   <p class="subhead">Step 4: Add the respective force components to determine the resultant vector component</p>
@@ -209,11 +237,11 @@
         <p class="eq" style="margin-bottom:0">= 303 N + 443 N + 369 N = <strong>1115 N</strong></p>
       </div>
     </div>
-    <div class="iplot" data-widget="vecsum" data-step="4"></div>
+    <div class="iplot" data-widget="vecsum" data-step="4" data-work="0"></div>
   </div>
 </section>
 
-<!-- 11 -->
+<!-- 13 -->
 <section>
   <h2>Internal force vector resolution</h2>
   <p class="subhead">Step 5: Solve for the resultant force magnitude and direction</p>
@@ -231,12 +259,12 @@
         <p class="eq" style="margin-bottom:0">= <strong>−80.4</strong></p>
       </div>
     </div>
-    <div class="iplot" data-widget="vecsum" data-step="5"></div>
+    <div class="iplot" data-widget="vecsum" data-step="5" data-work="0"></div>
   </div>
   <aside class="notes">That is what the calculator returns. Rx is negative and Ry is positive, so the resultant is up and to the left: add 180° to get 99.6° from the positive x axis. Make them check the quadrant every time.</aside>
 </section>
 
-<!-- 12 -->
+<!-- 14 -->
 <section>
   <h2>Force</h2>
   <div class="cols b top">
@@ -259,7 +287,7 @@
   </div>
 </section>
 
-<!-- 13 -->
+<!-- 15 -->
 <section>
   <h2>Gravity and contact forces</h2>
   <div class="cols b top">
@@ -270,14 +298,14 @@
       <p class="small">Occur in pairs: <strong>action and reaction</strong>.</p>
       <p class="small">The force of gravity acting on us causes us to contact the ground.</p>
     </div>
-    <div class="imgrow">
-      <img src="assets/runner.jpg" alt="Runner">
-      <img src="assets/swimmer.jpg" alt="Swimmer">
-    </div>
+    <div class="whitecard"><div class="imgrow">
+      <img src="assets/runner-anim.gif" alt="A runner, animated" style="max-height:34vh">
+      <img src="assets/swimmer-anim.gif" alt="A swimmer, animated" style="max-height:34vh">
+    </div></div>
   </div>
 </section>
 
-<!-- 14 -->
+<!-- 16 -->
 <section>
   <h2>Gravity</h2>
   <div class="cols b top">
@@ -294,7 +322,7 @@
   </div>
 </section>
 
-<!-- 15 -->
+<!-- 17 -->
 <section>
   <h2>Gravity and weight</h2>
   <div class="textstrip tiny">
@@ -311,7 +339,7 @@
   </div>
 </section>
 
-<!-- 16 -->
+<!-- 18 -->
 <section>
   <h2>Force of gravity and normal force</h2>
   <div class="cols b top">
@@ -324,12 +352,16 @@
       <p class="small">When we are on a surface parallel to the horizontal, the normal force is equal
          in magnitude to the force of gravity and opposite in direction….</p>
     </div>
-    <div class="iplot" data-widget="incline" data-angle="0" data-mass="4" data-calc="0"></div>
+    <div class="cols b top">
+    <div class="whitecard"><div class="fig"><img src="assets/gravity-anim.gif" alt="A runner, animated" style="max-height:30vh"></div></div>
+    <div class="iplot" data-widget="incline" data-body="person" data-angle="0" data-mass="78"
+         data-calc="0" data-anglectl="0" data-massctl="0" data-chips="0" data-comp="0" data-axes="0"></div>
+  </div>
   </div>
   <aside class="notes">This force is called the normal force.</aside>
 </section>
 
-<!-- 17 -->
+<!-- 19 -->
 <section>
   <h2>Force of gravity and normal force</h2>
   <div class="cols b top">
@@ -340,13 +372,15 @@
          and opposite to the magnitude and direction of the force of gravity.</p>
       <p class="small">So how do we calculate the normal force?</p>
     </div>
-    <div class="fig"><img src="assets/slope-diagram.jpg" alt="Force diagram for a cyclist coasting down a 20 degree slope"></div>
+    <div class="iplot" data-widget="incline" data-body="person" data-angle="20" data-mass="78"
+         data-calc="0" data-massctl="0" data-chips="0" data-comp="0"></div>
   </div>
+  <div class="whitecard" style="margin-top:.3em"><div class="fig"><img src="assets/slope-anim.gif" alt="A runner, animated" style="max-height:20vh"></div></div>
   <aside class="notes">This force is called the normal force.
 The figure is the worked case from the original slide: a 1000 N weight on a 20° slope gives 940 N perpendicular and 342 N parallel. The interactive version on the next slides reproduces it — try 102 kg at 20°.</aside>
 </section>
 
-<!-- 18 -->
+<!-- 20 -->
 <section>
   <h2>Force</h2>
   <div class="cols b top">
@@ -354,11 +388,12 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
       <p class="small">With contact forces it is customary to create an axis system that is
          <strong>parallel and perpendicular to the contact surface</strong>.</p>
     </div>
-    <div class="iplot" data-widget="incline" data-angle="20" data-mass="4" data-calc="0"></div>
+    <div class="iplot wide" data-widget="incline" data-angle="20" data-mass="4" data-calc="0"
+       data-toggles="1" data-axes="0" data-comp="0" data-labels="0" data-chips="0"></div>
   </div>
 </section>
 
-<!-- 19 -->
+<!-- 21 -->
 <section>
   <h2>Force</h2>
   <div class="cols b top">
@@ -372,11 +407,11 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
       <p class="small">The normal force is equal and opposite to the component of gravity force that
          is perpendicular to the contact surface.</p>
     </div>
-    <div class="iplot" data-widget="incline" data-angle="20" data-mass="4" data-calc="0"></div>
+    <div class="iplot wide" data-widget="incline" data-angle="20" data-mass="4" data-calc="0" data-sweep="1" data-chips="0"></div>
   </div>
 </section>
 
-<!-- 20 -->
+<!-- 22 -->
 <section>
   <h2>Force</h2>
   <div class="cols b top">
@@ -388,25 +423,27 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
         <li>and force components</li>
       </ul>
       <p class="small">If we change the angle of the contact surface?</p>
+      <div class="whitecard"><div class="fig"><img src="assets/slope-what-if.gif"
+        alt="A block on a slope whose angle keeps changing, animated" style="max-height:26vh"></div></div>
     </div>
-    <div class="iplot" data-widget="incline" data-angle="20" data-mass="4" data-calc="0"></div>
+    <div class="iplot wide" data-widget="incline" data-angle="20" data-mass="4" data-calc="0" data-sweep="1" data-chips="0"></div>
   </div>
   <aside class="notes">Drag the angle from 0 to 45 and answer the question on the slide out loud: gravity does not change at all, the normal force falls away, and the shear grows to meet it.</aside>
 </section>
 
-<!-- 21 -->
+<!-- 23 -->
 <section>
   <h2>Force</h2>
   <p class="lead">How to resolve for the components of force on a slant surface and solve for the
      normal force. We need to know the angle of the slant (20°) and the mass of the object (4 kg).</p>
-  <div class="iplot wide" data-widget="incline" data-angle="20" data-mass="4"></div>
+  <div class="iplot wide" data-widget="incline" data-angle="20" data-mass="4" data-step="1" data-anglectl="0" data-massctl="0" data-chips="0"></div>
   <aside class="notes">1st — Draw a diagram. Draw the axis system. Draw all known and to be determined forces.
 2nd — Solve for the magnitude of the force of gravity: W = mg, W = 4 kg × 9.81 m/s², W = 39.24 N.
 3rd — Solve for the direction of the force of gravity relative to the axis system.
 4th — Solve for the parallel and perpendicular force components.</aside>
 </section>
 
-<!-- 22 -->
+<!-- 24 -->
 <section>
   <h2>Force</h2>
   <div class="cols b top">
@@ -426,11 +463,11 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
         <p class="eq" style="margin-bottom:0">adjacent = 36.87 N</p>
       </div>
     </div>
-    <div class="iplot" data-widget="incline" data-angle="20" data-mass="4" data-calc="0"></div>
+    <div class="iplot wide" data-widget="incline" data-angle="20" data-mass="4" data-step="3" data-anglectl="0" data-massctl="0" data-chips="0"></div>
   </div>
 </section>
 
-<!-- 23 -->
+<!-- 25 -->
 <section>
   <h2>Force</h2>
   <div class="cols b top">
@@ -444,11 +481,11 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
       <p class="small muted">Where <span class="eq">mg</span> is the equation for the weight of the
          object.</p>
     </div>
-    <div class="iplot" data-widget="incline" data-angle="30" data-mass="4" data-calc="0"></div>
+    <div class="iplot wide" data-widget="incline" data-angle="30" data-mass="4" data-calc="0" data-step="4" data-chips="0"></div>
   </div>
 </section>
 
-<!-- 24 -->
+<!-- 26 -->
 <section>
   <h2>Friction</h2>
   <div class="cols b top">
@@ -465,7 +502,7 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
   </div>
 </section>
 
-<!-- 25 -->
+<!-- 27 -->
 <section>
   <h2>Forces in 3D</h2>
   <div class="cols b top">
@@ -474,37 +511,55 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
       <p class="small">Both internal and external forces are resolved into components in reference to
          anatomical planes and axis systems.</p>
     </div>
-    <div class="imgrow">
-      <img src="assets/skeleton.jpg" alt="Skeleton in the anatomical planes">
-      <img src="assets/axes3d.jpg" alt="Three dimensional axis system">
-    </div>
-  </div>
-</section>
-
-<!-- 26 -->
-<section>
-  <h2>Force in 3D</h2>
-  <div class="textstrip tiny">
-    <p class="firstcol">When considered in a <strong>sagittal plane</strong>: when we start to walk we
-       exert a force that is not just acting down (z-axis) — part of the force is parallel to the
-       surface (x-axis).</p>
-    <p>Also when considered in a <strong>frontal plane</strong>: part of the force is parallel to the
-       surface acting along the y-axis.</p>
-  </div>
-  <div class="iplot wide" data-widget="grf3d"></div>
-  <aside class="notes">Press "take a step" and watch the fore–aft component change sign: negative through the first half of stance (the ground braking you) and positive through the second (pushing you along).</aside>
-</section>
-
-<!-- 27 -->
-<section>
-  <h2>Force in 3D</h2>
-  <div class="cols top">
-    <div class="fig"><img src="assets/walk-sagittal.jpg" alt="Ground reaction force vectors in the sagittal plane while walking"></div>
-    <div class="fig"><img src="assets/walk-frontal.jpg" alt="Ground reaction force vectors in the frontal plane"></div>
+    <div class="whitecard"><div class="fig"><img src="assets/planes-axes.jpg"
+      alt="A body standing in the three cardinal planes with the x, y and z axes through it"
+      style="max-height:54vh"></div></div>
   </div>
 </section>
 
 <!-- 28 -->
+<section>
+  <h2>Forces in 3D</h2>
+  <p class="subhead">Three planes, three axes — spin it and pick one</p>
+  <div class="iplot wide" data-widget="planes3d"></div>
+  <aside class="notes">x is the way you are facing, y is out to the side, z is up. Each plane is named by the axis it is at right angles to, which is the quickest way to remember them: sagittal ⟂ y, frontal ⟂ x, transverse ⟂ z.</aside>
+</section>
+
+<!-- 29 -->
+<section>
+  <h2>Force in 3D</h2>
+  <div class="cols c top">
+    <div>
+      <p class="small">When considered in a <strong>sagittal plane</strong></p>
+      <ul class="small">
+        <li>when we start to walk we exert a force that is not just acting down (z-axis).</li>
+        <li>part of the force is parallel to the surface (x-axis)</li>
+      </ul>
+      <p class="small">Also when considered in a <strong>frontal plane</strong></p>
+      <ul class="small">
+        <li>Part of the force is parallel to the surface acting along the y-axis</li>
+      </ul>
+    </div>
+    <div class="whitecard">
+      <div class="fig small"><img src="assets/walk-sagittal-vec.jpg"
+        alt="Walking in the sagittal plane: the ground reaction force under each foot leans backwards at heel contact and forwards at push-off"
+        style="max-height:31vh"></div>
+      <div class="fig small"><img src="assets/walk-frontal-vec.jpg"
+        alt="The same step seen from behind: part of the force acts sideways along the y axis"
+        style="max-height:22vh"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 30 -->
+<section>
+  <h2>Force in 3D</h2>
+  <p class="subhead">One step, measured — the same vector split into its three axes</p>
+  <div class="iplot wide" data-widget="grf3d"></div>
+  <aside class="notes">Press "take a step" and watch the fore–aft component change sign: negative through the first half of stance (the ground braking you) and positive through the second (pushing you along).</aside>
+</section>
+
+<!-- 31 -->
 <section>
   <h2>Measuring external force in biomechanics</h2>
   <div class="cols b top">
@@ -530,7 +585,7 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
   </div>
 </section>
 
-<!-- 29 -->
+<!-- 32 -->
 <section>
   <h2>Measuring external force in biomechanics</h2>
   <div class="cols b top">
@@ -551,7 +606,7 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
   </div>
 </section>
 
-<!-- 30 -->
+<!-- 33 -->
 <section>
   <h2>Measuring external force in biomechanics</h2>
   <div class="cols b top">
@@ -570,26 +625,45 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
       </div>
     </div>
     <div class="imgrow">
-      <img src="assets/treadmill-schematic.jpg" alt="Instrumented treadmill with front and back force sensors">
+      <img src="assets/treadmill-anim.gif" alt="Instrumented treadmill with front and back force sensors, animated">
       <img src="assets/mocap-plate.jpg" alt="Motion capture skeleton over a force plate">
     </div>
   </div>
   <aside class="notes">In biomechanics, the gold standard measure of force is the forceplate and instrumented treadmill. These are ideal and accurate but impractical for field based measurement.</aside>
 </section>
 
-<!-- 31 -->
+<!-- 34 -->
 <section>
   <h2>Measuring external force in biomechanics</h2>
-  <div class="textstrip tiny">
-    <p class="firstcol">Often it is not feasible to directly measure external force but an
-       inexpensive alternate is to measure <strong>pressure</strong>.</p>
-    <p><strong>Pressure</strong> is the force per unit area directed perpendicular to an object
-       surface: <strong>P = F/A</strong></p>
+  <div class="cols b top">
+    <div>
+      <p class="small">Often it is not feasible to directly measure external force but an
+         inexpensive alternate is to measure <strong>pressure</strong>.</p>
+      <p class="small"><strong>Pressure</strong></p>
+      <ul class="small">
+        <li>Is the force per unit area directed perpendicular to an object surface</li>
+        <li>P = F/A</li>
+      </ul>
+    </div>
+    <div class="whitecard">
+      <div class="imgrow">
+        <img src="assets/pressure-mat-blk.jpg" alt="A pressure sensing mat" style="max-height:34vh">
+        <img src="assets/fsr-pair.jpg" alt="Two force sensing resistors" style="max-height:34vh">
+      </div>
+      <p class="small muted" style="text-align:center;margin:.35em 0 0">Pressure Mats and Sensors</p>
+    </div>
   </div>
-  <div class="iplot wide" data-widget="pressure"></div>
 </section>
 
-<!-- 32 -->
+<!-- 35 -->
+<section>
+  <h2>Measuring external force in biomechanics</h2>
+  <p class="subhead">P = F/A — and how an insole gets the force back</p>
+  <div class="iplot wide" data-widget="pressure"></div>
+  <aside class="notes">Drag the number of sensels down to two or three and the total collapses: the peaks fall between cells. That is the whole argument for sensor density, and the reason an insole is called an approximation of force.</aside>
+</section>
+
+<!-- 36 -->
 <section>
   <h2>How pressure sensors work</h2>
   <div class="cols b top">
@@ -603,15 +677,16 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
       </ul>
     </div>
     <div class="imgrow">
-      <img src="assets/piezoresistive.jpg" alt="A load changing the resistance of a sensing element">
-      <img src="assets/fsr.jpg" alt="Force sensing resistors">
+      <img src="assets/piezo-anim.gif" alt="A load changing the resistance of a sensing element, animated">
+      <img src="assets/fsr-anim.gif" alt="A force sensing resistor under load, animated">
       <img src="assets/pressure-3d.jpg" alt="Pressure field rendered as a 3D surface">
+      <img src="assets/insole-green.jpg" alt="A matrix of piezoresistive sensels laid out on an insole">
     </div>
   </div>
   <aside class="notes">A piezoresistive sensor can be very thin, lightweight, flexible and a number can be placed together to form a matrix of sensors.</aside>
 </section>
 
-<!-- 33 -->
+<!-- 37 -->
 <section>
   <h2>Measuring external force in biomechanics</h2>
   <div class="cols b top">
@@ -638,7 +713,7 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
   <aside class="notes">Many sensors have been made and there are important capabilities and limitations to their use.</aside>
 </section>
 
-<!-- 34 -->
+<!-- 38 -->
 <section>
   <h2>Measuring external force in biomechanics</h2>
   <div class="cols b top">
@@ -650,47 +725,65 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
     </div>
     <div class="imgrow">
       <img src="assets/pedar.jpg" alt="Pedar insole system in a shoe">
-      <img src="assets/insole-green.jpg" alt="Instrumented insoles with a sensor array">
+      <img src="assets/insole-anim.gif" alt="Instrumented insoles with a sensor array, animated">
     </div>
   </div>
 </section>
 
-<!-- 35 -->
+<!-- 39 -->
 <section>
   <h2>Plantar pressure sensors</h2>
-  <div class="imgrow">
-    <img src="assets/shoe-insole.jpg" alt="Pressure sensing insole fitted to a shoe">
-    <img src="assets/fsr.jpg" alt="Force sensing resistors">
-    <img src="assets/pressure-foot.jpg" alt="Plantar pressure distribution under one foot">
-    <img src="assets/pressure-3d.jpg" alt="Pressure field rendered as a 3D surface">
-  </div>
+  <div class="whitecard"><div class="fig"><img src="assets/plantar-sensors.jpg"
+    alt="Commercial and research plantar pressure systems: Tekscan, novel, medilogic, Dynafoot, amcube, Moticon, SmartMove"
+    style="max-height:60vh"></div></div>
   <aside class="notes">Many pressure sensing insoles from tried and true research grade to commercial and engineering one-offs. Even Nike introduced a commercial pressure sensing insole but this didn't take off.
 Of the current existing sensors all have different pro's and con's in terms of sensing units, reliability and validity.</aside>
 </section>
 
-<!-- 36 -->
+<!-- 40 -->
 <section>
-  <h2>Centre of pressure</h2>
-  <p class="lead">Centre of Pressure is the <strong>instantaneous point of application</strong> of the
-     ground reaction force. Measuring foot centre of pressure movement during walking can tell us
-     more information about the GRF vector and how we use our feet while walking.</p>
-  <div class="iplot wide" data-widget="cop"></div>
+  <h2>Centre of Pressure</h2>
+  <p class="small">Centre of Pressure is the <strong>instantaneous point of application</strong> of
+     the ground reaction force.</p>
+  <p class="small">Measuring foot centre of pressure movement during walking can tell us more
+     information about the GRF vector and how we use our feet while walking.</p>
+  <div class="whitecard"><div class="imgrow">
+    <img src="assets/cop-path.jpg" alt="The centre of pressure path under one foot from heel strike through foot flat and heel lift to toe off" style="max-height:38vh">
+    <img src="assets/cop-anim.gif" alt="The ground reaction force vector moving along the foot through stance, animated" style="max-height:32vh">
+    <img src="assets/cop-foot-anim.gif" alt="A plantar pressure film through one step, animated" style="max-height:38vh">
+  </div></div>
   <aside class="notes">Centre of Pressure is the instantaneous point of application of the ground reaction force.</aside>
 </section>
 
-<!-- 37 -->
+<!-- 41 -->
+<section>
+  <h2>Centre of pressure</h2>
+  <p class="subhead">The same path, measured — where the force is applied, moment by moment</p>
+  <div class="iplot wide" data-widget="cop"></div>
+</section>
+
+<!-- 42 -->
 <section>
   <h2>Centre of pressure</h2>
   <div class="cols b top">
     <div>
       <p class="small">PPMS can tell us similar information about COP as compared to force plates.</p>
+      <p class="small muted">Dyer &amp; Morris Bamberg, <i>Instrumented insole vs. force plate: a
+         comparison of center of plantar pressure</i>, IEEE.</p>
     </div>
-    <div class="fig"><img src="assets/cop-compare.jpg" alt="Centre of pressure path from an insole compared with a force plate"></div>
+    <div class="whitecard">
+      <div class="fig"><img src="assets/cop-insole-plots.jpg"
+        alt="Centre of pressure paths from an instrumented insole and a force plate, plotted together for two trials"
+        style="max-height:34vh"></div>
+      <div class="fig"><img src="assets/cop-insole-table.jpg"
+        alt="Pearson correlation coefficients and RMS error between insole and force plate centre of pressure"
+        style="max-height:18vh"></div>
+    </div>
   </div>
   <aside class="notes">Pressure sensing insoles with limited sensor array are capable of determining centre of pressure similar to force plate.</aside>
 </section>
 
-<!-- 38 -->
+<!-- 43 -->
 <section>
   <h2>Measuring external force in biomechanics</h2>
   <div class="cols b top">
@@ -707,7 +800,7 @@ Of the current existing sensors all have different pro's and con's in terms of s
   </div>
 </section>
 
-<!-- 39 -->
+<!-- 44 -->
 <section>
   <h2>Measuring external force in biomechanics</h2>
   <div class="cols b top">
@@ -732,7 +825,7 @@ Of the current existing sensors all have different pro's and con's in terms of s
   </div>
 </section>
 
-<!-- 40 -->
+<!-- 45 -->
 <section>
   <h2>Shod heel strike</h2>
   <div class="ivid">
@@ -744,7 +837,7 @@ Of the current existing sensors all have different pro's and con's in terms of s
   <aside class="notes">Watch for the small spike at the very start of the trace — the impact transient. The heel arrives first, the leg is nearly straight, and the collision goes almost straight into the skeleton.</aside>
 </section>
 
-<!-- 41 -->
+<!-- 46 -->
 <section>
   <h2>Barefoot heel strike</h2>
   <div class="ivid">
@@ -756,7 +849,7 @@ Of the current existing sensors all have different pro's and con's in terms of s
   <aside class="notes">The same landing without the midsole: the transient is sharper and arrives sooner. This is the comparison the Lieberman paper is built on.</aside>
 </section>
 
-<!-- 42 -->
+<!-- 47 -->
 <section>
   <h2>Barefoot forefoot strike</h2>
   <div class="ivid">
@@ -768,7 +861,7 @@ Of the current existing sensors all have different pro's and con's in terms of s
   <aside class="notes">No transient at all. The ankle and the calf take the collision over a longer time, so the force arrives more gradually — same peak, different first 50 ms.</aside>
 </section>
 
-<!-- 43 -->
+<!-- 48 -->
 <section>
   <h2>Racing flat, forefoot strike</h2>
   <div class="ivid">
@@ -780,7 +873,7 @@ Of the current existing sensors all have different pro's and con's in terms of s
   <aside class="notes">A shoe with very little midsole changes the trace much less than changing where the foot lands does. The strike pattern is doing most of the work, not the footwear.</aside>
 </section>
 
-<!-- 44 -->
+<!-- 49 -->
 <section>
   <h2>All four together</h2>
   <div class="vidgrid">
@@ -807,7 +900,7 @@ Of the current existing sensors all have different pro's and con's in terms of s
   </div>
 </section>
 
-<!-- 45 -->
+<!-- 50 -->
 <section>
   <h2>The same comparison, live</h2>
   <p class="lead">Every style lands on about the same peak force. What separates them is the spike in
@@ -817,7 +910,7 @@ Of the current existing sensors all have different pro's and con's in terms of s
 These traces are modelled on the published curves, not measured here — the measured ones are on the next slide.</aside>
 </section>
 
-<!-- 46 -->
+<!-- 51 -->
 <section>
   <h2>The published traces</h2>
   <div class="cols top">
@@ -828,24 +921,23 @@ These traces are modelled on the published curves, not measured here — the mea
      marks the impact transient.</p>
 </section>
 
-<!-- 47 -->
+<!-- 52 -->
 <section>
   <h2>Measuring external force in biomechanics</h2>
-  <div class="cols b top">
-    <div>
-      <p class="small">Daniel Lieberman</p>
-      <p class="small"><a href="http://www.barefootrunning.fas.harvard.edu">barefootrunning.fas.harvard.edu</a></p>
-    </div>
-    <div class="imgrow">
-      <img src="assets/lieberman-a.jpg" alt="Force trace for a shod heel strike">
-      <img src="assets/pressure-foot.jpg" alt="Plantar pressure distribution under one foot">
-      <img src="assets/cop-outline.jpg" alt="Centre of pressure path with gait events marked">
-    </div>
+  <div class="cols top">
+    <div class="whitecard"><div class="fig"><img src="assets/lieberman-transients.jpg"
+      alt="Three vertical force traces with the foot posture drawn at each instant: shod heel strike and barefoot heel strike both show an impact transient, the forefoot strike does not"
+      style="max-height:60vh"></div></div>
+    <div class="whitecard"><div class="fig"><img src="assets/pressure-films.jpg"
+      alt="Plantar pressure films through stance for two strike patterns"
+      style="max-height:60vh"></div></div>
   </div>
+  <p class="small muted center" style="margin-top:.4em">Daniel Lieberman ·
+     <a href="http://www.barefootrunning.fas.harvard.edu">barefootrunning.fas.harvard.edu</a></p>
   <aside class="notes">In summary, important force profile changes and kinematic changes can be linked to plantar pressure.</aside>
 </section>
 
-<!-- 48 -->
+<!-- 53 -->
 <section>
   <h2>Measuring internal forces in Biomechanics</h2>
   <div class="cols b top">
@@ -863,6 +955,14 @@ These traces are modelled on the published curves, not measured here — the mea
       <img src="assets/emg.jpg" alt="Electromyography recording">
     </div>
   </div>
+</section>
+
+<!-- 54 -->
+<section>
+  <h2>Measuring internal forces in Biomechanics</h2>
+  <p class="subhead">Inverse dynamics gives the net moment — EMG says who made it</p>
+  <div class="iplot wide" data-widget="invdyn"></div>
+  <aside class="notes">Two assumptions are doing all the work here: that the plantarflexors made the whole net moment, and that the moment arm is what you assumed. EMG attacks the first one — if tibialis anterior is on at the same time, the net moment is the difference between two muscle groups, and the agonist force is larger than the calculation says.</aside>
 </section>
 
 </div>
