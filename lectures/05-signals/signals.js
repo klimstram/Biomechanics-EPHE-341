@@ -1174,6 +1174,186 @@ D.register('synth', function (node, d) {
   draw();
 });
 
+/* ---------------- Fourier synthesis, one component per graph ----------------
+
+   The companion to `synth`. Same series, same numbers, but each harmonic gets
+   its own flat time-series panel instead of a place in the receding stack, so
+   the shape of a single term can actually be read off the page.            */
+
+/* −0.004 formatted to two places is “−0.00”, which looks like a mistake */
+function z(v) { return fmt(Math.abs(v) < 0.005 ? 0 : v, 2); }
+
+D.register('terms', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var NMAX = 12;
+  var ax = new Axes(u.cv, { w: port ? 470 : 980, h: port ? 880 : 400,
+                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
+  var out = readout(u.ctl);
+
+  var N = 512;
+  var key = d.target && TARGETS[d.target] ? d.target : 'walk';
+  var shown = parseInt(d.terms || 6, 10);
+  var split = false, own = false;
+  var S = series(TARGETS[key].f, N, NMAX);
+
+  /* one small panel: a zero line, a frame, the wave, and the numbers */
+  function panel(x0, y0, w, h, t, i, scale, xaxis) {
+    var c = ax.c, K = C();
+    var pad = 4, mid = y0 + h / 2;
+    var wl = 58;                       /* room for the name at the left */
+    var px0 = x0 + wl, px1 = x0 + w - 8;
+
+    c.save();
+    c.fillStyle = K.FILL0;
+    c.fillRect(px0, y0 + pad, px1 - px0, h - 2 * pad);
+    c.strokeStyle = K.PANEL; c.lineWidth = 1;
+    c.strokeRect(px0 + .5, y0 + pad + .5, px1 - px0 - 1, h - 2 * pad - 1);
+    /* zero */
+    c.strokeStyle = K.MUT; c.globalAlpha = .45; c.setLineDash([3, 3]);
+    c.beginPath(); c.moveTo(px0, mid + .5); c.lineTo(px1, mid + .5); c.stroke();
+    c.setLineDash([]); c.globalAlpha = 1;
+    c.restore();
+
+    var amp = h / 2 - pad - 9;
+    var waves = split
+      ? [{ a: t.a, ph: 0, col: K.ORG }, { a: t.b, ph: Math.PI / 2, col: K.GRN }]
+      : [{ a: t.amp, ph: t.ph, col: K.BLUE }];
+
+    waves.forEach(function (wv) {
+      if (Math.abs(wv.a) * scale * amp < 0.4) {       /* a term of no size */
+        c.save(); c.strokeStyle = wv.col; c.globalAlpha = .5; c.lineWidth = 1.6;
+        c.beginPath(); c.moveTo(px0 + 2, mid); c.lineTo(px1 - 2, mid); c.stroke(); c.restore();
+        return;
+      }
+      c.save(); c.strokeStyle = wv.col; c.lineWidth = 2; c.beginPath();
+      for (var j = 0; j <= 300; j++) {
+        var tt = j / 300 * 2;
+        var y = mid - wv.a * Math.cos(2 * Math.PI * t.k * tt - wv.ph) * scale * amp;
+        var xx = px0 + (px1 - px0) * j / 300;
+        if (j === 0) c.moveTo(xx, y); else c.lineTo(xx, y);
+      }
+      c.stroke(); c.restore();
+    });
+
+    label(c, t.k + ' Hz', x0 + wl - 8, mid - 8,
+          { color: C().INK, size: 14, align: 'right', weight: '750' });
+    label(c, split ? z(t.a) + ' cos' : 'A = ' + z(t.amp),
+          x0 + wl - 8, mid + 8, { color: split ? C().ORG : C().MUT, size: 11.5, align: 'right' });
+    if (split)
+      label(c, z(t.b) + ' sin', x0 + wl - 8, mid + 21,
+            { color: C().GRN, size: 11.5, align: 'right' });
+
+    if (xaxis) {
+      var c2 = ax.c;
+      [0, 0.5, 1, 1.5, 2].forEach(function (v) {
+        var xx = px0 + (px1 - px0) * v / 2;
+        c2.save(); c2.strokeStyle = C().MUT; c2.globalAlpha = .6; c2.lineWidth = 1;
+        c2.beginPath(); c2.moveTo(xx, y0 + h - pad); c2.lineTo(xx, y0 + h - pad + 4); c2.stroke();
+        c2.restore();
+        label(c2, v.toFixed(1), xx, y0 + h - pad + 7,
+              { color: C().MUT, size: 11, align: 'center', base: 'top' });
+      });
+      label(ax.c, 'time (cycles)', (px0 + px1) / 2, y0 + h - pad + 22,
+            { color: C().MUT, size: 11.5, align: 'center', base: 'top' });
+    }
+  }
+
+  /* the partial sum: the offset plus every harmonic on the page */
+  function recon(t) {
+    var v = S.a0, i;
+    for (i = 0; i < shown; i++)
+      v += S.terms[i].a * Math.cos(2 * Math.PI * S.terms[i].k * t) +
+           S.terms[i].b * Math.sin(2 * Math.PI * S.terms[i].k * t);
+    return v;
+  }
+
+  /* The top panel: what the waves on the page add up to, against the signal
+     they came from. Without it the grid is a pile of sine waves with nothing
+     to say. */
+  function drawSum(bandTop, bandBot) {
+    var c = ax.c, K = C(), i, T = TARGETS[key];
+    var lo = 1e9, hi = -1e9;
+    for (i = 0; i <= 300; i++) {
+      var t = i / 300 * 2;
+      lo = Math.min(lo, T.f(t % 1), recon(t)); hi = Math.max(hi, T.f(t % 1), recon(t));
+    }
+    var span = hi - lo; lo -= span * 0.10; hi += span * 0.62;
+
+    ax.pl = 66; ax.pr = 20; ax.pt = bandTop; ax.pb = ax.H - bandBot;
+    ax.setRange(0, 2, lo, hi);
+    ax.frame({ grid: true, xticks: [0, 0.5, 1, 1.5, 2], yticks: axisTicks(lo, hi, 4),
+               ylabel: T.yl, ysize: 15, zero: true,
+               xfmt: function (v) { return v.toFixed(1); },
+               yfmt: function (v) { return v.toFixed(1); } });
+    /* the offset is a component too — the k = 0 one */
+    ax.poly([[0, S.a0], [2, S.a0]], { color: K.MUT, width: 1.4, dash: [2, 4] });
+    ax.fn(function (t) { return T.f(t % 1); }, { color: K.MUT, width: 1.8, dash: [5, 4], n: 600 });
+    ax.fn(recon, { color: K.ACC, width: 2.6, n: 600 });
+    label(c, 'offset ' + fmt(S.a0, 2), ax.X(2) - 4, ax.Y(S.a0) - 9,
+          { color: K.MUT, size: 11, align: 'right', plate: true });
+    legend(c, ax.pl + 10, bandTop + 14,
+           [[K.MUT, [5, 4], 'the signal'],
+            [K.ACC, null, 'offset + the ' + shown + ' wave' + (shown === 1 ? '' : 's') + ' below']]);
+  }
+
+  function draw() {
+    var c = ax.c, K = C(), i;
+    ax.clear();
+
+    var top = port ? 182 : 152;
+    drawSum(12, top - 40);
+
+    /* past eight panels a second column still leaves each one too short to
+       read; a third keeps the row height up */
+    var cols = port ? 1 : (shown > 8 ? 3 : 2);
+    var rows = Math.ceil(shown / cols);
+    var foot = 30;
+    var gutter = 14;
+    var colw = (ax.W - gutter * (cols - 1) - 8) / cols;
+    var rowh = (ax.H - top - foot) / rows;
+
+    var maxA = 1e-9;
+    for (i = 0; i < shown; i++) maxA = Math.max(maxA, Math.abs(S.terms[i].amp),
+                                                Math.abs(S.terms[i].a), Math.abs(S.terms[i].b));
+
+    for (i = 0; i < shown; i++) {
+      var cI = Math.floor(i / rows), rI = i % rows;   /* fill down, then across */
+      var t = S.terms[i];
+      var scale = own ? 1 / Math.max(Math.abs(t.amp), Math.abs(t.a), Math.abs(t.b), 1e-9)
+                      : 1 / maxA;
+      /* a short right-hand column still needs a time axis under its own foot */
+      var last = (rI === rows - 1) || (i === shown - 1);
+      panel(4 + cI * (colw + gutter), top + rI * rowh, colw, rowh, t, i, scale, last);
+    }
+
+    out.innerHTML =
+      '<b class="k">' + TARGETS[key].lab + '</b> = <b>' + fmt(S.a0, 2) + '</b> offset + ' +
+      'the <b>' + shown + '</b> wave' + (shown === 1 ? '' : 's') + ' below, added together' +
+      '<span class="hint">' +
+      (split ? 'Each harmonic split into its <b>a<sub>k</sub> cos(2&pi;kt)</b> and <b>b<sub>k</sub> sin(2&pi;kt)</b> terms. '
+             : 'One flat graph per harmonic. ') +
+      (own ? 'Every panel fills its own box, so even a term far too small to see has a readable shape.'
+           : 'One shared amplitude scale, so a term drawn flat really is contributing almost nothing.') +
+      '</span>';
+  }
+
+  var row = ctlRow(u.ctl);
+  chips(row, [['walk', 'Walking GRF'], ['run', 'Running GRF'], ['square', 'Square wave']], key,
+    function (v) { key = v; S = series(TARGETS[v].f, N, NMAX); draw(); });
+  var sg = seg(row, [['combined', 'one wave each'], ['sincos', 'sin &amp; cos']], 'combined',
+    function (v) { split = v === 'sincos'; draw(); });
+  Array.prototype.forEach.call(sg.children, function (b) { b.setAttribute('data-unsafe', '1'); });
+  var sc = seg(row, [['one', 'one scale'], ['own', 'each to fit']], 'one',
+    function (v) { own = v === 'own'; draw(); });
+  Array.prototype.forEach.call(sc.children, function (b) { b.setAttribute('data-unsafe', '1'); });
+  slider(u.ctl, 'Harmonics shown', 2, NMAX, 1, shown,
+    function (v) { return v + ' of ' + NMAX; }, function (v) { shown = v; draw(); });
+
+  node._draw = draw;
+  draw();
+});
+
 D.boot();
 
 })();
