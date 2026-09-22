@@ -24,7 +24,8 @@ html[data-theme="dark"]{
   --good:#4ade80;
   --chip:#16233c;
   --shadow:0 2px 18px rgba(0,0,0,.34);
-  --img-card:#f7f8fa;       /* backing for white screenshots */
+  --img-card:#ffffff;       /* backing for white screenshots — the same white
+                               the cropped figures carry, so the card edge vanishes */
   --svg-filter:invert(1) hue-rotate(180deg) saturate(.92) brightness(1.06);
   color-scheme:dark;
 }
@@ -744,7 +745,7 @@ html[data-portrait] .portrait-hide{ display:none !important; }
    Each image normally gets its own light card in the dark theme, which turns a
    row of photographs into a row of tiles. This puts a single card behind them. */
 .whitecard{ background:var(--img-card); border-radius:10px; padding:.7em .9em; }
-html[data-theme="light"] .whitecard{ background:var(--surface); border:1px solid var(--hair); }
+html[data-theme="light"] .whitecard{ background:#fff; border:1px solid var(--hair); }
 html[data-theme="dark"] .whitecard .reveal img,
 html[data-theme="dark"] .reveal .whitecard img[src^="assets/"]{
   background:none !important; padding:0 !important; border-radius:0 !important; }

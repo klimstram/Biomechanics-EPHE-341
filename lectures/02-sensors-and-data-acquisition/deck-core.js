@@ -257,9 +257,36 @@ function noSwipe(root) {
     function (e) { e.setAttribute('data-prevent-swipe', ''); });
 }
 
+/* A figure whose name this script does not know about is almost always a
+   browser holding a cached copy of the lecture's widget file next to a fresh
+   index.html. Silence looks like a broken slide, so say so, and list what the
+   loaded script DID bring — that names the version on screen. */
+function warnBox(n, msg) {
+  var d = el('div');
+  d.setAttribute('style', 'margin:1.1em auto;max-width:46em;padding:.75em 1em;' +
+    'border:1px solid rgba(248,113,113,.55);border-radius:.55em;' +
+    'background:rgba(248,113,113,.10);font-size:.58em;line-height:1.55;text-align:left');
+  d.innerHTML = msg;
+  n.appendChild(d);
+}
 function make(n) {
   var name = n.getAttribute('data-widget');
-  if (MAP[name]) { try { MAP[name](n, n.dataset); } catch (e) { console.error(name, e); } }
+  if (MAP[name]) {
+    try { MAP[name](n, n.dataset); }
+    catch (e) {
+      console.error(name, e);
+      warnBox(n, '<b>This figure could not be drawn.</b> ' + name + ' &mdash; ' +
+                 ((e && e.message) ? e.message : e));
+    }
+  } else {
+    console.error('no widget registered for "' + name + '"; loaded:',
+                  Object.keys(MAP).join(', '));
+    warnBox(n, '<b>This figure is not in the script your browser loaded.</b> ' +
+               'Reload the page to pick up the current version &mdash; ' +
+               '<b>\u2318\u21e7R</b> on a Mac, <b>Ctrl+F5</b> on Windows.' +
+               '<br><span style="opacity:.72">wanted <b>' + name + '</b>; this copy has ' +
+               Object.keys(MAP).join(', ') + '</span>');
+  }
   noSwipe(n);
 }
 
