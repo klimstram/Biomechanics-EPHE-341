@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20260922e">
+<link rel="stylesheet" href="theme.css?v=20260923">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -30,8 +30,9 @@
 </head>
 <body data-home="../../index.html">
 <div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
-  <span class="mark">UVic</span>
-  <span class="who"><b>University of Victoria</b><span>EPHE 341 · BIOMECHANICS</span></span>
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
 </div>
 <div class="reveal">
 <div class="slides">
@@ -259,33 +260,14 @@ Then turn the noise up. Noise has no single frequency, so it lifts the entire sp
 <!-- 16 -->
 <section>
   <h2>Fourier transform</h2>
-  <div class="iplot wide" data-widget="synth"></div>
-  <aside class="notes">Any repeating signal, however square-edged, is a sum of sine and cosine waves at whole multiples of its own rate — 1 Hz, 2 Hz, 3 Hz and so on for a signal that repeats once a second. The Fourier transform is the arithmetic that finds how much of each, and those amplitudes are exactly what the frequency-domain graph plots. The three panels are the same numbers three ways.
-
-Start with one harmonic and walk the slider up, or press Build up. The dashed line is the real signal; the solid line is everything the terms kept so far can rebuild. The residual RMS is the gap between them.
-
-Walking GRF: six to eight harmonics carry almost all of it, which is where the usual 6 Hz low-pass cutoff for walking comes from. Switch to Running GRF and the same slider position no longer reaches — the impact is a shorter event, so its energy sits at higher frequencies, and a cutoff tuned for walking would shave the peak off. That is the whole argument for choosing a cutoff from the signal rather than from habit.
-
-Square wave is the animation this slide used to show: odd harmonics only, amplitudes falling as 1/k, and a corner that keeps ringing however many terms you add.
-
-'sin &amp; cos parts' splits each harmonic into the two waves that make it. Sines alone cannot build a signal that is not odd-symmetric about its own mean, which is why a real GRF needs the cosine terms and the offset as well.</aside>
+  <div class="cols top">
+    <div class="fig"><img src="assets/ft-illustration.jpg" alt="A complex wave decomposed into a stack of sine waves"></div>
+    <div class="fig"><img src="assets/ft-3d.jpg" alt="A square wave built out of sine waves, seen in three dimensions"></div>
+  </div>
+  <aside class="notes">Any repeating signal, however square-edged, is a sum of sine waves. The sharper the corner, the more high-frequency terms it takes.</aside>
 </section>
 
 <!-- 17 -->
-<section>
-  <h2>Fourier transform</h2>
-  <p class="subhead">The components, one graph each</p>
-  <div class="iplot wide" data-widget="terms"></div>
-  <aside class="notes">The same series as the slide before, laid out flat: the signal and the running sum on top, and underneath one ordinary time-series graph per harmonic — the waves that are being added.
-
-Read the top panel and the grid together. Pull the slider down to one wave and the red curve is a single sine about the offset; add the second and third and the double hump appears; by six or eight it is sitting on the dashed line. Nothing is hidden in the arithmetic — every wave on the page is drawn on the page.
-
-The panels share one amplitude scale on purpose, so the harmonics that contribute nothing look like nothing. 'each to fit' rescales every panel to its own box: the shape is then readable, but the fifth harmonic of a walking GRF is a full-size wave carrying an amplitude of 0.00. Worth showing both ways.
-
-'sin &amp; cos' puts the two terms of each harmonic in the same panel, orange and green. The 1 Hz term of a walking GRF is mostly sine, the 3 Hz term mostly cosine — the split is what carries the timing of each component, and it is the part a magnitude spectrum throws away.</aside>
-</section>
-
-<!-- 18 -->
 <section>
   <h2>Digital filtering</h2>
   <div class="cols b top">
@@ -302,7 +284,7 @@ The panels share one amplitude scale on purpose, so the harmonics that contribut
   </div>
 </section>
 
-<!-- 19 -->
+<!-- 18 -->
 <section>
   <h2>Digital filtering</h2>
   <div class="cols b top">
@@ -321,27 +303,29 @@ The panels share one amplitude scale on purpose, so the harmonics that contribut
   <aside class="notes">The phase lag is why biomechanics filters forwards and then backwards — running the same filter twice in opposite directions cancels the delay exactly. The figure on the next slide does that.</aside>
 </section>
 
-<!-- 20 -->
+<!-- 19 -->
 <section>
   <h2>Digital filtering</h2>
   <p class="lead">Let’s say that we wanted to isolate different parts of the signal — we could use
      different filters to do that. A <strong>low pass filter</strong> maintains low frequencies; a
      <strong>high pass filter</strong> maintains high frequencies.</p>
-  <div class="iplot wide" data-widget="filter" data-preset="mix" data-kind="low" data-cut="10"></div>
+  <div class="iplot wide" data-widget="filterwall" data-cut="10"></div>
   <aside class="notes">The signal is the lecture's 2 Hz + 30 Hz. Low-pass at 10 Hz keeps the 2 and throws away the 30; high-pass at 10 Hz does the reverse. The spectrum underneath shows what was removed rather than asking anyone to take it on trust.</aside>
 </section>
 
-<!-- 21 -->
+<!-- 20 -->
 <section>
   <h2>Digital filtering</h2>
   <p class="lead">25 Hz + 50 Hz, buried in random noise <strong>ten times larger</strong> than the
-     sine waves themselves — and pulled back out again.</p>
-  <div class="iplot wide" data-widget="filter" data-preset="buried" data-kind="band" data-cut="35"></div>
+     sine waves. In the time domain there is nothing left to see. In the
+     <strong>frequency domain</strong> the two spikes are still standing there — which is what lets
+     a filter pull the signal back out.</p>
+  <div class="iplot wide" data-widget="buried" data-noise="10"></div>
   <aside class="notes">Note that the amplitude of the noise is ten times that of the 25 Hz and 50 Hz sine waves; therefore, when the sine waves are added to the noise, they are completely buried.
 In the time domain there is nothing to see. In the frequency domain the two spikes are still standing there in plain sight, which is the whole reason for going to the frequency domain at all. Then band-pass around them.</aside>
 </section>
 
-<!-- 22 -->
+<!-- 21 -->
 <section>
   <h2>Digital filtering</h2>
   <div class="cols b top">
@@ -359,7 +343,7 @@ In the time domain there is nothing to see. In the frequency domain the two spik
   </div>
 </section>
 
-<!-- 23 -->
+<!-- 22 -->
 <section>
   <h2>Digital filtering</h2>
   <p class="lead">Noise in motion capture data is <strong>amplified</strong> each time the data are
@@ -370,7 +354,7 @@ In the original figure, noise with an amplitude of 0.01% of the signal was added
 Then press the low-pass button: this is why kinematic data is filtered before it is differentiated.</aside>
 </section>
 
-<!-- 24 -->
+<!-- 23 -->
 <section>
   <h2>Digital filtering</h2>
   <div class="cols b top">
@@ -386,6 +370,16 @@ Then press the low-pass button: this is why kinematic data is filtered before it
   </div>
   <aside class="notes">For our next task we had to go to the scientific literature to see what others have done to determine data landmarks in sensor data. Many techniques exist but none have easily automated drive start/end algorithms.
 So we decided to try and develop our own from previous research that we did. We used wavelets as a signal processing technique to see if different decomposition levels had clearer data landmarks.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Digital filtering</h2>
+  <p class="subhead">Undecimated wavelets on a hull accelerometer — finding the drive in the noise</p>
+  <div class="iplot wide" data-widget="wavelet"></div>
+  <p class="muted center" style="margin-top:.3em;font-size:.52em">Geneau, Commandeur, Brodie, Tsai,
+     Jensen &amp; Klimstra, <em>Sensors</em> <strong>24</strong>(18), 6085 (2024).</p>
+  <aside class="notes">Each level of the transform is a smoother version of the same signal, and because the transform is undecimated every level stays the same length — so an event found at a high level still sits at the sample it happened at. Pull the drive-start level down to 1 and the detector chases sensor noise; push it to 9 and the valley has slid away from the catch. The published pair sits in between. Press "rougher water" and watch which level survives it.</aside>
 </section>
 
 <!-- 25 -->
@@ -418,8 +412,8 @@ Accelerometer analysis — drive initiation: negative valley associated with pea
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20260922e"></script>
-<script src="mobile.js?v=20260922e"></script>
+<script src="annotate.js?v=20260923"></script>
+<script src="mobile.js?v=20260923"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -441,9 +435,9 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="deck-core.js?v=20260922e"></script>
-<script src="signals.js?v=20260922e"></script>
-<script src="deck-tools.js?v=20260922e"></script>
-<script src="fit.js?v=20260922e"></script>
+<script src="deck-core.js?v=20260923"></script>
+<script src="signals.js?v=20260923"></script>
+<script src="deck-tools.js?v=20260923"></script>
+<script src="fit.js?v=20260923"></script>
 </body>
 </html>

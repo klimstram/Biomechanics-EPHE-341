@@ -197,15 +197,17 @@ html[data-theme="dark"] .reveal img[src^="assets/"]{
   font:650 12px/1 ui-sans-serif,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;
   color:var(--muted); letter-spacing:.02em; opacity:.85; pointer-events:none;
 }
-#uvic-badge .mark{
+#uvic-badge span.mark{
   display:inline-flex; align-items:center; justify-content:center;
   width:34px; height:34px; border-radius:9px;
   background:var(--brand); color:var(--bg);
   font-size:13px; font-weight:750; letter-spacing:-.02em;
 }
-html[data-theme="light"] #uvic-badge .mark{ background:var(--brand); color:#fff; }
-#uvic-badge img.mark{ width:auto; height:34px; border-radius:0; background:none; padding:0; }
-html[data-theme="dark"] #uvic-badge img.mark{ filter:brightness(0) invert(1); }
+html[data-theme="light"] #uvic-badge span.mark{ background:var(--brand); color:#fff; }
+#uvic-badge img.mark{ width:auto; height:30px; border-radius:0; background:none; padding:0; }
+#uvic-badge img.mark.dark{ display:none; }
+html[data-theme="dark"] #uvic-badge img.mark.light{ display:none; }
+html[data-theme="dark"] #uvic-badge img.mark.dark{ display:inline-block; }
 #uvic-badge .who{ display:flex; flex-direction:column; gap:3px; }
 #uvic-badge .who b{ color:var(--ink); font-weight:650; font-size:12px; }
 #uvic-badge .who span{ color:var(--muted); font-weight:500; font-size:10.5px; letter-spacing:.06em; }

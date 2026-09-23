@@ -41,13 +41,20 @@ body{
 .top{ display:flex; align-items:flex-start; justify-content:space-between;
   gap:1.2rem; padding:2.4rem 0 0; }
 .crest{ display:flex; align-items:center; gap:.7rem; }
-.crest .mark{
+.crest span.mark{
   display:inline-flex; align-items:center; justify-content:center;
   width:2.5rem; height:2.5rem; border-radius:9px; flex:none;
   background:var(--brand); color:var(--bg); font-weight:700; font-size:.82rem;
   letter-spacing:-.02em;
 }
-html[data-theme="light"] .crest .mark{ color:#fff; }
+html[data-theme="light"] .crest span.mark{ color:#fff; }
+
+/* the real UVic wordmark: colour on a light page, reversed to white on a dark
+   one with the chevron keeping its green and gold. */
+.crest img.mark{ width:auto; height:30px; border-radius:0; background:none; padding:0; }
+.crest img.mark.dark{ display:none; }
+html[data-theme="dark"] .crest img.mark.light{ display:none; }
+html[data-theme="dark"] .crest img.mark.dark{ display:inline-block; }
 .crest b{ display:block; font-size:.95rem; font-weight:650; color:var(--ink-strong); line-height:1.25; }
 .crest span{ display:block; font-size:.7rem; letter-spacing:.09em; text-transform:uppercase;
   color:var(--muted); font-weight:600; }

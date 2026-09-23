@@ -55,12 +55,15 @@ window.EPHE341_LECTURES = [
     path: 'lectures/05-signals',
     blurb: 'Why a sample rate can lie to you, what a Fourier transform is actually for, and how ' +
            'filtering, smoothing and fitting each pull a different trick on the same noise.',
-    slides: 25, widgets: 10, updated: '2026-09-18',
+    slides: 26, widgets: 11, updated: '2026-09-23',
     handout: 'handout.pdf',
     live: ['sample a 10 Hz wave too slowly', 'the four components of a signal',
            'a moving average you can widen', 'polynomial against spline',
-           'time domain beside frequency domain', 'low-pass, high-pass, band-pass',
-           '25 + 50 Hz buried in noise', 'noise amplified by differentiation'] },
+           'time domain beside frequency domain',
+           'four filters side by side, with their own response curves',
+           '25 + 50 Hz buried in ten times the noise, and dug back out',
+           'a measured heel marker differentiated twice',
+           'wavelet event detection on a rowing hull accelerometer'] },
 
   { n: '6', title: 'Linear kinetics 1',
     path: 'lectures/06-linear-kinetics-1',

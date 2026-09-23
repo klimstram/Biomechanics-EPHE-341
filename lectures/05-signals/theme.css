@@ -211,15 +211,20 @@ html[data-theme="dark"] .reveal img[src^="assets/"]{
   font:650 12px/1 ui-sans-serif,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;
   color:var(--muted); letter-spacing:.02em; opacity:.85; pointer-events:none;
 }
-#uvic-badge .mark{
+#uvic-badge span.mark{
   display:inline-flex; align-items:center; justify-content:center;
   width:34px; height:34px; border-radius:9px;
   background:var(--brand); color:var(--bg);
   font-size:13px; font-weight:750; letter-spacing:-.02em;
 }
-html[data-theme="light"] #uvic-badge .mark{ background:var(--brand); color:#fff; }
-#uvic-badge img.mark{ width:auto; height:34px; border-radius:0; background:none; padding:0; }
-html[data-theme="dark"] #uvic-badge img.mark{ filter:brightness(0) invert(1); }
+html[data-theme="light"] #uvic-badge span.mark{ background:var(--brand); color:#fff; }
+/* the real wordmark: full colour on a light page, reversed to white on a dark
+   one with the chevron keeping its green and gold, which is how UVic's own
+   reverse lockup works. */
+#uvic-badge img.mark{ width:auto; height:30px; border-radius:0; background:none; padding:0; }
+#uvic-badge img.mark.dark{ display:none; }
+html[data-theme="dark"] #uvic-badge img.mark.light{ display:none; }
+html[data-theme="dark"] #uvic-badge img.mark.dark{ display:inline-block; }
 #uvic-badge .who{ display:flex; flex-direction:column; gap:3px; }
 #uvic-badge .who b{ color:var(--ink); font-weight:650; font-size:12px; }
 #uvic-badge .who span{ color:var(--muted); font-weight:500; font-size:10.5px; letter-spacing:.06em; }
@@ -492,6 +497,10 @@ html[data-theme="light"] .whitecard img{ box-shadow:none !important; }
    ============================================================ */
 .ictls.g2{ display:grid; grid-template-columns:1fr 1fr; gap:.18em 1.4em; }
 .ictls.g2 .ictl{ grid-template-columns:4.6em 1fr 3.2em; gap:.5em; }
+
+/* a readout or a chip row inside a two-column control grid spans both columns */
+.ictls.g2 > .iread,.ictls.g2 > .icalc-chips,
+.ictls.g2 > .ictl-row,.ictls.g2 > .iseg{ grid-column:1 / -1; }
 
 .ieqin{ display:flex; align-items:center; gap:.5em; }
 .ieqin-l{ color:var(--muted); font-weight:700; font-family:"Cambria Math",Cambria,Georgia,serif; }
