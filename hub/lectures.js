@@ -70,11 +70,14 @@ window.EPHE341_LECTURES = [
     path: 'lectures/06-linear-kinetics-1',
     blurb: 'Newton\u2019s three laws, momentum, and what actually decides how a collision ends \u2014 ' +
            'conservation on one side and the coefficient of restitution on the other.',
-    slides: 45, widgets: 15, updated: '2026-09-18',
+    slides: 54, widgets: 27, updated: '2026-09-25',
     handout: 'handout.pdf',
-    live: ['static against dynamic equilibrium', 'momentum of a player and a cyclist',
-           'a collision lab with every worked example in it', 'the drop test for restitution',
-           'conservation in two dimensions', 'normal and tangent axes',
+    live: ['static equilibrium on all three axes', 'dynamic equilibrium with a velocity trace',
+           'momentum of a player and a cyclist', 'velocity of approach against separation',
+           'the one-dimensional collision, animated', 'a collision lab with every worked example',
+           'the drop test, one real ball at a time', 'conservation in two dimensions',
+           'a strike that draws its own normal and tangent',
+           'the frame of reference turning to normal and tangent',
            'action and reaction on two different bodies'] },
 
   { n: '7', title: 'Linear kinetics 2',

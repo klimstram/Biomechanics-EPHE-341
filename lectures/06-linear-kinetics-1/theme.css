@@ -141,6 +141,16 @@ html[data-theme="dark"] .reveal-viewport{
 .fig figcaption{ font-size:.62em; color:var(--muted); margin-top:.3em; }
 .reveal img{ border:0; box-shadow:none; background:none; margin:0; }
 .imgrow{ display:flex; gap:.7em; justify-content:center; align-items:center; flex-wrap:wrap; }
+
+/* Newton's three laws, one labelled picture each — the right-hand column of
+   the objectives slide, the way the .pptx has it. Linear Kinetics I only. */
+.lawstack{ display:grid; gap:.55em; }
+.lawstack figure{ margin:0; }
+.lawstack figcaption{ margin:0 0 .18em; font-size:.6em; color:var(--muted); }
+.lawstack figure{ margin:0; text-align:center; }
+.lawstack img,.cols .lawstack img,.cols .lawstack .fig img{
+  max-height:15.5vh; max-width:70%; width:auto; height:auto; object-fit:contain; }
+html[data-portrait] .lawstack img,html[data-portrait] .cols .lawstack img{ max-height:132px; }
 .imgrow img{ max-height:52vh; max-width:100%; width:auto; height:auto; object-fit:contain; }
 .cols .imgrow img{ max-height:30vh; }
 
@@ -161,6 +171,12 @@ html[data-theme="dark"] .reveal img[src^="assets/"]{
 .frac{ display:inline-block; vertical-align:middle; text-align:center; margin:0 .25em; }
 .frac > span{ display:block; padding:0 .35em; }
 .frac .den{ border-top:1.4px solid currentColor; }
+/* a radical drawn round whatever is inside it, so the bounce-height formula
+   can be set as real maths instead of shipped as a screenshot */
+.rad{ display:inline-flex; align-items:stretch; }
+.rad > i{ font-style:normal; font-size:2.1em; line-height:.92; margin-right:-.05em; }
+.rad > .rbody{ border-top:1.5px solid currentColor; padding:.22em .4em 0 .22em;
+               display:flex; align-items:center; }
 .transfer{ display:inline-flex; align-items:center; gap:.6em; }
 .transfer .arrow{ color:var(--accent); font-size:1.15em; }
 
@@ -828,3 +844,8 @@ html[data-portrait] .vidgrid{ grid-template-columns:repeat(2,1fr); }
 html[data-portrait] .ivid video{ max-width:100%; }
 /* a video prints as its poster frame; the controls are noise on paper */
 .pdf-page .ivid video,.pdf-page .vidgrid video{ pointer-events:none; }
+
+/* A two-column control strip: the readout and any full-width row span both
+   columns, or a five-slider figure hides its readout down the left. */
+.ictls.g2 > .iread,.ictls.g2 > .icalc-chips,
+.ictls.g2 > .ictl-row,.ictls.g2 > .iseg{ grid-column:1 / -1; }

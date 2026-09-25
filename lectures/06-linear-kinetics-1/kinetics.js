@@ -84,6 +84,22 @@ function label(c, s, x, y, o) {
   c.fillStyle = o.color || C().INK;
   c.fillText(s, x, y); c.restore();
 }
+function subLabel(c, base, sub, x, y, o) {
+  o = o || {};
+  var size = o.size || 16, col = o.color || C().INK;
+  c.save();
+  c.font = '700 ' + size + 'px ui-sans-serif,system-ui,sans-serif';
+  var w = c.measureText(base).width;
+  c.restore();
+  label(c, base, x, y, { color: col, size: size, weight: '700' });
+  label(c, sub, x + w + 1, y + size * 0.30, { color: col, size: size * 0.66, weight: '700' });
+  c.save();
+  c.font = '700 ' + (size * 0.66) + 'px ui-sans-serif,system-ui,sans-serif';
+  var w2 = c.measureText(sub).width;
+  c.restore();
+  return w + 1 + w2;
+}
+
 function ball(c, x, y, r, col, txt) {
   c.save();
   var g = c.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.15, x, y, r);
@@ -120,99 +136,98 @@ function solve(mA, mB, vAi, vBi, e) {
 D.register('equilibrium', function (node, d) {
   var u = build(node);
   var port = D.portrait();
-  var ax = new Axes(u.cv, { w: port ? 460 : 720, h: port ? 380 : 400,
+  var ax = new Axes(u.cv, { w: port ? 460 : 720, h: port ? 440 : 400,
                             padl: 0, padr: 0, padt: 0, padb: 0,
                             xmin: 0, xmax: 1, ymin: 0, ymax: 1, fluid: false });
   var out = readout(u.ctl);
-  var m = 70, push = 0, v0 = parseFloat(d.v || 0);
-  var playing = false, raf, last = 0, xpos = 0;
+  var m = 70, push = 0, side = 0;
 
   function draw() {
     var c = ax.c, K = C(), W = ax.W, H = ax.H;
     ax.clear();
-    var Wt = m * G;
-    var net = push;                       /* the horizontal net force */
-    var a = net / m;
+    var Wt = m * G;                       /* weight, straight down          */
+    var Fz = 0;                           /* vertical: N and W always cancel */
+    var Fx = push, Fy = side;             /* the two horizontal axes         */
+    var res = Math.hypot(Fx, Fy);
+    var a = res / m;
+    var still = res < 0.5;
 
-    /* the ground */
-    var gy = H * 0.74;
+    var gy = H * 0.80, hh = H * 0.56, bx = W * 0.30;
     c.save(); c.strokeStyle = K.SOFT; c.lineWidth = 1.6;
-    c.beginPath(); c.moveTo(30, gy); c.lineTo(W - 30, gy); c.stroke(); c.restore();
+    c.beginPath(); c.moveTo(24, gy); c.lineTo(W * 0.62, gy); c.stroke(); c.restore();
 
-    /* the body, drifting if it has any velocity */
-    var bx = W * 0.30 + xpos, bw = 52, bh = 108;
-    bx = Math.max(90, Math.min(W - 120, bx));
-    c.save();
-    c.fillStyle = K.FILL; c.strokeStyle = K.BLUE; c.lineWidth = 2;
-    c.fillRect(bx - bw / 2, gy - bh, bw, bh);
-    c.strokeRect(bx - bw / 2, gy - bh, bw, bh);
-    c.restore();
-    label(c, fmt(m, 0) + ' kg', bx, gy - bh / 2, { color: K.BLUE, size: 14, align: 'center' });
+    person(c, bx, gy, hh, K.BLUE, K.FILL);
+    var comY = gy - hh * 0.56;
+    label(c, fmt(m, 0) + ' kg', bx, gy - hh - 16, { color: K.BLUE, size: 13, align: 'center' });
 
-    var S = 120 / Math.max(200, Wt);
-    /* weight down, ground reaction up — always equal on flat ground */
-    arrow(c, bx, gy - bh / 2, bx, gy - bh / 2 + Wt * S, { color: K.INK, width: 3.4 });
-    label(c, 'W = ' + fmt(Wt, 0) + ' N', bx + 10, gy - bh / 2 + Wt * S + 12,
+    var FS = 74 / Math.max(300, Wt);
+    /* both act at the centre of mass; they are drawn on a line beside the
+       body, with a leader back to it, so they do not print over the figure */
+    var fx0 = bx + hh * 0.30;
+    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = 0.55; c.lineWidth = 1;
+    c.setLineDash([3, 3]);
+    c.beginPath(); c.moveTo(bx, comY); c.lineTo(fx0, comY); c.stroke(); c.restore();
+    c.save(); c.fillStyle = K.MUT;
+    c.beginPath(); c.arc(bx, comY, 3.5, 0, 7); c.fill(); c.restore();
+    label(c, 'centre of mass', bx - hh * 0.06, comY + 16,
+          { color: K.MUT, size: 11, align: 'right' });
+
+    /* weight down and ground contact up: the only two forces when standing */
+    arrow(c, fx0, comY, fx0, comY + Wt * FS, { color: K.INK, width: 3.6 });
+    label(c, 'W = ' + fmt(Wt, 0) + ' N', fx0 + 10, comY + Wt * FS + 10,
           { color: K.INK, size: 13, plate: true });
-    arrow(c, bx, gy - bh / 2, bx, gy - bh / 2 - Wt * S, { color: K.GRN, width: 3.4 });
-    label(c, 'N = ' + fmt(Wt, 0) + ' N', bx + 10, gy - bh / 2 - Wt * S - 12,
+    arrow(c, fx0, comY, fx0, comY - Wt * FS, { color: K.GRN, width: 3.6 });
+    label(c, 'N = ' + fmt(Wt, 0) + ' N', fx0 + 10, comY - Wt * FS - 10,
           { color: K.GRN, size: 13, plate: true });
-
-    /* whatever horizontal push has been added */
-    if (Math.abs(push) > 0.5) {
-      var L = push * S * 2.2;
-      arrow(c, bx, gy - bh - 22, bx + L, gy - bh - 22, { color: K.ACC, width: 4 });
-      label(c, minus(fmt(push, 0)) + ' N', bx + L / 2, gy - bh - 40,
-            { color: K.ACC, size: 14, align: 'center', plate: true });
+    if (Math.abs(Fx) > 0.5) {
+      arrow(c, bx, comY - hh * 0.10, bx + Fx * FS * 2.0, comY - hh * 0.10,
+            { color: K.ACC, width: 3.6 });
+      label(c, minus(fmt(Fx, 0)) + ' N', bx + Fx * FS * 1.0, comY - hh * 0.10 - 16,
+            { color: K.ACC, size: 13, align: 'center', plate: true });
+    }
+    if (Math.abs(Fy) > 0.5) {
+      /* the third axis, drawn as depth so it is visibly not the vertical one */
+      var dx = Fy * FS * 1.35, dy = -Fy * FS * 0.62;
+      arrow(c, bx, comY + hh * 0.06, bx + dx, comY + hh * 0.06 + dy,
+            { color: K.VIO, width: 3.6 });
+      label(c, minus(fmt(Fy, 0)) + ' N', bx + dx, comY + hh * 0.06 + dy - 14,
+            { color: K.VIO, size: 13, align: 'center', plate: true });
     }
 
-    /* the sums, written out */
-    var sx = W * 0.72, sy = H * 0.22;
-    label(c, 'ΣFᵧ = N − W = 0', sx, sy, { color: K.GRN, size: 17 });
-    label(c, 'ΣFₓ = ' + minus(fmt(net, 0)) + ' N', sx, sy + 34,
-          { color: Math.abs(net) < 0.5 ? K.GRN : K.ACC, size: 17 });
-    label(c, 'a = ΣF / m = ' + num(a, 2) + ' m/s²', sx, sy + 68,
-          { color: Math.abs(a) < 0.005 ? K.GRN : K.ACC, size: 17 });
+    /* the three sums, which is what static equilibrium actually asserts */
+    var sx = W * 0.64, sy = H * 0.26, lh = 40;
+    label(c, 'static equilibrium', sx, sy - 44, { color: K.MUT, size: 13 });
+    function line(i, sub, val) {
+      var ok = Math.abs(val) < 0.5, y = sy + i * lh;
+      var w = subLabel(c, '\u03a3F', sub, sx, y,
+                       { size: 17, color: ok ? K.GRN : K.ACC });
+      label(c, ' = ' + minus(fmt(val, 0)) + ' N', sx + w + 4, y,
+            { color: ok ? K.GRN : K.ACC, size: 17 });
+      label(c, ok ? '\u2713' : '\u2717', sx - 22, y,
+            { color: ok ? K.GRN : K.ACC, size: 18 });
+    }
+    line(0, 'x', Fx);
+    line(1, 'y', Fy);
+    line(2, 'z', Fz);
+    label(c, 'a = \u03a3F / m = ' + fmt(a, 2) + ' m/s\u00b2', sx, sy + 3 * lh + 14,
+          { color: still ? K.GRN : K.ACC, size: 17 });
 
-    var state = Math.abs(net) > 0.5
-      ? '<b class="r">accelerating</b> — not in equilibrium'
-      : (Math.abs(v0) > 0.01 ? '<b class="g">dynamic equilibrium</b> — moving, and staying that way'
-                             : '<b class="g">static equilibrium</b> — at rest, and staying that way');
     out.innerHTML =
-      state +
-      '<span class="hint">' +
-      (Math.abs(net) > 0.5
-        ? 'A net force is the only thing that changes a state of motion. Take it away and whatever ' +
-          'the object was doing, it carries on doing.'
-        : 'The force diagram for a body standing still and a body gliding at constant velocity is ' +
-          'the <b>same diagram</b>. Nothing in the forces distinguishes them, which is exactly what ' +
-          'the first law says.') +
-      '</span>';
+      (still ? '<b class="g">static equilibrium</b> — at rest, and staying that way'
+             : '<b class="r">not in equilibrium</b> — one of the three sums is not zero') +
+      '<span class="hint">Equilibrium is not one equation, it is <b>three</b>: the forces have to ' +
+      'sum to zero along every axis independently. Standing still there are only two forces in ' +
+      'play — the weight the Earth pulls down with, and the contact force the ground pushes up ' +
+      'with — and because they are equal and opposite, all three sums come out zero at once. ' +
+      'Add a push along any one axis and that sum breaks on its own, and the body accelerates ' +
+      'in that direction and no other.</span>';
   }
 
-  slider(u.ctl, 'Body mass', 20, 140, 1, m, function (v) { return fmt(v, 0) + ' kg'; },
-    function (v) { m = v; draw(); }, { scale: 4, tick: function (v) { return fmt(v, 0); } });
-  slider(u.ctl, 'Net horizontal force', -200, 200, 5, push,
-    function (v) { return minus(fmt(v, 0)) + ' N'; }, function (v) { push = v; draw(); },
-    { scale: 5, tick: function (v) { return minus(fmt(v, 0)); } });
-  if (d.drift === '1') {
-    var r = ctlRow(u.ctl);
-    var pb = playBtn(r, '▶ Let it go');
-    pb.addEventListener('click', function () {
-      playing = !playing;
-      pb.textContent = playing ? '❚❚ Pause' : '▶ Let it go';
-      if (playing) { last = 0; raf = requestAnimationFrame(loop); } else cancelAnimationFrame(raf);
-    });
-    function loop(ts) {
-      if (!last) last = ts;
-      var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
-      xpos += (v0 + push / m) * dt * 40;
-      if (xpos > 260) xpos = -60;
-      draw();
-      raf = requestAnimationFrame(loop);
-    }
-    node._stop = function () { playing = false; cancelAnimationFrame(raf); pb.textContent = '▶ Let it go'; };
-  }
+  slider(u.ctl, 'Push along x', -200, 200, 5, push,
+    function (v) { return minus(fmt(v, 0)) + ' N'; }, function (v) { push = v; draw(); });
+  slider(u.ctl, 'Push along y', -200, 200, 5, side,
+    function (v) { return minus(fmt(v, 0)) + ' N'; }, function (v) { side = v; draw(); });
+  u.ctl.classList.add('g2');
   node._draw = draw;
   draw();
 });
@@ -479,15 +494,14 @@ D.register('drop', function (node, d) {
         by = gy - Math.max(0, hh) * PX;
       }
     } else { bx = W * 0.26; by = gy - h0 * PX; }
-    c.save();
-    c.fillStyle = K.ACC; c.globalAlpha = 0.35;
-    c.beginPath(); c.arc(bx, by - r, r, 0, 7); c.fill();
-    c.globalAlpha = 1; c.strokeStyle = K.ACC; c.lineWidth = 2.4;
-    c.beginPath(); c.arc(bx, by - r, r, 0, 7); c.stroke();
-    c.restore();
+    /* it is a named ball, so it is drawn as that ball; the spin makes the
+       fall and the rebound read as motion rather than a jumping dot */
+    sportBall(c, bx, by - r, r, kind, (anim || 0) * 2.4);
 
-    label(c, 'e = √( bounce / drop )', W * 0.5, H * 0.045,
-          { color: K.MUT, size: 15, align: 'center' });
+    label(c, 'e = √( bounce height / drop height )', W - 26, H * 0.055,
+          { color: K.MUT, size: 15, align: 'right', plate: true });
+    label(c, BALLS.filter(function (q) { return q.k === kind; })[0].name,
+          W - 26, H * 0.125, { color: K.INK, size: 16, align: 'right', plate: true });
 
     out.innerHTML =
       'e = √(' + fmt(h1, 2) + ' / ' + fmt(h0, 2) + ') = <b class="r">' + fmt(e, 2) + '</b>' +
@@ -534,23 +548,23 @@ D.register('drop', function (node, d) {
    ============================================================ */
 D.register('collide2d', function (node, d) {
   var u = build(node);
-  var wrap = u.cv.parentNode.parentNode;
-  wrap.classList.add('isplit');
-  var side = el('div', 'icalc');
-  wrap.insertBefore(side, u.ctl);
-
   var port = D.portrait();
-  var ax = new Axes(u.cv, { w: port ? 460 : 620, h: port ? 360 : 350,
+  var ax = new Axes(u.cv, { w: port ? 460 : 760, h: port ? 360 : 300,
                             padl: 0, padr: 0, padt: 0, padb: 0,
                             xmin: 0, xmax: 1, ymin: 0, ymax: 1, fluid: false });
   var out = readout(u.ctl);
   var m = 0.1, vAi = 5, vAf = 2, ang = 30;
   var step = parseInt(d.step || 3, 10);
 
+  /* His board carries the momentum terms to two decimals — 0.17 kg·m/s for
+     A's x momentum — and then divides. Solving exactly instead gives 3.27 and
+     3.42 where the slide says 3.3 and 3.45, so the figure rounds where he
+     rounds and the two agree. */
+  function r2(v) { return Math.round(v * 100) / 100; }
   function state() {
     var th = ang * Math.PI / 180;
     var afx = vAf * Math.cos(th), afy = vAf * Math.sin(th);
-    var bfx = (m * vAi - m * afx) / m, bfy = (0 - m * afy) / m;
+    var bfx = (r2(m * vAi) - r2(m * afx)) / m, bfy = (0 - r2(m * afy)) / m;
     return { afx: afx, afy: afy, bfx: bfx, bfy: bfy,
              vBf: Math.hypot(bfx, bfy),
              thB: Math.atan2(bfy, bfx) * 180 / Math.PI };
@@ -560,7 +574,7 @@ D.register('collide2d', function (node, d) {
     var c = ax.c, K = C(), W = ax.W, H = ax.H;
     ax.clear();
     var S = state();
-    var ox = W * 0.36, oy = H * 0.52, SC = 34;
+    var ox = W * 0.30, oy = H * 0.54, SC = 36;
 
     c.save(); c.strokeStyle = K.SOFT; c.lineWidth = 1.2; c.setLineDash([5, 4]);
     c.beginPath(); c.moveTo(24, oy); c.lineTo(W - 24, oy); c.stroke();
@@ -603,36 +617,6 @@ D.register('collide2d', function (node, d) {
       }
     }
 
-    var html = '<div class="icalc-h">' +
-      ['the set-up', 'A leaves at ' + fmt(ang, 0) + '°', 'momentum in x and y',
-       'magnitude and direction'][step - 1] + '</div>';
-    if (step === 1) {
-      html += '<div class="icalc-t">Each ball has a mass of ' + fmt(m, 1) + ' kg and ball B was ' +
-        'at rest. What is the speed and direction of ball B after the collision?</div>' +
-        '<div class="icalc-work"><div class="icalc-eq">Pₒ = Pᶠ</div>' +
-        '<div class="icalc-eq">Pₒₓ = Pᶠₓ , Pₒᵧ = Pᶠᵧ</div></div>';
-    } else if (step === 2) {
-      html += '<div class="icalc-t">Break the momentum into components. Nothing is conserved ' +
-        '“diagonally” — x is conserved, and y is conserved, separately.</div>';
-    } else if (step === 3) {
-      html += '<div class="icalc-work">' +
-        '<div class="icalc-t">Pₒₓ = Pᶠₓ</div>' +
-        '<div class="icalc-eq">(' + fmt(m, 1) + ')(' + fmt(vAi, 0) + ') + 0 = (' + fmt(m, 1) +
-          ')(' + fmt(vAf, 0) + '·cos' + fmt(ang, 0) + ') + (' + fmt(m, 1) + ')Vʙᶠₓ</div>' +
-        '<div class="icalc-eq">Vʙᶠₓ = <b>' + num(S.bfx, 2) + '</b> m/s</div>' +
-        '<div class="icalc-t" style="margin-top:.5em">Pₒᵧ = Pᶠᵧ</div>' +
-        '<div class="icalc-eq">0 = (' + fmt(m, 1) + ')(' + fmt(vAf, 0) + '·sin' + fmt(ang, 0) +
-          ') + (' + fmt(m, 1) + ')Vʙᶠᵧ</div>' +
-        '<div class="icalc-eq">Vʙᶠᵧ = <b>' + num(S.bfy, 2) + '</b> m/s</div></div>';
-    } else {
-      html += '<div class="icalc-work">' +
-        '<div class="icalc-eq">Vʙᶠ² = Vₓ² + Vᵧ²</div>' +
-        '<div class="icalc-eq">Vʙᶠ = <b class="r">' + fmt(S.vBf, 2) + '</b> m/s</div>' +
-        '<div class="icalc-t" style="margin-top:.5em">tanθ = Vᵧ / Vₓ</div>' +
-        '<div class="icalc-eq">θ = <b class="r">' + fmt(Math.abs(S.thB), 2) +
-          '°</b> below the x axis</div></div>';
-    }
-    side.innerHTML = html;
 
     out.innerHTML =
       'B leaves at <b class="r">' + fmt(S.vBf, 2) + ' m/s</b>, ' +
@@ -651,104 +635,6 @@ D.register('collide2d', function (node, d) {
     function (v) { vAf = v; draw(); }, { scale: 3, tick: function (v) { return fmt(v, 0); } });
   slider(u.ctl, 'A deflected by', 0, 80, 1, ang, function (v) { return fmt(v, 0) + '°'; },
     function (v) { ang = v; draw(); }, { scale: 3, tick: function (v) { return fmt(v, 0); } });
-  node._draw = draw;
-  draw();
-});
-
-
-/* ============================================================
-   6. NORMAL AND TANGENT
-   When the two balls do not meet head on, the useful axes are not x and y
-   but the line joining their centres and the line at right angles to it.
-   Along the tangent nothing happens at all; along the normal it is the
-   one-dimensional problem again.
-   ============================================================ */
-D.register('normtan', function (node, d) {
-  var u = build(node);
-  var port = D.portrait();
-  var ax = new Axes(u.cv, { w: port ? 460 : 760, h: port ? 400 : 420,
-                            padl: 0, padr: 0, padt: 0, padb: 0,
-                            xmin: 0, xmax: 1, ymin: 0, ymax: 1, fluid: false });
-  var out = readout(u.ctl);
-  var contact = 30;          /* angle of the line of centres, degrees */
-  var vA = 4, angA = 10, e = 1, after = false;
-
-  function draw() {
-    var c = ax.c, K = C(), W = ax.W, H = ax.H;
-    ax.clear();
-    var n = contact * Math.PI / 180;                 /* normal direction */
-    var nx = Math.cos(n), ny = -Math.sin(n);
-    var tx = -ny, ty = nx;                           /* tangent, at right angles */
-    var a = angA * Math.PI / 180;
-    var ax0 = vA * Math.cos(a), ay0 = vA * Math.sin(a);
-
-    /* A's velocity split along the two axes */
-    var an = ax0 * nx + ay0 * (-ny), at = ax0 * tx + ay0 * (-ty);
-    /* B starts at rest. Along the normal it is a one-dimensional collision of
-       equal masses; along the tangent neither ball changes at all. */
-    var anF = after ? (an * (1 - e) / 2) : an;
-    var bnF = after ? (an * (1 + e) / 2) : 0;
-
-    var ox = W * 0.44, oy = H * 0.52, SC = 30, R = 34;
-    var cxB = ox + nx * R * 2, cyB = oy + ny * R * 2;
-
-    /* the two axes through the contact point */
-    var cpx = (ox + cxB) / 2, cpy = (oy + cyB) / 2;
-    function ray(dx, dy, col, txt) {
-      c.save(); c.strokeStyle = col; c.lineWidth = 1.4; c.setLineDash([6, 5]);
-      c.beginPath();
-      c.moveTo(cpx - dx * 200, cpy - dy * 200); c.lineTo(cpx + dx * 200, cpy + dy * 200);
-      c.stroke(); c.restore();
-      label(c, txt, cpx + dx * 150, cpy + dy * 150 - 12,
-            { color: col, size: 12, weight: '700', align: 'center', plate: true });
-    }
-    ray(nx, ny, K.ACC, 'normal');
-    ray(tx, ty, K.GRN, 'tangent');
-
-    ball(c, ox, oy, R, K.BLUE, 'A');
-    ball(c, cxB, cyB, R, K.ORG, 'B');
-
-    if (!after) {
-      arrow(c, ox - ax0 * SC, oy + ay0 * SC, ox, oy, { color: K.BLUE, width: 3.4 });
-      label(c, fmt(vA, 1) + ' m/s', ox - ax0 * SC - 6, oy + ay0 * SC - 14,
-            { color: K.BLUE, size: 13, align: 'right', plate: true });
-      /* the split */
-      arrow(c, ox, oy, ox + nx * an * SC, oy + ny * an * SC, { color: K.ACC, width: 2.6 });
-      arrow(c, ox, oy, ox + tx * at * SC, oy + ty * at * SC, { color: K.GRN, width: 2.6 });
-      label(c, 'normal ' + fmt(an, 2), ox + nx * an * SC + 8, oy + ny * an * SC,
-            { color: K.ACC, size: 12, plate: true });
-      label(c, 'tangent ' + fmt(at, 2), ox + tx * at * SC + 8, oy + ty * at * SC,
-            { color: K.GRN, size: 12, plate: true });
-    } else {
-      /* A keeps its tangential part and whatever the normal collision left it */
-      var afx = nx * anF + tx * at, afy = ny * anF + ty * at;
-      arrow(c, ox, oy, ox + afx * SC, oy + afy * SC, { color: K.BLUE, width: 3.4 });
-      label(c, 'A ' + fmt(Math.hypot(anF, at), 2) + ' m/s', ox + afx * SC + 8, oy + afy * SC,
-            { color: K.BLUE, size: 13, plate: true });
-      var bfx = nx * bnF, bfy = ny * bnF;
-      arrow(c, cxB, cyB, cxB + bfx * SC, cyB + bfy * SC, { color: K.ORG, width: 3.4 });
-      label(c, 'B ' + fmt(Math.abs(bnF), 2) + ' m/s', cxB + bfx * SC + 8, cyB + bfy * SC,
-            { color: K.ORG, size: 13, plate: true });
-    }
-
-    out.innerHTML =
-      (after ? 'after the collision' : 'before the collision') +
-      ' &nbsp;·&nbsp; normal <b class="r">' + fmt(an, 2) +
-      '</b> m/s &nbsp;·&nbsp; tangent <b class="g">' + fmt(at, 2) + '</b> m/s' +
-      '<span class="hint">The balls can only push each other along the line joining their centres, ' +
-      'so the <b class="g">tangential</b> component of each ball is untouched by the collision — ' +
-      'Newton’s first law, one component at a time. Everything that happens, happens along the ' +
-      '<b class="r">normal</b>, and along that one line it is the same one-dimensional problem as ' +
-      'before. Swing the contact angle and watch how much of the approach actually collides.</span>';
-  }
-
-  var r = ctlRow(u.ctl);
-  seg(r, [['b', 'before'], ['a', 'after']], 'b', function (v) { after = v === 'a'; draw(); });
-  u.ctl.classList.add('g2');
-  slider(u.ctl, 'Line of centres', -60, 60, 1, contact, function (v) { return fmt(v, 0) + '°'; },
-    function (v) { contact = v; draw(); }, { scale: 3, tick: function (v) { return fmt(v, 0); } });
-  slider(u.ctl, 'A approaches at', -40, 40, 1, angA, function (v) { return fmt(v, 0) + '°'; },
-    function (v) { angA = v; draw(); }, { scale: 3, tick: function (v) { return fmt(v, 0); } });
   node._draw = draw;
   draw();
 });
@@ -831,6 +717,848 @@ D.register('reaction', function (node, d) {
   node._draw = draw;
   draw();
 });
+
+/* ---------------- a standing figure, drawn ----------------
+   Slide 5 is about a person standing still, so the body on the canvas is a
+   person and not a grey box. Height is in pixels from feet to the top of the
+   head; everything else is a fraction of it. */
+function person(c, x, footY, h, col, fill) {
+  var headR = h * 0.085, hipY = footY - h * 0.47, shY = footY - h * 0.79;
+  c.save();
+  c.strokeStyle = col; c.lineWidth = Math.max(2.4, h * 0.026);
+  c.lineCap = 'round'; c.lineJoin = 'round';
+  if (fill) { c.fillStyle = fill; }
+  /* head */
+  c.beginPath(); c.arc(x, footY - h + headR, headR, 0, 7);
+  if (fill) c.fill();
+  c.stroke();
+  /* trunk */
+  c.beginPath(); c.moveTo(x, footY - h + headR * 2); c.lineTo(x, hipY); c.stroke();
+  /* arms, hanging */
+  c.beginPath();
+  c.moveTo(x, shY); c.lineTo(x - h * 0.13, shY + h * 0.17); c.lineTo(x - h * 0.10, hipY + h * 0.05);
+  c.stroke();
+  c.beginPath();
+  c.moveTo(x, shY); c.lineTo(x + h * 0.13, shY + h * 0.17); c.lineTo(x + h * 0.10, hipY + h * 0.05);
+  c.stroke();
+  /* legs */
+  c.beginPath();
+  c.moveTo(x, hipY); c.lineTo(x - h * 0.07, footY - h * 0.22); c.lineTo(x - h * 0.08, footY);
+  c.stroke();
+  c.beginPath();
+  c.moveTo(x, hipY); c.lineTo(x + h * 0.07, footY - h * 0.22); c.lineTo(x + h * 0.08, footY);
+  c.stroke();
+  c.restore();
+  return { hipY: hipY, shY: shY, comY: footY - h * 0.56 };
+}
+
+/* ---------------- sport balls, drawn as themselves ----------------
+   The drop-test figure names a specific ball, so it should look like that
+   ball: a basketball has its seams, a tennis ball its curve, a golf ball its
+   dimples. Rotation is carried through so a bouncing ball visibly spins. */
+function sportBall(c, x, y, r, kind, spin) {
+  spin = spin || 0;
+  c.save();
+  c.translate(x, y); c.rotate(spin);
+  var body = { basket: '#d1752b', tennis: '#d8e63c', golf: '#f4f4f0',
+               squash: '#2b2b30', baseb: '#f6f2e8' }[kind] || '#888';
+  var line = { basket: '#4a2a12', tennis: '#ffffff', golf: '#b9b9ad',
+               squash: '#6a6a72', baseb: '#c3362f' }[kind] || '#444';
+  var g = c.createRadialGradient(-r * 0.35, -r * 0.4, r * 0.1, 0, 0, r * 1.05);
+  g.addColorStop(0, '#ffffff'); g.addColorStop(0.22, body); g.addColorStop(1, body);
+  c.fillStyle = g;
+  c.beginPath(); c.arc(0, 0, r, 0, 7); c.fill();
+  c.save(); c.beginPath(); c.arc(0, 0, r, 0, 7); c.clip();
+  c.strokeStyle = line; c.lineWidth = Math.max(1, r * 0.075); c.lineCap = 'round';
+  if (kind === 'basket') {
+    c.beginPath(); c.moveTo(0, -r); c.lineTo(0, r); c.stroke();
+    c.beginPath(); c.moveTo(-r, 0); c.lineTo(r, 0); c.stroke();
+    c.beginPath(); c.ellipse(-r * 0.98, 0, r * 0.62, r, 0, 0, 7); c.stroke();
+    c.beginPath(); c.ellipse(r * 0.98, 0, r * 0.62, r, 0, 0, 7); c.stroke();
+  } else if (kind === 'tennis') {
+    c.beginPath(); c.ellipse(-r * 1.05, 0, r * 0.72, r * 1.02, 0, 0, 7); c.stroke();
+    c.beginPath(); c.ellipse(r * 1.05, 0, r * 0.72, r * 1.02, 0, 0, 7); c.stroke();
+  } else if (kind === 'golf') {
+    c.fillStyle = line; c.globalAlpha = 0.55;
+    for (var i = -3; i <= 3; i++) {
+      for (var j = -3; j <= 3; j++) {
+        var dx = i * r * 0.30 + (j % 2 ? r * 0.15 : 0), dy = j * r * 0.28;
+        if (dx * dx + dy * dy > r * r * 0.82) continue;
+        c.beginPath(); c.arc(dx, dy, r * 0.085, 0, 7); c.fill();
+      }
+    }
+    c.globalAlpha = 1;
+  } else if (kind === 'squash') {
+    c.fillStyle = '#e8c93a';
+    c.beginPath(); c.arc(r * 0.30, -r * 0.24, r * 0.16, 0, 7); c.fill();
+  } else if (kind === 'baseb') {
+    c.lineWidth = Math.max(1, r * 0.055);
+    [-1, 1].forEach(function (s) {
+      c.beginPath();
+      c.ellipse(s * r * 1.02, 0, r * 0.62, r * 0.98, 0, 0, 7);
+      c.stroke();
+      for (var k = -3; k <= 3; k++) {
+        var yy = k * r * 0.22, xx = s * (r * 0.40 + Math.abs(yy) * 0.18);
+        c.beginPath(); c.moveTo(xx - s * r * 0.10, yy - r * 0.05);
+        c.lineTo(xx + s * r * 0.10, yy + r * 0.05); c.stroke();
+      }
+    });
+  }
+  c.restore();
+  c.strokeStyle = 'rgba(0,0,0,.30)'; c.lineWidth = Math.max(1, r * 0.06);
+  c.beginPath(); c.arc(0, 0, r, 0, 7); c.stroke();
+  c.restore();
+}
+
+
+/* ============================================================
+   DYNAMIC EQUILIBRIUM
+   The first law's other half, and the harder half to believe: a body moving
+   at constant velocity has no net force on it. The figure keeps a drive
+   force and a resistance on screen with a velocity trace underneath, so the
+   claim is testable — flatten the sum and the trace goes flat, unbalance it
+   by 5 N and it does not.
+   ============================================================ */
+D.register('dyneq', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 460 : 760, h: port ? 560 : 430,
+                            padl: 0, padr: 0, padt: 0, padb: 0,
+                            xmin: 0, xmax: 1, ymin: 0, ymax: 1, fluid: false });
+  var out = readout(u.ctl);
+  var m = 80, drive = 60, drag = 60, v = 6;
+  var playing = false, raf, last = 0, t = 0, trace = [], xpos = 0;
+
+  function reset() { t = 0; trace = []; v = 6; xpos = 0; }
+
+  function draw() {
+    var c = ax.c, K = C(), W = ax.W, H = ax.H;
+    ax.clear();
+    var net = drive - drag, a = net / m;
+    var balanced = Math.abs(net) < 0.5;
+
+    /* ---- the skater, on a line, with the two horizontal forces ---- */
+    var topH = port ? H * 0.40 : H * 0.50;
+    var gy = topH * 0.90;
+    c.save(); c.strokeStyle = K.SOFT; c.lineWidth = 1.6;
+    c.beginPath(); c.moveTo(24, gy); c.lineTo(W - 24, gy); c.stroke(); c.restore();
+
+    /* the figure travels between two margins wide enough that neither force
+       label can run off the side of the canvas */
+    var lm = W * 0.30, rm = W * 0.74;
+    var bx = lm + (xpos % Math.max(40, rm - lm));
+    var hh = topH * 0.70;
+    person(c, bx, gy, hh, K.BLUE, K.FILL);
+    var comY = gy - hh * 0.58;
+
+    /* the arrows start clear of the arms so they read as forces on the body
+       rather than lines drawn through it */
+    var FS = (W * 0.16) / 120, off = hh * 0.15;
+    arrow(c, bx + off, comY, bx + off + drive * FS, comY, { color: K.GRN, width: 4 });
+    label(c, 'drive ' + fmt(drive, 0) + ' N', bx + off + drive * FS + 8, comY - 15,
+          { color: K.GRN, size: 13, plate: true });
+    arrow(c, bx - off, comY + 26, bx - off - drag * FS, comY + 26, { color: K.ACC, width: 4 });
+    label(c, 'resistance ' + fmt(drag, 0) + ' N', bx - off - drag * FS - 8, comY + 42,
+          { color: K.ACC, size: 13, align: 'right', plate: true });
+
+    label(c, 'ΣF = ' + fmt(drive, 0) + ' − ' + fmt(drag, 0) + ' = ' + num(net, 0) + ' N',
+          W - 30, 26, { color: balanced ? K.GRN : K.ACC, size: 16, align: 'right' });
+    label(c, 'a = ΣF / m = ' + num(a, 2) + ' m/s²',
+          W - 30, 50, { color: balanced ? K.GRN : K.ACC, size: 16, align: 'right' });
+
+    /* ---- the velocity trace, which is where the claim is settled ---- */
+    var lo = 0, hi = 14;
+    ax.pl = 60; ax.pr = 26; ax.pt = topH + 22; ax.pb = 40;
+    ax.setRange(0, 12, lo, hi);
+    ax.frame({ grid: true, xticks: [0, 3, 6, 9, 12], yticks: [0, 4, 8, 12],
+               xlabel: 'time (s)', ylabel: 'velocity (m/s)', ysize: 12, ylabelx: 12,
+               xfmt: function (q) { return fmt(q, 0); },
+               yfmt: function (q) { return fmt(q, 0); } });
+    ax.poly([[0, 6], [12, 6]], { color: K.SOFT, width: 1.2, dash: [4, 4] });
+    if (trace.length > 1) ax.poly(trace, { color: balanced ? K.GRN : K.ACC, width: 2.8 });
+    else {
+      ax.dots([[0, v]], { color: balanced ? K.GRN : K.ACC, r: 4 });
+      label(c, 'press play', ax.X(0.5), ax.Y(v) - 16, { color: K.MUT, size: 12 });
+    }
+
+    out.innerHTML =
+      (balanced ? '<b class="g">dynamic equilibrium</b> — moving, and staying that way'
+                : '<b class="r">not in equilibrium</b> — the velocity is changing') +
+      ' &nbsp;·&nbsp; v = <b>' + fmt(v, 2) + ' m/s</b>' +
+      '<span class="hint">Uniform motion means <b>constant velocity</b>, and constant velocity ' +
+      'means zero acceleration, which by F = ma means zero net force. So the force diagram here ' +
+      'is the same one as for a body standing still — equal and opposite, summing to nothing. ' +
+      'Motion does not need a force to keep it going; only a <b>change</b> of motion does. ' +
+      'Nudge the drive away from the resistance and watch the trace tilt.</span>';
+  }
+
+  slider(u.ctl, 'Drive force', 0, 120, 1, drive, function (q) { return fmt(q, 0) + ' N'; },
+    function (q) { drive = q; draw(); });
+  slider(u.ctl, 'Resistance', 0, 120, 1, drag, function (q) { return fmt(q, 0) + ' N'; },
+    function (q) { drag = q; draw(); });
+  u.ctl.classList.add('g2');
+  var r = ctlRow(u.ctl);
+  var pb = playBtn(r, '▶ Let it run');
+  var rb = el('button', 'ibtn', 'Reset');
+  rb.setAttribute('data-unsafe', '1');
+  rb.addEventListener('click', function () { reset(); draw(); });
+  r.appendChild(rb);
+  pb.addEventListener('click', function () {
+    playing = !playing;
+    pb.textContent = playing ? '❚❚ Pause' : '▶ Let it run';
+    if (playing) { last = 0; raf = requestAnimationFrame(loop); } else cancelAnimationFrame(raf);
+  });
+  function loop(ts) {
+    if (!last) last = ts;
+    var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+    t += dt;
+    v = Math.max(0, Math.min(14, v + (drive - drag) / m * dt));
+    xpos += v * 9 * dt;
+    trace.push([Math.min(12, t), v]);
+    if (t > 12) { t = 0; trace = []; }
+    draw();
+    if (playing) raf = requestAnimationFrame(loop);
+  }
+  node._stop = function () { playing = false; cancelAnimationFrame(raf); pb.textContent = '▶ Let it run'; };
+  node._draw = draw;
+  draw();
+});
+
+
+/* ============================================================
+   VELOCITY OF APPROACH AND VELOCITY OF SEPARATION
+   The two quantities the coefficient of restitution is built out of, drawn
+   as what they are: the closing speed before, the opening speed after. e is
+   the ratio of the second to the first and nothing more.
+   ============================================================ */
+D.register('approach', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 460 : 820, h: port ? 520 : 420,
+                            padl: 0, padr: 0, padt: 0, padb: 0,
+                            xmin: 0, xmax: 1, ymin: 0, ymax: 1, fluid: false });
+  var out = readout(u.ctl);
+  var mA = 1, mB = 1, vAi = 3, vBi = -1, e = 0.6;
+  var playing = false, raf, last = 0, ph = 0;
+
+  function draw() {
+    var c = ax.c, K = C(), W = ax.W, H = ax.H;
+    ax.clear();
+    var S = solve(mA, mB, vAi, vBi, e);
+    var app = vAi - vBi, sep = S.vBf - S.vAf;
+    var vmax = Math.max(1e-6, Math.abs(vAi), Math.abs(vBi), Math.abs(S.vAf), Math.abs(S.vBf));
+    var VS = Math.min(64, (W * 0.16) / vmax);
+    var R = port ? 24 : 30;
+
+    function row(yy, title, va, vb, gap, close, tag) {
+      label(c, title, 26, yy - R - 46, { color: K.MUT, size: 13 });
+      c.save(); c.strokeStyle = K.SOFT; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(26, yy + R + 30); c.lineTo(W - 26, yy + R + 30); c.stroke();
+      c.restore();
+      var xA = W * 0.5 - gap, xB = W * 0.5 + gap;
+      ball(c, xA, yy, R, K.BLUE, 'A');
+      ball(c, xB, yy, R, K.ORG, 'B');
+      if (Math.abs(va) > 1e-3)
+        arrow(c, xA + Math.sign(va) * R * 0.5, yy, xA + Math.sign(va) * R * 0.5 + va * VS, yy,
+              { color: K.BLUE, width: 3.2 });
+      if (Math.abs(vb) > 1e-3)
+        arrow(c, xB + Math.sign(vb) * R * 0.5, yy, xB + Math.sign(vb) * R * 0.5 + vb * VS, yy,
+              { color: K.ORG, width: 3.2 });
+      label(c, num(va, 2) + ' m/s', xA, yy - R - 14, { color: K.BLUE, size: 13, align: 'center' });
+      label(c, num(vb, 2) + ' m/s', xB, yy - R - 14, { color: K.ORG, size: 13, align: 'center' });
+
+      /* the closing (or opening) speed, as a measured span between them */
+      var by = yy + R + 16, col = tag === 'approach' ? K.ACC : K.GRN;
+      var L = Math.min(W * 0.34, Math.abs(close) * VS);
+      var mx = W * 0.5;
+      c.save(); c.strokeStyle = col; c.lineWidth = 1.4; c.setLineDash([4, 3]);
+      [xA, xB].forEach(function (x) {
+        c.beginPath(); c.moveTo(x, yy + R + 2); c.lineTo(x, by); c.stroke();
+      });
+      c.restore();
+      if (L > 4) {
+        arrow(c, mx - L / 2, by, mx + L / 2, by, { color: col, width: 2.6 });
+        arrow(c, mx + L / 2, by, mx - L / 2, by, { color: col, width: 2.6 });
+      }
+      label(c, (tag === 'approach' ? 'velocity of approach  ' : 'velocity of separation  ') +
+               fmt(Math.abs(close), 2) + ' m/s',
+            mx, by + 20, { color: col, size: 13.5, align: 'center' });
+    }
+
+    var gapBefore = W * 0.15 + (1 - ph) * W * 0.06;
+    row(H * (port ? 0.17 : 0.24), 'Before the collision', vAi, vBi, gapBefore, app, 'approach');
+    row(H * (port ? 0.76 : 0.82), 'After the collision', S.vAf, S.vBf, W * 0.21, sep, 'separate');
+
+    /* the ratio, in the band between the two rows */
+    label(c, 'e  =  velocity of separation / velocity of approach',
+          W * 0.5, H * (port ? 0.44 : 0.50), { color: K.MUT, size: 14, align: 'center' });
+    label(c, '=  ' + fmt(Math.abs(sep), 2) + ' / ' + fmt(Math.abs(app), 2) +
+             '  =  ' + fmt(e, 2),
+          W * 0.5, H * (port ? 0.50 : 0.585), { color: K.INK, size: 18, align: 'center' });
+
+    out.innerHTML =
+      'approach <b class="r">' + fmt(Math.abs(app), 2) + ' m/s</b>' +
+      ' &nbsp;·&nbsp; separation <b class="g">' + fmt(Math.abs(sep), 2) + ' m/s</b>' +
+      ' &nbsp;·&nbsp; e = <b>' + fmt(e, 2) + '</b>' +
+      '<span class="hint">Neither quantity belongs to one ball: the velocity of approach is how ' +
+      'fast the <b>gap is closing</b>, the difference of the two velocities. Because e is a ratio ' +
+      'of two speeds it has <b>no units</b>, and it cannot exceed 1 without energy coming from ' +
+      'somewhere.</span>';
+  }
+
+  u.ctl.classList.add('g2');
+  slider(u.ctl, 'v<sub>Ai</sub>', -5, 5, 0.1, vAi, function (q) { return num(q, 1) + ' m/s'; },
+    function (q) { vAi = q; draw(); });
+  slider(u.ctl, 'v<sub>Bi</sub>', -5, 5, 0.1, vBi, function (q) { return num(q, 1) + ' m/s'; },
+    function (q) { vBi = q; draw(); });
+  slider(u.ctl, 'restitution', 0, 1, 0.05, e, function (q) { return fmt(q, 2); },
+    function (q) { e = q; draw(); });
+  node._draw = draw;
+  draw();
+});
+
+
+/* ============================================================
+   THE ONE-DIMENSIONAL COLLISION, WITH THE MOTION IN IT
+   Slides 19–27 of the original are six animated gifs of two blocks sliding
+   into each other, one worked case per pair of slides. This is that
+   animation: the blocks approach, touch, and leave at the velocities the
+   two equations give, on a loop, with the arrows labelled as they are on
+   his slides.
+
+   data-ma / data-mb / data-va / data-vb / data-e  set the case
+   data-reveal="0"   hides the outgoing velocities, for the slide that is
+                     still setting the problem up
+   data-shape="ball" draws pool balls instead of blocks
+   data-unit         a word for the mass label ("m", "2m", "kg")
+   ============================================================ */
+D.register('blocks', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 460 : 820, h: port ? 350 : 285,
+                            padl: 0, padr: 0, padt: 0, padb: 0,
+                            xmin: 0, xmax: 1, ymin: 0, ymax: 1, fluid: false });
+  var out = readout(u.ctl);
+  var mA = parseFloat(d.ma || 1), mB = parseFloat(d.mb || 1);
+  var vAi = parseFloat(d.va || 1), vBi = parseFloat(d.vb || 0);
+  var e = d.e == null ? 1 : parseFloat(d.e);
+  var reveal = d.reveal !== '0';
+  var round = d.shape === 'ball';
+  var playing = false, raf, last = 0;
+
+  /* --- the run, in metres, laid out so the touch happens mid-canvas --- */
+  var S = solve(mA, mB, vAi, vBi, e);
+  function recompute() { S = solve(mA, mB, vAi, vBi, e); }
+
+  var t = 0, TCON = 1.6, TEND = 3.4;          /* seconds: contact, and loop end */
+
+  function draw() {
+    var c = ax.c, K = C(), W = ax.W, H = ax.H;
+    ax.clear();
+    var stuck = Math.abs(S.vBf - S.vAf) < 1e-6;
+
+    /* geometry: half-width of each body, and the x of the contact point */
+    var hw = Math.min(46, W * 0.062) * (round ? 0.85 : 1);
+    var hA = hw * (round ? 1 : 1), hB = hw;
+    var cx = W * 0.52, gy = H * (port ? 0.46 : 0.50);
+
+    /* pixels per metre, chosen so nothing leaves the canvas in either phase */
+    var vin = Math.max(Math.abs(vAi), Math.abs(vBi), 1e-6);
+    var vout = Math.max(Math.abs(S.vAf), Math.abs(S.vBf), 1e-6);
+    var PX = Math.min((cx - hA - 40) / (vin * TCON),
+                      (W - cx - hB - 40) / Math.max(vout * (TEND - TCON), vin * TCON));
+
+    var xA, xB;
+    if (t <= TCON) {
+      xA = cx - hA - (TCON - t) * vAi * PX;
+      xB = cx + hB - (TCON - t) * vBi * PX;
+    } else {
+      xA = cx - hA + (t - TCON) * S.vAf * PX;
+      xB = cx + hB + (t - TCON) * S.vBf * PX;
+    }
+    /* perfectly inelastic: they travel as one body from the moment of contact */
+    if (stuck && t > TCON) { xB = xA + hA + hB; }
+
+    /* the track */
+    c.save(); c.strokeStyle = K.SOFT; c.lineWidth = 1.6;
+    c.beginPath(); c.moveTo(20, gy + hw * 0.72); c.lineTo(W - 20, gy + hw * 0.72); c.stroke();
+    c.restore();
+
+    function body(x, half, col, mass, tag) {
+      if (round) {
+        ball(c, x, gy, half, col, tag);
+      } else {
+        c.save();
+        c.fillStyle = col; c.globalAlpha = 0.30;
+        c.fillRect(x - half, gy - half * 0.62, half * 2, half * 1.24);
+        c.globalAlpha = 1; c.strokeStyle = col; c.lineWidth = 2.4;
+        c.strokeRect(x - half, gy - half * 0.62, half * 2, half * 1.24);
+        c.restore();
+      }
+      label(c, mass, x, gy + (round ? half + 16 : 0), { color: col, size: 15, align: 'center' });
+      if (round) label(c, tag, x, gy, { color: col, size: 14, align: 'center' });
+    }
+
+    function vec(x, half, v, col, shown) {
+      var ay = gy - half * 0.62 - 26;
+      if (!shown) {
+        label(c, '?', x, ay - 4, { color: K.MUT, size: 20, align: 'center' });
+        return;
+      }
+      var VS = Math.min(74, (W * 0.11) / Math.max(vin, vout));
+      /* the arrow leaves the body at its leading edge, as it does on his gifs */
+      var x0 = x + (v >= 0 ? half : -half);
+      if (Math.abs(v) > 1e-4)
+        arrow(c, x0, ay, x0 + v * VS, ay, { color: col, width: 3.2 });
+      label(c, num(v, 2) + ' m/s', x0 + v * VS / 2, ay - 20,
+            { color: col, size: 13, align: 'center' });
+    }
+
+    var mlabA = fmt(mA, mA % 1 ? 1 : 0) + ' kg', mlabB = fmt(mB, mB % 1 ? 1 : 0) + ' kg';
+    body(xA, hA, K.BLUE, mlabA, 'A');
+    body(xB, hB, K.ORG, mlabB, 'B');
+    var showOut = reveal || t <= TCON;
+    vec(xA, hA, t <= TCON ? vAi : S.vAf, K.BLUE, t <= TCON || reveal);
+    vec(xB, hB, t <= TCON ? vBi : S.vBf, K.ORG, t <= TCON || reveal);
+
+    label(c, t <= TCON ? 'before the collision' : 'after the collision', 24, 24,
+          { color: K.MUT, size: 13 });
+    label(c, 'e = ' + fmt(e, 2), W - 24, 24, { color: K.MUT, size: 13, align: 'right' });
+
+    /* the momentum ledger, under the track */
+    var pA0 = mA * vAi, pB0 = mB * vBi, pA1 = mA * S.vAf, pB1 = mB * S.vBf;
+    var ly = gy + hw * 2.0;
+    label(c, 'momentum before   ' + num(pA0, 2) + '  +  ' + num(pB0, 2) + '  =  ' +
+             num(pA0 + pB0, 2) + ' kg·m/s', W * 0.5, ly, { color: K.MUT, size: 13.5,
+             align: 'center' });
+    if (reveal)
+      label(c, 'momentum after      ' + num(pA1, 2) + '  +  ' + num(pB1, 2) + '  =  ' +
+               num(pA1 + pB1, 2) + ' kg·m/s', W * 0.5, ly + 22,
+            { color: K.GRN, size: 13.5, align: 'center' });
+
+    out.innerHTML =
+      'A ' + num(vAi, 2) + ' → <b class="b">' + (reveal ? num(S.vAf, 2) : '?') + '</b> m/s' +
+      ' &nbsp;·&nbsp; B ' + num(vBi, 2) + ' → <b>' + (reveal ? num(S.vBf, 2) : '?') + '</b> m/s' +
+      '<span class="hint">' +
+      (reveal
+        ? 'The total momentum is the same number before and after — that is the law, and it is one ' +
+          'equation. It is not enough on its own: two unknowns need two equations, and the second ' +
+          'is the coefficient of restitution.'
+        : 'Momentum gives you one equation and there are two unknowns in it, so it cannot be ' +
+          'solved yet. The second equation is the coefficient of restitution, on the next slide.') +
+      '</span>';
+  }
+
+  var r = ctlRow(u.ctl);
+  var pb = playBtn(r, '▶ Collide');
+  pb.addEventListener('click', function () {
+    playing = !playing;
+    pb.textContent = playing ? '❚❚ Pause' : '▶ Collide';
+    if (playing) { last = 0; raf = requestAnimationFrame(loop); } else cancelAnimationFrame(raf);
+  });
+  function loop(ts) {
+    if (!last) last = ts;
+    t += Math.min(0.05, (ts - last) / 1000); last = ts;
+    if (t > TEND) t = 0;
+    draw();
+    if (playing) raf = requestAnimationFrame(loop);
+  }
+  if (d.locked !== '1') {
+    u.ctl.classList.add('g2');
+    slider(u.ctl, 'mass A', 0.5, 8, 0.5, mA, function (q) { return fmt(q, 1) + ' kg'; },
+      function (q) { mA = q; recompute(); draw(); });
+    slider(u.ctl, 'mass B', 0.5, 8, 0.5, mB, function (q) { return fmt(q, 1) + ' kg'; },
+      function (q) { mB = q; recompute(); draw(); });
+    slider(u.ctl, 'v<sub>Ai</sub>', -3, 3, 0.1, vAi, function (q) { return num(q, 1) + ' m/s'; },
+      function (q) { vAi = q; recompute(); draw(); });
+    slider(u.ctl, 'v<sub>Bi</sub>', -3, 3, 0.1, vBi, function (q) { return num(q, 1) + ' m/s'; },
+      function (q) { vBi = q; recompute(); draw(); });
+    slider(u.ctl, 'restitution', 0, 1, 0.05, e, function (q) { return fmt(q, 2); },
+      function (q) { e = q; recompute(); draw(); });
+  }
+  node._stop = function () { playing = false; cancelAnimationFrame(raf); pb.textContent = '▶ Collide'; };
+  node._draw = draw;
+  recompute(); draw();
+});
+
+
+/* ============================================================
+   THE STRIKE, AND THE TWO AXES IT CREATES
+   The gif on his slide 30: two balls meet off centre, and at the instant
+   they touch the only two directions that matter appear — the line joining
+   their centres, and the line at right angles to it. Everything in a
+   two-dimensional collision is decided on those two lines.
+   ============================================================ */
+D.register('strike2d', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 460 : 780, h: port ? 440 : 380,
+                            padl: 0, padr: 0, padt: 0, padb: 0,
+                            xmin: 0, xmax: 1, ymin: 0, ymax: 1, fluid: false });
+  var out = readout(u.ctl);
+  var off = 0.62;                 /* how off-centre the strike is, 0..1 of 2R */
+  var vA = 3.0, e = 1;
+  var TCON = 1.5, TEND = 3.6;
+  /* the still frame is the moment just after contact, so a printed handout
+     shows the two axes and the two new directions rather than an empty field */
+  var t = TCON + 0.55, playing = false, raf, last = 0;
+
+  function geom() {
+    /* A runs along the horizontal; B sits at rest, displaced upward by b.
+       At contact their centres are 2R apart, so the line of centres makes
+       an angle phi with A's line of travel. */
+    var phi = Math.asin(Math.max(-0.999, Math.min(0.999, off)));
+    var nx = Math.cos(phi), ny = -Math.sin(phi);       /* canvas y is down */
+    var tx = -ny, ty = nx;
+    /* A's velocity split on those axes (A travels +x) */
+    var an = vA * nx, at = vA * tx;
+    var anA = an * (1 - e) / 2, anB = an * (1 + e) / 2;
+    return { phi: phi, nx: nx, ny: ny, tx: tx, ty: ty, an: an, at: at,
+             aF: [nx * anA + tx * at, ny * anA + ty * at],
+             bF: [nx * anB, ny * anB] };
+  }
+
+  function draw() {
+    var c = ax.c, K = C(), W = ax.W, H = ax.H;
+    ax.clear();
+    var g = geom();
+    var R = port ? 26 : 32;
+    var cx = W * 0.47, cy = H * 0.50;                 /* B's centre at contact */
+    /* contact geometry: A's centre is 2R away along −n from B's centre */
+    var axC = cx - 2 * R * g.nx, ayC = cy - 2 * R * g.ny;
+    var PX = Math.min(120, (axC - R - 30) / (vA * TCON));
+
+    var xA, yA, xB, yB;
+    if (t <= TCON) {
+      xA = axC - (TCON - t) * vA * PX; yA = ayC;
+      xB = cx; yB = cy;
+    } else {
+      var dt = t - TCON;
+      xA = axC + g.aF[0] * dt * PX; yA = ayC + g.aF[1] * dt * PX;
+      xB = cx + g.bF[0] * dt * PX;  yB = cy + g.bF[1] * dt * PX;
+    }
+
+    /* the two axes, drawn from the contact point once the balls are close */
+    var near = Math.max(0, Math.min(1, (t - TCON * 0.72) / (TCON * 0.28)));
+    if (near > 0) {
+      var px = (axC + cx) / 2, py = (ayC + cy) / 2;
+      c.save(); c.globalAlpha = near;
+      function ray(dx, dy, col, txt, side) {
+        var L = 168;
+        c.save(); c.strokeStyle = col; c.lineWidth = 1.6; c.setLineDash([7, 5]);
+        c.beginPath(); c.moveTo(px - dx * L, py - dy * L); c.lineTo(px + dx * L, py + dy * L);
+        c.stroke(); c.restore();
+        /* the label goes on the end the balls are not leaving along, or it
+           ends up printed across one of them */
+        label(c, txt, px + side * dx * (L - 20), py + side * dy * (L - 20),
+              { color: col, size: 13, align: 'center', plate: true });
+      }
+      ray(g.nx, g.ny, K.ACC, 'normal', -1);
+      ray(g.tx, g.ty, K.GRN, 'tangent', 1);
+      c.fillStyle = K.INK; c.globalAlpha = near * 0.8;
+      c.beginPath(); c.arc(px, py, 3.5, 0, 7); c.fill();
+      c.restore();
+    }
+
+    ball(c, xA, yA, R, K.BLUE, 'A');
+    ball(c, xB, yB, R, K.ORG, 'B');
+
+    var VS = 30;
+    if (t <= TCON) {
+      arrow(c, xA + R, yA, xA + R + vA * VS, yA, { color: K.BLUE, width: 3.4 });
+      label(c, fmt(vA, 1) + ' m/s', xA + R + vA * VS / 2, yA - 16,
+            { color: K.BLUE, size: 13, align: 'center', plate: true });
+    } else {
+      /* arrows leave each ball at its rim, so the ball label stays readable */
+      function out2(x, y, vx, vy, col, txt) {
+        var L = Math.hypot(vx, vy); if (L < 1e-6) return;
+        var ux = vx / L, uy = vy / L;
+        arrow(c, x + ux * R, y + uy * R, x + ux * R + vx * VS, y + uy * R + vy * VS,
+              { color: col, width: 3.4 });
+        label(c, fmt(L, 2) + ' m/s', x + ux * (R + L * VS + 22), y + uy * (R + L * VS + 22),
+              { color: col, size: 12.5, align: 'center', plate: true });
+      }
+      out2(xA, yA, g.aF[0], g.aF[1], K.BLUE);
+      out2(xB, yB, g.bF[0], g.bF[1], K.ORG);
+    }
+
+    label(c, t <= TCON ? 'B is at rest; A is about to strike it off centre'
+                       : 'each ball leaves along its own new line', 24, 22,
+          { color: K.MUT, size: 13 });
+
+    out.innerHTML =
+      'strike offset <b>' + fmt(off, 2) + '</b> of a diameter &nbsp;·&nbsp; ' +
+      'line of centres at <b class="r">' + fmt(g.phi * 180 / Math.PI, 0) + '°</b> to A’s path' +
+      '<span class="hint">Two smooth balls can only push each other one way: along the line ' +
+      'joining their centres. That line is the <b class="r">normal</b>, and the line at right ' +
+      'angles to it, along the surfaces where they touch, is the <b class="g">tangent</b>. A ' +
+      'head-on strike puts the normal along the direction of travel and the problem is ' +
+      'one-dimensional again; slide the offset and watch how far off that line the collision ' +
+      'throws them.</span>';
+  }
+
+  var r = ctlRow(u.ctl);
+  var pb = playBtn(r, '▶ Strike');
+  pb.addEventListener('click', function () {
+    playing = !playing;
+    pb.textContent = playing ? '❚❚ Pause' : '▶ Strike';
+    if (playing) { last = 0; raf = requestAnimationFrame(loop); } else cancelAnimationFrame(raf);
+  });
+  function loop(ts) {
+    if (!last) last = ts;
+    t += Math.min(0.05, (ts - last) / 1000); last = ts;
+    if (t > TEND) t = 0;
+    draw();
+    if (playing) raf = requestAnimationFrame(loop);
+  }
+  u.ctl.classList.add('g2');
+  slider(u.ctl, 'how off centre', 0, 0.92, 0.02, off,
+    function (q) { return fmt(q, 2); }, function (q) { off = q; draw(); });
+  slider(u.ctl, 'A’s speed', 1, 5, 0.1, vA, function (q) { return fmt(q, 1) + ' m/s'; },
+    function (q) { vA = q; draw(); });
+  node._stop = function () { playing = false; cancelAnimationFrame(raf); pb.textContent = '▶ Strike'; };
+  node._draw = draw;
+  draw();
+});
+
+
+/* ============================================================
+   ROTATING THE FRAME OF REFERENCE
+   Slides 35–39 of the original. Two balls meet off centre, so neither x nor
+   y is a useful axis. Turn the whole frame — grid, axes, velocities and all
+   — until the line joining the centres is horizontal, and the collision
+   falls apart into two independent one-dimensional statements: along the
+   tangent nothing happens at all, and along the normal it is the ordinary
+   momentum-and-restitution problem.
+
+   The rotation is of the *frame*, not of the physics. Nothing about the
+   collision changes while the slider moves; only the axes you are choosing
+   to describe it in.
+   ============================================================ */
+D.register('rotframe', function (node, d) {
+  var u = build(node);
+  var wrap = u.cv.parentNode.parentNode;
+  wrap.classList.add('isplit');
+  var side = el('div', 'icalc');
+  wrap.insertBefore(side, u.ctl);
+
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 460 : 720, h: port ? 500 : 345,
+                            padl: 0, padr: 0, padt: 0, padb: 0,
+                            xmin: 0, xmax: 1, ymin: 0, ymax: 1, fluid: false });
+  var out = readout(u.ctl);
+
+  var phi = -32;                 /* line of centres, degrees from the x axis  */
+  var vA = 3.2, aA = -12;        /* A: speed and heading, degrees            */
+  var vB = 2.4, aB = 196;        /* B: coming the other way                  */
+  var e = 1, mA = 1, mB = 1;
+  var rot = d.rot == null ? 0 : parseFloat(d.rot);   /* 0 = x/y, 1 = n/t */
+  var after = d.after === '1';
+  var playing = false, raf, last = 0;
+
+  function S() {
+    var p = phi * Math.PI / 180;
+    var nx = Math.cos(p), ny = Math.sin(p);         /* maths coords, y up */
+    var tx = -ny, ty = nx;
+    var a = aA * Math.PI / 180, b = aB * Math.PI / 180;
+    var A = [vA * Math.cos(a), vA * Math.sin(a)];
+    var B = [vB * Math.cos(b), vB * Math.sin(b)];
+    var An = A[0] * nx + A[1] * ny, At = A[0] * tx + A[1] * ty;
+    var Bn = B[0] * nx + B[1] * ny, Bt = B[0] * tx + B[1] * ty;
+    var q = solve(mA, mB, An, Bn, e);               /* the 1-D problem, on n */
+    return { p: p, n: [nx, ny], t: [tx, ty], A: A, B: B,
+             An: An, At: At, Bn: Bn, Bt: Bt, AnF: q.vAf, BnF: q.vBf,
+             AF: [nx * q.vAf + tx * At, ny * q.vAf + ty * At],
+             BF: [nx * q.vBf + tx * Bt, ny * q.vBf + ty * Bt] };
+  }
+
+  function draw() {
+    var c = ax.c, K = C(), W = ax.W, H = ax.H;
+    ax.clear();
+    var s = S();
+    var th = -s.p * rot;                 /* the frame turn, in maths coords  */
+    var ct = Math.cos(th), st = Math.sin(th);
+    var cx = W * (port ? 0.50 : 0.33), cy = H * (port ? 0.30 : 0.50);
+    var SC = port ? 40 : 41, R = port ? 24 : 25;
+
+    /* world (metres, y up, origin at the contact point) → screen */
+    function P(x, y) {
+      var X = x * ct - y * st, Y = x * st + y * ct;
+      return { x: cx + X * SC, y: cy - Y * SC };
+    }
+    function dir(x, y) {                 /* a direction, same rotation, no origin */
+      return { x: (x * ct - y * st), y: -(x * st + y * ct) };
+    }
+
+    /* ---- the graph paper, turning with the frame ---- */
+    c.save();
+    c.strokeStyle = K.GRID; c.lineWidth = 1; c.globalAlpha = 0.75;
+    for (var g = -4; g <= 4; g++) {
+      var p1 = P(g, -4), p2 = P(g, 4), p3 = P(-4, g), p4 = P(4, g);
+      c.beginPath(); c.moveTo(p1.x, p1.y); c.lineTo(p2.x, p2.y); c.stroke();
+      c.beginPath(); c.moveTo(p3.x, p3.y); c.lineTo(p4.x, p4.y); c.stroke();
+    }
+    c.restore();
+
+    /* ---- the x and y axes: they belong to the frame, so they turn too ---- */
+    function axis(vx, vy, col, txt) {
+      var o = P(0, 0), dd = dir(vx, vy), L = 3.05 * SC;
+      var m = Math.hypot(dd.x, dd.y);
+      arrow(c, o.x - dd.x / m * L * 0.28, o.y - dd.y / m * L * 0.28,
+            o.x + dd.x / m * L, o.y + dd.y / m * L, { color: col, width: 2.4 });
+      label(c, txt, o.x + dd.x / m * (L + 14), o.y + dd.y / m * (L + 14),
+            { color: col, size: 14, align: 'center', plate: true });
+    }
+    axis(1, 0, K.BLUE, 'x');
+    axis(0, 1, K.BLUE, 'y');
+
+    /* ---- the normal and the tangent: fixed to the collision, so once the
+            frame has turned they come out horizontal and vertical ---- */
+    function nt(v, col, txt) {
+      var o = P(0, 0), dd = dir(v[0], v[1]), L = 3.4 * SC;
+      var m = Math.hypot(dd.x, dd.y);
+      c.save(); c.strokeStyle = col; c.lineWidth = 1.6; c.setLineDash([7, 5]);
+      c.beginPath();
+      c.moveTo(o.x - dd.x / m * L, o.y - dd.y / m * L);
+      c.lineTo(o.x + dd.x / m * L, o.y + dd.y / m * L);
+      c.stroke(); c.restore();
+      /* nudged off the line so it does not print on top of its own arrow */
+      var ox = -dd.y / m * 13, oy = dd.x / m * 13;
+      label(c, txt, o.x + dd.x / m * (L - 20) + ox, o.y + dd.y / m * (L - 20) + oy,
+            { color: col, size: 13, align: 'center', plate: true });
+    }
+    nt(s.n, K.ACC, 'normal');
+    nt(s.t, K.GRN, 'tangent');
+
+    /* ---- the two balls, touching on the line of centres ---- */
+    var rw = R / SC;
+    var pA = P(-s.n[0] * rw, -s.n[1] * rw), pB = P(s.n[0] * rw, s.n[1] * rw);
+    ball(c, pA.x, pA.y, R, K.BLUE, 'A');
+    ball(c, pB.x, pB.y, R, K.ORG, 'B');
+
+    /* ---- velocities, and their components on whichever axes are in use ---- */
+    var VS = 30;
+    function vshow(p, v, col) {
+      var m = Math.hypot(v[0], v[1]); if (m < 1e-6) return;
+      var dd = dir(v[0], v[1]);
+      var ux = dd.x / m, uy = dd.y / m;           /* unit, in screen space */
+      arrow(c, p.x + ux * R, p.y + uy * R, p.x + ux * R + dd.x * VS, p.y + uy * R + dd.y * VS,
+            { color: col, width: 3.4 });
+      label(c, fmt(m, 2), p.x + ux * (R + m * VS + 20), p.y + uy * (R + m * VS + 20),
+            { color: col, size: 12.5, align: 'center', plate: true });
+    }
+    function comps(p, vn, vt) {
+      var dn = dir(s.n[0] * vn, s.n[1] * vn), dt = dir(s.t[0] * vt, s.t[1] * vt);
+      arrow(c, p.x, p.y, p.x + dn.x * VS, p.y + dn.y * VS,
+            { color: K.ACC, width: 2.2, dash: [4, 3] });
+      arrow(c, p.x, p.y, p.x + dt.x * VS, p.y + dt.y * VS,
+            { color: K.GRN, width: 2.2, dash: [4, 3] });
+    }
+    if (!after) {
+      comps(pA, s.An, s.At); comps(pB, s.Bn, s.Bt);
+      vshow(pA, s.A, K.BLUE); vshow(pB, s.B, K.ORG);
+    } else {
+      comps(pA, s.AnF, s.At); comps(pB, s.BnF, s.Bt);
+      vshow(pA, s.AF, K.BLUE); vshow(pB, s.BF, K.ORG);
+    }
+
+    /* ---- the two component panels from his slide, before over after ---- */
+    var px = W * (port ? 0.50 : 0.80), py0 = H * (port ? 0.76 : 0.24),
+        py1 = H * (port ? 0.91 : 0.68), rr = port ? 15 : 20, cs = 24;
+    function panel(y, ttl, an, at2, bn, bt, live) {
+      label(c, ttl, px, y - rr - 22, { color: live ? K.INK : K.MUT, size: 13,
+            align: 'center', weight: '700' });
+      [[px - rr * 2.0, K.BLUE, an, at2], [px + rr * 2.0, K.ORG, bn, bt]]
+        .forEach(function (q) {
+          c.save(); c.globalAlpha = live ? 1 : 0.42;
+          c.strokeStyle = q[1]; c.lineWidth = 2;
+          c.beginPath(); c.arc(q[0], y, rr, 0, 7); c.stroke(); c.restore();
+          c.save(); c.globalAlpha = live ? 1 : 0.42;
+          arrow(c, q[0], y, q[0] + q[2] * cs, y, { color: K.ACC, width: 2.6 });
+          arrow(c, q[0], y, q[0], y - q[3] * cs, { color: K.GRN, width: 2.6 });
+          c.restore();
+        });
+    }
+    panel(py0, 'before', s.An, s.At, s.Bn, s.Bt, !after);
+    panel(py1, 'after', s.AnF, s.At, s.BnF, s.Bt, after);
+    label(c, '\u2192 normal', px - rr * 2.6, py1 + rr + 26,
+          { color: K.ACC, size: 11.5 });
+    label(c, '\u2191 tangent', px + rr * 0.5, py1 + rr + 26,
+          { color: K.GRN, size: 11.5 });
+    label(c, 'the tangent arrows are the same in both panels', px, py1 + rr + 48,
+          { color: K.MUT, size: 11, align: 'center' });
+
+    /* ---- the working: the two component pairs, before and after ---- */
+    function row(lab, x, y, col) {
+      return '<div class="icalc-eq"><span style="color:' + col + '">' + lab +
+             '</span> &nbsp; A ' + num(x, 2) + ' &nbsp; B ' + num(y, 2) + '</div>';
+    }
+    side.innerHTML =
+      '<div class="icalc-h">frame turned <span class="v">' +
+        fmt(rot * Math.abs(phi), 0) + '\u00b0</span> of ' + fmt(Math.abs(phi), 0) + '\u00b0</div>' +
+      '<div class="icalc-work">' +
+      '<div class="icalc-t">components before</div>' +
+      row('normal', s.An, s.Bn, C().ACC) +
+      row('tangent', s.At, s.Bt, C().GRN) +
+      '<div class="icalc-t" style="margin-top:.45em">components after</div>' +
+      row('normal', s.AnF, s.BnF, C().ACC) +
+      row('tangent', s.At, s.Bt, C().GRN) +
+      '</div>' +
+      '<div class="icalc-vals" style="grid-template-columns:repeat(2,1fr)">' +
+      '<div><span>A after</span><b>' + fmt(Math.hypot(s.AF[0], s.AF[1]), 2) + '</b></div>' +
+      '<div><span>B after</span><b>' + fmt(Math.hypot(s.BF[0], s.BF[1]), 2) + '</b></div>' +
+      '</div>';
+
+    out.innerHTML =
+      (rot < 0.02 ? 'the original <b class="b">x, y</b> frame'
+                  : (rot > 0.98 ? 'the <b class="r">normal</b>–<b class="g">tangent</b> frame'
+                                : 'turning the frame…')) +
+      ' &nbsp;·&nbsp; ' + (after ? 'after the collision' : 'before the collision') +
+      '<span class="hint">Nothing about the collision changes while that slider moves — the balls ' +
+      'and their velocities are doing exactly what they were doing. What changes is the pair of ' +
+      'axes you describe them with. Choose x and y and both balls have two components that both ' +
+      'change, and you are stuck. Choose the <b class="r">normal</b> and the <b class="g">tangent' +
+      '</b> and the problem separates: the tangential components come through the collision ' +
+      '<b>untouched</b> — first law, one component at a time — and everything that happens ' +
+      'happens on the normal, where it is the same one-dimensional problem as the start of the ' +
+      'lecture.</span>';
+  }
+
+  var r = ctlRow(u.ctl);
+  var pb = playBtn(r, '▶ Turn the frame');
+  seg(r, [['b', 'before'], ['a', 'after']], after ? 'a' : 'b',
+      function (v) { after = v === 'a'; draw(); }).setAttribute('data-unsafe', '1');
+  pb.addEventListener('click', function () {
+    playing = !playing;
+    pb.textContent = playing ? '❚❚ Pause' : '▶ Turn the frame';
+    if (playing) { last = 0; raf = requestAnimationFrame(loop); } else cancelAnimationFrame(raf);
+  });
+  function loop(ts) {
+    if (!last) last = ts;
+    var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+    rot += dt * 0.42;
+    if (rot > 1.45) rot = 0;
+    sRot.quiet(Math.min(1, rot));
+    draw();
+    if (playing) raf = requestAnimationFrame(loop);
+  }
+  u.ctl.classList.add('g2');
+  var sRot = slider(u.ctl, 'turn the frame', 0, 1, 0.02, rot,
+    function (q) { return fmt(q * 100, 0) + ' %'; },
+    function (q) { rot = q; draw(); });
+  slider(u.ctl, 'line of centres', -70, 70, 1, phi, function (q) { return fmt(q, 0) + '°'; },
+    function (q) { phi = q; draw(); });
+  slider(u.ctl, 'A heading', -60, 60, 1, aA, function (q) { return fmt(q, 0) + '°'; },
+    function (q) { aA = q; draw(); });
+  slider(u.ctl, 'restitution', 0, 1, 0.05, e, function (q) { return fmt(q, 2); },
+    function (q) { e = q; draw(); });
+  node._stop = function () {
+    playing = false; cancelAnimationFrame(raf); pb.textContent = '▶ Turn the frame';
+  };
+  node._draw = draw;
+  draw();
+});
+
 
 D.boot();
 
