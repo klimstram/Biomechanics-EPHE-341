@@ -1720,7 +1720,7 @@ D.register('rotframe', function (node, d) {
       row('normal', s.An, s.Bn, C().ACC) +
       row('tangent', s.At, s.Bt, C().GRN) +
       '<div class="icalc-t" style="margin-top:.45em">components after</div>' +
-      row('normal', s.AnF, s.BnF, C().ACC) +
+      row('normal', s.An + (s.AnF - s.An) * qp, s.Bn + (s.BnF - s.Bn) * qp, C().ACC) +
       row('tangent', s.At, s.Bt, C().GRN) +
       '</div>' +
       '<div class="icalc-vals" style="grid-template-columns:repeat(2,1fr)">' +
@@ -1749,9 +1749,10 @@ D.register('rotframe', function (node, d) {
      state. The slide that has not turned yet turns the frame; the slides
      that are already in the normal–tangent frame run the collision. */
   var r = ctlRow(u.ctl);
-  var turnable = rot < 0.999;
-  var PLAY = turnable ? '▶ Turn the frame' : '▶ Collide';
-  var pb = playBtn(r, PLAY);
+  var turnable = rot < 0.999;              /* the slide that starts on x, y */
+  var TURN = '▶ Turn the frame', COLL = '▶ Collide', PAUSE = '❚❚ Pause';
+  var tb = turnable ? playBtn(r, TURN) : null;
+  var cb = playBtn(r, COLL);
   var sg = seg(r, [['b', 'before'], ['a', 'after']], after ? 'a' : 'b',
       function (v) { after = v === 'a'; cp = after ? 1 : 0; stop(); draw(); });
   sg.setAttribute('data-unsafe', '1');
@@ -1761,27 +1762,39 @@ D.register('rotframe', function (node, d) {
       b.classList.toggle('on', i === (k === 'a' ? 1 : 0));
     });
   }
-  function stop() { playing = false; cancelAnimationFrame(raf); pb.textContent = PLAY; }
-
-  pb.addEventListener('click', function () {
-    if (playing) { stop(); return; }
-    if (turnable && rot >= 0.999) { rot = 0; sRot.quiet(0); }   /* replay from x, y */
-    if (!turnable && cp >= 0.999) { cp = 0; after = false; lite('b'); }
-    playing = true; last = 0; pb.textContent = '❚❚ Pause';
+  /* Both animations are one-shot and rest on their end state, and only one
+     runs at a time: pressing the other stops the first where it stands. */
+  var mode = null;
+  function stop() {
+    playing = false; mode = null; cancelAnimationFrame(raf);
+    if (tb) tb.textContent = TURN;
+    cb.textContent = COLL;
+  }
+  function start(m) {
+    var was = mode;
+    stop();
+    if (was === m) return;                 /* that press was a pause */
+    if (m === 'turn') { if (rot >= 0.999) { rot = 0; sRot.quiet(0); } }
+    else if (cp >= 0.999) { cp = 0; after = false; lite('b'); }
+    mode = m; playing = true; last = 0;
+    (m === 'turn' ? tb : cb).textContent = PAUSE;
     raf = requestAnimationFrame(loop);
     draw();
-  });
+  }
+  if (tb) tb.addEventListener('click', function () { start('turn'); });
+  cb.addEventListener('click', function () { start('collide'); });
+
   function loop(ts) {
     if (!last) last = ts;
     var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
-    if (turnable) {
+    if (mode === 'turn') {
       rot = Math.min(1, rot + dt * 0.42);  /* the drawing never goes past the turned frame */
       sRot.quiet(rot);
       if (rot >= 1) { stop(); draw(); return; }   /* one pass, and it rests there */
-    } else {
+    } else if (mode === 'collide') {
       cp = Math.min(1, cp + dt * 0.8);
       if (cp >= 1) { after = true; lite('a'); stop(); draw(); return; }
-    }
+    } else return;
     draw();
     if (playing) raf = requestAnimationFrame(loop);
   }
