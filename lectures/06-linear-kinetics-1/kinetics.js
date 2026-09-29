@@ -1355,6 +1355,7 @@ D.register('rotframe', function (node, d) {
   var rot = d.rot == null ? 0 : parseFloat(d.rot);   /* 0 = x/y, 1 = n/t */
   var after = d.after === '1';
   var playing = false, raf, last = 0;
+  var phase = rot;               /* animation clock: runs past 1 to dwell, rot never does */
 
   function S() {
     var p = phi * Math.PI / 180;
@@ -1536,16 +1537,17 @@ D.register('rotframe', function (node, d) {
   function loop(ts) {
     if (!last) last = ts;
     var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
-    rot += dt * 0.42;
-    if (rot > 1.45) rot = 0;
-    sRot.quiet(Math.min(1, rot));
+    phase += dt * 0.42;
+    if (phase > 1.45) phase = 0;         /* 1 turns the frame, the rest is a pause on it */
+    rot = Math.min(1, phase);            /* the drawing never goes past the turned frame */
+    sRot.quiet(rot);
     draw();
     if (playing) raf = requestAnimationFrame(loop);
   }
   u.ctl.classList.add('g2');
   var sRot = slider(u.ctl, 'turn the frame', 0, 1, 0.02, rot,
     function (q) { return fmt(q * 100, 0) + ' %'; },
-    function (q) { rot = q; draw(); });
+    function (q) { rot = q; phase = q; draw(); });
   slider(u.ctl, 'line of centres', -70, 70, 1, phi, function (q) { return fmt(q, 0) + '°'; },
     function (q) { phi = q; draw(); });
   slider(u.ctl, 'A heading', -60, 60, 1, aA, function (q) { return fmt(q, 0) + '°'; },
@@ -1553,7 +1555,8 @@ D.register('rotframe', function (node, d) {
   slider(u.ctl, 'restitution', 0, 1, 0.05, e, function (q) { return fmt(q, 2); },
     function (q) { e = q; draw(); });
   node._stop = function () {
-    playing = false; cancelAnimationFrame(raf); pb.textContent = '▶ Turn the frame';
+    playing = false; cancelAnimationFrame(raf); phase = rot;
+    pb.textContent = '▶ Turn the frame';
   };
   node._draw = draw;
   draw();
