@@ -1323,6 +1323,218 @@ D.register('strike2d', function (node, d) {
 
 
 /* ============================================================
+   THE COLLISION ITSELF, AND THE TWO WAYS OF WRITING IT DOWN
+   His slide before this one is a still from a collision simulator: two balls
+   meet off centre, neither x nor y lines up with anything, and each ball
+   leaves on a line of its own. This runs that collision, and then freezes it
+   at the moment of contact and writes the same two velocities out twice —
+   on x and y, where all four components change and nothing comes apart, and
+   on the normal and the tangent, where the tangential halves come through
+   the collision untouched.
+   ============================================================ */
+D.register('collideaxes', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 430 : 640, h: port ? 430 : 390,
+                            padl: 0, padr: 0, padt: 0, padb: 0,
+                            xmin: 0, xmax: 1, ymin: 0, ymax: 1, fluid: false });
+  var out = readout(u.ctl);
+
+  var phi = -30;                  /* line of centres, degrees from x, y up  */
+  var vA = 3.0, aA = 22;          /* A comes in from the left, uphill       */
+  var vB = 2.2, aB = 200;         /* B comes back the other way, downhill   */
+  var e = 1, mA = 1, mB = 1;
+  var view = d.view || 'go';      /* go | xy | nt                           */
+  var T0 = -1.15, T1 = 0.65;
+  var t = 0.5;                    /* the still frame: just after contact    */
+  var playing = false, raf, last = 0;
+
+  function S() {
+    var p = phi * Math.PI / 180;
+    var n = [Math.cos(p), Math.sin(p)], tg = [-n[1], n[0]];
+    var a = aA * Math.PI / 180, b = aB * Math.PI / 180;
+    var A = [vA * Math.cos(a), vA * Math.sin(a)];
+    var B = [vB * Math.cos(b), vB * Math.sin(b)];
+    var An = A[0] * n[0] + A[1] * n[1], At = A[0] * tg[0] + A[1] * tg[1];
+    var Bn = B[0] * n[0] + B[1] * n[1], Bt = B[0] * tg[0] + B[1] * tg[1];
+    var q = solve(mA, mB, An, Bn, e);
+    return { n: n, t: tg, A: A, B: B, An: An, At: At, Bn: Bn, Bt: Bt,
+             AF: [n[0] * q.vAf + tg[0] * At, n[1] * q.vAf + tg[1] * At],
+             BF: [n[0] * q.vBf + tg[0] * Bt, n[1] * q.vBf + tg[1] * Bt] };
+  }
+
+  function draw() {
+    var c = ax.c, K = C(), W = ax.W, H = ax.H;
+    ax.clear();
+    var s = S();
+    /* the flight is short and the arrows are long: every one of these was
+       set by walking the end state out to the canvas edge and back */
+    var R = port ? 21 : 24, SC = port ? 31 : 34, VS = port ? 21 : 22;
+    var cx = W * (port ? 0.50 : 0.47), cy = H * (port ? 0.47 : 0.50);
+    var tt = view === 'go' ? t : 0;
+    function P(x, y) { return { x: cx + x * SC, y: cy - y * SC }; }
+
+    /* ---- graph paper, square with x and y, as his simulator draws it ---- */
+    c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1;
+    for (var gx = cx % SC; gx < W; gx += SC) {
+      c.beginPath(); c.moveTo(gx, 0); c.lineTo(gx, H); c.stroke();
+    }
+    for (var gy = cy % SC; gy < H; gy += SC) {
+      c.beginPath(); c.moveTo(0, gy); c.lineTo(W, gy); c.stroke();
+    }
+    c.restore();
+
+    /* ---- where each ball is, and which velocity it is carrying ---- */
+    var rw = R / SC;
+    var A0 = [-s.n[0] * rw, -s.n[1] * rw], B0 = [s.n[0] * rw, s.n[1] * rw];
+    var vAn = tt <= 0 ? s.A : s.AF, vBn = tt <= 0 ? s.B : s.BF;
+    var pA = P(A0[0] + vAn[0] * tt, A0[1] + vAn[1] * tt);
+    var pB = P(B0[0] + vBn[0] * tt, B0[1] + vBn[1] * tt);
+
+    /* ---- the two axis pairs, drawn through the contact point ---- */
+    var L = Math.min(W, H) * 0.46;
+    function ray(dx, dy, col, txt, side) {
+      var o = P(0, 0), m = Math.hypot(dx, dy), ux = dx / m, uy = -dy / m;
+      c.save(); c.strokeStyle = col; c.lineWidth = 1.6; c.setLineDash([7, 5]);
+      c.beginPath(); c.moveTo(o.x - ux * L, o.y - uy * L);
+      c.lineTo(o.x + ux * L, o.y + uy * L); c.stroke(); c.restore();
+      /* nudged off its own line so it does not print across the arrow */
+      label(c, txt, o.x + side * ux * (L - 18) - uy * 12,
+                    o.y + side * uy * (L - 18) + ux * 12,
+            { color: col, size: 13, align: 'center', plate: true });
+    }
+    if (view === 'xy') { ray(1, 0, K.VIO, 'x', 1); ray(0, 1, K.VIO, 'y', 1); }
+    if (view === 'nt') {
+      ray(s.n[0], s.n[1], K.ACC, 'normal', -1);
+      ray(s.t[0], s.t[1], K.GRN, 'tangent', 1);
+    }
+    if (view !== 'go') {
+      var o0 = P(0, 0);
+      c.save(); c.fillStyle = K.INK; c.globalAlpha = 0.8;
+      c.beginPath(); c.arc(o0.x, o0.y, 3.5, 0, 7); c.fill(); c.restore();
+    }
+
+    /* ---- where the collision happened, left behind once they separate ---- */
+    if (tt > 0.05) {
+      c.save(); c.globalAlpha = 0.45; c.lineWidth = 1.6; c.setLineDash([4, 4]);
+      [[P(A0[0], A0[1]), K.BLUE], [P(B0[0], B0[1]), K.ORG]].forEach(function (q) {
+        c.strokeStyle = q[1];
+        c.beginPath(); c.arc(q[0].x, q[0].y, R, 0, 7); c.stroke();
+      });
+      c.restore();
+    }
+
+    /* ---- the components, on whichever pair of axes is being used ---- */
+    ball(c, pA.x, pA.y, R, K.BLUE, 'A');
+    ball(c, pB.x, pB.y, R, K.ORG, 'B');
+
+    /* the components, on whichever pair of axes is in use, drawn from each
+       centre and over the ball, the way his own before/after figure has them */
+    function comp(p, vx, vy, col) {
+      arrow(c, p.x, p.y, p.x + vx * VS, p.y - vy * VS,
+            { color: col, width: 2.4, dash: [4, 3] });
+    }
+    if (view === 'xy') {
+      comp(pA, s.A[0], 0, K.VIO); comp(pA, 0, s.A[1], K.VIO);
+      comp(pB, s.B[0], 0, K.VIO); comp(pB, 0, s.B[1], K.VIO);
+    } else if (view === 'nt') {
+      comp(pA, s.n[0] * s.An, s.n[1] * s.An, K.ACC);
+      comp(pA, s.t[0] * s.At, s.t[1] * s.At, K.GRN);
+      comp(pB, s.n[0] * s.Bn, s.n[1] * s.Bn, K.ACC);
+      comp(pB, s.t[0] * s.Bt, s.t[1] * s.Bt, K.GRN);
+    }
+
+    function vshow(p, v, col) {
+      var m = Math.hypot(v[0], v[1]); if (m < 1e-6) return;
+      var ux = v[0] / m, uy = -v[1] / m;
+      arrow(c, p.x + ux * R, p.y + uy * R,
+               p.x + ux * R + v[0] * VS, p.y + uy * R - v[1] * VS,
+            { color: col, width: 3.2 });
+      label(c, fmt(m, 2) + ' m/s', p.x + ux * (R + m * VS + 26),
+            p.y + uy * (R + m * VS + 26),
+            { color: col, size: 12.5, align: 'center', plate: true });
+    }
+    vshow(pA, vAn, K.BLUE); vshow(pB, vBn, K.ORG);
+
+    /* ---- x and y, in the corner, the way his simulator prints them ---- */
+    var gx0 = 26, gy0 = H - 24, GL = 28, gc = view === 'xy' ? K.VIO : K.MUT;
+    arrow(c, gx0, gy0, gx0 + GL, gy0, { color: gc, width: 2.2 });
+    arrow(c, gx0, gy0, gx0, gy0 - GL, { color: gc, width: 2.2 });
+    label(c, 'x', gx0 + GL + 9, gy0, { color: gc, size: 13 });
+    label(c, 'y', gx0 - 1, gy0 - GL - 11, { color: gc, size: 13, align: 'center' });
+
+    var cap = view === 'xy'
+      ? 'on x and y: four components, and every one of them changes'
+      : (view === 'nt'
+         ? 'on the normal and the tangent: the green halves do not change'
+         : (tt <= 0 ? 'B is coming the other way; they will meet off centre'
+                    : 'each ball leaves along a line of its own'));
+    label(c, cap, W * 0.5, H - 13,
+          { color: K.MUT, size: 13, align: 'center', plate: true });
+
+    out.innerHTML =
+      'line of centres <b class="r">' + num(phi, 0) + '°</b> to x' +
+      ' &nbsp;·&nbsp; ' +
+      (view === 'xy'
+        ? 'A <b>(' + num(s.A[0], 2) + ', ' + num(s.A[1], 2) + ')</b> &nbsp; ' +
+          'B <b>(' + num(s.B[0], 2) + ', ' + num(s.B[1], 2) + ')</b> on x, y'
+        : (view === 'nt'
+          ? 'A <b class="r">' + num(s.An, 2) + '</b>, <b class="g">' + num(s.At, 2) +
+            '</b> &nbsp; B <b class="r">' + num(s.Bn, 2) + '</b>, <b class="g">' +
+            num(s.Bt, 2) + '</b> on n, t'
+          : 'they leave at <b>' + fmt(Math.hypot(s.AF[0], s.AF[1]), 2) + '</b> and <b>' +
+            fmt(Math.hypot(s.BF[0], s.BF[1]), 2) + '</b> m/s')) +
+      '<span class="hint">Two smooth balls can only push on each other one way: along the line ' +
+      'joining their centres. On <b class="v">x and y</b> both balls have two components, all ' +
+      'four of them change, and there is nothing to hold on to. On the <b class="r">normal</b> ' +
+      'and the <b class="g">tangent</b> it comes apart: along the tangent nothing happens at all, ' +
+      'and along the normal it is the one-dimensional collision from the start of the lecture.</span>';
+  }
+
+  var r = ctlRow(u.ctl);
+  var sg;
+  function lite(k) {
+    var keys = ['go', 'xy', 'nt'];
+    Array.prototype.forEach.call(sg.children, function (b, i) {
+      b.classList.toggle('on', keys[i] === k);
+    });
+  }
+  function stop() { playing = false; cancelAnimationFrame(raf); pb.textContent = '▶ Collide'; }
+  var pb = playBtn(r, '▶ Collide');
+  sg = seg(r, [['go', 'the collision'], ['xy', 'on x, y'], ['nt', 'on n, t']], view,
+      function (v) { stop(); view = v; draw(); });   /* tt freezes the two
+         written-down views at contact, so t itself is never disturbed */
+  sg.setAttribute('data-unsafe', '1');
+
+  pb.addEventListener('click', function () {
+    if (playing) { stop(); return; }
+    if (view !== 'go') { view = 'go'; lite('go'); }
+    /* fit.js prewarm presses every control, so a press carries on from where
+       the figure is and only rewinds once a run has finished — otherwise the
+       still frame, and with it the handout page, is left mid-approach */
+    if (t >= T1 - 1e-6 || t <= T0) t = T0;
+    playing = true; last = 0; pb.textContent = '❚❚ Pause';
+    raf = requestAnimationFrame(loop); draw();
+  });
+  function loop(ts) {
+    if (!last) last = ts;
+    t += Math.min(0.05, (ts - last) / 1000); last = ts;
+    if (t >= T1) { t = T1; stop(); draw(); return; }   /* one pass, and it rests apart */
+    draw();
+    if (playing) raf = requestAnimationFrame(loop);
+  }
+  u.ctl.classList.add('g2');
+  slider(u.ctl, 'line of centres', -70, -5, 1, phi, function (q) { return num(q, 0) + '°'; },
+    function (q) { stop(); phi = q; draw(); });
+  slider(u.ctl, 'B’s speed', 0, 4, 0.1, vB, function (q) { return fmt(q, 1) + ' m/s'; },
+    function (q) { stop(); vB = q; draw(); });
+  node._stop = stop;
+  node._draw = draw;
+  draw();
+});
+
+
+/* ============================================================
    ROTATING THE FRAME OF REFERENCE
    Slides 35–39 of the original. Two balls meet off centre, so neither x nor
    y is a useful axis. Turn the whole frame — grid, axes, velocities and all
@@ -1355,7 +1567,7 @@ D.register('rotframe', function (node, d) {
   var rot = d.rot == null ? 0 : parseFloat(d.rot);   /* 0 = x/y, 1 = n/t */
   var after = d.after === '1';
   var playing = false, raf, last = 0;
-  var phase = rot;               /* animation clock: runs past 1 to dwell, rot never does */
+  var cp = after ? 1 : 0;        /* the collision itself, 0 = before, 1 = after */
 
   function S() {
     var p = phi * Math.PI / 180;
@@ -1455,13 +1667,15 @@ D.register('rotframe', function (node, d) {
       arrow(c, p.x, p.y, p.x + dt.x * VS, p.y + dt.y * VS,
             { color: K.GRN, width: 2.2, dash: [4, 3] });
     }
-    if (!after) {
-      comps(pA, s.An, s.At); comps(pB, s.Bn, s.Bt);
-      vshow(pA, s.A, K.BLUE); vshow(pB, s.B, K.ORG);
-    } else {
-      comps(pA, s.AnF, s.At); comps(pB, s.BnF, s.Bt);
-      vshow(pA, s.AF, K.BLUE); vshow(pB, s.BF, K.ORG);
-    }
+    /* The collision, as one number. Only the normal components move: the
+       tangential ones are the same before, during and after, which is the
+       whole point of having turned the frame. */
+    var qm = (cp > 0 && cp < 1) ? cp : (after ? 1 : 0);
+    var AnC = s.An + (s.AnF - s.An) * qm, BnC = s.Bn + (s.BnF - s.Bn) * qm;
+    var AC = [s.n[0] * AnC + s.t[0] * s.At, s.n[1] * AnC + s.t[1] * s.At];
+    var BC = [s.n[0] * BnC + s.t[0] * s.Bt, s.n[1] * BnC + s.t[1] * s.Bt];
+    comps(pA, AnC, s.At); comps(pB, BnC, s.Bt);
+    vshow(pA, AC, K.BLUE); vshow(pB, BC, K.ORG);
 
     /* ---- the two component panels from his slide, before over after ---- */
     var px = W * (port ? 0.50 : 0.80), py0 = H * (port ? 0.76 : 0.24),
@@ -1480,8 +1694,12 @@ D.register('rotframe', function (node, d) {
           c.restore();
         });
     }
-    panel(py0, 'before', s.An, s.At, s.Bn, s.Bt, !after);
-    panel(py1, 'after', s.AnF, s.At, s.BnF, s.Bt, after);
+    /* the upper panel is the record of what came in and never moves; the
+       lower one is the one that is watched, and it carries the animation */
+    var qp = (cp > 0 && cp < 1) ? cp : 1;
+    panel(py0, 'before', s.An, s.At, s.Bn, s.Bt, qm < 0.5);
+    panel(py1, 'after', s.An + (s.AnF - s.An) * qp, s.At,
+                        s.Bn + (s.BnF - s.Bn) * qp, s.Bt, qm >= 0.5);
     label(c, '\u2192 normal', px - rr * 2.6, py1 + rr + 26,
           { color: K.ACC, size: 11.5 });
     label(c, '\u2191 tangent', px + rr * 0.5, py1 + rr + 26,
@@ -1514,7 +1732,9 @@ D.register('rotframe', function (node, d) {
       (rot < 0.02 ? 'the original <b class="b">x, y</b> frame'
                   : (rot > 0.98 ? 'the <b class="r">normal</b>–<b class="g">tangent</b> frame'
                                 : 'turning the frame…')) +
-      ' &nbsp;·&nbsp; ' + (after ? 'after the collision' : 'before the collision') +
+      ' &nbsp;·&nbsp; ' + (qm <= 0.001 ? 'before the collision'
+                            : (qm >= 0.999 ? 'after the collision'
+                                           : 'the collision, mid-transfer')) +
       '<span class="hint">Nothing about the collision changes while that slider moves — the balls ' +
       'and their velocities are doing exactly what they were doing. What changes is the pair of ' +
       'axes you describe them with. Choose x and y and both balls have two components that both ' +
@@ -1525,39 +1745,57 @@ D.register('rotframe', function (node, d) {
       'lecture.</span>';
   }
 
+  /* One play button per instance, and it runs once and stops on its end
+     state. The slide that has not turned yet turns the frame; the slides
+     that are already in the normal–tangent frame run the collision. */
   var r = ctlRow(u.ctl);
-  var pb = playBtn(r, '▶ Turn the frame');
-  seg(r, [['b', 'before'], ['a', 'after']], after ? 'a' : 'b',
-      function (v) { after = v === 'a'; draw(); }).setAttribute('data-unsafe', '1');
+  var turnable = rot < 0.999;
+  var PLAY = turnable ? '▶ Turn the frame' : '▶ Collide';
+  var pb = playBtn(r, PLAY);
+  var sg = seg(r, [['b', 'before'], ['a', 'after']], after ? 'a' : 'b',
+      function (v) { after = v === 'a'; cp = after ? 1 : 0; stop(); draw(); });
+  sg.setAttribute('data-unsafe', '1');
+
+  function lite(k) {                       /* move the segment without a click */
+    Array.prototype.forEach.call(sg.children, function (b, i) {
+      b.classList.toggle('on', i === (k === 'a' ? 1 : 0));
+    });
+  }
+  function stop() { playing = false; cancelAnimationFrame(raf); pb.textContent = PLAY; }
+
   pb.addEventListener('click', function () {
-    playing = !playing;
-    pb.textContent = playing ? '❚❚ Pause' : '▶ Turn the frame';
-    if (playing) { last = 0; raf = requestAnimationFrame(loop); } else cancelAnimationFrame(raf);
+    if (playing) { stop(); return; }
+    if (turnable && rot >= 0.999) { rot = 0; sRot.quiet(0); }   /* replay from x, y */
+    if (!turnable && cp >= 0.999) { cp = 0; after = false; lite('b'); }
+    playing = true; last = 0; pb.textContent = '❚❚ Pause';
+    raf = requestAnimationFrame(loop);
+    draw();
   });
   function loop(ts) {
     if (!last) last = ts;
     var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
-    phase += dt * 0.42;
-    if (phase > 1.45) phase = 0;         /* 1 turns the frame, the rest is a pause on it */
-    rot = Math.min(1, phase);            /* the drawing never goes past the turned frame */
-    sRot.quiet(rot);
+    if (turnable) {
+      rot = Math.min(1, rot + dt * 0.42);  /* the drawing never goes past the turned frame */
+      sRot.quiet(rot);
+      if (rot >= 1) { stop(); draw(); return; }   /* one pass, and it rests there */
+    } else {
+      cp = Math.min(1, cp + dt * 0.8);
+      if (cp >= 1) { after = true; lite('a'); stop(); draw(); return; }
+    }
     draw();
     if (playing) raf = requestAnimationFrame(loop);
   }
   u.ctl.classList.add('g2');
   var sRot = slider(u.ctl, 'turn the frame', 0, 1, 0.02, rot,
     function (q) { return fmt(q * 100, 0) + ' %'; },
-    function (q) { rot = q; phase = q; draw(); });
+    function (q) { stop(); rot = q; draw(); });
   slider(u.ctl, 'line of centres', -70, 70, 1, phi, function (q) { return fmt(q, 0) + '°'; },
     function (q) { phi = q; draw(); });
   slider(u.ctl, 'A heading', -60, 60, 1, aA, function (q) { return fmt(q, 0) + '°'; },
     function (q) { aA = q; draw(); });
   slider(u.ctl, 'restitution', 0, 1, 0.05, e, function (q) { return fmt(q, 2); },
     function (q) { e = q; draw(); });
-  node._stop = function () {
-    playing = false; cancelAnimationFrame(raf); phase = rot;
-    pb.textContent = '▶ Turn the frame';
-  };
+  node._stop = stop;
   node._draw = draw;
   draw();
 });

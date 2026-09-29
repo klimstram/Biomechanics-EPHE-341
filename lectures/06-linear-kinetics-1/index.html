@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20260925">
+<link rel="stylesheet" href="theme.css?v=20260929">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -803,6 +803,19 @@
 
 <!-- 40 -->
 <section>
+  <h2>Normal and tangent axes</h2>
+  <p class="subhead">The collision, written down twice</p>
+  <div class="iplot wide" data-widget="collideaxes"></div>
+  <aside class="notes">Run it, then stop it at contact and take the same two velocities apart —
+    first on x and y, then on the normal and the tangent. Play it once before saying anything —
+    this is his simulator screenshot from the slide before, running. Then step to <em>on x, y</em>: both balls have two components,
+    all four of them change in the collision, and there is nothing to hold on to. Step to
+    <em>on n, t</em> and the green tangential components are the ones that will come through
+    untouched. That is the whole reason for turning the frame on the next slide.</aside>
+</section>
+
+<!-- 41 -->
+<section>
   <h2>Turning the frame of reference</h2>
   <p class="small" style="margin:.1em 0 .4em">Turn the whole frame — grid, axes, velocities and
      all — until the line joining the centres is horizontal.</p>
@@ -813,7 +826,7 @@
     describe them with, and that choice is ours to make.</aside>
 </section>
 
-<!-- 41 -->
+<!-- 42 -->
 <section>
   <h2>Components in the new frame</h2>
   <p class="small" style="margin:.1em 0 .4em">Then determine the <strong>normal</strong> and
@@ -824,7 +837,7 @@
     fast it is closing on it. Only the second one is a collision.</aside>
 </section>
 
-<!-- 42 -->
+<!-- 43 -->
 <section>
   <h2>After the collision</h2>
   <p class="small" style="margin:.1em 0 .4em">The <strong>tangential</strong> components remain
@@ -836,7 +849,7 @@
     worth pausing on. Only the red normal arrows change.</aside>
 </section>
 
-<!-- 43 -->
+<!-- 44 -->
 <section>
   <h2>Linear Kinetics</h2>
   <div class="cols b top">
@@ -860,7 +873,7 @@
     that component of the motion simply carries on. The collision lives entirely on the normal.</aside>
 </section>
 
-<!-- 44 -->
+<!-- 45 -->
 <section>
   <h2>Transfer of momentum</h2>
   <div class="cols b top">
@@ -879,7 +892,7 @@
   </div>
 </section>
 
-<!-- 45 -->
+<!-- 46 -->
 <section>
   <h2>Transfer of momentum in sit to stand</h2>
   <div class="cols b top">
@@ -894,7 +907,7 @@
   </div>
 </section>
 
-<!-- 46 -->
+<!-- 47 -->
 <section>
   <h2>Horizontal momentum during sit to stand</h2>
   <div class="cols b top">
@@ -912,7 +925,7 @@
   </div>
 </section>
 
-<!-- 47 -->
+<!-- 48 -->
 <section>
   <h2>Transfer of momentum in the high jump</h2>
   <div class="cols b top">
@@ -935,7 +948,7 @@
   </div>
 </section>
 
-<!-- 48 -->
+<!-- 49 -->
 <section>
   <h2>Free limb relative momentum</h2>
   <div class="cols b top">
@@ -955,7 +968,7 @@
   </div>
 </section>
 
-<!-- 49 -->
+<!-- 50 -->
 <section>
   <h2>Free limb relative momentum</h2>
   <div class="cols b top">
@@ -974,7 +987,7 @@
   </div>
 </section>
 
-<!-- 50 -->
+<!-- 51 -->
 <section>
   <h2>2nd Law: The Law of Acceleration</h2>
   <div class="cols b top">
@@ -991,7 +1004,7 @@
   </div>
 </section>
 
-<!-- 51 -->
+<!-- 52 -->
 <section>
   <h2>2nd Law: The Law of Acceleration</h2>
   <div class="cols b top">
@@ -1008,7 +1021,7 @@
   </div>
 </section>
 
-<!-- 52 -->
+<!-- 53 -->
 <section>
   <h2>Free Body Diagram</h2>
   <div class="cols top">
@@ -1017,7 +1030,7 @@
   </div>
 </section>
 
-<!-- 53 -->
+<!-- 54 -->
 <section>
   <h2>3rd Law: The Law of Reaction</h2>
   <div class="cols b top">
@@ -1038,7 +1051,7 @@
   </div>
 </section>
 
-<!-- 54 -->
+<!-- 55 -->
 <section>
   <h2>3rd Law: The Law of Reaction</h2>
   <div class="fig"><img src="assets/jumpers.jpg" alt="Jumpers pushing against the ground"></div>
@@ -1053,8 +1066,8 @@
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20260925"></script>
-<script src="mobile.js?v=20260925"></script>
+<script src="annotate.js?v=20260929"></script>
+<script src="mobile.js?v=20260929"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -1076,9 +1089,9 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="deck-core.js?v=20260925"></script>
-<script src="kinetics.js?v=20260925"></script>
-<script src="deck-tools.js?v=20260925"></script>
-<script src="fit.js?v=20260925"></script>
+<script src="deck-core.js?v=20260929"></script>
+<script src="kinetics.js?v=20260929"></script>
+<script src="deck-tools.js?v=20260929"></script>
+<script src="fit.js?v=20260929"></script>
 </body>
 </html>
