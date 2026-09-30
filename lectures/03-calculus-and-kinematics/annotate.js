@@ -28,7 +28,14 @@ function save() {
   }, 250);
 }
 function slideKey(sec) {
-  var all = document.querySelectorAll('.reveal .slides > section');
+  /* NOT '.slides > section' — in reveal's scroll view (any viewport under
+     scrollActivationWidth, so every iPhone) each slide is wrapped in a
+     .scroll-page and is no longer a child of .slides. That selector then
+     matches nothing, indexOf returns -1, and every page on the phone keys to
+     's-1' — one shared set of notes for the whole lecture. Ask reveal. */
+  var all = (window.Reveal && Reveal.getSlides && Reveal.getSlides().length)
+    ? Reveal.getSlides()
+    : document.querySelectorAll('.reveal .slides > section');
   return 's' + Array.prototype.indexOf.call(all, sec);
 }
 function page(key) {

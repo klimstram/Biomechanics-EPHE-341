@@ -133,21 +133,50 @@ window.EPHE341_LECTURES = [
            ['Abreu\u2019s home run, rise and fall separately', 'w-homerun'],
            ['the platform jump and its two roots', 'w-platform']] },
 
+  { n: '9', title: 'Work, energy and power',
+    path: 'lectures/09-work-energy-power',
+    blurb: 'Work as a force acting through a distance, the three energies it turns into, and ' +
+           'power as the rate of the whole business \u2014 worked on the same force-plate jump ' +
+           'this course already measured by impulse.',
+    slides: 44, widgets: 17, updated: '2026-09-30',
+    handout: 'handout.pdf',
+    live: [['the sign of work, on a dial', 'w-workangle'],
+           ['double the speed, four times the energy', 'w-kecurve'],
+           ['net work becoming kinetic energy', 'w-wet'],
+           ['a measured jump, as force against displacement', 'w-jumpwork'],
+           ['the reference height you get to choose', 'w-pegrav'],
+           ['a tendon and an elastic band on one curve', 'w-spring'],
+           ['kinetic into potential and back again', 'w-conserve'],
+           ['try to make the mass matter', 'w-masscancels'],
+           ['one lift, three formulas for power', 'w-power3'],
+           ['the five phases of a countermovement jump', 'w-cmjphases'],
+           ['the Margaria-Kalamen test with your own numbers', 'w-margaria'],
+           ['force, velocity, and where power actually peaks', 'w-fvp'],
+           ['peak power across nine activities, on a log axis', 'w-powerbars'],
+           ['the power\u2013duration curve and critical power', 'w-pdcurve'],
+           ['the Achilles storing and returning energy', 'w-ssc'],
+           ['countermovement against squat jump', 'w-cmjsj'],
+           ['the whole lecture read off one jump', 'w-energymap']] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
-  { n: '8',  title: 'Work, energy and power' },
-  { n: '9',  title: 'Angular kinematics' },
-  { n: '10', title: 'General kinematics' },
-  { n: '11', title: 'Muscle mechanics' },
-  { n: '12', title: 'Virtual Muscle Lab' },
-  { n: '13', title: 'Electromyography' },
-  { n: '14', title: 'Angular kinetics 1' },
-  { n: '15', title: 'Gait analysis' },
-  { n: '16', title: 'Angular kinetics 2' },
-  { n: '17', title: 'Angular kinetics 3' },
-  { n: '18', title: 'Static analysis' },
-  { n: '19', title: 'Dynamic analysis' },
+  /* Work, energy and power was '8' here, clashing with projectile motion, and
+     is now lecture 9 above. Everything from angular kinematics on has shifted
+     by one so the converted decks stay sequential \u2014 these numbers no longer
+     match the numbers in the source .pptx filenames. Change them here if you
+     would rather they did. */
+  { n: '10', title: 'Angular kinematics' },
+  { n: '11', title: 'General kinematics' },
+  { n: '12', title: 'Muscle mechanics' },
+  { n: '13', title: 'Virtual Muscle Lab' },
+  { n: '14', title: 'Electromyography' },
+  { n: '15', title: 'Angular kinetics 1' },
+  { n: '16', title: 'Gait analysis' },
+  { n: '17', title: 'Angular kinetics 2' },
+  { n: '18', title: 'Angular kinetics 3' },
+  { n: '19', title: 'Static analysis' },
+  { n: '20', title: 'Dynamic analysis' },
   { n: '22', title: 'Projectile motion' },
   { n: '23', title: 'Signals and LabVIEW' }
 ];

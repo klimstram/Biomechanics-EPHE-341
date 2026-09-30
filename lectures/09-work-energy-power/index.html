@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a2e">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Work, Energy and Power</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css?v=20260930">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'dark';
+  try { t = localStorage.getItem('ephe341-theme') || 'dark'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Work, energy and power</h1>
+    <div class="rule"></div>
+    <p class="sub">McGinnis Chpt 4</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Work, Energy and Power</h2>
+  <p class="subhead">By the end of this lecture you should be able to…</p>
+  <ul class="small two">
+    <li><strong>Define</strong> mechanical work, energy and power, and state their SI units</li>
+    <li><strong>Apply</strong> the work–energy theorem to jumping, lifting and running</li>
+    <li><strong>Distinguish</strong> kinetic, gravitational and elastic energy in movement</li>
+    <li><strong>Use</strong> conservation of mechanical energy to solve problems</li>
+    <li><strong>Connect</strong> the force–velocity–power curve to performance</li>
+    <li><strong>Interpret</strong> the stretch–shortening cycle in energetic terms</li>
+  </ul>
+  <aside class="notes">This lecture is the second way of describing motion. Everything here could be done with forces and impulse instead — the energy route is not new physics, it is a change of bookkeeping that makes some questions much easier.
+
+The one to flag early is the last: the stretch–shortening cycle is where this lecture pays off in the lab.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>From forces to energy</h2>
+  <p class="subhead">A second way of describing the same motion</p>
+  <div class="textstrip">
+    <div class="firstcol">
+      <p><strong>FORCE AND MOMENTUM — what you have already seen</strong></p>
+      <ul class="small">
+        <li>Newton's second law: ΣF = m·a</li>
+        <li>Impulse–momentum: F·Δt = Δ(m·v)</li>
+        <li>Tracks force and how it changes motion <strong>over time</strong></li>
+      </ul>
+    </div>
+    <div>
+      <p><strong>WORK AND ENERGY — what we add today</strong></p>
+      <ul class="small">
+        <li>Work: force acting <strong>over a distance</strong></li>
+        <li>Energy: the capacity to do work — kinetic, gravitational, elastic</li>
+        <li>Power: the <strong>rate</strong> at which work is done</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">Impulse is force integrated over <strong>time</strong> and gives you
+       velocity. Work is force integrated over <strong>distance</strong> and gives you energy. Same
+       force record, two different integrals, two different questions answered.</p>
+  </div>
+  <aside class="notes">Worth being explicit that this is a choice of tool, not a new law. The countermovement jump from Linear Kinetics II comes back later in this lecture, worked the other way — same trial, same athlete, same take-off velocity, arrived at through areas under force–displacement instead of force–time.
+
+If anyone asks which is "better": impulse when you are given a time, work when you are given a distance or a height.</aside>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Defining work</h2>
+  <p class="subhead">A scalar — force acting over a displacement</p>
+  <div class="box accent workblock" style="max-width:24em">
+    <p class="eq big" style="margin-bottom:0">W = F · d · cos θ</p>
+  </div>
+  <div class="textstrip three">
+    <div class="firstcol">
+      <p><strong>SI unit</strong></p>
+      <p class="small">joule (J)<br>1 J = 1 N·m = 1 kg·m²/s²</p>
+    </div>
+    <div>
+      <p><strong>A scalar</strong></p>
+      <p class="small">No direction of its own — the sign comes entirely from cos θ, the angle
+         between the force and the displacement</p>
+    </div>
+    <div>
+      <p><strong>Net work</strong></p>
+      <p class="small">Sum over every force acting, or equivalently
+         W<sub>net</sub> = F<sub>net</sub> · d · cos θ</p>
+    </div>
+  </div>
+  <aside class="notes">The cos θ is the part students drop. Emphasise that θ is between the force and the DISPLACEMENT, not between the force and the ground or the force and some axis.
+
+A force with no displacement does no work at all, however hard it is to hold. Holding a barbell overhead is exhausting and mechanically zero — that is a good one to ask before revealing it.</aside>
+</section>
+
+<!-- 5 -->
+<section id="w-workangle">
+  <h2>The sign of work</h2>
+  <p class="subhead">Turn the force and watch cos θ change the answer</p>
+  <div class="iplot wide" data-widget="workangle"></div>
+  <aside class="notes">Drag the angle from 0° through 90° to 180°. At 0° the force and the displacement agree and the work is positive; at 90° there is no component along the motion at all and it is exactly zero; past 90° it is negative.
+
+The 90° case is worth dwelling on. The normal force on a sledge, or the tension in a string whirling a ball, do no work at all — they are perpendicular to the motion the whole way.
+
+Biomechanics note: in a vertical jump the muscles do positive work on the push-off and negative work on the countermovement. Both phases matter, and the negative one is not wasted — it is the slide after next.</aside>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>Work</h2>
+  <p class="subhead">Example Problem</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">An athlete lifts a 100 kg barbell 2.1 m from the floor to overhead at a
+         roughly constant velocity. How much work does the athlete do on the bar?</p>
+    </div>
+    <div>
+      <p class="small"><strong>Given:</strong></p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">m = 100 kg</p>
+        <p class="eq" style="margin-bottom:.25em">d = 2.1 m (vertical)</p>
+        <p class="eq" style="margin-bottom:.25em">a ≈ 0 (constant velocity)</p>
+        <p class="eq" style="margin-bottom:0">θ = 0° (force and displacement both up)</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Ask what force the athlete has to apply before showing the next slide. "Constant velocity" is the key phrase — it means the accelerations are zero, so the lifting force is exactly the weight and no more.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Work</h2>
+  <p class="subhead">Solution</p>
+  <ul class="small">
+    <li>At constant velocity ΣF = 0, so the lifting force equals the weight of the bar</li>
+  </ul>
+  <div class="box accent workblock" style="max-width:28em">
+    <p class="eq" style="margin-bottom:.25em">F = m · g = (100 kg)(9.81 m/s²)</p>
+    <p class="eq" style="margin-bottom:0">F = 981 N</p>
+  </div>
+  <ul class="small">
+    <li>The force and the displacement are both upward, so θ = 0° and cos θ = 1</li>
+  </ul>
+  <div class="box accent workblock" style="max-width:28em">
+    <p class="eq" style="margin-bottom:.25em">W = F · d · cos(0°)</p>
+    <p class="eq" style="margin-bottom:.25em">W = (981 N)(2.1 m)(1)</p>
+    <p class="eq" style="margin-bottom:0">W ≈ 2060 J</p>
+  </div>
+  <p class="small">The bar's gravitational potential energy has gone up by the same 2060 J.</p>
+  <aside class="notes">That last line is the bridge to the second half of the lecture: the work done on the bar did not vanish, it is sitting in the bar's new position and you can get it back by dropping it.</aside>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Kinetic energy</h2>
+  <p class="subhead">The energy an object has because it is moving</p>
+  <div class="box accent workblock" style="max-width:20em">
+    <p class="eq big" style="margin-bottom:0">KE = ½ · m · v²</p>
+  </div>
+  <ul class="small two">
+    <li>A scalar, and always ≥ 0</li>
+    <li>Units: joules, the same as work</li>
+    <li><strong>Doubling the speed quadruples it</strong></li>
+    <li>Halving the mass only halves it</li>
+  </ul>
+  <aside class="notes">The asymmetry between the two terms is the whole slide. Mass enters once, velocity twice. That is why a small fast object can carry as much energy as a large slow one, and why collision injury scales so brutally with speed.</aside>
+</section>
+
+<!-- 9 -->
+<section id="w-kecurve">
+  <h2>Kinetic energy</h2>
+  <p class="subhead">Doubling the velocity quadruples the energy</p>
+  <div class="iplot wide" data-widget="kecurve"></div>
+  <aside class="notes">Drag the velocity slider and watch the two dropped lines: the grey one is at half the speed of the red one, and its energy is always a quarter, wherever you put them. That ratio is fixed by the square.
+
+Then drag the mass slider. Everything scales, but nothing about the SHAPE changes — mass is a multiplier, velocity is the curve.
+
+The shot put sits well below the curve because it carries its own mass of 7.26 kg rather than the body mass on the slider.</aside>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Kinetic energy in sport</h2>
+  <p class="subhead">The v² term is what makes these numbers spread</p>
+  <div class="textstrip four">
+    <div class="firstcol">
+      <p><strong>Bolt at top speed</strong></p>
+      <p class="small">m ≈ 86 kg, v ≈ 12.3 m/s<br><strong>≈ 6,500 J</strong></p>
+    </div>
+    <div>
+      <p><strong>Shot put at release</strong></p>
+      <p class="small">m = 7.26 kg, v ≈ 14 m/s<br><strong>≈ 710 J</strong></p>
+    </div>
+    <div>
+      <p><strong>70 kg runner, jogging</strong></p>
+      <p class="small">v ≈ 2.8 m/s<br><strong>≈ 275 J</strong></p>
+    </div>
+    <div>
+      <p><strong>Fastball at release</strong></p>
+      <p class="small">m ≈ 145 g, v ≈ 45 m/s<br><strong>≈ 150 J</strong></p>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">A 145 g baseball carries more than half the kinetic energy of a
+       jogging adult, because it is moving sixteen times faster. Mass differs by a factor of 480;
+       the energies differ by a factor of under two.</p>
+  </div>
+  <aside class="notes">Get them to check one. ½(7.26)(14²) = 711 J for the shot; ½(0.145)(45²) = 147 J for the baseball. Both are one line of arithmetic and it is worth doing at least one out loud, because the numbers are counter-intuitive enough that students assume they are wrong.
+
+Bolt's 6,500 J is roughly the energy of a 1.5 kg object dropped from a 440 m building — not a useful comparison to make in class, but a reminder that a sprinter at full speed is carrying a serious amount of energy.</aside>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>The work–energy theorem</h2>
+  <p class="subhead">Net work equals the change in kinetic energy</p>
+  <div class="box accent workblock" style="max-width:34em">
+    <p class="eq big" style="margin-bottom:0">W<sub>net</sub> = ΔKE = ½mv<sub>f</sub>² − ½mv<sub>i</sub>²</p>
+  </div>
+  <div class="textstrip">
+    <div class="firstcol">
+      <p><strong>WHAT IT SAYS</strong></p>
+      <ul class="small">
+        <li>W<sub>net</sub> &gt; 0 → the object speeds up</li>
+        <li>W<sub>net</sub> &lt; 0 → it slows down</li>
+        <li>W<sub>net</sub> = 0 → the speed is unchanged</li>
+      </ul>
+    </div>
+    <div>
+      <p><strong>WHERE IT IS USED</strong></p>
+      <ul class="small">
+        <li>Sprint acceleration: net forward work becomes kinetic energy</li>
+        <li>Braking at heel-strike: negative work removes it again</li>
+        <li>Throwing: work on the implement becomes its kinetic energy</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">This is a theorem, not a definition — it follows from ΣF = ma and a bit of calculus, exactly the way the projectile equations did.
+
+Note it is NET work. Every force that acts counts, including friction and gravity, and it is their sum that shows up as a change in speed.</aside>
+</section>
+
+<!-- 12 -->
+<section id="w-wet">
+  <h2>The work–energy theorem</h2>
+  <p class="subhead">The area and the energy are the same number</p>
+  <div class="iplot wide" data-widget="wet"></div>
+  <aside class="notes">Press play. The shaded area under the force–displacement line is the work done; the column on the right is the kinetic energy. They are equal at every instant of the run, not just at the end — that is what the theorem asserts.
+
+Then change the net force, or the mass, and run it again. A heavier runner gets the same work done on them but ends up slower, because the same energy is spread over more mass.</aside>
+</section>
+
+<!-- 13 -->
+<section id="w-jumpwork">
+  <h2>Work in a vertical jump</h2>
+  <p class="subhead">The same jump you measured in Linear Kinetics II</p>
+  <div class="iplot wide" data-widget="jumpwork"></div>
+  <aside class="notes">This is the same force record we worked by impulse a few lectures ago — 66.6 kg, phase impulses of −86.6, +204.1 and −15.0 N·s, take-off at 1.54 m/s. Integrating it twice gives the centre-of-mass displacement, and that is the lower panel.
+
+The point: the force–TIME trace tells you WHEN the work is being done, but the work itself is the area on the force–DISPLACEMENT curve. Scrub through and watch the lower panel switch from red to green at the bottom of the dip. On the way down the ground takes about 303 J out of the body; on the way up it puts 328 J back in; the difference, 25 J, is what the body leaves the floor with.
+
+Be honest about one thing: the record is the three-phase idealisation from Linear Kinetics II, and integrating it gives a 46 cm countermovement, which is deeper than a real one. A measured jump brakes on the way down, which this record does not. The energy bookkeeping is exact; the depth is the model's.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <div class="section-slide">
+    <div class="course">Part 02</div>
+    <h2>Energy forms</h2>
+    <p class="sub">Kinetic, gravitational, elastic — and conservation</p>
+  </div>
+</section>
+
+<!-- 15 -->
+<section>
+  <h2>Gravitational potential energy</h2>
+  <p class="subhead">Energy stored in an object's vertical position</p>
+  <div class="box accent workblock" style="max-width:20em">
+    <p class="eq big" style="margin-bottom:0">U<sub>g</sub> = m · g · h</p>
+  </div>
+  <ul class="small">
+    <li><strong>h is measured from a reference height that you choose</strong> — only
+        <em>changes</em> in U<sub>g</sub> are physically meaningful</li>
+    <li>Raising 1 kg by 1 m stores about 9.81 J</li>
+    <li>A change in U<sub>g</sub> is minus the work done by gravity</li>
+  </ul>
+  <aside class="notes">The reference height is the bit worth labouring, and the next slide makes it a control you can move. Students often think there is a "correct" zero. There is not — floor level, the centre of mass at standing, and sea level are all legitimate, and every one of them gives a different U for the same body.
+
+What no choice can change is a DIFFERENCE. That is why every problem in this course is about ΔU.</aside>
+</section>
+
+<!-- 16 -->
+<section id="w-pegrav">
+  <h2>Gravitational potential energy</h2>
+  <p class="subhead">Move the reference and the number changes; the climb does not</p>
+  <div class="iplot wide" data-widget="pegrav"></div>
+  <aside class="notes">Drag the reference slider. U swings from positive to negative without the climber moving at all. Then drag the height slider and note that Δh — the length of the green arrow — is what actually did anything.
+
+Set the reference above the climber to get a negative potential energy, which is a perfectly good answer and usually the moment someone objects.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Gravitational potential energy</h2>
+  <p class="subhead">Example Problem</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">A 70 kg student climbs a staircase 3.0 m high. How much gravitational
+         potential energy do they gain?</p>
+      <p class="small">And if the climb takes 2.0 s, what average power did they produce?</p>
+    </div>
+    <div>
+      <p class="small"><strong>Given:</strong></p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">m = 70 kg</p>
+        <p class="eq" style="margin-bottom:.25em">Δh = 3.0 m</p>
+        <p class="eq" style="margin-bottom:0">Δt = 2.0 s</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The power half of this question needs the definition from Part 03, so either park it until then or take the definition on trust now — P = work ÷ time — and come back. It is here because it is the natural second half of the same climb.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Gravitational potential energy</h2>
+  <p class="subhead">Solution</p>
+  <div class="box accent workblock" style="max-width:30em">
+    <p class="eq" style="margin-bottom:.25em">ΔU = m · g · Δh</p>
+    <p class="eq" style="margin-bottom:.25em">ΔU = (70 kg)(9.81 m/s²)(3.0 m)</p>
+    <p class="eq" style="margin-bottom:0">ΔU ≈ 2060 J</p>
+  </div>
+  <p class="small">And over 2.0 s, the average power on the centre of mass:</p>
+  <div class="box accent workblock" style="max-width:30em">
+    <p class="eq" style="margin-bottom:.25em">P = 2060 J / 2.0 s</p>
+    <p class="eq" style="margin-bottom:0">P ≈ 1030 W  (about 1.4 horsepower)</p>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">That 2060 J is the same number as the barbell lift earlier — a 100 kg
+       bar raised 2.1 m and a 70 kg student raised 3.0 m are the same job. Once it is energy, it
+       does not matter which.</p>
+  </div>
+  <aside class="notes">1030 W for two seconds is a genuinely large number, and it is a nice reality check against the power-duration curve later in the lecture: the same person cannot hold 300 W for an hour.
+
+The callout is the point of putting the two problems in one lecture. Energy is a currency — it does not remember how it was earned.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Elastic potential energy</h2>
+  <p class="subhead">Energy stored in a deformed spring — or a tendon</p>
+  <div class="box accent workblock" style="max-width:20em">
+    <p class="eq big" style="margin-bottom:0">U<sub>e</sub> = ½ · k · x²</p>
+  </div>
+  <ul class="small two">
+    <li>k is the stiffness, in N/m (or N/mm)</li>
+    <li>x is the deformation from resting length</li>
+    <li><strong>Double the stretch, four times the energy</strong></li>
+    <li>Tendons, ligaments and aponeuroses are all biological springs</li>
+  </ul>
+  <aside class="notes">Same quadratic structure as kinetic energy, and the same lesson: the term that is squared dominates. A tendon that stretches twice as far stores four times as much, which is why a deep countermovement can store so much more than a shallow one.
+
+The Achilles is the one to name here, because it comes back in Part 04.</aside>
+</section>
+
+<!-- 20 -->
+<section id="w-spring">
+  <h2>Elastic potential energy</h2>
+  <p class="subhead">Stiffness and stretch do not contribute equally</p>
+  <div class="iplot wide" data-widget="spring"></div>
+  <aside class="notes">Start on the elastic band and drag the stretch slider — the grey dot is always at half the stretch of the red one and always at a quarter of the energy.
+
+Then press the Achilles tendon chip. The stiffness jumps from 12 to 150 N/mm and the stretch drops from 40 mm to 18, and the stored energy goes UP, because stiffness is linear and stretch is squared but the tendon is more than twelve times stiffer.
+
+The vaulting pole chip is the extreme case — very compliant, enormous deflection, and it stores more than either.</aside>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Conservation of mechanical energy</h2>
+  <p class="subhead">When only gravity and springs act, the total does not change</p>
+  <div class="box accent workblock" style="max-width:36em">
+    <p class="eq big" style="margin-bottom:0">E<sub>mech</sub> = KE + U<sub>g</sub> + U<sub>e</sub> = constant</p>
+  </div>
+  <ul class="small">
+    <li>KE and PE trade back and forth, but their sum is flat</li>
+    <li>This holds <strong>only</strong> in the absence of friction and muscle work</li>
+    <li>Real movements lose some to friction and heat; muscles can add energy or take it away</li>
+  </ul>
+  <aside class="notes">The condition is what matters. Once the feet leave the ground in a jump, nothing but gravity is acting and conservation is exact — that is why the flight phase is the one place in biomechanics where this is genuinely clean.
+
+During the push-off it is not conserved at all, because the muscles are pouring energy in.</aside>
+</section>
+
+<!-- 22 -->
+<section id="w-conserve">
+  <h2>Conservation of mechanical energy</h2>
+  <p class="subhead">Kinetic into potential and back again, through one flight</p>
+  <div class="iplot wide" data-widget="conserve" data-mode="anim"></div>
+  <aside class="notes">Press play. The blue region is kinetic energy, the red above it is potential, and the green line on top — their sum — never moves. That flat line is the whole idea.
+
+At the peak the kinetic energy is zero and every joule is potential. On landing it has all come back. Pause at the top and ask what the velocity is; "zero" is the answer they should be able to read straight off the figure.</aside>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Conservation of mechanical energy</h2>
+  <p class="subhead">Example Problem</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">A 75 kg athlete leaves the ground with a vertical velocity of 2.9 m/s.
+         How high does their centre of mass rise?</p>
+      <p class="small">Once they are airborne, only gravity acts — so mechanical energy
+         is conserved.</p>
+    </div>
+    <div>
+      <p class="small"><strong>Given:</strong></p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">m = 75 kg</p>
+        <p class="eq" style="margin-bottom:.25em">v<sub>take-off</sub> = 2.9 m/s</p>
+        <p class="eq" style="margin-bottom:0">at the peak, v = 0</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Ask what is true at the peak before turning over. "Vertical velocity is zero" is the insight the whole problem turns on — and note it is the VERTICAL velocity, which matters for a long jumper who is still moving fast horizontally at the top.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Conservation of mechanical energy</h2>
+  <p class="subhead">Solution</p>
+  <ul class="small">
+    <li>At the peak all of the take-off kinetic energy has become potential energy</li>
+  </ul>
+  <div class="box accent workblock" style="max-width:32em">
+    <p class="eq" style="margin-bottom:.25em">½ · m · v<sub>to</sub>²  =  m · g · Δh</p>
+    <p class="eq" style="margin-bottom:.25em">Δh = v<sub>to</sub>² / (2 · g)</p>
+    <p class="eq" style="margin-bottom:.25em">Δh = (2.9 m/s)² / (2 × 9.81 m/s²)</p>
+    <p class="eq" style="margin-bottom:0">Δh ≈ 0.43 m  (43 cm)</p>
+  </div>
+  <p class="small"><strong>The mass cancels.</strong> Jump height depends only on take-off velocity.</p>
+  <aside class="notes">Write the cancellation out on the board — m appears on both sides and divides away. This is the single most useful result in jump testing: measure take-off velocity, or flight time, and you have the height without weighing anybody.
+
+It is also why "heavier athletes jump lower" is false as stated. Heavier athletes often produce less take-off velocity, which is a different claim.</aside>
+</section>
+
+<!-- 25 -->
+<section id="w-masscancels">
+  <h2>Conservation of mechanical energy</h2>
+  <p class="subhead">Try to make the mass matter</p>
+  <div class="iplot wide" data-widget="conserve" data-mode="slider"></div>
+  <aside class="notes">Set the take-off speed to 2.9 m/s and check that Δh reads 0.429 m, which is the answer we just worked.
+
+Now drag the mass slider from 45 kg to 110 kg. Every energy on the figure changes — the flat line moves up and down — and the peak height does not move at all. That is the cancellation, made in front of them rather than asserted.
+
+Then drag take-off speed instead. Small changes there move the height a lot, because it is squared.</aside>
+</section>
+
+<!-- 26 -->
+<section>
+  <div class="section-slide">
+    <div class="course">Part 03</div>
+    <h2>Power</h2>
+    <p class="sub">The rate of mechanical work</p>
+  </div>
+</section>
+
+<!-- 27 -->
+<section>
+  <h2>Defining power</h2>
+  <p class="subhead">How fast work is done, or energy transferred</p>
+  <div class="textstrip three">
+    <div class="firstcol">
+      <p class="eq" style="margin-bottom:.2em">P = W / t</p>
+      <p class="small">Time-average power — work done divided by the time it took</p>
+    </div>
+    <div>
+      <p class="eq" style="margin-bottom:.2em">P = F · v</p>
+      <p class="small">Instantaneous linear power — force times velocity along the force</p>
+    </div>
+    <div>
+      <p class="eq" style="margin-bottom:.2em">P = τ · ω</p>
+      <p class="small">Rotational power — torque times angular velocity</p>
+    </div>
+  </div>
+  <div class="box accent workblock" style="max-width:34em">
+    <p class="eq" style="margin-bottom:0">SI unit: 1 watt (W) = 1 joule per second</p>
+  </div>
+  <p class="small">For reference: 1 horsepower ≈ 746 W, and a fit cyclist can hold about 300 W
+     for an hour.</p>
+  <aside class="notes">These are one quantity written three ways, not three quantities. P = F·v falls straight out of P = W/t when you let t get small: W = F·d, divide by t, and d/t is v.
+
+τ·ω is the same move in angular terms and is what you will use for the rest of the course, from Angular Kinetics onward.</aside>
+</section>
+
+<!-- 28 -->
+<section id="w-power3">
+  <h2>Defining power</h2>
+  <p class="subhead">One lift, three formulas, the same watts</p>
+  <div class="iplot wide" data-widget="power3"></div>
+  <aside class="notes">The curve is instantaneous power through the lift and the dashed line is the time-average up to the cursor. They are different numbers at every instant, and the average is always the smaller — worth pointing out, because "peak power" and "average power" get used interchangeably in the strength literature and they should not be.
+
+Press the τ·ω button. Nothing about the lift changes; the same watts are simply being counted at a joint with a 0.42 m moment arm instead of at the bar.</aside>
+</section>
+
+<!-- 29 -->
+<section id="w-cmjphases">
+  <h2>Phases of a countermovement jump</h2>
+  <p class="subhead">Each phase has its own work and power signature</p>
+  <div class="iplot wide" data-widget="cmjphases"></div>
+  <aside class="notes">Press play and let it run once before saying anything. Then go back through it phase by phase with the slider.
+
+Standing: force equals body weight, nothing is moving, no work is being done. Countermovement: the body drops, the muscles lengthen under load — this is eccentric, and it is where the tendons are stretched. Propulsion: concentric, the muscles shorten and deliver positive work to the centre of mass. Flight: the feet are off the floor, only gravity acts, and mechanical energy is conserved. Landing: eccentric again, dissipating the kinetic energy — or storing it, if another jump is coming.
+
+The crouch you see is driven by the actual measured record, not drawn by hand, so the depth and the timing are the trace's.</aside>
+</section>
+
+<!-- 30 -->
+<section>
+  <h2>Power</h2>
+  <p class="subhead">Example Problem — the Margaria-Kalamen stair sprint</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">A 75 kg athlete sprints up a staircase. Timing gates are set on the
+         3rd and 9th steps, each step is 0.175 m high, and the athlete covers the six steps
+         between the gates in 0.52 s.</p>
+      <p class="small">What is their peak anaerobic power?</p>
+    </div>
+    <div>
+      <p class="small"><strong>Given:</strong></p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">m = 75 kg</p>
+        <p class="eq" style="margin-bottom:.25em">step = 0.175 m, 6 steps</p>
+        <p class="eq" style="margin-bottom:0">Δt = 0.52 s</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">This is a classic field test of alactic power and you will run it in the lab. Note that the gates are on steps 3 and 9 — the first two steps are the run-up, so the athlete is already at speed when the clock starts. That is deliberate: the test is measuring power, not acceleration from rest.</aside>
+</section>
+
+<!-- 31 -->
+<section>
+  <h2>Power</h2>
+  <p class="subhead">Solution</p>
+  <ul class="small">
+    <li>Only the <strong>vertical</strong> rise counts — the work being measured is against gravity</li>
+  </ul>
+  <div class="box accent workblock" style="max-width:30em">
+    <p class="eq" style="margin-bottom:0">Δh = 6 × 0.175 m = 1.05 m</p>
+  </div>
+  <div class="box accent workblock" style="max-width:34em">
+    <p class="eq" style="margin-bottom:.25em">P = m · g · Δh / Δt</p>
+    <p class="eq" style="margin-bottom:.25em">P = (75)(9.81)(1.05) / 0.52</p>
+    <p class="eq" style="margin-bottom:0">P ≈ 1486 W</p>
+  </div>
+  <p class="small">Per kilogram that is about <strong>19.8 W/kg</strong> — competitive for a
+     power athlete.</p>
+  <aside class="notes">Dividing by body mass is what makes the test comparable between athletes, and it is the number that actually gets reported. A 100 kg athlete producing 1486 W is unremarkable; a 60 kg athlete producing it is exceptional.</aside>
+</section>
+
+<!-- 32 -->
+<section id="w-margaria">
+  <h2>Power</h2>
+  <p class="subhead">The same test, with your own numbers in it</p>
+  <div class="iplot wide" data-widget="margaria"></div>
+  <aside class="notes">Leave it on the lecture's numbers first — 1486 W, 19.8 W/kg, right at the edge of the power-athlete band.
+
+Then change the mass without changing anything else. The watts go up and the W/kg does not move, because both sides scale together. That is the cleanest demonstration of why the test is normalised.
+
+Then slow the time from 0.52 s to 0.95 s and watch it fall through two bands. Half a second of difference over six steps is the entire range from trained to untrained, which is why the timing gates have to be good.</aside>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>Muscle force, velocity and power</h2>
+  <p class="subhead">Peak power is at neither end of the range</p>
+  <ul class="small two">
+    <li><strong>Isometric</strong> (v = 0): maximum force, and no power at all</li>
+    <li><strong>v<sub>max</sub></strong>: no force, and again no power</li>
+    <li>Peak power is at about <strong>0.3 · v<sub>max</sub></strong></li>
+    <li>Olympic lifts and plyometrics are aimed at that region</li>
+  </ul>
+  <div class="callout small">
+    <p style="margin-bottom:0">Power is a product, so it is zero whenever either term is zero. The
+       maximum has to lie somewhere in between — and it is much closer to the fast end than most
+       people guess.</p>
+  </div>
+  <aside class="notes">Ask where they think peak power sits before showing the figure. Most guess halfway. It is about a third of v_max, and the force at that point is only about 30% of maximum — which is a genuinely surprising result and the reason heavy slow lifting is not the same training stimulus as explosive lifting.
+
+This is the hand-off to Muscle Mechanics later in the course.</aside>
+</section>
+
+<!-- 34 -->
+<section id="w-fvp">
+  <h2>Muscle force, velocity and power</h2>
+  <p class="subhead">Drag along the curve and watch the product</p>
+  <div class="iplot wide" data-widget="fvp"></div>
+  <aside class="notes">Press the isometric chip: force is at maximum, power is exactly zero. Press v_max: force is zero, power is zero again. Then peak power, and note that the force there is only about a third of maximum.
+
+Drag slowly between them. The power curve is quite flat near its peak — anywhere from about 0.2 to 0.45 of v_max gives you more than 90% of peak power, which is why the training prescription is a range rather than a number.</aside>
+</section>
+
+<!-- 35 -->
+<section id="w-powerbars">
+  <h2>Peak power across activities</h2>
+  <p class="subhead">Explosive movements produce ten to fifty times steady-state power</p>
+  <div class="iplot wide" data-widget="powerbars"></div>
+  <aside class="notes">Start on the linear scale, where walking and FTP cycling are invisible next to an Olympic clean. Then press log, and the spread becomes readable — the range is about seventy to one.
+
+Two honesty notes belong here. First, the cyclist's numbers are measured at the pedal and the jumper's are whole-body centre-of-mass power; they are not the same measurement and should not really share an axis without saying so. Second, the orange bar is the jump from this lecture — 1745 W — which is well under the 4500 W of a good countermovement jump, because our record is a 12 cm jump by a 66.6 kg subject, not an explosive athlete.</aside>
+</section>
+
+<!-- 36 -->
+<section id="w-pdcurve">
+  <h2>The power–duration curve</h2>
+  <p class="subhead">What you can hold falls sharply with how long you have to hold it</p>
+  <div class="iplot wide" data-widget="pdcurve"></div>
+  <aside class="notes">Walk the chips left to right: 5 seconds is ATP-PCr and peak neuromuscular output; a minute is anaerobic glycolysis; five minutes is close to VO₂max; an hour is the sustainable threshold, FTP, and the curve has flattened onto critical power.
+
+The shape is the point. Between 5 s and 60 s the sustainable power falls by a factor of six; between 5 min and 60 min it barely moves. Energy systems, not willpower.
+
+Note the axis is logarithmic — on a linear duration axis this curve is a cliff followed by a flat line and tells you nothing.</aside>
+</section>
+
+<!-- 37 -->
+<section>
+  <div class="section-slide">
+    <div class="course">Part 04</div>
+    <h2>Applied biomechanics</h2>
+    <p class="sub">Stretch–shortening, jumping, gait</p>
+  </div>
+</section>
+
+<!-- 38 -->
+<section>
+  <h2>The stretch–shortening cycle</h2>
+  <p class="subhead">Tendons store and return energy on every step</p>
+  <ul class="small">
+    <li>The Achilles returns roughly <strong>35–50% of the mechanical energy a running step
+        needs</strong> — energy the muscles never have to produce</li>
+    <li>Less muscle work means a lower metabolic cost</li>
+    <li>It is why running is about 50% more economical than a muscle-only model predicts</li>
+    <li>The same mechanism powers countermovement jumps and hopping</li>
+  </ul>
+  <aside class="notes">This is the punchline of the whole lecture. A runner is partly a bouncing ball, and the bouncing is free — the tendon is not metabolically active while it is being stretched and recoiled.
+
+Be careful with the percentages: the tendon returns about 90–93% of what it stores (the rest is hysteresis, lost as heat), and what it stores happens to be roughly 35–50% of what the step needs. Those are two different fractions and they get conflated constantly.</aside>
+</section>
+
+<!-- 39 -->
+<section id="w-ssc">
+  <h2>The stretch–shortening cycle</h2>
+  <p class="subhead">One running stance, absorbed and returned</p>
+  <div class="iplot wide" data-widget="ssc"></div>
+  <aside class="notes">Press play and watch the tendon lengthen through the first half of stance and recoil through the second. The pink half is absorption, the green half is return.
+
+Then drag the hysteresis slider up from 7%. At 25% loss the tendon is a poor spring and the returned energy drops to about a third of a step's requirement. Real tendon is at the good end of that range — around 7% loss — and that efficiency is what makes the mechanism worth having.
+
+Worth saying that a rubber band is worse, around 15%, and a modern running shoe midsole is worse still.</aside>
+</section>
+
+<!-- 40 -->
+<section id="w-cmjsj">
+  <h2>Countermovement against squat jump</h2>
+  <p class="subhead">Why the dip is worth 8 cm</p>
+  <div class="iplot wide" data-widget="cmjsj"></div>
+  <aside class="notes">Both jumps start from rest and finish with the same push-off range. The only difference is that the countermovement jump dips first — you can see the force drop below body weight in the blue trace while the grey one stays flat.
+
+That dip is worth about 8 cm, or 25%, and there are three reasons, not one: elastic energy stored in the tendons during the pre-stretch, active state — the muscles are already producing force before shortening begins, so no time is lost building it — and a stretch reflex that potentiates activation.
+
+Students almost always name only the first. The second is arguably the biggest contributor.</aside>
+</section>
+
+<!-- 41 -->
+<section>
+  <h2>Putting it together</h2>
+  <p class="subhead">The same framework, different dominant terms</p>
+  <div class="ditable-wrap">
+    <table class="ditable">
+      <tr><th>Sprinting</th><td class="eq">W<sub>net</sub> = ΔKE</td>
+          <td>Concentric work accelerates the runner; the stretch–shortening cycle recycles elastic energy each step</td></tr>
+      <tr><th>Vertical jump</th><td class="eq">W<sub>push-off</sub> = Δ(KE + PE)</td>
+          <td>Push-off work becomes take-off velocity, then height — with about 25% added by the countermovement</td></tr>
+      <tr><th>Cycling time trial</th><td class="eq">P = F · v</td>
+          <td>Sustainable power at the pedal sets the pace, and the power–duration curve sets the ceiling</td></tr>
+      <tr><th>Throwing</th><td class="eq">W = ΔKE<sub>implement</sub></td>
+          <td>Work is transferred down the kinetic chain and ends as kinetic energy in the hand and the implement</td></tr>
+      <tr><th>Running gait</th><td class="eq">U<sub>e</sub> ↔ KE</td>
+          <td>Tendons and ground reaction impulses recycle energy across every step</td></tr>
+    </table>
+  </div>
+  <aside class="notes">Nothing new here — it is a map of where each piece of the lecture shows up. Pick whichever row matches the sport the class cares about and work it out loud.</aside>
+</section>
+
+<!-- 42 -->
+<section>
+  <h2>Summary</h2>
+  <div class="textstrip">
+    <div class="firstcol">
+      <p><strong>WORK</strong> — W = F·d·cos θ</p>
+      <p class="small">Positive, negative or zero depending on the angle between force and
+         displacement. Measured in joules.</p>
+      <p><strong>KINETIC ENERGY</strong> — KE = ½mv²</p>
+      <p class="small">The v² term dominates. The work–energy theorem says W<sub>net</sub> = ΔKE.</p>
+    </div>
+    <div>
+      <p><strong>POTENTIAL ENERGY</strong> — U<sub>g</sub> = mgh, U<sub>e</sub> = ½kx²</p>
+      <p class="small">Gravitational depends on a reference you choose; elastic is quadratic in
+         the stretch. Both trade with kinetic energy.</p>
+      <p><strong>POWER</strong> — P = W/t = F·v = τ·ω</p>
+      <p class="small">The rate of doing work. Muscle power peaks near 0.3·v<sub>max</sub>, and
+         what you can sustain falls sharply with duration.</p>
+    </div>
+  </div>
+  <aside class="notes">If they remember one thing: energy is a currency and work is the transaction. Every problem in this lecture is asking where a fixed number of joules went.</aside>
+</section>
+
+<!-- 43 -->
+<section id="w-energymap">
+  <h2>One movement, four quantities</h2>
+  <p class="subhead">The whole lecture read off a single jump</p>
+  <div class="iplot wide" data-widget="energymap"></div>
+  <aside class="notes">Scrub from one end to the other. Work, kinetic energy, potential energy and power are four readings off the same force record, and W = ΔKE + ΔPE holds at every point on the slider.
+
+Watch the power tile in particular: it peaks at about 1745 W, late in the propulsion phase, at the moment when force is still high and the body is already moving fast. Neither the peak force nor the peak velocity is where peak power is — which is exactly the force–velocity trade-off from Part 03, showing up in a whole-body movement.</aside>
+</section>
+
+<!-- 44 -->
+<section>
+  <div class="title-slide">
+    <div class="course">EPHE 341 · Biomechanics</div>
+    <h1>Questions?</h1>
+    <div class="rule"></div>
+    <p class="sub">Next up: angular kinematics · Further reading: McGinnis Chpt 4</p>
+  </div>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js?v=20260930"></script>
+<script src="mobile.js?v=20260930"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="deck-core.js?v=20260930"></script>
+<script src="energy.js?v=20260930"></script>
+<script src="deck-tools.js?v=20260930"></script>
+<script src="fit.js?v=20260930"></script>
+</body>
+</html>
