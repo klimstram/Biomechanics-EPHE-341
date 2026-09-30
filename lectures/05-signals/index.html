@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20260923">
+<link rel="stylesheet" href="theme.css?v=20260930">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -91,7 +91,7 @@
 </section>
 
 <!-- 4 -->
-<section>
+<section id="w-nyquist">
   <h2>Nyquist–Shannon Sampling Theorem</h2>
   <p class="lead">In sampling an analog signal, the goal is to represent the original signal as
      accurately as possible with as few discrete points as possible.
@@ -168,7 +168,7 @@ Smoothing reduces short-term fluctuations to reveal the underlying trend; it is 
 </section>
 
 <!-- 9 -->
-<section>
+<section id="w-smooth">
   <h2>Smoothing</h2>
   <p class="lead"><strong>Moving average</strong> (over a window of samples). Simple averaging gets
      rid of noisy spikes.</p>
@@ -186,7 +186,7 @@ Smoothing reduces short-term fluctuations to reveal the underlying trend; it is 
 </section>
 
 <!-- 11 -->
-<section>
+<section id="w-fit">
   <h2>Curve fitting</h2>
   <div class="cols b top">
     <div>
@@ -204,7 +204,7 @@ Smoothing reduces short-term fluctuations to reveal the underlying trend; it is 
 </section>
 
 <!-- 12 -->
-<section>
+<section id="w-components">
   <h2>Components of a signal</h2>
   <p class="lead">Filtering – a process that removes some unwanted components or features from a
      signal. Before we discuss filtering we need to talk about <strong>signal components</strong>.</p>
@@ -248,7 +248,7 @@ Smoothing reduces short-term fluctuations to reveal the underlying trend; it is 
 </section>
 
 <!-- 15 -->
-<section>
+<section id="w-fourier">
   <h2>Frequency domain</h2>
   <p class="lead">A time-domain signal is converted to a frequency-domain signal with a mathematical
      technique called a <strong>Fourier Transform</strong>.</p>
@@ -258,7 +258,7 @@ Then turn the noise up. Noise has no single frequency, so it lifts the entire sp
 </section>
 
 <!-- 16 -->
-<section>
+<section id="w-synth">
   <h2>Fourier transform</h2>
   <div class="iplot wide" data-widget="synth"></div>
   <aside class="notes">Any repeating signal, however square-edged, is a sum of sine and cosine waves at whole multiples of its own rate — 1 Hz, 2 Hz, 3 Hz and so on for a signal that repeats once a second. The Fourier transform is the arithmetic that finds how much of each, and those amplitudes are exactly what the frequency-domain graph plots. The three panels are the same numbers three ways.
@@ -273,7 +273,7 @@ Square wave is the animation this slide used to show: odd harmonics only, amplit
 </section>
 
 <!-- 17 -->
-<section>
+<section id="w-terms">
   <h2>Fourier transform</h2>
   <p class="subhead">The components, one graph each</p>
   <div class="iplot wide" data-widget="terms"></div>
@@ -334,7 +334,7 @@ The panels share one amplitude scale on purpose, so the harmonics that contribut
 </section>
 
 <!-- 21 -->
-<section>
+<section id="w-filterwall">
   <h2>Digital filtering</h2>
   <p class="lead">Let’s say that we wanted to isolate different parts of the signal — we could use
      different filters to do that. A <strong>low pass filter</strong> maintains low frequencies; a
@@ -344,7 +344,7 @@ The panels share one amplitude scale on purpose, so the harmonics that contribut
 </section>
 
 <!-- 22 -->
-<section>
+<section id="w-buried">
   <h2>Digital filtering</h2>
   <p class="lead">25 Hz + 50 Hz, buried in random noise <strong>ten times larger</strong> than the
      sine waves. In the time domain there is nothing left to see. In the
@@ -374,7 +374,7 @@ In the time domain there is nothing to see. In the frequency domain the two spik
 </section>
 
 <!-- 24 -->
-<section>
+<section id="w-deriv">
   <h2>Digital filtering</h2>
   <p class="lead">Noise in motion capture data is <strong>amplified</strong> each time the data are
      differentiated or integrated.</p>
@@ -403,7 +403,7 @@ So we decided to try and develop our own from previous research that we did. We 
 </section>
 
 <!-- 26 -->
-<section>
+<section id="w-wavelet">
   <h2>Digital filtering</h2>
   <p class="subhead">Undecimated wavelets on a hull accelerometer — finding the drive in the noise</p>
   <div class="iplot wide" data-widget="wavelet"></div>
@@ -442,8 +442,8 @@ Accelerometer analysis — drive initiation: negative valley associated with pea
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20260923"></script>
-<script src="mobile.js?v=20260923"></script>
+<script src="annotate.js?v=20260930"></script>
+<script src="mobile.js?v=20260930"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -465,9 +465,9 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="deck-core.js?v=20260923"></script>
-<script src="signals.js?v=20260923"></script>
-<script src="deck-tools.js?v=20260923"></script>
-<script src="fit.js?v=20260923"></script>
+<script src="deck-core.js?v=20260930"></script>
+<script src="signals.js?v=20260930"></script>
+<script src="deck-tools.js?v=20260930"></script>
+<script src="fit.js?v=20260930"></script>
 </body>
 </html>

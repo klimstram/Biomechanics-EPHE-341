@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20260923">
+<link rel="stylesheet" href="theme.css?v=20260930">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -134,7 +134,7 @@
 </section>
 
 <!-- 6 -->
-<section>
+<section id="w-impulse">
   <h2>Impulse is an area</h2>
   <div class="iplot wide" data-widget="impulse"></div>
   <aside class="notes">Drag the force and the time and watch the area. The three chips all carry very different forces but the middle two carry the same area, and therefore the same change in velocity. This is why a follow-through in throwing matters, and why a crash mat works.</aside>
@@ -247,7 +247,7 @@
 </section>
 
 <!-- 14 -->
-<section>
+<section id="w-jump">
   <h2>First: subtract body weight</h2>
   <div class="iplot wide" data-widget="jump" data-step="1"></div>
   <aside class="notes">first, we want to subtract the jumper’s body weight from the force vs time data. The distance from the axis to the dashed line is equal to the jumper’s body weight — 653 N for a 66.6 kg jumper.
@@ -417,7 +417,7 @@ The trace here is reconstructed so that its three areas are the lecture’s publ
 </section>
 
 <!-- 26 -->
-<section>
+<section id="w-activity">
   <h2>Name the activity</h2>
   <div class="iplot wide" data-widget="activity"></div>
   <aside class="notes">Run the cursor along before pressing reveal and ask the room. The giveaways: a section pinned at zero can only be flight or the plate unloaded; a single tall narrow spike after zero is a landing; a slow decline that never returns is sitting down.
@@ -567,7 +567,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
 </section>
 
 <!-- 34 -->
-<section>
+<section id="w-friction">
   <h2>Static and kinetic friction together</h2>
   <div class="iplot wide" data-widget="friction"></div>
   <aside class="notes">The diagonal is static friction matching the push newton for newton. The drop at the critical point is why a heavy object that has just begun to slide seems to leap away — the resistance falls while the push does not.</aside>
@@ -702,7 +702,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
 </section>
 
 <!-- 41 -->
-<section>
+<section id="w-hiker">
   <h2>Friction</h2>
   <p class="subhead">Example Problem</p>
   <div class="cols b top">
@@ -805,7 +805,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
 </section>
 
 <!-- 47 -->
-<section>
+<section id="w-slopefric">
   <h2>Friction</h2>
   <p class="subhead">The same comparison, on a slope you can tilt</p>
   <div class="iplot wide" data-widget="slopefric"></div>
@@ -878,8 +878,8 @@ The trace is drawn to the segment boundaries and levels of the published record 
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20260923"></script>
-<script src="mobile.js?v=20260923"></script>
+<script src="annotate.js?v=20260930"></script>
+<script src="mobile.js?v=20260930"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -901,9 +901,9 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="deck-core.js?v=20260923"></script>
-<script src="impulse.js?v=20260923"></script>
-<script src="deck-tools.js?v=20260923"></script>
-<script src="fit.js?v=20260923"></script>
+<script src="deck-core.js?v=20260930"></script>
+<script src="impulse.js?v=20260930"></script>
+<script src="deck-tools.js?v=20260930"></script>
+<script src="fit.js?v=20260930"></script>
 </body>
 </html>

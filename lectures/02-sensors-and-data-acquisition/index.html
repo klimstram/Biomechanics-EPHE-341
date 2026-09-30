@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20260923">
+<link rel="stylesheet" href="theme.css?v=20260930">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -190,7 +190,7 @@ Worth saying out loud: 1200 µε is a big strain for metal, and it moves 120 Ω 
 </section>
 
 <!-- 8 — INTERACTIVE: the strain gauge -->
-<section>
+<section id="w-strain">
   <h2>Sensor example: strain gauge</h2>
   <p class="lead">We could measure the voltage in conditions where the beam was <strong>compressed</strong>, in
      <strong>tension</strong>, or <strong>at rest</strong> — and we could watch it change as the force does.</p>
@@ -225,7 +225,7 @@ A digital clock displays the time only at discrete points.</aside>
 </section>
 
 <!-- 10 — INTERACTIVE: analog vs digital -->
-<section>
+<section id="w-sampling">
   <h2>Signals</h2>
   <div class="textstrip tiny">
     <p class="firstcol">If a signal is <strong>analog</strong> it means there are no separations, based on time,
@@ -284,7 +284,7 @@ This is the first place students meet aliasing, even though we do not name it ye
 </section>
 
 <!-- 13 -->
-<section>
+<section id="w-calib">
   <h2>Sensor calibration</h2>
   <h3>How is a sensor calibrated? — in this example, a force transducer</h3>
   <div class="textstrip tiny three" style="align-items:center">
@@ -502,7 +502,7 @@ Worth saying out loud: every force number in every paper you will read this term
 </section>
 
 <!-- 25 -->
-<section>
+<section id="w-multisensor">
   <h2>Data acquisition</h2>
   <h3>Multiplexer</h3>
   <div class="cols a top">
@@ -586,7 +586,7 @@ Two things to point at. First, the arm has to come all the way round before it g
 </section>
 
 <!-- 29 — INTERACTIVE: sample-and-hold -->
-<section>
+<section id="w-samplehold">
   <h2>Sample-and-hold circuit</h2>
   <p class="lead">To convert accurately, the voltage input <strong>must not change much</strong> — or the number
      produced by the A/D will not be an accurate reflection of the voltage.</p>
@@ -618,7 +618,7 @@ Then lengthen the conversion time and watch the error grow. That is the whole ar
 </section>
 
 <!-- 31 — INTERACTIVE: the three limits -->
-<section>
+<section id="w-adclimits">
   <h2>Analog-to-digital converter</h2>
   <p class="lead">All three limits, in one figure. Change one at a time and watch what the stored signal loses.</p>
   <div class="iplot wide" data-widget="adclimits" data-gain="1"></div>
@@ -805,8 +805,8 @@ Note: an unamplified signal is usually much smaller than the example shown here;
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20260923"></script>
-<script src="mobile.js?v=20260923"></script>
+<script src="annotate.js?v=20260930"></script>
+<script src="mobile.js?v=20260930"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -828,9 +828,9 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="deck-core.js?v=20260923"></script>
-<script src="sensors.js?v=20260923"></script>
-<script src="deck-tools.js?v=20260923"></script>
-<script src="fit.js?v=20260923"></script>
+<script src="deck-core.js?v=20260930"></script>
+<script src="sensors.js?v=20260930"></script>
+<script src="deck-tools.js?v=20260930"></script>
+<script src="fit.js?v=20260930"></script>
 </body>
 </html>

@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20260923">
+<link rel="stylesheet" href="theme.css?v=20260930">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -74,7 +74,7 @@ Point out before moving on: all anyone measured was where he was at ten marks, a
 </section>
 
 <!-- 2b -->
-<section>
+<section id="w-sprint">
   <h2>Measuring a 100 m sprint</h2>
   <p class="lead">Ten split times are the only measurement. Speed and acceleration are <strong>calculated</strong> from them — each graph is the slope of the one above it.</p>
   <div class="iplot wide" data-widget="sprint"></div>
@@ -196,7 +196,7 @@ But… can we determine velocity from an acceleration–time graph, or displacem
 </section>
 
 <!-- 13 -->
-<section>
+<section id="w-grapher">
   <h2>Calculus and kinematics</h2>
   <div class="cols a top">
     <div>
@@ -311,7 +311,7 @@ Good one to do live: start with 6t-squared, then add minus-t-cubed and watch the
 </section>
 
 <!-- 19 -->
-<section>
+<section id="w-curvefit">
   <h2>Side note on curve fitting</h2>
   <div class="cols c top">
     <ul class="small">
@@ -448,7 +448,7 @@ The equation box at the bottom is live: put any polynomial in it and the worked 
 
 
 <!-- 29 -->
-<section>
+<section id="w-golf">
   <h2>Calculus and kinematics</h2>
   <p class="lead">Determine point displacement from video analysis, then differentiate to find velocity and acceleration.</p>
   <div class="iplot wide" data-widget="golf"></div>
@@ -962,7 +962,7 @@ Then overlay the accelerometer: two instruments, same trial, same acceleration.<
 </section>
 
 <!-- 62 -->
-<section>
+<section id="w-imu">
   <h2>Experimental application</h2>
   <p class="lead">An issue with integral sum is that you cumulatively sum the signal — but also <strong>any error</strong> that may be present.</p>
   <div class="iplot wide" data-widget="imu" data-scrub="0" data-rawpick="0" data-panels="avd" data-controls="1" data-video="1"></div>
@@ -988,8 +988,8 @@ That is why integrating accelerometers to get position is hard, and why we bothe
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20260923"></script>
-<script src="mobile.js?v=20260923"></script>
+<script src="annotate.js?v=20260930"></script>
+<script src="mobile.js?v=20260930"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -1014,8 +1014,8 @@ Reveal.initialize(Object.assign({
 <script src="data/imu.js"></script>
 <script src="data/video.js"></script>
 <script src="data/golf.js"></script>
-<script src="interactives.js?v=20260923"></script>
-<script src="deck-tools.js?v=20260923"></script>
-<script src="fit.js?v=20260923"></script>
+<script src="interactives.js?v=20260930"></script>
+<script src="deck-tools.js?v=20260930"></script>
+<script src="fit.js?v=20260930"></script>
 </body>
 </html>

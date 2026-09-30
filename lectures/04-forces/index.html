@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20260923">
+<link rel="stylesheet" href="theme.css?v=20260930">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -68,7 +68,7 @@
 </section>
 
 <!-- 3 -->
-<section>
+<section id="w-vector">
   <h2>Force vectors</h2>
   <div class="cols a top">
     <div>
@@ -86,7 +86,7 @@
 </section>
 
 <!-- 4 -->
-<section>
+<section id="w-fma">
   <h2>Force — units</h2>
   <div class="textstrip tiny">
     <p class="firstcol">The Newton (N) is the SI unit of measurement for force. One N of force is
@@ -151,7 +151,7 @@
 </section>
 
 <!-- 8 -->
-<section>
+<section id="w-tendon">
   <h2>Measuring internal forces in biomechanics</h2>
   <p class="subhead">A buckle transducer or an optical fibre in the Achilles tendon</p>
   <p class="small">The sensor gives the <strong>magnitude</strong> of the tension in the tendon.
@@ -197,7 +197,7 @@
 </section>
 
 <!-- 11 -->
-<section>
+<section id="w-vecsum">
   <h2>Internal force vector resolution</h2>
   <p class="subhead">Step 3: Isolate the forces and determine force components using trig functions</p>
   <div class="cols b top">
@@ -324,7 +324,7 @@
 </section>
 
 <!-- 17 -->
-<section>
+<section id="w-weight">
   <h2>Gravity and weight</h2>
   <div class="textstrip tiny">
     <p class="firstcol">The weight of an object is defined as the force of gravity acting on an
@@ -341,7 +341,7 @@
 </section>
 
 <!-- 18 -->
-<section>
+<section id="w-incline">
   <h2>Force of gravity and normal force</h2>
   <div class="cols b top">
     <div>
@@ -519,7 +519,7 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
 </section>
 
 <!-- 28 -->
-<section>
+<section id="w-planes3d">
   <h2>Forces in 3D</h2>
   <p class="subhead">Three planes, three axes — spin it and pick one</p>
   <div class="iplot wide" data-widget="planes3d"></div>
@@ -553,7 +553,7 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
 </section>
 
 <!-- 30 -->
-<section>
+<section id="w-grf3d">
   <h2>Force in 3D</h2>
   <p class="subhead">One step, measured — the same vector split into its three axes</p>
   <div class="iplot wide" data-widget="grf3d"></div>
@@ -657,7 +657,7 @@ The figure is the worked case from the original slide: a 1000 N weight on a 20°
 </section>
 
 <!-- 35 -->
-<section>
+<section id="w-pressure">
   <h2>Measuring external force in biomechanics</h2>
   <p class="subhead">P = F/A — and how an insole gets the force back</p>
   <div class="iplot wide" data-widget="pressure"></div>
@@ -757,7 +757,7 @@ Of the current existing sensors all have different pro's and con's in terms of s
 </section>
 
 <!-- 41 -->
-<section>
+<section id="w-cop">
   <h2>Centre of pressure</h2>
   <p class="subhead">The same path, measured — where the force is applied, moment by moment</p>
   <div class="iplot wide" data-widget="cop"></div>
@@ -875,7 +875,7 @@ Of the current existing sensors all have different pro's and con's in terms of s
 </section>
 
 <!-- 49 -->
-<section>
+<section id="w-clips">
   <h2>All four together</h2>
   <div class="vidgrid">
     <figure>
@@ -902,7 +902,7 @@ Of the current existing sensors all have different pro's and con's in terms of s
 </section>
 
 <!-- 50 -->
-<section>
+<section id="w-grf">
   <h2>The same comparison, live</h2>
   <p class="lead">Every style lands on about the same peak force. What separates them is the spike in
      the first 50 milliseconds — and how fast the load arrives.</p>
@@ -959,7 +959,7 @@ These traces are modelled on the published curves, not measured here — the mea
 </section>
 
 <!-- 54 -->
-<section>
+<section id="w-invdyn">
   <h2>Measuring internal forces in Biomechanics</h2>
   <p class="subhead">Inverse dynamics gives the net moment — EMG says who made it</p>
   <div class="iplot wide" data-widget="invdyn"></div>
@@ -973,8 +973,8 @@ These traces are modelled on the published curves, not measured here — the mea
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20260923"></script>
-<script src="mobile.js?v=20260923"></script>
+<script src="annotate.js?v=20260930"></script>
+<script src="mobile.js?v=20260930"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -996,9 +996,9 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="deck-core.js?v=20260923"></script>
-<script src="forces.js?v=20260923"></script>
-<script src="deck-tools.js?v=20260923"></script>
-<script src="fit.js?v=20260923"></script>
+<script src="deck-core.js?v=20260930"></script>
+<script src="forces.js?v=20260930"></script>
+<script src="deck-tools.js?v=20260930"></script>
+<script src="fit.js?v=20260930"></script>
 </body>
 </html>

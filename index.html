@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>EPHE 341 — Biomechanics · University of Victoria</title>
 <meta name="description" content="Lecture slides for EPHE 341 Biomechanics at the University of Victoria.">
-<link rel="stylesheet" href="hub/hub.css?v=20260923">
+<link rel="stylesheet" href="hub/hub.css?v=20260930">
 <script>
 /* the decks remember this too, so the whole site stays on one theme */
 (function () {
@@ -79,7 +79,7 @@
 
 </div>
 
-<script src="hub/lectures.js?v=20260923"></script>
+<script src="hub/lectures.js?v=20260930"></script>
 <script>
 (function () {
   'use strict';
@@ -113,12 +113,23 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
     });
   }
+  /* A tag is either a plain label or ['label', 'slide-id']. The id is on the
+     <section> in the deck, and reveal resolves '#/<id>' to that slide itself —
+     so a slide inserted above it does not move the link. */
+  var tagBase = '';
+  function tag(t) {
+    var label = t, id = null;
+    if (Object.prototype.toString.call(t) === '[object Array]') { label = t[0]; id = t[1]; }
+    if (!id) return '<li>' + esc(label) + '</li>';
+    return '<li class="lk"><a href="' + esc(tagBase + '#/' + id) + '">' + esc(label) + '</a></li>';
+  }
   function card(x) {
     /* Link to the file, not the folder. A web server turns a folder URL into
        its index.html; opening the site straight off disk does not, and you get
        a directory listing instead. Naming the file works in both places. */
     var base = x.path.replace(/\/+$/, '') + '/';
     var entry = base + (x.file || 'index.html');
+    tagBase = entry;
     var bits = [];
     if (x.slides) bits.push('<b>' + x.slides + '</b> slides');
     if (x.widgets) bits.push('<b>' + x.widgets + '</b> interactive figures');
@@ -128,7 +139,7 @@
       '<h3>' + esc(x.title) + '</h3>' +
       (x.blurb ? '<p>' + esc(x.blurb) + '</p>' : '') +
       (x.live && x.live.length
-        ? '<ul class="tags">' + x.live.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>'
+        ? '<ul class="tags">' + x.live.map(tag).join('') + '</ul>'
         : '') +
       (bits.length ? '<div class="meta">' + bits.join(' &nbsp;·&nbsp; ') + '</div>' : '') +
       '<div class="go">' +

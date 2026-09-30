@@ -94,6 +94,14 @@ h2.sec{ margin:3rem 0 1.2rem; font-size:.74rem; letter-spacing:.14em; text-trans
 .tags{ display:flex; flex-wrap:wrap; gap:.36rem; margin:0; padding:0; list-style:none; }
 .tags li{ font-size:.74rem; line-height:1.5; color:var(--ink); background:var(--chip);
   border:1px solid var(--rule); border-radius:99px; padding:.1rem .62rem; }
+/* A tag that opens a slide. The padding moves onto the anchor so the whole
+   chip is the hit target, not just the words. */
+.tags li.lk{ padding:0; transition:border-color .12s ease; }
+.tags li.lk a{ display:block; padding:.1rem .62rem; border-radius:99px;
+  color:inherit; text-decoration:none; }
+.tags li.lk:hover{ border-color:var(--brand); }
+.tags li.lk:hover a{ color:var(--brand); }
+.tags li.lk a:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
 .meta{ font-size:.78rem; color:var(--muted); font-variant-numeric:tabular-nums; }
 .meta b{ color:var(--ink); font-weight:650; }
 .go{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.15rem; }

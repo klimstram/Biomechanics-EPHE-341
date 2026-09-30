@@ -69,6 +69,56 @@ else document.addEventListener('DOMContentLoaded', function () {
   if (window.Reveal) { try { Reveal.on('ready', boot); } catch (e) {} }
 });
 
+/* ---- a link straight to one slide ----
+   The hub's tags link to '#/<id>', where that id sits on the <section> itself
+   so an inserted slide cannot move it. Reveal honours that on a desktop. But
+   from 5.2 it turns itself into a scroll view below `scrollActivationWidth`
+   (435 px — which is every iPhone), and on that path the incoming hash is
+   dropped before it is ever read: the reader lands on slide 1 and the URL is
+   rewritten, with nothing in the console to say so. Plain '#/12' is lost the
+   same way, so this is not only about the tags.
+
+   So keep the hash here — this file runs before Reveal.initialize — and put
+   the deck back on that slide once it is ready. */
+var WANT = (location.hash || '').replace(/^#\/?/, '').split('?')[0];
+
+function deepLink() {
+  if (!WANT) return;
+  var target = null;
+  if (/^\d+$/.test(WANT)) {
+    /* '.slides > section' does NOT match in a scroll view — reveal wraps every
+       slide in .scroll-page there — so ask reveal for the slides instead. */
+    var all = (Reveal.getSlides && Reveal.getSlides().length)
+      ? Reveal.getSlides()
+      : document.querySelectorAll('.reveal .slides > section');
+    target = all[+WANT];
+  } else {
+    target = document.getElementById(WANT);
+    if (target && target.tagName !== 'SECTION' && target.closest) target = target.closest('section');
+  }
+  if (!target) return;
+  var i;
+  try { i = Reveal.getIndices(target); } catch (e) { return; }
+  if (!i) return;
+  try { Reveal.slide(i.h, i.v || 0); } catch (e) {}
+  /* In a scroll view Reveal.slide() may leave the page where it was, so check
+     the slide actually came into view and scroll to it ourselves if not. */
+  setTimeout(function () {
+    var cur;
+    try { cur = Reveal.getCurrentSlide(); } catch (e) {}
+    if (cur !== target && target.scrollIntoView) target.scrollIntoView({ block: 'start' });
+  }, 120);
+}
+
+/* Reveal's 'ready' can fire before this file gets to register for it, so poll
+   rather than listen — it is a handful of frames at most. */
+var dlWaited = 0;
+(function whenReady() {
+  if (window.Reveal && Reveal.isReady && Reveal.isReady()) { setTimeout(deepLink, 0); return; }
+  if ((dlWaited += 50) > 6000) return;
+  setTimeout(whenReady, 50);
+})();
+
 /* ---- switching mode ----
    Turning the phone rebuilds every figure. The canvases were sized for the
    old geometry and there is no honest way to reflow a drawing, so the
