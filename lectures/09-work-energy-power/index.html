@@ -284,13 +284,15 @@ Then change the net force, or the mass, and run it again. A heavier runner gets 
 <!-- 13 -->
 <section id="w-jumpwork">
   <h2>Work in a vertical jump</h2>
-  <p class="subhead">The same jump you measured in Linear Kinetics II</p>
+  <p class="subhead">The measured jump from Linear Kinetics II, integrated once more</p>
   <div class="iplot wide" data-widget="jumpwork"></div>
-  <aside class="notes">This is the same force record we worked by impulse a few lectures ago — 66.6 kg, phase impulses of −86.6, +204.1 and −15.0 N·s, take-off at 1.54 m/s. Integrating it twice gives the centre-of-mass displacement, and that is the lower panel.
+  <aside class="notes">This is the measured jump from Linear Kinetics II — SUSU-46 from the UVic youth motion dataset, 60.7 kg, one foot on each of two force plates at 450 Hz. There we integrated it once, to the take-off velocity. Here it is integrated twice, so the lower panel is a real force–displacement curve.
 
-The point: the force–TIME trace tells you WHEN the work is being done, but the work itself is the area on the force–DISPLACEMENT curve. Scrub through and watch the lower panel switch from red to green at the bottom of the dip. On the way down the ground takes about 303 J out of the body; on the way up it puts 328 J back in; the difference, 25 J, is what the body leaves the floor with.
+The point: the force–TIME trace tells you WHEN the work is being done, but the work itself is the area on the force–DISPLACEMENT curve. Scrub through and watch the lower panel switch from red to green at the bottom of the dip.
 
-Be honest about one thing: the record is the three-phase idealisation from Linear Kinetics II, and integrating it gives a 46 cm countermovement, which is deeper than a real one. A measured jump brakes on the way down, which this record does not. The energy bookkeeping is exact; the depth is the model's.</aside>
+The numbers: on the way down the ground takes 206 J out of the body, on the way up it puts 419 J back in, and the difference — 213 J — is exactly ΔKE + ΔPE at take-off (154 J of kinetic energy and 59 J of height). That identity is not fitted; it falls out of the measurement.
+
+Worth pointing at the shape of the loop. He goes down 35 cm and pushes back up through 44 cm, and the force is highest not at the bottom but partway up.</aside>
 </section>
 
 <!-- 14 -->
@@ -537,13 +539,13 @@ Press the τ·ω button. Nothing about the lift changes; the same watts are simp
 <!-- 29 -->
 <section id="w-cmjphases">
   <h2>Phases of a countermovement jump</h2>
-  <p class="subhead">Each phase has its own work and power signature</p>
+  <p class="subhead">Each phase has its own work and power signature — drag the figure to turn it</p>
   <div class="iplot wide" data-widget="cmjphases"></div>
   <aside class="notes">Press play and let it run once before saying anything. Then go back through it phase by phase with the slider.
 
 Standing: force equals body weight, nothing is moving, no work is being done. Countermovement: the body drops, the muscles lengthen under load — this is eccentric, and it is where the tendons are stretched. Propulsion: concentric, the muscles shorten and deliver positive work to the centre of mass. Flight: the feet are off the floor, only gravity acts, and mechanical energy is conserved. Landing: eccentric again, dissipating the kinetic energy — or storing it, if another jump is coming.
 
-The crouch you see is driven by the actual measured record, not drawn by hand, so the depth and the timing are the trace's.</aside>
+Nothing here is drawn by hand. The body is 22 measured joint centres from SUSU-46's markers, on the same clock as the force plate, so the depth of the crouch, the timing of the extension and every boundary on the phase strip are the measurement's rather than mine. Drag the figure to turn it — the side view shows the hip, knee and ankle extending in sequence into take-off.</aside>
 </section>
 
 <!-- 30 -->
@@ -638,7 +640,7 @@ Drag slowly between them. The power curve is quite flat near its peak — anywhe
   <div class="iplot wide" data-widget="powerbars"></div>
   <aside class="notes">Start on the linear scale, where walking and FTP cycling are invisible next to an Olympic clean. Then press log, and the spread becomes readable — the range is about seventy to one.
 
-Two honesty notes belong here. First, the cyclist's numbers are measured at the pedal and the jumper's are whole-body centre-of-mass power; they are not the same measurement and should not really share an axis without saying so. Second, the orange bar is the jump from this lecture — 1745 W — which is well under the 4500 W of a good countermovement jump, because our record is a 12 cm jump by a 66.6 kg subject, not an explosive athlete.</aside>
+Two honesty notes belong here. First, the cyclist's numbers are measured at the pedal and the jumper's are whole-body centre-of-mass power; they are not the same measurement and should not really share an axis without saying so. Second, the orange bar is the measured jump from this lecture — 2660 W — which is under the 4500 W of an explosive countermovement jump, because SUSU-46 is a 60.7 kg participant jumping 25 cm, not a trained jumper.</aside>
 </section>
 
 <!-- 36 -->
@@ -751,9 +753,11 @@ Students almost always name only the first. The second is arguably the biggest c
   <h2>One movement, four quantities</h2>
   <p class="subhead">The whole lecture read off a single jump</p>
   <div class="iplot wide" data-widget="energymap"></div>
-  <aside class="notes">Scrub from one end to the other. Work, kinetic energy, potential energy and power are four readings off the same force record, and W = ΔKE + ΔPE holds at every point on the slider.
+  <aside class="notes">Scrub from one end to the other. Work, kinetic energy, potential energy and power are four readings off the same measured force record, and W = ΔKE + ΔPE holds at every point on the slider.
 
-Watch the power tile in particular: it peaks at about 1745 W, late in the propulsion phase, at the moment when force is still high and the body is already moving fast. Neither the peak force nor the peak velocity is where peak power is — which is exactly the force–velocity trade-off from Part 03, showing up in a whole-body movement.</aside>
+Watch the power tile in particular: it peaks at about 2660 W — 43.8 W per kilogram — late in the propulsion phase, at the moment when force is still high and the body is already moving fast. Neither the peak force nor the peak velocity is where peak power is, which is exactly the force–velocity trade-off from Part 03 showing up in a whole-body movement.
+
+Compare that 43.8 W/kg with the 19.8 W/kg from the stair test earlier. Both are real measurements of the same athlete-ish population; they differ because one is a single explosive extension and the other is averaged over six steps.</aside>
 </section>
 
 <!-- 44 -->

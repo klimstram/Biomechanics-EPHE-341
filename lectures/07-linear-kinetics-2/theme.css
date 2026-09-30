@@ -752,6 +752,10 @@ html[data-portrait] .portrait-hide{ display:none !important; }
 .ditable .chain{ display:block; font-family:"Cambria Math",Cambria,Georgia,serif;
   font-size:1.12em; line-height:1.5; }
 .ditable .chain b{ color:var(--ink-strong); font-weight:650; }
+/* `.reveal table td` sets text-align:right and outranks `.ditable td`, so every
+   wrapped cell in a .ditable was quietly right-aligned. Restore what .ditable
+   already asks for, with enough specificity to actually win. */
+.reveal .ditable th,.reveal .ditable td{ text-align:left; }
 .ditable-wrap{ border:1px solid var(--hair); border-radius:10px; overflow:hidden;
   background:var(--surface); }
 

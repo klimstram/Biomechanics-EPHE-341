@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20260930">
+<link rel="stylesheet" href="theme.css?v=20260930b">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -394,6 +394,53 @@ The trace here is reconstructed so that its three areas are the lecture’s publ
 </section>
 
 <!-- 24 -->
+<section id="w-jumpkin">
+  <h2>Integrate it twice</h2>
+  <p class="subhead">A measured jump — force, then velocity, then the centre of mass</p>
+  <div class="iplot wide" data-widget="jumpkin"></div>
+  <aside class="notes">Everything above stopped at the take-off velocity. That is only the FIRST integral of the force record. Do it once more and you have where the centre of mass actually was, the whole way through.
+
+This is a real trial: SUSU-46 from the UVic youth motion dataset, 60.7 kg, one foot on each of two force plates at 450 Hz. Nothing here is drawn by hand.
+
+Read the three panels downward. The force dips below body weight as he unweights, rises through body weight as he brakes, peaks at 2.05 BW and drops to nothing at take-off. Integrate that and you get the velocity: negative while he drops, through zero at the bottom, 2.25 m/s at take-off. Integrate again and you get the dip — 35 cm down before he goes up.
+
+The orange dashed line on the bottom panel is the punchline. That is the centre of mass measured a completely different way — 83 markers at 90 Hz through a twelve-segment model — and it lands on the integrated curve to about 16 mm. Two instruments, one answer.
+
+Also worth a moment: the landing peak is 3.77 body weights against 2.05 for the push-off. Getting down is harder on you than getting up.</aside>
+</section>
+
+
+<!-- 25 -->
+<section id="w-jumpcheck">
+  <h2>How high did he jump?</h2>
+  <p class="subhead">Two answers, from two different parts of the record</p>
+  <div class="iplot wide" data-widget="jumpcheck"></div>
+  <aside class="notes">Ask them for a way to get jump height WITHOUT the force plate before showing this. Flight time is the one they will find, and it is what every jump mat and phone app uses.
+
+The left column is the route we have just done: the impulse gives the take-off velocity, and v²/2g gives the height. It never mentions how long he was in the air. The right column is flight time alone, and it never mentions force.
+
+They agree to 7 mm on a 25 cm jump. That is the best evidence in this lecture that the method works — not because the numbers are pretty, but because two independent measurements had every opportunity to disagree and did not.
+
+Where the 7 mm comes from, if asked: the plate route integrates for about a second, so any small error in body weight accumulates; and the flight-time route assumes take-off and landing happen at the same body position, which is never exactly true.</aside>
+</section>
+
+
+<!-- 26 -->
+<section id="w-jump3d">
+  <h2>The same jump, in three dimensions</h2>
+  <p class="subhead">Twenty-two measured joint centres — drag to turn it</p>
+  <div class="iplot wide" data-widget="jump3d"></div>
+  <aside class="notes">This is what the force record above actually was. Twenty-two joint centres built from the 83 markers, on the same clock as the plate, at 40 frames a second.
+
+Drag the figure to turn it, or use the three camera buttons. The side view is the one to teach from: you can see the hips drop and the trunk pitch forward through the countermovement, then the whole chain extend — hips, knees, ankles — into take-off, and the arms swing up through the drive.
+
+Run it once with the cursor on the force trace and ask them to call out which part of the trace goes with which part of the movement. The unweighting dip happens while he is still going DOWN; the peak force happens on the way back up, not at the bottom.
+
+One honest technical note. The two systems in this dataset are not synchronised — in this trial the markers run 133 ms ahead of the plate — and that offset has been measured and taken out here. If you reuse another trial from this dataset, check it: the offset is different in every one I looked at.</aside>
+</section>
+
+
+<!-- 27 -->
 <section>
   <h2>Reading activity off a force profile</h2>
   <p class="lead">Understanding impulse/momentum and how it relates to the force time graph gives us
@@ -406,7 +453,7 @@ The trace here is reconstructed so that its three areas are the lecture’s publ
      Crouch, Rise to stand, partial weight (feet only), unloaded</p>
 </section>
 
-<!-- 25 -->
+<!-- 28 -->
 <section>
   <h2>Reading activity off a force profile</h2>
   <div class="cols top">
@@ -416,7 +463,7 @@ The trace here is reconstructed so that its three areas are the lecture’s publ
      Crouch, Rise to stand, partial weight (feet only), unloaded</p>
 </section>
 
-<!-- 26 -->
+<!-- 29 -->
 <section id="w-activity">
   <h2>Name the activity</h2>
   <div class="iplot wide" data-widget="activity"></div>
@@ -425,7 +472,7 @@ The trace here is reconstructed so that its three areas are the lecture’s publ
 The trace is drawn to the segment boundaries and levels of the published record rather than being the record itself.</aside>
 </section>
 
-<!-- 27 -->
+<!-- 30 -->
 <section>
   <h2>Friction</h2>
   <div class="cols b top">
@@ -446,7 +493,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   <aside class="notes">Note the plural. Most of what students think of as "friction" is the dry case, but skin friction on a blister and the lubricated friction inside a joint are the same physics with very different coefficients.</aside>
 </section>
 
-<!-- 28 -->
+<!-- 31 -->
 <section>
   <h2>Friction</h2>
   <div class="cols b top">
@@ -467,7 +514,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 29 -->
+<!-- 32 -->
 <section>
   <h2>Static Friction</h2>
   <ul class="small">
@@ -482,7 +529,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   <aside class="notes">The key word is "opposite in the direction of motion or impending motion" — friction does not have a direction of its own, it takes the opposite of whatever is trying to happen.</aside>
 </section>
 
-<!-- 30 -->
+<!-- 33 -->
 <section>
   <h2>Static Friction</h2>
   <ul class="small">
@@ -495,7 +542,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   <aside class="notes">Static friction is not a number you look up — it is whatever it needs to be, up to a ceiling. Only the ceiling is a property of the two surfaces.</aside>
 </section>
 
-<!-- 31 -->
+<!-- 34 -->
 <section>
   <h2>Static Friction</h2>
   <div class="cols b top">
@@ -517,7 +564,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 32 -->
+<!-- 35 -->
 <section>
   <h2>Static Friction</h2>
   <div class="cols b top">
@@ -543,7 +590,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   <aside class="notes">Two hundred-fold between the top and the bottom of that table. Everything a shoe company does is an attempt to move a number in that column.</aside>
 </section>
 
-<!-- 33 -->
+<!-- 36 -->
 <section>
   <h2>Kinetic Friction</h2>
   <div class="cols b top">
@@ -566,14 +613,14 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 34 -->
+<!-- 37 -->
 <section id="w-friction">
   <h2>Static and kinetic friction together</h2>
   <div class="iplot wide" data-widget="friction"></div>
   <aside class="notes">The diagonal is static friction matching the push newton for newton. The drop at the critical point is why a heavy object that has just begun to slide seems to leap away — the resistance falls while the push does not.</aside>
 </section>
 
-<!-- 35 -->
+<!-- 38 -->
 <section>
   <h2>Friction</h2>
   <p class="subhead">Example Problem</p>
@@ -587,7 +634,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 36 -->
+<!-- 39 -->
 <section>
   <h2>Friction</h2>
   <p class="subhead">Solution</p>
@@ -612,7 +659,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   <aside class="notes">Six times more force to break it loose than to keep it going. Note the 90 N is a weight, not a mass — it is already the normal force.</aside>
 </section>
 
-<!-- 37 -->
+<!-- 40 -->
 <section>
   <h2>Friction on a slope</h2>
   <div class="cols b top">
@@ -630,7 +677,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 38 -->
+<!-- 41 -->
 <section>
   <h2>Components on any incline</h2>
   <p class="small">For any incline of a certain angle the parallel and perpendicular components of
@@ -651,7 +698,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 39 -->
+<!-- 42 -->
 <section>
   <h2>Worked example: 4 kg at 20°</h2>
   <div class="cols b top">
@@ -670,7 +717,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 40 -->
+<!-- 43 -->
 <section>
   <h2>Worked example: the components</h2>
   <div class="cols b top">
@@ -701,7 +748,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   <aside class="notes">Note what this does and does not tell you. It gives the friction force the slope demands — 13.42 N — but says nothing yet about whether the surfaces can supply it. That needs μs, and it is the next problem.</aside>
 </section>
 
-<!-- 41 -->
+<!-- 44 -->
 <section id="w-hiker">
   <h2>Friction</h2>
   <p class="subhead">Example Problem</p>
@@ -715,7 +762,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 42 -->
+<!-- 45 -->
 <section>
   <h2>Friction</h2>
   <p class="subhead">① Draw a free-body diagram</p>
@@ -723,7 +770,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   <aside class="notes">F<sub>w</sub> straight down, resolved onto the two axes of the slope: F<sub>pd</sub> into the surface and F<sub>pl</sub> down it. N and F<sub>fr</sub> are the reactions to those, and F<sub>msfr</sub> is the most the boot can supply.</aside>
 </section>
 
-<!-- 43 -->
+<!-- 46 -->
 <section>
   <h2>Friction</h2>
   <p class="subhead">② Calculate the weight of the object, perpendicular and parallel forces of the object on the slope</p>
@@ -747,7 +794,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 44 -->
+<!-- 47 -->
 <section>
   <h2>Friction</h2>
   <p class="subhead">③ Calculate the Normal and friction forces</p>
@@ -770,7 +817,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 45 -->
+<!-- 48 -->
 <section>
   <h2>Friction</h2>
   <p class="subhead">④ Calculate the maximum force of static friction</p>
@@ -786,7 +833,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 46 -->
+<!-- 49 -->
 <section>
   <h2>Friction</h2>
   <p class="subhead">⑤ Determine if the maximum force of static friction is greater than the friction force</p>
@@ -804,7 +851,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 47 -->
+<!-- 50 -->
 <section id="w-slopefric">
   <h2>Friction</h2>
   <p class="subhead">The same comparison, on a slope you can tilt</p>
@@ -812,7 +859,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   <aside class="notes">Take the slope slider up and watch the two numbers close on each other: the shear the slope demands rises while the normal force, and therefore the friction available, falls. They cross where tanθ = μs — 39.7° for this boot. The mass slider changes neither, because m cancels out of the comparison entirely.</aside>
 </section>
 
-<!-- 48 -->
+<!-- 51 -->
 <section>
   <h2>Friction application</h2>
   <div class="cols b top">
@@ -831,7 +878,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   </div>
 </section>
 
-<!-- 49 -->
+<!-- 52 -->
 <section>
   <h2>Friction application</h2>
   <div class="cols b top">
@@ -847,7 +894,7 @@ The trace is drawn to the segment boundaries and levels of the published record 
   <aside class="notes">Worth noting the direction of the surprise: the disease did not change the coefficient, the lubricant did. Healthy cartilage in saline is worse than osteoarthritic cartilage in synovial fluid.</aside>
 </section>
 
-<!-- 50 -->
+<!-- 53 -->
 <section>
   <h2>Summary</h2>
   <div class="cols b top">
@@ -878,8 +925,8 @@ The trace is drawn to the segment boundaries and levels of the published record 
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20260930"></script>
-<script src="mobile.js?v=20260930"></script>
+<script src="annotate.js?v=20260930b"></script>
+<script src="mobile.js?v=20260930b"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -901,9 +948,9 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="deck-core.js?v=20260930"></script>
-<script src="impulse.js?v=20260930"></script>
-<script src="deck-tools.js?v=20260930"></script>
-<script src="fit.js?v=20260930"></script>
+<script src="deck-core.js?v=20260930b"></script>
+<script src="impulse.js?v=20260930b"></script>
+<script src="deck-tools.js?v=20260930b"></script>
+<script src="fit.js?v=20260930b"></script>
 </body>
 </html>

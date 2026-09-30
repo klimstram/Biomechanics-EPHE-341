@@ -107,12 +107,15 @@ window.EPHE341_LECTURES = [
 
   { n: '7', title: 'Linear kinetics 2',
     path: 'lectures/07-linear-kinetics-2',
-    blurb: 'Impulse \u2014 the time side of force \u2014 read straight off a jump that reproduces the ' +
-           'lecture\u2019s own numbers, and friction from a stuck crate to a hiker on a 35\u00b0 trail.',
-    slides: 50, widgets: 8, updated: '2026-09-18',
+    blurb: 'Impulse \u2014 the time side of force \u2014 read off a jump, then integrated once more ' +
+           'into the kinematics, and friction from a stuck crate to a hiker on a 35\u00b0 trail.',
+    slides: 53, widgets: 11, updated: '2026-09-30',
     handout: 'handout.pdf',
     live: [['impulse as an area you can reshape', 'w-impulse'],
            ['a countermovement jump in four steps', 'w-jump'],
+           ['a measured jump, integrated twice', 'w-jumpkin'],
+           ['jump height two ways, agreeing to 7 mm', 'w-jumpcheck'],
+           ['the jumper in 3D, 22 measured joints', 'w-jump3d'],
            ['ten activities on one force plate', 'w-activity'],
            ['static giving way to kinetic friction', 'w-friction'],
            ['a free-body diagram on a slope you can tilt', 'w-slopefric'],
@@ -136,14 +139,14 @@ window.EPHE341_LECTURES = [
   { n: '9', title: 'Work, energy and power',
     path: 'lectures/09-work-energy-power',
     blurb: 'Work as a force acting through a distance, the three energies it turns into, and ' +
-           'power as the rate of the whole business \u2014 worked on the same force-plate jump ' +
-           'this course already measured by impulse.',
+           'power as the rate of the whole business \u2014 all of it read off the same measured ' +
+           'force-plate jump this course already worked by impulse.',
     slides: 44, widgets: 17, updated: '2026-09-30',
     handout: 'handout.pdf',
     live: [['the sign of work, on a dial', 'w-workangle'],
            ['double the speed, four times the energy', 'w-kecurve'],
            ['net work becoming kinetic energy', 'w-wet'],
-           ['a measured jump, as force against displacement', 'w-jumpwork'],
+           ['the measured jump, as force against displacement', 'w-jumpwork'],
            ['the reference height you get to choose', 'w-pegrav'],
            ['a tendon and an elastic band on one curve', 'w-spring'],
            ['kinetic into potential and back again', 'w-conserve'],
