@@ -571,104 +571,137 @@ D.register('workangle', function (node, d) {
      coordinates, so it lays itself out from ax.W/ax.H instead of being
      rescaled. That caps it at its own width, so make that width most of a
      slide rather than leaving two hundred pixels of nothing either side. */
-  var ax = new Axes(u.cv, { w: port ? 460 : 1020, h: port ? 380 : 360,
+  var ax = new Axes(u.cv, { w: port ? 460 : 1020, h: port ? 400 : 380,
                             padl: 10, padr: 10, padt: 10, padb: 10, fluid: false });
   var out = readout(u.ctl);
+  var F_MAX = 400, D_MAX = 6, W_MAX = F_MAX * D_MAX;
   var th = 0, F = 140, dist = 3;
 
   function draw() {
     var c = ax.c, K = C(), W = ax.W, H = ax.H;
     ax.clear();
-    var W_J = F * dist * Math.cos(th * Math.PI / 180);
+    var rad = th * Math.PI / 180;
+    var W_J = F * dist * Math.cos(rad);
     var sign = W_J > 1 ? 1 : (W_J < -1 ? -1 : 0);
     var col = sign > 0 ? K.GRN : (sign < 0 ? K.ACC : K.MUT);
 
-    /* ---- the block on its surface ---- */
-    var gy = H * 0.56, x0 = W * 0.16, x1 = W * 0.84;
-    var bw = W * 0.10, bh = H * 0.15;
-    var bx = x0 + (x1 - x0) * 0.30;
+    /* ---- the surface, and the block's journey along it ----
+       Both the force arrow and the displacement are drawn to scale, so moving
+       either slider changes the PICTURE and not just the number under it. */
+    var gy = H * 0.52;
+    var xs = W * 0.11, xe = W * 0.66;              /* travel track */
+    var bw = W * 0.082, bh = H * 0.14;
+    var dpx = (dist / D_MAX) * (xe - xs);
+    var bEnd = xs + dpx;
 
     c.save();
-    c.strokeStyle = K.MUT; c.lineWidth = 2; c.globalAlpha = .75;
-    c.beginPath(); c.moveTo(x0 - 18, gy); c.lineTo(x1 + 18, gy); c.stroke();
-    c.globalAlpha = 1; c.restore();
+    c.strokeStyle = K.MUT; c.lineWidth = 2; c.globalAlpha = .7;
+    c.beginPath(); c.moveTo(xs - bw, gy); c.lineTo(xe + bw * 1.6, gy); c.stroke();
+    c.restore();
+
+    /* where it started, ghosted, so the distance is a gap you can see */
+    c.save(); c.globalAlpha = .34;
+    c.strokeStyle = K.MUT; c.lineWidth = 1.6; c.setLineDash([5, 4]);
+    c.strokeRect(xs - bw / 2 + .5, gy - bh + .5, bw, bh);
+    c.restore();
 
     c.save();
     c.fillStyle = K.FILL; c.strokeStyle = K.DEEP; c.lineWidth = 2;
-    c.fillRect(bx - bw / 2, gy - bh, bw, bh);
-    c.strokeRect(bx - bw / 2 + .5, gy - bh + .5, bw, bh);
+    c.fillRect(bEnd - bw / 2, gy - bh, bw, bh);
+    c.strokeRect(bEnd - bw / 2 + .5, gy - bh + .5, bw, bh);
     c.restore();
 
-    /* ---- displacement, drawn under the surface so the arrows never meet ---- */
-    var dy = gy + 38;
-    arrow(c, bx, dy, bx + (x1 - x0) * 0.46, dy, { color: K.MUT, width: 2.4 });
-    label(c, 'displacement  d = ' + fmt(dist, 1) + ' m',
-          bx + (x1 - x0) * 0.23, dy + 20, { color: K.MUT, size: 14, align: 'center' });
-
-    /* ---- the force, at θ to the displacement ---- */
-    var cx = bx, cy = gy - bh / 2;
-    var L = H * 0.38;
-    var a = -th * Math.PI / 180;                   /* canvas y grows downward */
-    var fx = cx + Math.cos(a) * L, fy = cy + Math.sin(a) * L;
-    arrow(c, cx, cy, fx, fy, { color: col, width: 4 });
-    /* a label at the end of its own ray lands on the arrowhead, so nudge it
-       perpendicular; near vertical it goes to the side instead of above */
-    var near90 = Math.abs(Math.cos(a)) < 0.30;
-    label(c, 'F = ' + fmt(F, 0) + ' N',
-          fx + (near90 ? 14 : Math.cos(a) * 16), fy + (near90 ? 4 : Math.sin(a) * 16 - 4),
-          { color: col, size: 15, align: (!near90 && Math.cos(a) < -0.2) ? 'right' : 'left',
-            plate: true });
-
-    /* the angle arc, from the displacement direction round to the force */
-    c.save();
-    c.strokeStyle = K.MUT; c.lineWidth = 1.8; c.setLineDash([4, 4]);
-    c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + L * 0.92, cy); c.stroke();
-    c.setLineDash([]);
-    c.beginPath();
-    /* arc() sweeps from min to max, so going anticlockwise needs the negative
-       angle as the SECOND argument, not the first */
-    c.arc(cx, cy, L * 0.25, a, 0);
-    c.stroke(); c.restore();
-    var mid = a / 2;
-    label(c, 'θ = ' + fmt(th, 0) + '°',
-          cx + Math.cos(mid) * L * 0.50, cy + Math.sin(mid) * L * 0.50,
+    /* ---- the displacement, under the surface, its LENGTH is d ---- */
+    var dy = gy + 34;
+    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .45; c.lineWidth = 1;
+    [xs, bEnd].forEach(function (x) {
+      c.beginPath(); c.moveTo(x, gy + 4); c.lineTo(x, dy + 8); c.stroke();
+    });
+    c.restore();
+    if (dpx > 26) arrow(c, xs, dy, bEnd, dy, { color: K.MUT, width: 2.4 });
+    label(c, 'd = ' + fmt(dist, 1) + ' m', (xs + bEnd) / 2, dy + 20,
           { color: K.MUT, size: 14, align: 'center', plate: true });
 
-    /* ---- the work bar: the whole range, with where we are on it ---- */
-    var barY = H - 46, bx0 = W * 0.16, bx1 = W * 0.84, mx = (bx0 + bx1) / 2;
-    var full = F * dist;
+    /* ---- the force, at θ to the displacement, its LENGTH is F ---- */
+    var cx = bEnd, cy = gy - bh / 2;
+    var L = H * 0.10 + (F / F_MAX) * H * 0.32;
+    var aa = -rad;                                 /* canvas y grows downward */
+    var fx = cx + Math.cos(aa) * L, fy = cy + Math.sin(aa) * L;
+
+    /* the reference ray and the arc first, so the arrow sits on top */
+    var AR = Math.min(L * 0.30, 46);
+    c.save();
+    c.strokeStyle = K.MUT; c.lineWidth = 1.6; c.globalAlpha = .8; c.setLineDash([4, 4]);
+    c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + Math.max(L * 0.92, AR + 16), cy); c.stroke();
+    c.setLineDash([]);
+    /* arc() sweeps from min to max, so going anticlockwise needs the negative
+       angle as the SECOND argument, not the first */
+    c.beginPath(); c.arc(cx, cy, AR, aa, 0); c.stroke();
+    c.restore();
+    var mid = aa / 2, lr = AR + (Math.abs(th) < 14 ? 6 : 22);
+    label(c, '\u03b8 = ' + fmt(th, 0) + '\u00b0',
+          cx + Math.cos(mid) * lr, cy + Math.sin(mid) * lr - (Math.abs(th) < 14 ? 20 : 0),
+          { color: K.MUT, size: 14, align: 'center', plate: true });
+
+    arrow(c, cx, cy, fx, fy, { color: col, width: 3 + (F / F_MAX) * 3 });
+    /* a label at the end of its own ray lands on the arrowhead, so nudge it
+       perpendicular; near vertical it goes to the side instead of above */
+    var near90 = Math.abs(Math.cos(aa)) < 0.30;
+    label(c, 'F = ' + fmt(F, 0) + ' N',
+          fx + (near90 ? 14 : Math.cos(aa) * 16), fy + (near90 ? 4 : Math.sin(aa) * 16 - 4),
+          { color: col, size: 15, align: (!near90 && Math.cos(aa) < -0.2) ? 'right' : 'left',
+            plate: true });
+
+    /* ---- the work bar, on a FIXED scale ----
+       The track is always ±2400 J (the biggest this figure's sliders allow),
+       so the filled part grows when F or d grows instead of staying the same
+       size and only changing what the end labels say. The two ticks mark
+       ±F·d — the most this force over this distance could possibly do. */
+    var barY = H - 40, bx0 = W * 0.16, bx1 = W * 0.84, mx = (bx0 + bx1) / 2;
+    var half = (bx1 - bx0) / 2;
+    function BX(j) { return mx + (j / W_MAX) * half; }
     c.save();
     c.fillStyle = K.PANEL; c.fillRect(bx0, barY - 11, bx1 - bx0, 22);
-    var px = mx + (W_J / full) * (bx1 - bx0) / 2;
-    c.fillStyle = col; c.globalAlpha = .55;
+    var px = BX(W_J);
+    c.fillStyle = col; c.globalAlpha = .6;
     c.fillRect(Math.min(mx, px), barY - 11, Math.abs(px - mx), 22);
     c.globalAlpha = 1;
-    c.strokeStyle = K.INK; c.lineWidth = 1.6;
-    c.beginPath(); c.moveTo(mx, barY - 15); c.lineTo(mx, barY + 15); c.stroke();
+    /* the reach of F·d, marked on both sides */
+    c.strokeStyle = K.INK; c.globalAlpha = .55; c.lineWidth = 1.4;
+    [-1, 1].forEach(function (sgn) {
+      var x = BX(sgn * F * dist);
+      c.beginPath(); c.moveTo(x, barY - 13); c.lineTo(x, barY + 13); c.stroke();
+    });
+    c.globalAlpha = 1;
+    c.strokeStyle = K.INK; c.lineWidth = 1.8;
+    c.beginPath(); c.moveTo(mx, barY - 16); c.lineTo(mx, barY + 16); c.stroke();
     c.restore();
-    label(c, minus(fmt(-full, 0)) + ' J', bx0 - 8, barY, { color: K.MUT, size: 12, align: 'right' });
-    label(c, '+' + fmt(full, 0) + ' J', bx1 + 8, barY, { color: K.MUT, size: 12, align: 'left' });
+    label(c, '\u22122400 J', bx0 - 8, barY, { color: K.MUT, size: 12, align: 'right' });
+    label(c, '+2400 J', bx1 + 8, barY, { color: K.MUT, size: 12, align: 'left' });
+    /* keep the tick's caption inside the track - at F.d = 2400 it sits on
+       the right-hand end label, and at 10 J it sits on the centre mark */
+    var tx = BX(F * dist), tlx = Math.min(Math.max(tx + 7, bx0 + 30), bx1 - 8);
+    label(c, '\u00b1F\u00b7d = ' + fmt(F * dist, 0) + ' J', tlx, barY - 25,
+          { color: K.INK, size: 12, align: tx > mx + half * 0.55 ? 'right' : 'left',
+            plate: true });
 
-    /* the verdict sits BESIDE the bar, not above the figure: at θ = 90° the
-       force arrow points straight up and a centred title is exactly where it
-       lands */
     /* top LEFT, not centred: at θ = 90° the arrow points straight up through
        the middle of the canvas, and just above the bar is where the
        displacement caption already is */
     label(c, sign > 0 ? 'POSITIVE WORK' : (sign < 0 ? 'NEGATIVE WORK' : 'ZERO WORK'),
           W * 0.03, 20, { color: col, size: 16, align: 'left' });
 
-    out.innerHTML = 'W = F·d·cosθ = ' + fmt(F, 0) + ' × ' + fmt(dist, 1) +
-      ' × cos ' + fmt(th, 0) + '° = <b>' + num(W_J, 0) + ' J</b>' +
-      '<span style="opacity:.7">  ·  cosθ = ' + num(Math.cos(th * Math.PI / 180), 2) + '</span>';
+    out.innerHTML = 'W = F\u00b7d\u00b7cos\u03b8 = ' + fmt(F, 0) + ' \u00d7 ' + fmt(dist, 1) +
+      ' \u00d7 cos ' + fmt(th, 0) + '\u00b0 = <b>' + num(W_J, 0) + ' J</b>' +
+      '<span style="opacity:.7">  \u00b7  cos\u03b8 = ' + num(Math.cos(rad), 2) + '</span>';
   }
 
   u.ctl.classList.add('g2');
-  slider(u.ctl, 'Angle θ', 0, 180, 1, th, function (v) { return fmt(v, 0) + '°'; },
+  slider(u.ctl, 'Angle \u03b8', 0, 180, 1, th, function (v) { return fmt(v, 0) + '\u00b0'; },
     function (v) { th = v; draw(); });
-  slider(u.ctl, 'Force', 20, 400, 10, F, function (v) { return fmt(v, 0) + ' N'; },
+  slider(u.ctl, 'Force', 20, F_MAX, 10, F, function (v) { return fmt(v, 0) + ' N'; },
     function (v) { F = v; draw(); });
-  slider(u.ctl, 'Distance', 0.5, 6, 0.1, dist, function (v) { return fmt(v, 1) + ' m'; },
+  slider(u.ctl, 'Distance', 0.5, D_MAX, 0.1, dist, function (v) { return fmt(v, 1) + ' m'; },
     function (v) { dist = v; draw(); });
   node._draw = draw;
   draw();
