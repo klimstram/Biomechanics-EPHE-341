@@ -469,6 +469,56 @@ function dragRotate(cv, st, redraw) {
 
 
 /* ============================================================
+   ONE MEASURED WALKING STRIDE, AS ENERGY
+
+   SUSU-30, trial Walking1-2 — the same subject and the same stride the
+   Forces deck's 3D widgets run on. Right heel strike to right heel strike,
+   1.11 s, 61 samples, 70.3 kg.
+
+   The centre of mass is the twelve-segment model over the markers; speed is
+   its derivative. PE is m·g·h above the stride's lowest point and KE is
+   ½m·v², both in joules.
+
+   The number worth knowing: over this stride KE and PE correlate at
+   **−0.92** — they are almost exactly out of phase — and the pendulum
+   energy recovery is **70.5%**, which is the top of the published
+   walking range. Walking really is a rolling egg.
+   ============================================================ */
+var WK = {
+  n: 61, stride: 1.11, mass: 70.3, recovery: 70.5,
+  z:  [
+  1042,1042,1042,1043,1045,1047,1050,1053,1057,1061,1065,1068,1071,1073,1075,1075,1074,1073,
+  1071,1068,1065,1061,1057,1054,1050,1047,1044,1042,1041,1039,1039,1039,1040,1041,1043,1046,
+  1048,1051,1054,1058,1061,1064,1067,1069,1071,1071,1071,1071,1069,1067,1065,1062,1059,1056,
+  1052,1049,1045,1042,1039,1037,1036
+  ],
+  v:  [
+  1497,1488,1466,1439,1413,1388,1364,1342,1321,1301,1283,1268,1254,1245,1239,1234,1232,1235,
+  1241,1251,1262,1274,1288,1304,1326,1353,1390,1433,1475,1512,1533,1541,1535,1513,1486,1454,
+  1421,1395,1374,1357,1344,1332,1322,1316,1310,1305,1300,1299,1304,1311,1324,1340,1355,1373,
+  1395,1418,1448,1482,1511,1530,1537
+  ],
+  ke: [
+  78.8,77.8,75.5,72.8,70.2,67.7,65.4,63.3,61.3,59.5,57.9,56.5,55.3,54.5,53.9,53.5,53.4,53.6,
+  54.1,55.0,56.0,57.1,58.3,59.8,61.8,64.4,67.9,72.2,76.5,80.3,82.7,83.5,82.8,80.5,77.6,74.3,
+  70.9,68.4,66.4,64.7,63.5,62.4,61.5,60.9,60.3,59.8,59.4,59.3,59.8,60.4,61.6,63.2,64.5,66.2,
+  68.4,70.7,73.7,77.2,80.2,82.3,83.1
+  ],
+  pe: [
+  4.3,4.2,4.4,5.1,6.1,7.6,9.5,11.9,14.5,17.3,20.0,22.4,24.4,25.9,26.7,26.9,26.5,25.6,24.1,22.1,
+  19.9,17.3,14.7,12.2,9.8,7.6,5.8,4.3,3.2,2.5,2.2,2.3,2.9,3.8,5.1,6.6,8.4,10.4,12.6,14.9,17.3,
+  19.6,21.5,23.0,24.0,24.5,24.5,24.0,23.0,21.7,20.0,18.1,15.9,13.5,11.1,8.7,6.4,4.3,2.4,0.9,0.0
+  ]
+};
+function wkAt(p) {
+  var f = Math.max(0, Math.min(WK.n - 1, p * (WK.n - 1)));
+  var a = Math.floor(f), u = f - a, b = Math.min(WK.n - 1, a + 1);
+  function L(arr) { return arr[a] + (arr[b] - arr[a]) * u; }
+  return { z: L(WK.z) / 1000, v: L(WK.v) / 1000, ke: L(WK.ke), pe: L(WK.pe) };
+}
+
+
+/* ============================================================
    A MEASURED COUNTERMOVEMENT JUMP
    SUSU youth motion dataset (UVic), subject SUSU-46,
    trial "SUSU-46-Vertical Jump(Single)1". Two force plates at 450 Hz, one foot on each,
@@ -2224,6 +2274,605 @@ D.register('energymap', function (node, d) {
 
   slider(u.ctl, 'Through the jump', 0, TEND, 0.005, cur,
     function (q) { return fmt(q, 2) + ' s'; }, function (q) { cur = q; draw(); });
+  node._draw = draw;
+  draw();
+});
+
+/* ============================================================
+   THE MAP — what this lecture is about, on one slide
+
+   Work, energy and power are three words for parts of one idea, and the
+   three mechanical energies are the forms the middle one takes. Everything
+   after this slide hangs off this picture, so it is worth drawing rather
+   than listing. Click any box to light its row of the story.
+   ============================================================ */
+D.register('wepmap', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 460 : 980, h: port ? 620 : 440,
+                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
+  var out = readout(u.ctl);
+  var pick = 'work';
+
+  var TXT = {
+    work:  ['WORK', 'a force acting through a distance',
+            'W = F·d·cosθ, in joules. Work is how energy gets moved ' +
+            'from one place to another — it is a transfer, not a thing a body ' +
+            'has. Positive work puts energy in, negative work takes it out.'],
+    energy:['ENERGY', 'the capacity to do work',
+            'Also in joules, and a thing a body does have. Mechanical energy ' +
+            'comes in three forms and their total is conserved when only ' +
+            'gravity and springs are acting.'],
+    power: ['POWER', 'the rate of doing work',
+            'P = W/t = F·v = τ·ω, in watts. The same job done ' +
+            'twice as fast needs twice the power — which is why a muscle’s ' +
+            'force–velocity curve decides what it can actually do.'],
+    ke:    ['KINETIC ENERGY', '½mv²',
+            'Energy because it is moving. The velocity is squared, so speed ' +
+            'matters far more than mass.'],
+    peg:   ['GRAVITATIONAL PE', 'mgh',
+            'Energy because of where it is. Only CHANGES in height mean ' +
+            'anything — you choose the reference.'],
+    pee:   ['ELASTIC PE', '½kx²',
+            'Energy because it is deformed. Tendons, ligaments and the ' +
+            'aponeuroses are all springs, and the stretch is squared.']
+  };
+
+  function box(c, K, x, y, w, h, key, title, sub, col, on) {
+    c.save();
+    c.fillStyle = on ? col : K.PANEL;
+    c.globalAlpha = on ? 0.26 : 0.30;
+    c.fillRect(x, y, w, h);
+    c.globalAlpha = 1;
+    c.strokeStyle = on ? col : K.PANEL; c.lineWidth = on ? 2.2 : 1.2;
+    c.strokeRect(x + .5, y + .5, w, h);
+    c.restore();
+    label(c, title, x + w / 2, y + h * 0.38,
+          { color: on ? col : K.INK, size: on ? 17 : 15.5, align: 'center' });
+    label(c, sub, x + w / 2, y + h * 0.72,
+          { color: K.MUT, size: 12.5, align: 'center' });
+    return { x: x, y: y, w: w, h: h, key: key };
+  }
+
+  var hit = [];
+
+  function draw() {
+    var c = ax.c, K = C(), W = ax.W, H = ax.H;
+    ax.clear();
+    hit = [];
+    var bw = W * 0.26, bh = H * 0.155, gap = (W - 3 * bw) / 4;
+    var topY = H * 0.10;
+
+    /* the top row — the three words */
+    hit.push(box(c, K, gap, topY, bw, bh, 'work', 'WORK',
+                 'F · d · cosθ   (J)', K.BLUE, pick === 'work'));
+    hit.push(box(c, K, gap * 2 + bw, topY, bw, bh, 'energy', 'ENERGY',
+                 'the capacity to do work   (J)', K.GRN, pick === 'energy'));
+    hit.push(box(c, K, gap * 3 + bw * 2, topY, bw, bh, 'power', 'POWER',
+                 'W / t  =  F · v   (W)', K.ACC, pick === 'power'));
+
+    /* work transfers energy; power is the rate of the same thing */
+    var midY = topY + bh;
+    arrow(c, gap + bw, topY + bh / 2, gap * 2 + bw, topY + bh / 2,
+          { color: K.MUT, width: 2.2 });
+    label(c, 'transfers', gap + bw + (gap / 2), topY + bh / 2 - 16,
+          { color: K.MUT, size: 11.5, align: 'center', plate: true });
+    /* energy PER SECOND is power, so this arrow runs left to right like the
+       first one. Drawn the other way it reads "power per second = energy". */
+    arrow(c, gap * 2 + bw * 2, topY + bh / 2, gap * 3 + bw * 2, topY + bh / 2,
+          { color: K.MUT, width: 2.2 });
+    label(c, 'per second', gap * 2 + bw * 2 + gap / 2, topY + bh / 2 - 16,
+          { color: K.MUT, size: 11.5, align: 'center', plate: true });
+
+    /* the three forms, under ENERGY */
+    var fy = H * 0.52, fw = W * 0.24, fh = H * 0.15;
+    var fx0 = (W - (3 * fw + 2 * gap * 0.6)) / 2, fg = gap * 0.6;
+    var cxE = gap * 2 + bw * 1.5;
+    c.save(); c.strokeStyle = K.GRN; c.globalAlpha = .55; c.lineWidth = 1.6;
+    [0, 1, 2].forEach(function (i) {
+      var bx = fx0 + i * (fw + fg) + fw / 2;
+      c.beginPath();
+      c.moveTo(cxE, midY + 6);
+      c.bezierCurveTo(cxE, (midY + fy) / 2, bx, (midY + fy) / 2, bx, fy - 4);
+      c.stroke();
+    });
+    c.restore();
+    label(c, 'mechanical energy takes three forms', W / 2, (midY + fy) / 2 + 4,
+          { color: K.GRN, size: 13, align: 'center', plate: true });
+
+    hit.push(box(c, K, fx0, fy, fw, fh, 'ke', 'KINETIC',
+                 '½ m v²', K.BLUE, pick === 'ke'));
+    hit.push(box(c, K, fx0 + fw + fg, fy, fw, fh, 'peg', 'GRAVITATIONAL',
+                 'm g h', K.ORG, pick === 'peg'));
+    hit.push(box(c, K, fx0 + 2 * (fw + fg), fy, fw, fh, 'pee', 'ELASTIC',
+                 '½ k x²', K.VIO, pick === 'pee'));
+
+    /* the sum, and the conservation statement */
+    var sy = fy + fh + H * 0.085;
+    label(c, 'TOTAL  =  KINETIC  +  GRAVITATIONAL  +  ELASTIC', W / 2, sy,
+          { color: K.INK, size: 17, align: 'center' });
+    label(c, 'constant whenever only gravity and springs are doing the work',
+          W / 2, sy + 26, { color: K.MUT, size: 13, align: 'center' });
+
+    var t = TXT[pick];
+    out.innerHTML = '<b>' + t[0] + '</b> — ' + t[1] +
+      '<span style="opacity:.75">  ·  ' + t[2] + '</span>';
+  }
+
+  u.cv.setAttribute('data-prevent-swipe', '');
+  u.cv.style.cursor = 'pointer';
+  u.cv.addEventListener('click', function (e) {
+    var r = u.cv.getBoundingClientRect();
+    var sx = ax.W / r.width, sy = ax.H / r.height;
+    var x = (e.clientX - r.left) * sx, y = (e.clientY - r.top) * sy;
+    for (var i = 0; i < hit.length; i++) {
+      var b = hit[i];
+      if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) {
+        pick = b.key; draw(); return;
+      }
+    }
+  });
+  /* the same six boxes as buttons, so this works without a pointer too */
+  keepOut(chips(u.ctl, [['work', 'work'], ['energy', 'energy'], ['power', 'power'],
+                        ['ke', 'kinetic'], ['peg', 'gravitational'], ['pee', 'elastic']],
+                'work', function (k) { pick = k; draw(); }));
+  node._draw = draw;
+  draw();
+});
+
+
+/* ============================================================
+   THE TWO INTEGRALS
+
+   Impulse is the area under force against TIME and it gives you velocity.
+   Work is the area under force against DISTANCE and it gives you energy.
+   Same force record, two different x axes, two different questions — which
+   is the whole reason this lecture exists. Drawn on the jump Linear
+   Kinetics II already worked, so nothing here is new except the axis.
+   ============================================================ */
+D.register('workarea', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 460 : 920, h: port ? 560 : 470,
+                            padl: 80, padr: 28, padt: 24, padb: 52 });
+  var out = readout(u.ctl);
+  var m = J46.mass, BW = J46.bw, TEND = J46.tTo;
+  var nEnd = Math.round(TEND * J46.rate);
+  var cur = TEND;
+
+  var PA = { pt: 24, pb: 274 }, PB = { pt: 254, pb: 52 };
+  var SLO, SHI;
+  (function () {
+    var lo = 0, hi = 0, i;
+    for (i = 0; i <= nEnd; i++) { if (J46K.s[i] < lo) lo = J46K.s[i]; if (J46K.s[i] > hi) hi = J46K.s[i]; }
+    SLO = lo - 0.04; SHI = hi + 0.04;
+  })();
+
+  function impulseTo(t) {
+    var J = 0, n = Math.round(t * J46.rate), i, dt = 1 / J46.rate;
+    for (i = 1; i <= n && i < J46K.n; i++) J += ((J46.FZ[i - 1] - BW) + (J46.FZ[i] - BW)) / 2 * dt;
+    return J;
+  }
+  function workTo(t) {
+    var W = 0, n = Math.round(t * J46.rate), i;
+    for (i = 1; i <= n && i < J46K.n; i++) W += (J46.FZ[i - 1] + J46.FZ[i]) / 2 * (J46K.s[i] - J46K.s[i - 1]);
+    return W;
+  }
+
+  function draw() {
+    var c = ax.c, K = C(), i, t;
+    ax.clear();
+    var now = J46K.at(cur), FMAX = 1400;
+
+    /* ---------- force against TIME: impulse ---------- */
+    ax.pt = PA.pt; ax.pb = PA.pb;
+    ax.setRange(0, TEND, 0, FMAX);
+    ax.frame({ grid: true, xticks: [0, 0.2, 0.4, 0.6, 0.8], yticks: [0, 400, 800, 1200],
+               ylabel: 'Force (N)', ysize: 12, ylabelx: 13,
+               xfmt: function (q) { return q.toFixed(1); },
+               yfmt: function (q) { return q.toFixed(0); } });
+    ax.poly([[0, BW], [TEND, BW]], { color: K.MUT, width: 1.3, dash: [5, 4] });
+    var seg = [], all = [];
+    for (i = 0; i <= nEnd; i++) {
+      t = J46K.tAt(i); all.push([t, J46.FZ[i]]);
+      if (t <= cur) seg.push([t, J46.FZ[i]]);
+    }
+    if (seg.length > 1) fillTo(ax, seg, BW, K.ACCFILL);
+    ax.poly(all, { color: K.BLUE, width: 2.4 });
+    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(ax.X(cur), ax.Y(0)); c.lineTo(ax.X(cur), ax.Y(FMAX)); c.stroke(); c.restore();
+    label(c, 'area = IMPULSE = ' + num(impulseTo(cur), 0) + ' N·s  →  velocity',
+          ax.X(TEND / 2), ax.Y(FMAX * 0.86),
+          { color: K.ACC, size: 14, align: 'center', plate: true });
+    label(c, 'Time (s)', (ax.pl + ax.W - ax.pr) / 2, ax.H - PA.pb + 30,
+          { color: K.INK, size: 13.5, align: 'center' });
+
+    /* ---------- force against DISTANCE: work ---------- */
+    ax.pt = PB.pt; ax.pb = PB.pb;
+    ax.setRange(SLO, SHI, 0, FMAX);
+    ax.frame({ grid: true, xticks: axisTicks(SLO, SHI), yticks: [0, 400, 800, 1200],
+               xlabel: 'Centre-of-mass displacement (m)',
+               ylabel: 'Force (N)', ysize: 12, ylabelx: 13,
+               xfmt: function (q) { return q.toFixed(1); },
+               yfmt: function (q) { return q.toFixed(0); } });
+    var BOT = J46.tBottom, up = cur > BOT, act = [], ghost = [];
+    for (i = 1; i <= nEnd; i++) {
+      t = J46K.tAt(i);
+      ghost.push([J46K.s[i], J46.FZ[i]]);
+      if (up ? (t > BOT && t <= cur) : (t <= cur)) act.push([J46K.s[i], J46.FZ[i]]);
+    }
+    ax.poly(ghost, { color: K.PANEL, width: 1.6 });
+    if (act.length > 1) {
+      fillTo(ax, act, 0, up ? 'rgba(74,222,128,0.30)' : K.ACCFILL);
+      ax.poly(act, { color: K.BLUE, width: 2.6 });
+    }
+    ax.dots([[now.s, now.f]], { color: K.ACC, r: 5.5 });
+    label(c, 'area = WORK = ' + num(workTo(cur), 0) + ' J  →  energy',
+          ax.X((SLO + SHI) / 2), ax.Y(FMAX * 0.86),
+          { color: K.GRN, size: 14, align: 'center', plate: true });
+
+    out.innerHTML = 'the same record, two x axes · impulse <b>' + num(impulseTo(cur), 0) +
+      ' N·s</b> gives v = <b>' + num(now.v, 2) + ' m/s</b> · work <b>' +
+      num(workTo(cur), 0) + ' J</b> gives ΔKE + ΔPE' +
+      '<span style="opacity:.72">  ·  force × time, or force × distance</span>';
+  }
+
+  slider(u.ctl, 'Through the jump', 0, TEND, 0.005, cur,
+    function (q) { return fmt(q, 2) + ' s'; }, function (q) { cur = q; draw(); });
+  node._draw = draw;
+  draw();
+});
+
+
+/* ============================================================
+   WALKING IS A ROLLING EGG
+
+   The signature figure of gait energetics: potential and kinetic energy
+   almost exactly out of phase, so the body trades one for the other
+   instead of paying for both. On this measured stride they correlate at
+   −0.92 and the pendulum recovery is 70 %.
+   ============================================================ */
+D.register('walkenergy', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 460 : 900, h: port ? 540 : 450,
+                            padl: 80, padr: 150, padt: 26, padb: 52 });
+  var out = readout(u.ctl);
+  var p = 0.0, playing = false, raf = null, last = 0;
+  var show = 'both';
+
+  function draw() {
+    var c = ax.c, K = C(), i, q;
+    ax.clear();
+    var HI = 100;
+    ax.setRange(0, 1, 0, HI);
+    ax.frame({ grid: true, xticks: [0, 0.25, 0.5, 0.75, 1],
+               yticks: [0, 20, 40, 60, 80, 100],
+               xlabel: 'Through the stride (right heel strike to right heel strike)',
+               ylabel: 'Energy (J)', ysize: 13, ylabelx: 15,
+               xfmt: function (v) { return (v * 100).toFixed(0) + '%'; },
+               yfmt: function (v) { return v.toFixed(0); } });
+
+    var ke = [], pe = [], tot = [];
+    for (i = 0; i <= 120; i++) {
+      q = i / 120; var s = wkAt(q);
+      ke.push([q, s.ke]); pe.push([q, s.pe]); tot.push([q, s.ke + s.pe]);
+    }
+    if (show !== 'pe') ax.poly(ke, { color: K.BLUE, width: 2.8 });
+    if (show !== 'ke') ax.poly(pe, { color: K.ORG, width: 2.8 });
+    if (show === 'both') ax.poly(tot, { color: K.GRN, width: 2.2, dash: [6, 4] });
+
+    var s0 = wkAt(p);
+    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(ax.X(p), ax.Y(0)); c.lineTo(ax.X(p), ax.Y(HI)); c.stroke(); c.restore();
+    ax.dots([[p, s0.ke]], { color: K.BLUE, r: 5.5 });
+    ax.dots([[p, s0.pe]], { color: K.ORG, r: 5.5 });
+
+    key(c, ax.X(0.02), ax.pt + 4,
+        [[K.BLUE, 'kinetic  ½mv²'], [K.ORG, 'potential  mgh'],
+         [K.GRN, 'their total']], { size: 12 });
+
+    /* the centre of mass riding over its arc, in the right margin. The
+       vertical excursion is only 3.9 cm over a 1.4 m step, so it is drawn
+       with the height exaggerated about tenfold or there is nothing to see. */
+    var hx0 = ax.W - 128, hx1 = ax.W - 34, gy = ax.pt + 300;
+    var zlo = 1.030, zhi = 1.080, EX = 520;        /* px per metre of height */
+    function PY_(z) { return gy - (z - zlo) * EX; }
+    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(hx0 - 10, gy + 34); c.lineTo(hx1 + 10, gy + 34); c.stroke(); c.restore();
+    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .45; c.lineWidth = 1.6;
+    c.beginPath();
+    for (i = 0; i <= 60; i++) {
+      var qq = i / 60;
+      var xx = hx0 + (hx1 - hx0) * qq, yy = PY_(wkAt(qq).z);
+      i ? c.lineTo(xx, yy) : c.moveTo(xx, yy);
+    }
+    c.stroke(); c.restore();
+    var bx2 = hx0 + (hx1 - hx0) * p, by2 = PY_(s0.z);
+    /* the leg it is vaulting over, which is what makes it a pendulum */
+    c.save(); c.strokeStyle = K.SOFT; c.globalAlpha = .7; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(bx2, by2); c.lineTo(bx2 + (p < 0.5 ? 16 : -16), gy + 34);
+    c.stroke(); c.restore();
+    c.save(); c.fillStyle = K.VIO; c.beginPath(); c.arc(bx2, by2, 8, 0, 7); c.fill(); c.restore();
+    label(c, 'centre of mass', (hx0 + hx1) / 2, PY_(zhi) - 20,
+          { color: K.MUT, size: 11.5, align: 'center' });
+    label(c, fmt(100 * (s0.z - zlo), 1) + ' cm', (hx0 + hx1) / 2, gy + 52,
+          { color: K.VIO, size: 12, align: 'center' });
+
+    out.innerHTML = 'KE <b>' + fmt(s0.ke, 0) + ' J</b> · PE <b>' + fmt(s0.pe, 0) +
+      ' J</b> · total <b>' + fmt(s0.ke + s0.pe, 0) + ' J</b>' +
+      '<span style="opacity:.72">  ·  they run almost exactly out of phase (r = −0.92), ' +
+      'and ' + fmt(WK.recovery, 0) + '% of the energy is recovered rather than paid for again</span>';
+  }
+
+  function stop() { playing = false; if (raf) cancelAnimationFrame(raf); raf = null; btn.innerHTML = '▶ Play'; }
+  function frame(now) {
+    if (!playing) return;
+    var dt = Math.min(0.05, (now - last) / 1000); last = now;
+    p += dt * 0.55;
+    if (p >= 1) { p = 1; sP.quiet(p); draw(); stop(); return; }
+    sP.quiet(p); draw();
+    raf = requestAnimationFrame(frame);
+  }
+  function start() {
+    if (playing) return;
+    if (p >= 1 - 1e-6) p = 0;
+    playing = true; btn.innerHTML = '❚❚ Pause';
+    last = performance.now(); raf = requestAnimationFrame(frame);
+  }
+
+  var row = ctlRow(u.ctl);
+  var btn = playBtn(row, '▶ Play');
+  btn.addEventListener('click', function () { playing ? stop() : start(); });
+  var sP = slider(row, 'Through the stride', 0, 1, 0.005, p,
+    function (q) { return (q * 100).toFixed(0) + '%'; },
+    function (q) { stop(); p = q; draw(); });
+  keepOut(seg(row, [['both', 'both + total'], ['ke', 'kinetic'], ['pe', 'potential']], 'both',
+    function (w) { show = w; draw(); }));
+  node._draw = draw; node._stop = stop;
+  draw();
+});
+
+
+/* ============================================================
+   THE CRUMPLE ZONE
+
+   Greg's cyclist problem, made into a dial. The energy arriving at the head
+   is fixed by how fast it is going and how far it falls; all a helmet can
+   do is spread the stop over a longer distance. W = F·d, so doubling the
+   crumple distance halves the force.
+
+   One modelling decision worth saying out loud in class: this uses the
+   energy of the HEAD, not of the whole rider. Putting all 70 kg through the
+   skull gives 76 kN — eleven times what a skull actually fails at — because
+   the rest of the body does not stop in three centimetres. Head and neck
+   are 8.1 % of body mass (Winter), and with that the numbers land where the
+   helmet-testing literature puts them.
+   ============================================================ */
+D.register('crumple', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 460 : 900, h: port ? 450 : 420,
+                            padl: 86, padr: 30, padt: 30, padb: 54 });
+  var out = readout(u.ctl);
+  var HEAD_FRAC = 0.081;                     /* head + neck, Winter */
+  var m = 70, v = 6, h = 1.5, dcm = 3;
+
+  function mh() { return m * HEAD_FRAC; }
+  function energy() { return 0.5 * mh() * v * v + mh() * G * h; }
+  function force(cm) { return energy() / (cm / 100); }
+
+  var MARKS = [
+    { cm: 0.5, n: 'no helmet', dy: -14 },
+    { cm: 1.0, n: 'a thin shell', dy: 20 },
+    { cm: 2.0, n: 'a thin helmet', dy: -14 },
+    { cm: 5.0, n: 'a thick helmet', dy: 22 }
+  ];
+
+  function draw() {
+    var c = ax.c, K = C(), i;
+    ax.clear();
+    var E = energy();
+    var XMAX = 6, HI = 24000;                 /* fixed, so the band stays readable */
+    ax.setRange(0.3, XMAX, 0, HI);
+    ax.frame({ grid: true, xticks: [1, 2, 3, 4, 5, 6], yticks: [0, 5000, 10000, 15000, 20000],
+               xlabel: 'Crumple distance (cm)',
+               ylabel: 'Average force on the head (N)', ysize: 13, ylabelx: 15,
+               xfmt: function (q) { return q.toFixed(0); },
+               yfmt: function (q) { return q >= 1000 ? (q / 1000).toFixed(0) + ' kN' : q.toFixed(0); } });
+
+    /* the band where skulls start to fail, so the curve has something to mean */
+    c.save(); c.fillStyle = 'rgba(248,113,113,0.14)';
+    var yTop = ax.Y(7000), yBot = ax.Y(4000);
+    c.fillRect(ax.pl, yTop, ax.W - ax.pl - ax.pr, yBot - yTop);
+    c.restore();
+    label(c, 'skull fracture likely  (4\u20137 kN)', ax.X(XMAX) - 8, ax.Y(5500),
+          { color: K.ACC, size: 12, align: 'right' });
+
+    /* the curve, clipped at the top of the axis rather than running off it */
+    c.save();
+    c.beginPath(); c.rect(ax.pl, ax.pt, ax.W - ax.pl - ax.pr, ax.H - ax.pt - ax.pb); c.clip();
+    c.strokeStyle = K.BLUE; c.lineWidth = 2.8; c.beginPath();
+    for (i = 0; i <= 240; i++) {
+      var xq = 0.3 + (XMAX - 0.3) * i / 240, yq = force(xq);
+      var px = ax.X(xq), py = ax.Y(Math.min(yq, HI * 1.4));
+      i ? c.lineTo(px, py) : c.moveTo(px, py);
+    }
+    c.stroke(); c.restore();
+
+    MARKS.forEach(function (mk) {
+      var F2 = force(mk.cm);
+      if (F2 > HI) {                    /* off the top: say so at the ceiling */
+        label(c, mk.n + '  ' + fmt(F2 / 1000, 0) + ' kN \u2191', ax.X(mk.cm) + 8, ax.pt + 46,
+              { color: K.MUT, size: 11.5, align: 'left', plate: true });
+        return;
+      }
+      ax.dots([[mk.cm, F2]], { color: K.MUT, r: 4.5 });
+      label(c, mk.n, ax.X(mk.cm) + 12, ax.Y(F2) + mk.dy,
+            { color: K.MUT, size: 11.5, align: 'left', plate: true });
+    });
+
+    var F = force(dcm);
+    if (F <= HI) {
+      c.save(); c.strokeStyle = K.ACC; c.lineWidth = 2; c.setLineDash([5, 4]);
+      c.beginPath(); c.moveTo(ax.X(dcm), ax.Y(0)); c.lineTo(ax.X(dcm), ax.Y(F));
+      c.lineTo(ax.X(0.3), ax.Y(F)); c.stroke(); c.restore();
+      ax.dots([[dcm, F]], { color: K.ACC, r: 7 });
+      label(c, fmt(F / 1000, 1) + ' kN', ax.X(dcm) - 14, ax.Y(F) - 20,
+            { color: K.ACC, size: 17, align: 'right', plate: true });
+    } else {
+      c.save(); c.strokeStyle = K.ACC; c.lineWidth = 2; c.setLineDash([5, 4]);
+      c.beginPath(); c.moveTo(ax.X(dcm), ax.Y(0)); c.lineTo(ax.X(dcm), ax.pt); c.stroke(); c.restore();
+      label(c, fmt(F / 1000, 1) + ' kN \u2014 off the top of this chart',
+            ax.X(dcm) + 12, ax.pt + 44, { color: K.ACC, size: 16, align: 'left', plate: true });
+    }
+
+    label(c, 'head energy ' + fmt(E, 0) + ' J must all go somewhere',
+          ax.X(0.3) + 10, ax.pt + 16, { color: K.INK, size: 12.5, align: 'left' });
+
+    out.innerHTML = 'head ' + fmt(mh(), 1) + ' kg \u00b7 KE ' + fmt(0.5 * mh() * v * v, 0) +
+      ' J + PE ' + fmt(mh() * G * h, 0) + ' J = <b>' + fmt(E, 0) +
+      ' J</b>, stopped in ' + fmt(dcm, 1) + ' cm \u2192 <b>' + fmt(F / 1000, 1) + ' kN</b>' +
+      '<span style="opacity:.72">  \u00b7  a helmet removes none of the energy \u2014 it only ' +
+      'spends it over a longer distance, and W = F\u00b7d does the rest</span>';
+  }
+
+  keepOut(chips(u.ctl, [['05', 'no helmet'], ['1', 'thin'], ['3', 'typical'], ['5', 'thick']], '3',
+    function (w) { dcm = w === '05' ? 0.5 : parseFloat(w); sD.quiet(dcm); draw(); }));
+  u.ctl.classList.add('g2');
+  var sD = slider(u.ctl, 'Crumple distance', 0.4, 6, 0.1, dcm,
+    function (q) { return fmt(q, 1) + ' cm'; }, function (q) { dcm = q; draw(); });
+  slider(u.ctl, 'Riding speed', 2, 12, 0.5, v, function (q) { return fmt(q, 1) + ' m/s'; },
+    function (q) { v = q; draw(); });
+  slider(u.ctl, 'Head height', 0.5, 2.2, 0.1, h, function (q) { return fmt(q, 1) + ' m'; },
+    function (q) { h = q; draw(); });
+  node._draw = draw;
+  draw();
+});
+
+
+/* ============================================================
+   JOINT POWER — GENERATION AND ABSORPTION
+
+   P = M·ω, and the sign of the product is the whole story: when the moment
+   and the rotation agree the muscle is shortening and GENERATING energy;
+   when they oppose, it is lengthening and ABSORBING it. This is the idea
+   Angular Kinetics builds on, so it is worth meeting here with the signs
+   drawn rather than asserted.
+   ============================================================ */
+D.register('jointpower', function (node, d) {
+  var u = build(node);
+  var port = D.portrait();
+  var ax = new Axes(u.cv, { w: port ? 460 : 920, h: port ? 560 : 440,
+                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
+  var out = readout(u.ctl);
+  var M = 60, om = 2.2;                      /* N·m and rad/s, both signed */
+
+  function draw() {
+    var c = ax.c, K = C(), W = ax.W, H = ax.H;
+    ax.clear();
+    var P = M * om;
+    var gen = P > 1, abs_ = P < -1;
+    var col = gen ? K.GRN : (abs_ ? K.ACC : K.MUT);
+
+    /* ---- the joint, drawn as a hinge with a moment and a rotation ---- */
+    var cx = W * 0.26, cy = H * 0.50, L = Math.min(W * 0.16, H * 0.30);
+    /* thigh fixed, shank swinging; the shank angle just shows the direction */
+    var ang = -0.55 + (om > 0 ? 0.42 : -0.42);
+    c.save(); c.strokeStyle = K.MUT; c.lineWidth = 7; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(cx, cy - L); c.lineTo(cx, cy); c.stroke();
+    c.strokeStyle = K.INK;
+    c.beginPath(); c.moveTo(cx, cy);
+    c.lineTo(cx + Math.cos(ang) * L, cy - Math.sin(ang) * L); c.stroke();
+    c.fillStyle = K.PLATE; c.strokeStyle = K.INK; c.lineWidth = 2.4;
+    c.beginPath(); c.arc(cx, cy, 11, 0, 7); c.fill(); c.stroke();
+    c.restore();
+
+    /* the moment, as a curved arrow */
+    function curvedArrow(r, from, to, color, w) {
+      c.save(); c.strokeStyle = color; c.lineWidth = w; c.lineCap = 'round';
+      c.beginPath(); c.arc(cx, cy, r, Math.min(from, to), Math.max(from, to));
+      c.stroke();
+      var e = to, dir = to > from ? 1 : -1;
+      var hx = cx + Math.cos(e) * r, hy = cy + Math.sin(e) * r;
+      var tx = -Math.sin(e) * dir, ty = Math.cos(e) * dir;
+      c.fillStyle = color;
+      c.beginPath();
+      c.moveTo(hx + tx * 13, hy + ty * 13);
+      c.lineTo(hx - tx * 4 + Math.cos(e) * 9, hy - ty * 4 + Math.sin(e) * 9);
+      c.lineTo(hx - tx * 4 - Math.cos(e) * 9, hy - ty * 4 - Math.sin(e) * 9);
+      c.closePath(); c.fill(); c.restore();
+    }
+    var mdir = M > 0 ? 1 : -1;
+    curvedArrow(L * 0.52, 0.5, 0.5 - mdir * 1.5, K.BLUE, 4.5);
+    label(c, 'moment  M = ' + num(M, 0) + ' N·m', cx, cy + L * 0.52 + 34,
+          { color: K.BLUE, size: 13.5, align: 'center' });
+    var odir = om > 0 ? 1 : -1;
+    curvedArrow(L * 0.92, -0.35, -0.35 - odir * 1.4, K.ORG, 3.5);
+    label(c, 'rotation  ω = ' + num(om, 1) + ' rad/s', cx, cy - L * 0.92 - 26,
+          { color: K.ORG, size: 13.5, align: 'center' });
+
+    /* ---- the four quadrants ---- */
+    var qx = W * 0.56, qy = H * 0.13, qw = W * 0.38, qh = H * 0.62;
+    var mx = qx + qw / 2, my = qy + qh / 2;
+    c.save();
+    /* generating quadrants on one diagonal, absorbing on the other */
+    /* M is up the box and omega is to the right, so the product is POSITIVE in
+       the top-right and bottom-left. Getting this diagonal the wrong way round
+       tints 'generating' red, which is worse than no tint at all. */
+    [[1, 0, 1], [0, 1, 1], [0, 0, -1], [1, 1, -1]].forEach(function (q) {
+      var x = qx + q[0] * qw / 2, y = qy + q[1] * qh / 2;
+      c.fillStyle = q[2] > 0 ? 'rgba(74,222,128,0.13)' : 'rgba(248,113,113,0.13)';
+      c.fillRect(x, y, qw / 2, qh / 2);
+    });
+    c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
+    c.strokeRect(qx + .5, qy + .5, qw, qh);
+    c.beginPath(); c.moveTo(mx, qy); c.lineTo(mx, qy + qh);
+    c.moveTo(qx, my); c.lineTo(qx + qw, my); c.stroke();
+    c.restore();
+    label(c, 'GENERATING', qx + qw * 0.75, qy + qh * 0.16,
+          { color: K.GRN, size: 12.5, align: 'center' });
+    label(c, 'concentric', qx + qw * 0.75, qy + qh * 0.16 + 17,
+          { color: K.MUT, size: 11, align: 'center' });
+    label(c, 'GENERATING', qx + qw * 0.25, qy + qh * 0.84,
+          { color: K.GRN, size: 12.5, align: 'center' });
+    label(c, 'concentric', qx + qw * 0.25, qy + qh * 0.84 + 17,
+          { color: K.MUT, size: 11, align: 'center' });
+    label(c, 'ABSORBING', qx + qw * 0.25, qy + qh * 0.16,
+          { color: K.ACC, size: 12.5, align: 'center' });
+    label(c, 'eccentric', qx + qw * 0.25, qy + qh * 0.16 + 17,
+          { color: K.MUT, size: 11, align: 'center' });
+    label(c, 'ABSORBING', qx + qw * 0.75, qy + qh * 0.84,
+          { color: K.ACC, size: 12.5, align: 'center' });
+    label(c, 'eccentric', qx + qw * 0.75, qy + qh * 0.84 + 17,
+          { color: K.MUT, size: 11, align: 'center' });
+    label(c, 'M +', qx + qw + 8, my - qh * 0.25, { color: K.BLUE, size: 12, align: 'left' });
+    label(c, 'M −', qx + qw + 8, my + qh * 0.25, { color: K.BLUE, size: 12, align: 'left' });
+    label(c, 'ω −', qx + qw * 0.25, qy - 12, { color: K.ORG, size: 12, align: 'center' });
+    label(c, 'ω +', qx + qw * 0.75, qy - 12, { color: K.ORG, size: 12, align: 'center' });
+
+    /* where we are */
+    var px = mx + (om / 4) * (qw / 2) * 0.85;
+    var py = my - (M / 120) * (qh / 2) * 0.85;
+    c.save(); c.fillStyle = col; c.beginPath(); c.arc(px, py, 9, 0, 7); c.fill();
+    c.strokeStyle = K.PLATE; c.lineWidth = 2; c.stroke(); c.restore();
+
+    label(c, (gen ? 'GENERATING ' : abs_ ? 'ABSORBING ' : '') + num(P, 0) + ' W',
+          qx + qw / 2, qy + qh + 34, { color: col, size: 19, align: 'center' });
+
+    out.innerHTML = 'P = M·ω = ' + num(M, 0) + ' × ' + num(om, 1) +
+      ' = <b>' + num(P, 0) + ' W</b>' +
+      '<span style="opacity:.72">  ·  ' +
+      (gen ? 'moment and rotation agree — the muscle is shortening and putting energy in'
+        : abs_ ? 'moment and rotation oppose — the muscle is lengthening and taking energy out'
+        : 'no rotation or no moment, so no power either way') + '</span>';
+  }
+
+  u.ctl.classList.add('g2');
+  slider(u.ctl, 'Joint moment M', -120, 120, 5, M, function (q) { return num(q, 0) + ' N·m'; },
+    function (q) { M = q; draw(); });
+  slider(u.ctl, 'Angular velocity ω', -4, 4, 0.1, om,
+    function (q) { return num(q, 1) + ' rad/s'; }, function (q) { om = q; draw(); });
   node._draw = draw;
   draw();
 });

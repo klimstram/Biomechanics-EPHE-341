@@ -138,27 +138,32 @@ window.EPHE341_LECTURES = [
 
   { n: '9', title: 'Work, energy and power',
     path: 'lectures/09-work-energy-power',
-    blurb: 'Work as a force acting through a distance, the three energies it turns into, and ' +
-           'power as the rate of the whole business \u2014 all of it read off the same measured ' +
-           'force-plate jump this course already worked by impulse.',
-    slides: 44, widgets: 17, updated: '2026-09-30',
+    blurb: 'The framework first \u2014 work, the three energies and power, and how they are ' +
+           'related \u2014 then nine worked problems, then where it all shows up in the body: ' +
+           'generation and absorption, joint power, the Achilles, and one measured jump.',
+    slides: 66, widgets: 21, updated: '2026-10-01',
     handout: 'handout.pdf',
-    live: [['the sign of work, on a dial', 'w-workangle'],
+    live: [['the two integrals of one force record', 'w-workarea'],
+           ['the map: work, energy and power', 'w-wepmap'],
+           ['the sign of work, on a dial', 'w-workangle'],
            ['double the speed, four times the energy', 'w-kecurve'],
            ['net work becoming kinetic energy', 'w-wet'],
-           ['the measured jump, as force against displacement', 'w-jumpwork'],
            ['the reference height you get to choose', 'w-pegrav'],
            ['a tendon and an elastic band on one curve', 'w-spring'],
            ['kinetic into potential and back again', 'w-conserve'],
-           ['try to make the mass matter', 'w-masscancels'],
            ['one lift, three formulas for power', 'w-power3'],
-           ['the five phases of a countermovement jump', 'w-cmjphases'],
            ['the Margaria-Kalamen test with your own numbers', 'w-margaria'],
+           ['try to make the mass matter', 'w-masscancels'],
+           ['the helmet, and why crumple distance is everything', 'w-crumple'],
+           ['joint power in four quadrants', 'w-jointpower'],
            ['force, velocity, and where power actually peaks', 'w-fvp'],
            ['peak power across nine activities, on a log axis', 'w-powerbars'],
-           ['the power\u2013duration curve and critical power', 'w-pdcurve'],
+           ['the power–duration curve and critical power', 'w-pdcurve'],
            ['the Achilles storing and returning energy', 'w-ssc'],
            ['countermovement against squat jump', 'w-cmjsj'],
+           ['walking as a pendulum, measured', 'w-walkenergy'],
+           ['the five phases of a countermovement jump', 'w-cmjphases'],
+           ['the measured jump, as force against displacement', 'w-jumpwork'],
            ['the whole lecture read off one jump', 'w-energymap']] },
 
   /* ---- still PowerPoint ---- */
