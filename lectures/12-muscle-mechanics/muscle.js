@@ -388,38 +388,93 @@ D.register('pennation', function (node, d) {
        along the tendon shortens the whole muscle */
     var vBelly = fl * M.VX * Math.cos(r);   /* cm/s */
 
-    /* ---- the belly, drawn with its fibres ---- */
-    var bx = 64, by = H * 0.38, bw = W * 0.40, bh = 132;
-    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.4;
-    c.strokeRect(bx, by - bh / 2, bw, bh); c.restore();
+    /* Below about 7 degrees the fibres would be longer than the belly, so the
+       arrangement is the parallel-fibred one from the architecture figure
+       rather than a pennate one. That is where the clamp in fibreLen() comes
+       from, and the drawing switches with it. */
+    var parallel = fl >= LMAX - 1e-6;
 
-    c.save(); c.strokeStyle = K.MUT; c.lineWidth = 2.4; c.setLineDash([6, 5]);
-    c.beginPath(); c.moveTo(bx - 44, by); c.lineTo(bx + bw + 44, by); c.stroke(); c.restore();
-    label(c, 'line of action', bx + bw / 2, by - bh / 2 - 15,
-          { color: K.MUT, size: 11.5, align: 'center' });
+    var bx = 60, cy = H * 0.40, bw = W * 0.42, Hp = 58;
+    var x1 = bx + bw;
 
-    /* fibres, clipped to the belly so none of them escape it */
+    /* the tendon, and the direction it pulls in */
+    c.save(); c.strokeStyle = K.MUT; c.lineWidth = 2; c.setLineDash([6, 5]);
+    c.beginPath(); c.moveTo(bx - 52, cy); c.lineTo(x1 + 74, cy); c.stroke(); c.restore();
+    arrow(c, x1 + 30, cy, x1 + 74, cy, { color: K.MUT, width: 2.4 });
+    label(c, 'line of action', x1 + 76, cy - 16, { color: K.MUT, size: 11.5, align: 'right' });
+
     c.save();
-    c.beginPath(); c.rect(bx, by - bh / 2, bw, bh); c.clip();
-    var nF = Math.max(5, Math.round(VOL / fl * 1.5));
-    var dy = bh / 2;
-    var dx = r < 1e-4 ? 0 : dy / Math.tan(r);
-    for (i = -nF; i <= nF * 2; i++) {
-      var fx = bx + (bw + Math.abs(dx) * 2) * i / (nF * 1.5) - Math.abs(dx);
-      c.strokeStyle = K.ACC; c.lineWidth = 2.6; c.lineCap = 'round'; c.globalAlpha = .85;
-      c.beginPath(); c.moveTo(fx - dx / 2, by - dy); c.lineTo(fx + dx / 2, by + dy); c.stroke();
+    c.beginPath(); c.rect(bx, cy - Hp - 2, bw, Hp * 2 + 4); c.clip();
+
+    if (parallel) {
+      /* fibres run the whole length, tendon to tendon */
+      for (i = -6; i <= 6; i++) {
+        var py = cy + i * (Hp / 6.5);
+        c.strokeStyle = K.ACC; c.lineWidth = 2.6; c.lineCap = 'round'; c.globalAlpha = .9;
+        c.beginPath(); c.moveTo(bx + 4, py); c.lineTo(x1 - 4, py); c.stroke();
+      }
+    } else {
+      /* bipennate: fibres leave the central tendon at the pennation angle and
+         run out to the aponeurosis on each side, making the feather the word
+         comes from. Fibres are packed a fixed distance apart measured ACROSS
+         them, so the spacing along the tendon is that distance over sin(theta)
+         \u2014 which is why opening the angle fits more of them in. */
+      var run = Hp / Math.tan(r);
+      var step = Math.max(9, 13 / Math.sin(r));
+      for (i = -14; i <= 26; i++) {
+        var sx = bx + i * step;
+        c.strokeStyle = K.ACC; c.lineWidth = 2.6; c.lineCap = 'round'; c.globalAlpha = .9;
+        c.beginPath(); c.moveTo(sx, cy); c.lineTo(sx + run, cy - Hp); c.stroke();   /* upper half */
+        c.beginPath(); c.moveTo(sx, cy); c.lineTo(sx + run, cy + Hp); c.stroke();   /* lower half */
+      }
     }
     c.restore();
 
-    if (r > 0.02) {
-      var ax0 = bx + bw * 0.52, ay0 = by;
-      c.save(); c.strokeStyle = K.INK; c.lineWidth = 1.5;
-      c.beginPath(); c.arc(ax0, ay0, 36, -Math.PI / 2, -Math.PI / 2 + r); c.stroke(); c.restore();
-      label(c, fmt(th, 0) + '\u00b0', ax0 + 14, ay0 - 46, { color: K.INK, size: 14, align: 'left' });
+    /* the aponeuroses the fibres pull on, and the central tendon they leave */
+    c.save(); c.strokeStyle = K.BLUE; c.lineWidth = 4; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(bx, cy - Hp); c.lineTo(x1, cy - Hp);
+    c.moveTo(bx, cy + Hp); c.lineTo(x1, cy + Hp); c.stroke();
+    if (!parallel) {
+      c.strokeStyle = K.INK; c.lineWidth = 4.5;
+      c.beginPath(); c.moveTo(bx - 40, cy); c.lineTo(x1, cy); c.stroke();
+    } else {
+      c.strokeStyle = K.INK; c.lineWidth = 4.5;
+      c.beginPath(); c.moveTo(bx - 40, cy); c.lineTo(bx + 4, cy);
+      c.moveTo(x1 - 4, cy); c.lineTo(x1 + 30, cy); c.stroke();
+    }
+    c.restore();
+    label(c, 'aponeurosis', bx + 6, cy - Hp - 15, { color: K.BLUE, size: 11, align: 'left' });
+    label(c, parallel ? 'tendon' : 'central tendon', bx - 38, cy - 15,
+          { color: K.INK, size: 11, align: 'left' });
+
+    /* the angle itself, against the line of action */
+    if (!parallel) {
+      var axp = bx + bw * 0.34;
+      c.save(); c.strokeStyle = K.INK; c.lineWidth = 1.6;
+      c.beginPath(); c.arc(axp, cy, 40, -r, 0); c.stroke(); c.restore();
+      label(c, fmt(th, 0) + '\u00b0', axp + 48, cy - 13, { color: K.INK, size: 14, align: 'left' });
     }
 
+    /* the two cuts from the previous slide, which is where PCSA comes from */
+    var cutX = bx + bw * 0.74;
+    c.save(); c.strokeStyle = K.VIO; c.lineWidth = 2.2; c.setLineDash([7, 5]);
+    c.beginPath(); c.moveTo(cutX, cy - Hp - 14); c.lineTo(cutX, cy + Hp + 14); c.stroke();
+    if (!parallel) {
+      /* perpendicular to the fibres of the upper half */
+      var px2 = Math.sin(r) * 58, py2 = Math.cos(r) * 58;
+      c.strokeStyle = K.GRN;
+      c.beginPath();
+      c.moveTo(cutX + 30 - px2, cy - Hp / 2 - py2);
+      c.lineTo(cutX + 30 + px2, cy - Hp / 2 + py2);
+      c.stroke();
+    }
+    c.restore();
+    label(c, 'anatomic', cutX, cy + Hp + 28, { color: K.VIO, size: 11, align: 'center' });
+    if (!parallel) label(c, 'physiologic', cutX + 30, cy - Hp - 20,
+                         { color: K.GRN, size: 11, align: 'center' });
+
     /* ---- what it buys and what it costs ---- */
-    var px = bx + bw + 104, py = H * 0.16, rowH = 50;
+    var px = x1 + 104, py = H * 0.14, rowH = 48;
     [['fibre length', fmt(fl, 1) + ' cm', K.MUT],
      ['cross-sectional area', fmt(pcsa, 1) + ' cm\u00b2', K.BLUE],
      ['force along the fibres', fmt(fFibre, 0) + ' N', K.ACC],
@@ -431,18 +486,19 @@ D.register('pennation', function (node, d) {
       label(c, rw[1], px, y + 20, { color: rw[2], size: 17, align: 'left' });
     });
 
-    /* against the parallel-fibred case, which is the comparison that matters */
     var f0 = (VOL / LMAX) * M.SIGMA, v0 = LMAX * M.VX;
     label(c, 'against parallel fibres:  force \u00d7' + fmt(fTendon / f0, 1) +
              ',  speed \u00d7' + fmt(vBelly / v0, 2),
-          bx, H - 26, { color: K.INK, size: 13, align: 'left' });
+          bx, H - 24, { color: K.INK, size: 13, align: 'left' });
 
     out.innerHTML = 'at <b>' + fmt(th, 0) + '\u00b0</b> \u00b7 fibres <b>' + fmt(fl, 1) +
       ' cm</b> \u00b7 area <b>' + fmt(pcsa, 1) + ' cm\u00b2</b> \u00b7 fibres pull <b>' +
       fmt(fFibre, 0) + ' N</b>, the tendon gets <b>' + fmt(fTendon, 0) + ' N</b> (\u00d7 cos\u03b8 = ' +
       fmt(Math.cos(r), 3) + ')' +
-      '<span style="opacity:.72">  \u00b7  cos\u03b8 costs a few percent; the shorter fibres buy ' +
-      'several times the area \u2014 paid for in shortening speed</span>';
+      '<span style="opacity:.72">  \u00b7  ' +
+      (parallel ? 'fibres run the whole length of the belly, tendon to tendon'
+                : 'cos\u03b8 costs a few percent; the shorter fibres buy several times the area ' +
+                  '\u2014 paid for in shortening speed') + '</span>';
   }
 
   keepOut(chips(u.ctl, [['par', 'parallel  0\u00b0'], ['gm', 'gastrocnemius  17\u00b0'],
