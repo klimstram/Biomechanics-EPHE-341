@@ -1712,15 +1712,25 @@ D.register('margaria', function (node, d) {
 D.register('fvp', function (node, d) {
   var u = build(node);
   var port = D.portrait();
-  var ax = new Axes(u.cv, { w: port ? 460 : 880, h: port ? 430 : 410,
-                            padl: 78, padr: 82, padt: 30, padb: 54 });
+  var ax = new Axes(u.cv, { w: port ? 460 : 880, h: port ? 440 : 420,
+                            padl: 78, padr: 86, padt: 34, padb: 54 });
   var out = readout(u.ctl);
-  var vr = 0.31;
+  var vr = 0.33;
+  var VE = -0.5;                       /* how far into lengthening we draw */
 
-  /* Hill's equation, normalised: F(0) = 1, F(1) = 0 */
-  var A = 0.25;
-  function Fof(v) { return Math.max(0, (1 - v) / (1 + v / A)); }
+  /* Hill's equation on the shortening side, normalised so F(0) = 1 and
+     F(vmax) = 0. The curvature constant is VML's default force-velocity
+     curvature (af = 0.30), so this figure and the Virtual Muscle Lab agree. */
+  var A = 0.30;
+  function Fcon(v) { return Math.max(0, (1 - v) / (1 + v / A)); }
+
+  /* The lengthening side, taken from the same expression the Virtual Muscle
+     Lab uses. It meets the concentric branch at F = 1 and flattens out near
+     1.8, which is why a muscle can resist far more than it can lift. */
+  function Fecc(v) { return 1.8 - (0.8 * (1 + v)) / (1 - 7.56 * 0.21 * v); }
+  function Fof(v) { return v >= 0 ? Fcon(v) : Fecc(v); }
   function Pof(v) { return Fof(v) * v; }
+
   var PKV = (function () {                 /* where the product peaks */
     var best = 0, bv = 0;
     for (var i = 1; i < 1000; i++) { var v = i / 1000, p = Pof(v); if (p > best) { best = p; bv = v; } }
@@ -1730,60 +1740,92 @@ D.register('fvp', function (node, d) {
   function draw() {
     var c = ax.c, K = C();
     ax.clear();
-    ax.setRange(0, 1, 0, 1.18);
-    ax.frame({ grid: true, xticks: [0, 0.2, 0.4, 0.6, 0.8, 1.0], yticks: [0, 0.2, 0.4, 0.6, 0.8, 1.0],
-               xlabel: 'Shortening velocity  (v / vₘₐₓ)',
-               ylabel: 'Force  (F / Fₘₐₓ)', ysize: 13, ylabelx: 15,
-               xfmt: function (q) { return q.toFixed(1); },
+    ax.setRange(VE, 1, 0, 1.95);
+    ax.frame({ grid: true, xticks: [-0.5, -0.25, 0, 0.25, 0.5, 0.75, 1.0],
+               yticks: [0, 0.5, 1.0, 1.5],
+               xlabel: 'Velocity   (v / v\u2098\u2090\u2093)   \u2190 lengthening   shortening \u2192',
+               ylabel: 'Force  (F / F\u2098\u2090\u2093)', ysize: 13, ylabelx: 15,
+               xfmt: function (q) { return q.toFixed(2); },
                yfmt: function (q) { return q.toFixed(1); } });
 
-    /* power on its own scale, so both curves fill the frame */
-    var PS = 1 / PKV.p;
-    ax.fn(Fof, { color: K.BLUE, width: 2.8 });
-    ax.fn(function (v) { return Pof(v) * PS; }, { color: K.ACC, width: 2.8 });
+    /* the lengthening half, tinted so the two regimes read apart at a glance */
+    c.save(); c.fillStyle = 'rgba(248,113,113,0.10)';
+    c.fillRect(ax.X(VE), ax.pt, ax.X(0) - ax.X(VE), ax.Y(0) - ax.pt);
+    c.restore();
+    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .7; c.lineWidth = 1.4;
+    c.beginPath(); c.moveTo(ax.X(0), ax.pt); c.lineTo(ax.X(0), ax.Y(0)); c.stroke(); c.restore();
+    label(c, 'ECCENTRIC \u00b7 lengthening', ax.X(0) - 10, ax.pt + 14,
+          { color: K.ACC, size: 11.5, align: 'right' });
+    label(c, 'CONCENTRIC \u00b7 shortening', ax.X(0) + 10, ax.pt + 14,
+          { color: K.GRN, size: 11.5, align: 'left' });
 
-    /* the right-hand axis belongs to power */
+    /* the eccentric plateau, which is the whole point of showing this half */
+    c.save(); c.strokeStyle = K.ACC; c.globalAlpha = .55; c.lineWidth = 1.4;
+    c.setLineDash([5, 4]);
+    c.beginPath(); c.moveTo(ax.X(VE), ax.Y(1.8)); c.lineTo(ax.X(0), ax.Y(1.8)); c.stroke();
+    c.restore();
+    label(c, '\u22481.8 \u00d7 F\u2098\u2090\u2093', ax.X(VE) + 8, ax.Y(1.8) + 16,
+          { color: K.ACC, size: 12, align: 'left', plate: true });
+
+    /* power on its own scale, drawn only where it fits: on the lengthening
+       side the product is negative and roughly ten times larger, so it is
+       reported in the readout rather than crushed onto this axis */
+    var PS = 1 / PKV.p;
+    ax.fn(Fof, { color: K.BLUE, width: 2.8, from: VE, to: 1 });
+    ax.fn(function (v) { return Pof(v) * PS; }, { color: K.ACC, width: 2.8, from: 0, to: 1 });
+
     var rx = ax.W - ax.pr;
     c.save(); c.strokeStyle = K.ACC; c.lineWidth = 1.2; c.globalAlpha = .8;
-    c.beginPath(); c.moveTo(rx + .5, ax.pt); c.lineTo(rx + .5, ax.Y(0)); c.stroke(); c.restore();
-    [0, 0.25, 0.5, 0.75, 1].forEach(function (q) {
-      label(c, fmt(q, 2), rx + 8, ax.Y(q), { color: K.ACC, size: 11, align: 'left' });
+    c.beginPath(); c.moveTo(rx + .5, ax.Y(1.05)); c.lineTo(rx + .5, ax.Y(0)); c.stroke(); c.restore();
+    [0, 0.5, 1].forEach(function (q) {
+      label(c, fmt(q, 1), rx + 8, ax.Y(q), { color: K.ACC, size: 11, align: 'left' });
     });
-    c.save(); c.translate(ax.W - 15, (ax.pt + ax.Y(0)) / 2); c.rotate(Math.PI / 2);
-    c.fillStyle = K.ACC; c.font = '700 13px ui-sans-serif,system-ui,sans-serif';
+    c.save(); c.translate(ax.W - 15, (ax.Y(1.05) + ax.Y(0)) / 2); c.rotate(Math.PI / 2);
+    c.fillStyle = K.ACC; c.font = '700 12.5px ui-sans-serif,system-ui,sans-serif';
     c.textAlign = 'center'; c.textBaseline = 'top';
     c.fillText('Power, as a fraction of peak', 0, 0); c.restore();
 
-    /* peak power, marked once and for all */
     c.save(); c.strokeStyle = K.ORG; c.globalAlpha = .6; c.lineWidth = 1.5; c.setLineDash([5, 4]);
-    c.beginPath(); c.moveTo(ax.X(PKV.v), ax.Y(0)); c.lineTo(ax.X(PKV.v), ax.Y(1)); c.stroke();
+    c.beginPath(); c.moveTo(ax.X(PKV.v), ax.Y(0)); c.lineTo(ax.X(PKV.v), ax.Y(1.12)); c.stroke();
     c.restore();
-    label(c, 'peak power at ' + fmt(PKV.v, 2) + '·vₘₐₓ',
-          ax.X(PKV.v) - 8, ax.Y(1.11), { color: K.ORG, size: 12.5, align: 'right', plate: true });
+    label(c, 'peak power at ' + fmt(PKV.v, 2) + '\u00b7v\u2098\u2090\u2093',
+          ax.X(PKV.v) + 8, ax.Y(1.2), { color: K.ORG, size: 12.5, align: 'left', plate: true });
 
     var f = Fof(vr), p = Pof(vr);
     ax.dots([[vr, f]], { color: K.BLUE, r: 6.5 });
-    ax.dots([[vr, p * PS]], { color: K.ACC, r: 6.5 });
-    c.save(); c.strokeStyle = K.INK; c.globalAlpha = .55; c.lineWidth = 1.6;
-    c.beginPath(); c.moveTo(ax.X(vr), ax.Y(0)); c.lineTo(ax.X(vr), ax.Y(1.06)); c.stroke(); c.restore();
+    if (vr >= 0) ax.dots([[vr, p * PS]], { color: K.ACC, r: 6.5 });
+    c.save(); c.strokeStyle = K.INK; c.globalAlpha = .5; c.lineWidth = 1.6;
+    c.beginPath(); c.moveTo(ax.X(vr), ax.Y(0)); c.lineTo(ax.X(vr), ax.Y(1.9)); c.stroke(); c.restore();
 
-    key(c, ax.X(0.62), ax.pt + 6, [[K.BLUE, 'force'], [K.ACC, 'power = F × v']], { size: 12.5 });
+    key(c, ax.X(0.52), ax.Y(1.86), [[K.BLUE, 'force'], [K.ACC, 'power = F \u00d7 v']], { size: 12.5 });
 
-    out.innerHTML = 'at v = ' + fmt(vr, 2) + '·vₘₐₓ → F = <b>' + fmt(f, 2) +
-      '</b>·Fₘₐₓ · P = <b>' + fmt(p / PKV.p, 2) + '</b> of peak' +
-      '<span style="opacity:.72">  ·  ' +
-      (vr < 0.03 ? 'isometric: maximum force, and no power at all'
-        : vr > 0.96 ? 'vₘₐₓ: the muscle cannot hold any load, so again no power'
-        : 'both terms matter — the product is what training targets') + '</span>';
+    var msg, pwr;
+    if (vr < -0.005) {
+      pwr = '<b>' + fmt(p / PKV.p, 1) + '\u00d7</b> peak concentric power';
+      msg = 'lengthening under load \u2014 the power is negative, so the muscle is ' +
+            '<strong>absorbing</strong> energy, and it can resist far more than it could lift';
+    } else if (vr < 0.03) {
+      pwr = '<b>0.00</b> of peak';
+      msg = 'isometric: maximum force on the shortening side, and no power at all';
+    } else if (vr > 0.96) {
+      pwr = '<b>' + fmt(p / PKV.p, 2) + '</b> of peak';
+      msg = 'v\u2098\u2090\u2093: the muscle cannot hold any load, so again no power';
+    } else {
+      pwr = '<b>' + fmt(p / PKV.p, 2) + '</b> of peak';
+      msg = 'both terms matter \u2014 the product is what training targets';
+    }
+    out.innerHTML = 'at v = ' + fmt(vr, 2) + '\u00b7v\u2098\u2090\u2093 \u2192 F = <b>' +
+      fmt(f, 2) + '</b>\u00b7F\u2098\u2090\u2093 \u00b7 P = ' + pwr +
+      '<span style="opacity:.72">  \u00b7  ' + msg + '</span>';
   }
 
-  chips(u.ctl, [['iso', 'isometric (v = 0)'], ['peak', 'peak power'],
-                ['vmax', 'vₘₐₓ']], 'peak', function (w) {
-    vr = w === 'iso' ? 0 : (w === 'vmax' ? 1 : PKV.v);
+  chips(u.ctl, [['ecc', 'lengthening'], ['iso', 'isometric (v = 0)'],
+                ['peak', 'peak power'], ['vmax', 'v\u2098\u2090\u2093']], 'peak', function (w) {
+    vr = w === 'ecc' ? -0.3 : (w === 'iso' ? 0 : (w === 'vmax' ? 1 : PKV.v));
     sV.quiet(vr); draw();
   });
-  var sV = slider(u.ctl, 'Shortening velocity', 0, 1, 0.01, vr,
-    function (q) { return fmt(q, 2) + '·vₘₐₓ'; },
+  var sV = slider(u.ctl, 'Velocity', VE, 1, 0.01, vr,
+    function (q) { return fmt(q, 2) + '\u00b7v\u2098\u2090\u2093'; },
     function (q) { vr = q; draw(); });
   node._draw = draw;
   draw();

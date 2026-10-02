@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a2e">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Muscle Mechanics</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css?v=20261002">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'dark';
+  try { t = localStorage.getItem('ephe341-theme') || 'dark'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Muscle mechanics</h1>
+    <div class="rule"></div>
+    <p class="sub">The three properties, and the model they add up to</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Muscle Mechanics</h2>
+  <p class="subhead">By the end of this lecture you should be able to…</p>
+  <ul class="small two">
+    <li><strong>Explain</strong> how sliding filaments turn overlap into force</li>
+    <li><strong>Relate</strong> architecture — pennation and cross-sectional area — to force and speed</li>
+    <li><strong>Describe</strong> the force–length, force–velocity and force–time relationships</li>
+    <li><strong>Separate</strong> active from passive tension, and CC from PEC and SEC</li>
+    <li><strong>Assemble</strong> the model F = F<sub>0</sub> · a · F<sub>L</sub> · F<sub>V</sub></li>
+    <li><strong>Read</strong> a work loop, and say what its enclosed area means</li>
+  </ul>
+  <aside class="notes">This lecture is a build. The first part is where force comes from and what the architecture does to it; the middle is the three relationships one at a time; the end puts them back together into a single equation and then into a work loop.
+
+Say at the outset that the equation at the end is not decoration — it is exactly what the Virtual Muscle Lab computes in the next lecture, and every constant in it will be a slider there.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <div class="section-slide">
+    <div class="course">Part 01</div>
+    <h2>Where force comes from</h2>
+    <p class="sub">Filaments, architecture, and the moment arm</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>From muscle to sarcomere</h2>
+  <p class="subhead">Force is generated at the bottom of this hierarchy</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>A muscle is bundles of <strong>fascicles</strong>, each a bundle of
+            <strong>fibres</strong>, each a bundle of <strong>myofibrils</strong></li>
+        <li>A myofibril is a chain of <strong>sarcomeres</strong> laid end to end</li>
+        <li>The sarcomere is where the mechanics happens — everything above it is
+            packaging and plumbing</li>
+        <li>Each sarcomere is built from two protein filaments:
+            <strong>actin</strong> (thin) and <strong>myosin</strong> (thick)</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Sarcomeres in <strong>series</strong> give a muscle
+           <strong>range and speed</strong>; sarcomeres in <strong>parallel</strong> give it
+           <strong>force</strong>. Almost every architectural fact in this lecture follows from
+           that one sentence.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/hierarchy.jpg" alt="Muscle, fascicle, fibre, myofibril and sarcomere shown as a nested hierarchy">
+    </div>
+  </div>
+  <aside class="notes">The callout is the organising idea for the whole first part, and it is worth writing on the board. More sarcomeres end to end means a longer muscle that can shorten further and faster. More side by side means more cross-bridges pulling at once, which is force.
+
+Everything that follows — pennation, cross-sectional area, even the force–length curve — is a consequence of how many sarcomeres are arranged which way.</aside>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>The sliding filament</h2>
+  <p class="subhead">Neither filament changes length — the overlap does</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Force comes from one filament <strong>sliding over</strong> the other, not from
+            either one contracting</li>
+        <li>Actin and myosin keep the same length throughout</li>
+        <li>What changes is how much of the thick filament has thin filament
+            <strong>alongside it to pull on</strong></li>
+        <li>More overlap means more myosin heads with somewhere to bind — up to the point
+            where the thin filaments start getting in each other's way</li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/sarcomere-fig.jpg" alt="A sarcomere with thin and thick filaments, Z discs and M line labelled">
+    </div>
+  </div>
+  <aside class="notes">"Muscles contract" is the phrase to dismantle here. The muscle shortens; nothing inside it shortens. The filaments slide.
+
+Ask what sets the force before moving on. The answer the next slide makes visible is: the number of myosin heads that currently have actin to grab. That is a geometric fact about overlap, and it is why the force–length curve has the shape it does.</aside>
+</section>
+
+<!-- 6 -->
+<section id="w-sarcomere">
+  <h2>The sliding filament</h2>
+  <p class="subhead">Change the length and watch the overlap — and the force — change</p>
+  <div class="iplot wide" data-widget="sarcomere"></div>
+  <aside class="notes">Start at optimal and point out that every head on the thick filament has thin filament to reach. That is the plateau.
+
+Press "too long". The Z discs pull apart, the thin filaments withdraw, and heads at the ends of the thick filament are left with nothing to bind — they grey out, and the force falls in proportion. This is the descending limb, and it is pure geometry.
+
+Then press "too short". Two separate things go wrong: the thin filaments from opposite ends start to overlap each other and interfere, and eventually the thick filament runs into the Z disc itself. That is why the ascending limb is steeper than the descending one.
+
+The sentence to land: the force–length curve is not a biological mystery, it is a picture of how much overlap there is.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>The cross-bridge cycle</h2>
+  <p class="subhead">One head, one ATP, about ten nanometres</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Side-pieces fixed along the myosin filament <strong>attach</strong> to binding sites
+            on actin, <strong>pull</strong>, then <strong>detach</strong> — over and over</li>
+        <li>One cycle moves the filaments about <strong>10 nm</strong> relative to each other</li>
+        <li>One cycle produces about <strong>2–10 pN</strong> of force</li>
+        <li>One cycle costs the hydrolysis of <strong>one ATP</strong></li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">A whole muscle's force is a great many of these happening at
+           once and out of step with each other. Heads are always attaching while others are
+           letting go, which is what makes the force smooth rather than ratchety.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/crossbridge.jpg" alt="The cross-bridge cycle: attachment, power stroke, detachment and recovery">
+    </div>
+  </div>
+  <aside class="notes">The numbers are worth saying out loud because they are so small. Ten nanometres and a few piconewtons per cycle — and a muscle produces hundreds of newtons, so the number of heads cycling at any instant is astronomical.
+
+That also answers a question students ask later: why does force take time to build? Because activation has to reach every one of those sites, and calcium takes time to spread. That is the force–time relationship in Part 02.</aside>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Muscle architecture</h2>
+  <p class="subhead">The same tissue, arranged four different ways</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li><strong>Parallel / fusiform</strong> — fibres run the length of the belly. Long fibres,
+            so large range and high shortening speed</li>
+        <li><strong>Pennate / bipennate</strong> — fibres run at an angle to the tendon. Short
+            fibres, so many more of them fit</li>
+        <li>Pennation angle is the angle between the <strong>line of action</strong> of the muscle
+            and the direction of its <strong>fibres</strong></li>
+        <li>It changes the direction of every fibre's force vector — and it changes with joint
+            angle, because the muscle keeps its thickness</li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/architecture.jpg" alt="Parallel fibered, fusiform, pinnate and bipennate muscle architectures">
+    </div>
+  </div>
+  <aside class="notes">Name a muscle of each type: sartorius and biceps for parallel and fusiform, gastrocnemius and soleus for pennate, rectus femoris and tibialis anterior for bipennate.
+
+The thing to flag early is that pennation angle is not a constant. It opens as the muscle shortens, because the belly keeps its thickness while the fibres get shorter. In this lecture we treat it as fixed for simplicity; in the Virtual Muscle Lab it varies with length, exactly as it does in life.</aside>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Physiological cross-sectional area</h2>
+  <p class="subhead">Count the sarcomeres in parallel — cut perpendicular to the fibres</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>The more sarcomeres side by side, the more force the muscle can produce</li>
+        <li>You count them by cutting <strong>perpendicular to the fibres</strong>, not
+            perpendicular to the muscle</li>
+        <li>For a pennate muscle those are different cuts, and the physiological one is much
+            the larger</li>
+        <li>Most muscle produces about <strong>20 N per cm²</strong> of physiological
+            cross-sectional area</li>
+      </ul>
+      <div class="box accent workblock" style="max-width:26em">
+        <p class="eq" style="margin-bottom:.25em">PCSA = muscle volume ÷ fibre length</p>
+        <p class="eq" style="margin-bottom:0">F<sub>fibre</sub> = PCSA × 20 N/cm²</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/cross-sections.jpg" alt="Anatomic cross sections compared with physiologic cross sections in parallel and pennate muscle">
+    </div>
+  </div>
+  <aside class="notes">The distinction in the figure is the one to labour. An anatomic cross section cuts straight across the belly. A physiologic cross section cuts at right angles to the fibres, so for a pennate muscle it is a much larger area and crosses far more fibres.
+
+The 20 N/cm² figure is specific tension and it is remarkably constant across muscles and species. That is the point: muscles are not stronger or weaker tissue, they are more or less of it arranged better or worse. Everything about strength is geometry.</aside>
+</section>
+
+<!-- 10 -->
+<section id="w-pennation">
+  <h2>What pennation buys, and what it costs</h2>
+  <p class="subhead">Open the angle and watch the five numbers move</p>
+  <div class="iplot wide" data-widget="pennation"></div>
+  <aside class="notes">Start at parallel. One long 12 cm fibre, 8.2 cm² of area, 163 N at the tendon — those are the numbers from the worked example on the next slide.
+
+Now press gastrocnemius at 17°. The fibres fall to about 5 cm because they span the thickness of the belly rather than its length, so almost four times as many fit, the area more than doubles, and the tendon force goes up by a factor of 2.3. Press soleus and deep pennate and it keeps climbing.
+
+Then point at the bottom line, which is the honest half. The shortening speed falls to 0.40 and then 0.26 of the parallel case. A pennate muscle is a strong slow muscle, and a parallel one is a weak fast muscle, from exactly the same tissue.
+
+Worth noting that cos θ itself is almost irrelevant — at 17° it costs 4%. Students expect the angle to be the cost. It is not; the shorter fibres are.</aside>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>Pennation, worked through</h2>
+  <p class="subhead">The same muscle volume, arranged two ways</p>
+  <div class="fig">
+    <img src="assets/pennation-worked.jpg" alt="A worked comparison of force and velocity for parallel and pennate arrangements of the same muscle">
+  </div>
+  <aside class="notes">Walk the two columns. On the left a parallel-fibred muscle: 36.8 cm long, 12 cm fibres, 8.15 cm² of area, so 163 N — and it shortens from 36.8 to 24.8 cm in 0.033 s, which is 364 cm/s.
+
+On the right the same volume arranged at 15°: the physiological cross-sectional area is now 25 cm², so even after multiplying by cos 15° the force is 483 N — three times as much. And the velocity has fallen to about 109 cm/s.
+
+Three times the force for a third of the speed. That is the whole trade, and it is why you cannot ask which architecture is better without saying what for.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Force is not torque</h2>
+  <p class="subhead">The moment arm stands between the muscle and the joint</p>
+  <div class="cols a top">
+    <div>
+      <div class="box accent workblock" style="max-width:22em">
+        <p class="eq big" style="margin-bottom:0">T = r(θ) · F</p>
+      </div>
+      <ul class="small">
+        <li>The moment arm is the perpendicular distance from the muscle's line of action to
+            the joint's axis of rotation</li>
+        <li>It <strong>changes with joint angle</strong> — it is a function, not a number</li>
+        <li>A bigger moment arm gives more torque for the same muscle force</li>
+        <li>But a bigger moment arm also means the muscle must shorten further and faster for
+            the same joint rotation</li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/moment-arms.jpg" alt="The line of action and moment arm of the elbow flexors shown at five different joint angles">
+    </div>
+  </div>
+  <aside class="notes">The figure shows the same muscle at five elbow angles, and the perpendicular distance to the joint centre is visibly different in each.
+
+The last bullet is the gearing trade-off and it is the same shape as the pennation one: a long moment arm is a low gear — lots of torque, but the muscle has to travel. This is why moment arms are not simply maximised by evolution.
+
+That also sets up the next figure, where the moment you can actually produce is the muscle's force–length curve multiplied by this changing moment arm.</aside>
+</section>
+
+<!-- 13 -->
+<section id="w-momentarm">
+  <h2>Force is not torque</h2>
+  <p class="subhead">Two things change at once as the joint rotates</p>
+  <div class="iplot wide" data-widget="momentarm"></div>
+  <aside class="notes">The dashed grey curve is what you would get from the moment arm alone, holding muscle force constant. It peaks in mid-range because that is where the moment arm is longest.
+
+The solid blue curve is the real one: the same moment arm, multiplied by the force the muscle can actually produce at the fibre length that joint angle puts it at. It peaks earlier and falls away faster.
+
+Drag through the range. The point is that a strength curve — the thing you feel when you load a joint through its range — is never a property of the muscle alone. It is always the muscle times the geometry, and you cannot separate them by feel.
+
+This is also the answer to why sticking points in a lift happen where they do.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <div class="section-slide">
+    <div class="course">Part 02</div>
+    <h2>The three properties</h2>
+    <p class="sub">Force–length, force–velocity, force–time</p>
+  </div>
+</section>
+
+<!-- 15 -->
+<section>
+  <h2>Three reductionist properties</h2>
+  <p class="subhead">Muscular force depends on length, on velocity, and on time</p>
+  <div class="textstrip three">
+    <div class="firstcol">
+      <p><strong>FORCE–LENGTH</strong></p>
+      <p class="small">How much force at this length. Set by filament overlap, plus passive
+         tissue once the muscle is stretched.</p>
+    </div>
+    <div>
+      <p><strong>FORCE–VELOCITY</strong></p>
+      <p class="small">How much force at this shortening or lengthening speed. Set by
+         cross-bridge cycling rates.</p>
+    </div>
+    <div>
+      <p><strong>FORCE–TIME</strong></p>
+      <p class="small">How much force <em>yet</em>. Force takes time to build and longer to
+         release, because calcium takes time to arrive and to be pumped away.</p>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">Taken one at a time these are <strong>reductionist</strong>
+       properties — each measured by holding the other two still. Real movement has all three
+       happening at once, and putting them back together is what Part 03 and the Virtual Muscle
+       Lab are for.</p>
+  </div>
+  <aside class="notes">This slide is the map for the rest of the lecture, and it is worth returning to as each property is dealt with.
+
+Be explicit about what "reductionist" means here and why it is a necessary cheat. To measure force–length you have to hold velocity at zero and wait for force to plateau; to measure force–velocity you have to pick a length. Neither condition occurs in a real movement. We measure them separately because that is the only way to measure them, and then we have to do work to put them back together.
+
+That tension — properties measured in isolation, movement that uses them together — is the whole argument of the next lecture.</aside>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>A mechanical model of muscle</h2>
+  <p class="subhead">One active element and two springs</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li><strong>Contractile component (CC)</strong> — the cross-bridges themselves, carrying
+            the force–length, force–velocity and activation behaviour</li>
+        <li><strong>Parallel elastic component (PEC)</strong> — connective tissue alongside the
+            fibres, which takes load only when the muscle is stretched</li>
+        <li><strong>Series elastic component (SEC)</strong> — tendon and cross-bridge elasticity,
+            in line between the CC and the bone</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Everything the contractile component does reaches the skeleton
+           <strong>through the SEC</strong>. That is why tendon force can lag cross-bridge force,
+           and why a tendon can return energy the muscle never had to produce.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/ccpec-model.jpg" alt="The three element muscle model with contractile, parallel elastic and series elastic components">
+    </div>
+  </div>
+  <aside class="notes">This is the standard Hill-type arrangement and it is the skeleton of every muscle model they will meet, including the one in the Virtual Muscle Lab.
+
+The callout connects back to Work, Energy and Power: the series elastic component is the Achilles from the stretch–shortening cycle. Here it has a name and a position in a diagram.
+
+One honest caveat: the PEC and SEC are modelling conveniences rather than dissectible structures. You cannot point at the SEC in a cadaver — it lumps tendon, aponeurosis and the compliance of the cross-bridges themselves.</aside>
+</section>
+
+<!-- 17 -->
+<section id="w-ccpec">
+  <h2>A mechanical model of muscle</h2>
+  <p class="subhead">Activate it, stretch it, and see where the force comes from</p>
+  <div class="iplot wide" data-widget="ccpec"></div>
+  <aside class="notes">Start with the unit at optimal length and run the activation slider from zero to one. The CC darkens, the SEC stretches, and the force at the bone rises. Nothing about the passive element changes.
+
+Now set activation to zero and stretch the unit instead. Force appears anyway, entirely from the PEC. That is a completely passive force — a cadaver muscle does this — and it is the second curve on the next figure.
+
+Finally turn activation back up while the unit is stretched, and note that the two add.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Force–length</h2>
+  <p class="subhead">The overlap story, plotted</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Force depends on how much <strong>actin and myosin overlap</strong></li>
+        <li>Too <strong>short</strong>: thin filaments interfere with each other and the thick
+            filament meets the Z disc</li>
+        <li>Too <strong>long</strong>: not enough overlap, so fewer heads can bind</li>
+        <li>In between there is an <strong>optimal length</strong>, and a short plateau where
+            every head has somewhere to pull</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">The insets on the figure are the same sarcomere pictures from
+           Part 01. The curve is not an empirical fit — each point on it is a geometry you can
+           draw.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/fl-overlap.jpg" alt="The active force-length curve with sarcomere overlap diagrams at four points along it">
+    </div>
+  </div>
+  <aside class="notes">Go back to the sliding-filament figure if anyone looks unconvinced, and line the two up: ascending limb, plateau, descending limb, each with its sarcomere picture.
+
+The descending limb is the clean one — force falls in direct proportion to lost overlap, which is why that part of the curve is a straight line. The ascending limb has two mechanisms stacked, which is why it is steeper and less tidy.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Active and passive tension</h2>
+  <p class="subhead">What you measure is the sum of the two</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Tension is generated in <strong>active</strong> tissue — the cross-bridges — and in
+            <strong>passive</strong> tissue, which simply resists being stretched</li>
+        <li>Passive tension is <strong>zero</strong> below about optimal length, then rises
+            steeply as connective tissue goes taut</li>
+        <li>Add them and you get <strong>total tension</strong>, which is what a dynamometer
+            actually records</li>
+        <li>At long lengths most of the force is passive, and the muscle may be producing very
+            little of it</li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/fl-active-passive.jpg" alt="Active tension, passive tension from the series and parallel elastic components, and their sum as total tension">
+    </div>
+  </div>
+  <aside class="notes">Point at the three curves on the figure and name them: active tension from the CC, passive tension from the SEC and PEC, and total tension as their sum.
+
+The clinically interesting consequence is the last bullet. A very stretched muscle can feel strong and be contributing almost nothing actively — the force is coming from tissue being pulled on, not from cross-bridges. Hamstrings at full hip flexion with the knee extended are the usual example.
+
+This is also the honest answer to "is stretching making me weaker?" — it changes where on this curve you are operating, which changes both halves.</aside>
+</section>
+
+<!-- 20 -->
+<section id="w-flcurve">
+  <h2>Force–length</h2>
+  <p class="subhead">Separate the two curves, then add them back</p>
+  <div class="iplot wide" data-widget="flcurve"></div>
+  <aside class="notes">Press "active only" first and drag through the range — this is the overlap curve from Part 01, with the plateau tinted.
+
+Then "passive only": flat zero until the unit is stretched past optimal, then climbing fast. Then back to the sum, which is what you would measure.
+
+Worth pressing the Gaussian overlay at the end. That smooth bell is what most muscle models actually use, the Virtual Muscle Lab included, because it is differentiable and close enough. It is visibly not the real curve — it has no plateau and no straight descending limb — and that is a useful thing for students to see: models trade fidelity for tractability on purpose, and you should know which you are looking at.</aside>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Force–velocity</h2>
+  <p class="subhead">The faster a muscle shortens, the less force it can produce</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li><strong>Concentric</strong> — the muscle shortens while producing force. The faster it
+            shortens, the less force, because cross-bridges have less time attached</li>
+        <li><strong>Isometric</strong> — no movement, and maximum force on the shortening side</li>
+        <li><strong>Eccentric</strong> — the muscle lengthens while producing force. Force keeps
+            <strong>climbing</strong>, to roughly <strong>1.8 × maximum</strong></li>
+        <li>That is why you can lower a load you cannot lift, and why eccentric work is such an
+            effective — and such a sore — training stimulus</li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/contraction-types.jpg" alt="Isometric, concentric and eccentric contractions of the elbow flexors">
+    </div>
+  </div>
+  <aside class="notes">Ask which of the three produces the most force before revealing the third bullet. Almost everyone says concentric, because that is the one that looks like effort.
+
+The eccentric plateau is a genuinely surprising number and it is worth dwelling on. Roughly 1.8 times maximum isometric, which is itself more than any concentric action can manage. The mechanism is partly that attached cross-bridges are being forcibly detached, which takes more force than letting them go, and partly passive structures being loaded.
+
+Connect back to Work, Energy and Power: on that side the force and the velocity point opposite ways, so the power is negative and the muscle is absorbing energy.</aside>
+</section>
+
+<!-- 22 -->
+<section id="w-fvcurve">
+  <h2>Force–velocity</h2>
+  <p class="subhead">Both halves, with the curvature exposed</p>
+  <div class="iplot wide" data-widget="fvcurve"></div>
+  <aside class="notes">Work the chips left to right. Lengthening: force above maximum, power negative, energy being absorbed. Isometric: maximum force on the shortening side, zero power. Peak power: about a third of v_max, with the force only about a third of maximum. Then v_max: no load, no force, no power.
+
+Then drag the curvature slider. A lower a-sub-e bends the curve harder, moves peak power to a slower velocity and makes the muscle more force-biased; a higher one straightens it. This is the single constant that distinguishes a fast muscle from a slow one in the model, and it is the fourth numeric box in the Virtual Muscle Lab.
+
+Note the readout gives real newtons and watts, using the 1871 N and 0.084 m from the model constants. These are the app's defaults, so the numbers will look familiar next lecture.</aside>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Fibre type, and what training can move</h2>
+  <p class="subhead">The same shape, scaled differently</p>
+  <div class="cols top">
+    <div class="fig">
+      <img src="assets/fv-twitch-type.jpg" alt="Force-velocity curves for fast twitch and slow twitch fibres">
+    </div>
+    <div class="fig">
+      <img src="assets/fv-power-type.jpg" alt="Force-velocity and power curves compared for fast twitch and slow twitch muscle">
+    </div>
+  </div>
+  <ul class="small two">
+    <li>Fast-twitch fibres have a much higher <strong>v<sub>max</sub></strong>, so their curve
+        extends much further right</li>
+    <li>Both types reach similar force at zero velocity — the difference is <strong>speed</strong>,
+        not strength</li>
+    <li>Peak <strong>power</strong> is therefore far higher in fast-twitch muscle, and occurs at a
+        higher velocity</li>
+    <li>Training shifts the curve; it does not change its shape</li>
+  </ul>
+  <aside class="notes">The second bullet usually needs saying twice. At zero velocity the two fibre types are not very different. The whole advantage of fast-twitch muscle appears only once it is allowed to move, which is why maximal strength testing and power testing rank athletes differently.
+
+On the right-hand figure the shaded area under each power curve is the useful comparison — the fast-twitch muscle's peak is both higher and further right.
+
+What training moves and what it does not is worth being careful about. Velocity-specific training shifts the curve in the region you train. Wholesale fibre-type conversion is a much weaker claim than the popular literature suggests.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Force–time</h2>
+  <p class="subhead">Force does not appear the instant it is asked for</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li><strong>Latent period</strong> — the stimulus has arrived and nothing has happened yet</li>
+        <li><strong>Period of contraction</strong> — calcium is spreading and binding, and force
+            is building</li>
+        <li><strong>Period of relaxation</strong> — calcium is being pumped away, and force decays</li>
+        <li>Relaxation always takes <strong>longer</strong> than contraction</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">For a single movement these delays are a curiosity. For a
+           <strong>cyclic</strong> one — pedalling, running, swimming — they decide when you must
+           switch the muscle on and off, and that is where Part 04 is going.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/twitch.jpg" alt="A myogram of a single isometric twitch showing latent period, contraction and relaxation">
+    </div>
+  </div>
+  <aside class="notes">The three phases are a classic myogram and most students will have seen it in physiology. What is new here is the mechanical consequence rather than the mechanism.
+
+The asymmetry in the fourth bullet is the one that matters. Turning force on is faster than turning it off, so in a cyclic movement the switch-off has to be anticipated by more than the switch-on. The Virtual Muscle Lab's default onset and offset are 22% and 66% of a cycle whose shortening phase runs 25% to 75% — both early, and the offset earlier relative to its phase. That is this slide, in numbers.</aside>
+</section>
+
+<!-- 25 -->
+<section id="w-twitch">
+  <h2>Force–time</h2>
+  <p class="subhead">Three muscles, the same three phases, very different clocks</p>
+  <div class="iplot wide" data-widget="twitch"></div>
+  <aside class="notes">Step through the three. An extraocular muscle peaks in about 8 ms and is finished before 30 — it has to be, because saccades are among the fastest movements the body makes. The gastrocnemius peaks around 25 ms. The soleus takes about 75 ms to peak and well over 200 to relax.
+
+The soleus curve is the one to point at. It is a postural muscle holding you upright all day, and it is built for economy rather than speed. A muscle that slow cannot do anything explosive, and is not asked to.
+
+The phase markers below the axis follow whichever muscle is selected, so the latent period shrinks and grows as you switch.</aside>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Activation and deactivation</h2>
+  <p class="subhead">A sustained contraction has a delayed onset and a later offset</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>A held contraction produces an activation that <strong>lags</strong> the signal at both
+            ends</li>
+        <li>Rising takes roughly <strong>10 ms</strong>; falling takes roughly
+            <strong>40 ms</strong></li>
+        <li>Both come from the rate at which calcium spreads, binds, and is pumped back</li>
+        <li>This is part of — but not the whole of — the <strong>electromechanical delay</strong>
+            between the EMG signal and the force</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Those two numbers, 10 ms and 40 ms, are the activation and
+           deactivation time constants in the Virtual Muscle Lab. They are the reason its optimal
+           timing is always <em>early</em>.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/act-deact.jpg" alt="A sustained excitation producing an activation with a delayed rise and a slower fall">
+    </div>
+  </div>
+  <aside class="notes">Flag the last bullet carefully. Electromechanical delay is usually measured at 30 to 100 ms and has several contributions: this calcium kinetics term, the time taken to stretch the series elastic component, and propagation along the muscle. Activation dynamics is one piece, not the explanation.
+
+The callout is the bridge. Students sometimes treat "activation dynamics" as a biochemical footnote; two slides from now it will be the thing that decides whether a work loop produces positive or negative work.</aside>
+</section>
+
+<!-- 27 -->
+<section id="w-actdyn">
+  <h2>Activation and deactivation</h2>
+  <p class="subhead">What is asked for, against what is delivered</p>
+  <div class="iplot wide" data-widget="actdyn"></div>
+  <aside class="notes">The dashed grey trace is excitation — a clean on and off. The blue is activation, which is what the contractile machinery actually has available, and it never catches up.
+
+The two marked intervals are the time constants made visible: about 10 ms to reach 63% on the way up, about 40 ms to fall to 37% on the way down.
+
+Then drag the deactivation slider from 40 up to 100 ms and watch the tail stretch out. A muscle like that cannot be cycled quickly — by the time it has let go, the limb has moved on and the force is now in the wrong place. Set the signal duration short as well and you can make the activation never reach one at all, which is exactly what happens at high cadence.
+
+That failure mode is the subject of the next lecture.</aside>
+</section>
+
+<!-- 28 -->
+<section>
+  <div class="section-slide">
+    <div class="course">Part 03</div>
+    <h2>Putting them together</h2>
+    <p class="sub">One surface, and one equation</p>
+  </div>
+</section>
+
+<!-- 29 -->
+<section>
+  <h2>Force–length–velocity</h2>
+  <p class="subhead">Not two relationships — two cuts through one surface</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Force–length and force–velocity are <strong>acting at the same time</strong>, always</li>
+        <li>Plot force against both at once and you get a <strong>surface</strong></li>
+        <li>The force–length curve is a slice across it at one velocity; the force–velocity curve
+            is a slice at one length</li>
+        <li>The two factors <strong>multiply</strong>, so being off-optimal in both costs far more
+            than being off in either alone</li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/flv-surface.jpg" alt="A three dimensional surface of muscle force against length and velocity">
+    </div>
+  </div>
+  <aside class="notes">The multiplication in the last bullet is the quantitative point and it is easy to check in front of them: at 70% of optimal length the force–length factor is about 0.7, and at half of v_max the force–velocity factor is about 0.25. Together that is 0.18 — not 0.7 and not 0.25, but less than either.
+
+This is why a movement that puts a muscle at a bad length and a fast velocity simultaneously feels disproportionately weak. The mid-range of a lift usually avoids that; the ends of range often do not.</aside>
+</section>
+
+<!-- 30 -->
+<section id="w-flvsurface">
+  <h2>Force–length–velocity</h2>
+  <p class="subhead">Drag to turn it, and watch the two familiar curves appear as its edges</p>
+  <div class="iplot wide" data-widget="flvsurface"></div>
+  <aside class="notes">Turn it so the length axis faces the class and the green curve is side on — that is the force–length curve from twenty minutes ago. Turn it ninety degrees and the red one is the force–velocity curve.
+
+Then move the two sliders and watch the orange dot climb and fall on the surface. The ridge running along the top is the locus of optimal length at each velocity.
+
+The sentence worth repeating: there is only one surface here. The two curves we have been drawing separately are the edges we happen to be able to measure.</aside>
+</section>
+
+<!-- 31 -->
+<section>
+  <h2>The model equation</h2>
+  <p class="subhead">Everything so far, in one line</p>
+  <div class="box accent workblock" style="max-width:34em">
+    <p class="eq big" style="margin-bottom:0">F = F<sub>0</sub> · a · F<sub>L</sub>(L) · F<sub>V</sub>(v)</p>
+  </div>
+  <div class="textstrip four">
+    <div class="firstcol">
+      <p><strong>F<sub>0</sub></strong></p>
+      <p class="small">Maximum isometric force. Set by <strong>PCSA</strong>, pennation and fibre
+         type — the architecture from Part 01.</p>
+    </div>
+    <div>
+      <p><strong>a</strong></p>
+      <p class="small">Activation, between 0 and 1. Supplied by the <strong>force–time</strong>
+         behaviour.</p>
+    </div>
+    <div>
+      <p><strong>F<sub>L</sub>(L)</strong></p>
+      <p class="small">The normalised <strong>force–length</strong> factor at the current fibre
+         length.</p>
+    </div>
+    <div>
+      <p><strong>F<sub>V</sub>(v)</strong></p>
+      <p class="small">The normalised <strong>force–velocity</strong> factor at the current fibre
+         velocity.</p>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">Three of the four terms are fractions between 0 and 1, so they can
+       only take force <strong>away</strong> from F<sub>0</sub>. The one exception is
+       F<sub>V</sub> when the muscle is being lengthened, where it rises above 1.</p>
+  </div>
+  <aside class="notes">This is the destination of the whole lecture, and every term on it has had its own figure.
+
+The callout is a good comprehension check. Ask what the largest force this muscle could ever produce is, and why. The answer is 1.8 × F₀, fully activated, at optimal length, being forcibly lengthened — and it is not a voluntary action.
+
+Point out that the moment arm is not in this equation. That comes next: T = r(θ) · F.</aside>
+</section>
+
+<!-- 32 -->
+<section id="w-musclemodel">
+  <h2>The model equation</h2>
+  <p class="subhead">Four dials, one product</p>
+  <div class="iplot wide" data-widget="musclemodel"></div>
+  <aside class="notes">Start with everything at one — fully activated, optimal length, isometric — and the product is 1871 N, which is F₀ itself and the dashed mark on the bar.
+
+Now spoil one term at a time. Drop activation to 0.5 and the force halves. Put it back, and move the length to 140% instead: the force–length factor falls to about 0.6. Put that back and set the velocity to half of v_max: about 0.25.
+
+Then do two at once — 140% length and half v_max — and the bar collapses to about 15% of maximum. That multiplication is the single most important thing on this slide.
+
+Finally, drag the velocity negative. The force–velocity term goes above one and the bar passes the F₀ mark, which is the only way it ever can.</aside>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>From muscle force to joint moment</h2>
+  <p class="subhead">The full chain, and where each piece came from</p>
+  <div class="box accent workblock" style="max-width:40em">
+    <p class="eq big" style="margin-bottom:.3em">T = r(θ) · F( L(θ), v, a )</p>
+    <p class="eq" style="margin-bottom:0">F<sub>0</sub> = F<sub>0</sub>( pennation, PCSA, fibre type )</p>
+  </div>
+  <ul class="small">
+    <li>Joint angle <strong>θ</strong> sets both the moment arm <strong>r</strong> and the fibre
+        length <strong>L</strong> — the same variable enters twice</li>
+    <li>Joint angular velocity sets the fibre velocity <strong>v</strong>, through the same
+        geometry</li>
+    <li>The nervous system supplies only <strong>a</strong></li>
+    <li>Everything else is anatomy, and it is fixed for the duration of the movement</li>
+  </ul>
+  <div class="callout small">
+    <p style="margin-bottom:0">This is why a measured joint moment is never a measurement of
+       "muscle strength". It is a measurement of strength, architecture, geometry, length,
+       velocity and activation, all multiplied together.</p>
+  </div>
+  <aside class="notes">The first bullet is the subtle one and it is worth drawing on the board. Flexing a joint simultaneously changes the lever you are pulling on and the length you are pulling from, and those two effects can push the moment in opposite directions.
+
+The callout is the interpretive lesson for the lab. An isokinetic dynamometer gives you a torque–angle curve; that curve is the product of everything in this lecture, and attributing a change in it to any single factor requires more evidence than the curve itself.</aside>
+</section>
+
+<!-- 34 -->
+<section>
+  <div class="section-slide">
+    <div class="course">Part 04</div>
+    <h2>Into the work loop</h2>
+    <p class="sub">What happens when the movement is cyclic</p>
+  </div>
+</section>
+
+<!-- 35 -->
+<section>
+  <h2>A cyclic contraction</h2>
+  <p class="subhead">Four things have to happen, in order, every cycle</p>
+  <div class="ditable-wrap">
+    <table class="ditable">
+      <thead><tr><th>Phase</th><th>What the muscle is doing</th><th>Which properties govern it</th></tr></thead>
+      <tbody>
+        <tr><th>Activate</th><td>Switching on, before it is needed</td>
+            <td class="eq">force–time</td></tr>
+        <tr><th>Lengthen</th><td>Being stretched, under rising load</td>
+            <td class="eq">force–time · force–length · eccentric force–velocity</td></tr>
+        <tr><th>Shorten</th><td>Producing positive work</td>
+            <td class="eq">force–length · force–velocity</td></tr>
+        <tr><th>Relax</th><td>Switching off, before it does harm</td>
+            <td class="eq">force–time</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">All three properties are in play at every instant, in different
+       proportions. That is why they cannot be understood one at a time, and why the next lecture
+       lets you switch each of them off and watch what is lost.</p>
+  </div>
+  <aside class="notes">Walk the four rows against a pedal stroke, which is the case study in the Virtual Muscle Lab. The knee extensors switch on late in the upstroke, get lengthened over the top, shorten through the drive, and must be off before the bottom or they fight the other leg.
+
+The right-hand column is the thing to stress. Students want each phase to belong to one property. None of them do.</aside>
+</section>
+
+<!-- 36 -->
+<section id="w-workloop">
+  <h2>The work loop</h2>
+  <p class="subhead">Force against length, round a complete cycle</p>
+  <div class="iplot wide" data-widget="workloop"></div>
+  <aside class="notes">Here is the whole lecture running at once. The muscle is being lengthened and shortened sinusoidally, it is switched on between the onset and offset you set, and the force at each instant is F₀ · a · F_L · F_V — the equation from Part 03, evaluated four hundred times a cycle.
+
+Plot that force against length and you get a loop. The area inside it is the net work per cycle, and work times cycle frequency is the mean power, which is what the readout reports.
+
+Now play with the timing. Move the onset later and the muscle is still building force when it should already be pulling. Move the offset later and it is still pulling when the limb has started to lengthen again — force on the wrong side of the loop, negative work, and the area shrinks or inverts.
+
+The default 22% and 66% are not arbitrary. Both are early, because activation takes 10 ms to arrive and 40 ms to leave, and the offset is earlier relative to its phase because the fall is the slower of the two.
+
+Then raise the cycle frequency to 4 or 5 Hz without touching the timing, and watch the loop collapse. At high cadence the activation dynamics simply cannot keep up.</aside>
+</section>
+
+<!-- 37 -->
+<section>
+  <h2>Next: the Virtual Muscle Lab</h2>
+  <p class="subhead">The same model, with every property switchable</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>The app runs this model through a cycle and reports <strong>work and power</strong>,
+            positive, negative and net</li>
+        <li>It computes the same cycle <strong>four times</strong>, turning properties off:</li>
+      </ul>
+      <div class="ditable-wrap">
+        <table class="ditable">
+          <tr><th>FV, FL and FT</th><td>everything, as set</td></tr>
+          <tr><th>FV and FT</th><td>force–length removed</td></tr>
+          <tr><th>FV and FL</th><td>force–time removed — instant activation, ideal timing</td></tr>
+          <tr><th>F-V only</th><td>force–velocity alone</td></tr>
+        </table>
+      </div>
+      <p class="small">Subtract one column from another and you have measured what that property
+         cost you.</p>
+    </div>
+    <div>
+      <ul class="small">
+        <li>It will also <strong>optimise</strong> the onset and offset for you, and you can
+            check its answer against the reasoning on the last slide</li>
+        <li>Every constant in the sidebar has appeared in this lecture: L<sub>0</sub>,
+            F<sub>0</sub>, v<sub>max</sub>, curvature, and the two time constants</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Come to the next lecture with a prediction: which of the three
+           properties costs the most work at 2 Hz, and does your answer change at 5 Hz?</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Set the prediction in the callout as actual homework — it takes thirty seconds to answer in the app and it is much more memorable if they have committed first.
+
+Most students guess force–length, because it has the most dramatic curve. The answer at higher frequencies is usually force–time, and that surprises them, which is the point.
+
+The Virtual Muscle Lab was built by Jim Martin at Utah with Jenna Link and me, so questions about why it does something are answerable rather than rhetorical.</aside>
+</section>
+
+<!-- 38 -->
+<section>
+  <h2>Summary</h2>
+  <div class="textstrip three">
+    <div class="firstcol">
+      <p><strong>STRUCTURE</strong></p>
+      <p class="small">Force comes from filament overlap. Sarcomeres in parallel give force,
+         in series give speed. Pennation trades speed for area, and the moment arm turns force
+         into torque.</p>
+    </div>
+    <div>
+      <p><strong>THE THREE PROPERTIES</strong></p>
+      <p class="small">Force–length from overlap plus passive tissue. Force–velocity falling with
+         shortening speed and rising to 1.8 × F<sub>0</sub> on lengthening. Force–time, with a
+         10 ms rise and a 40 ms fall.</p>
+    </div>
+    <div>
+      <p><strong>THE MODEL</strong></p>
+      <p class="small">F = F<sub>0</sub> · a · F<sub>L</sub> · F<sub>V</sub>, and
+         T = r(θ) · F. The terms multiply, so deficits compound — and in a cycle, the timing
+         matters as much as any of them.</p>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">If you remember one thing: <strong>a muscle's force is never a
+       single number.</strong> It is a product of how much tissue there is, how it is arranged,
+       how long it is, how fast it is moving, and how long ago you asked.</p>
+  </div>
+  <aside class="notes">Close on the callout. It is the sentence that makes sense of why strength testing is so protocol-dependent and why "how strong is this muscle" is not a well-posed question.
+
+Flag what carries forward: the force–velocity curve returns in the work loop next lecture, the moment arm returns in Angular Kinetics, and the series elastic component already appeared in Work, Energy and Power as the Achilles.</aside>
+</section>
+
+<!-- 39 -->
+<section>
+  <div class="title-slide">
+    <div class="course">EPHE 341 · Biomechanics</div>
+    <h1>Questions?</h1>
+    <div class="rule"></div>
+    <p class="sub">Next up: the Virtual Muscle Lab</p>
+  </div>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js?v=20261002"></script>
+<script src="mobile.js?v=20261002"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="deck-core.js?v=20261002"></script>
+<script src="muscle.js?v=20261002"></script>
+<script src="deck-tools.js?v=20261002"></script>
+<script src="fit.js?v=20261002"></script>
+</body>
+</html>

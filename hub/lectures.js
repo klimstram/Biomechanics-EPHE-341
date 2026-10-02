@@ -166,6 +166,25 @@ window.EPHE341_LECTURES = [
            ['the measured jump, as force against displacement', 'w-jumpwork'],
            ['the whole lecture read off one jump', 'w-energymap']] },
 
+  { n: '12', title: 'Muscle mechanics',
+    path: 'lectures/12-muscle-mechanics',
+    blurb: 'Where force actually comes from — filament overlap, pennation and the moment ' +
+           'arm — then the three reductionist properties one at a time, assembled into ' +
+           'F = F₀·a·Fₗ·Fᵥ and finally into a work loop.',
+    slides: 39, widgets: 11, updated: '2026-10-02',
+    handout: 'handout.pdf',
+    live: [['the sliding filament, and what sets the force', 'w-sarcomere'],
+           ['what pennation buys and what it costs', 'w-pennation'],
+           ['force is not torque — the moment arm through the range', 'w-momentarm'],
+           ['the three-element model, activated and stretched', 'w-ccpec'],
+           ['force–length: active, passive and total', 'w-flcurve'],
+           ['force–velocity, both halves', 'w-fvcurve'],
+           ['the twitch, in three different muscles', 'w-twitch'],
+           ['activation against excitation — 10 ms up, 40 ms down', 'w-actdyn'],
+           ['force as a surface over length and velocity', 'w-flvsurface'],
+           ['the model equation, as four dials', 'w-musclemodel'],
+           ['the work loop, and what timing does to it', 'w-workloop']] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
@@ -176,7 +195,6 @@ window.EPHE341_LECTURES = [
      would rather they did. */
   { n: '10', title: 'Angular kinematics' },
   { n: '11', title: 'General kinematics' },
-  { n: '12', title: 'Muscle mechanics' },
   { n: '13', title: 'Virtual Muscle Lab' },
   { n: '14', title: 'Electromyography' },
   { n: '15', title: 'Angular kinetics 1' },
