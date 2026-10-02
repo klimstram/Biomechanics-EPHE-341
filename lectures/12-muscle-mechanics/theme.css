@@ -844,3 +844,29 @@ html[data-portrait] .vidgrid{ grid-template-columns:repeat(2,1fr); }
 html[data-portrait] .ivid video{ max-width:100%; }
 /* a video prints as its poster frame; the controls are noise on paper */
 .pdf-page .ivid video,.pdf-page .vidgrid video{ pointer-events:none; }
+
+/* ============================================================
+   KEYBOARD FOCUS
+
+   The widget controls are ordinary buttons and range inputs, so Tab already
+   reaches them and Enter already activates them. What was missing was any
+   way to SEE where the focus is: with no rule here the browser falls back to
+   its default outline, which is near-black and therefore invisible on the
+   dark theme.
+
+   :focus-visible rather than :focus, so the ring appears for the keyboard
+   and not after an ordinary click.
+   ============================================================ */
+.reveal .icalc-chip:focus-visible,
+.reveal .iseg-b:focus-visible,
+.reveal .ibtn:focus-visible,
+.reveal .ictl-row input[type="range"]:focus-visible,
+.reveal input[type="range"]:focus-visible,
+#deck-tools button:focus-visible,
+#ink-bar button:focus-visible{
+  outline:3px solid var(--brand);
+  outline-offset:3px;
+  border-radius:8px;
+}
+/* the slider thumb is the part that moves, so mark the track as a whole */
+.reveal input[type="range"]:focus-visible{ outline-offset:5px; }

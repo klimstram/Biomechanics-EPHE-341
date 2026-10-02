@@ -446,7 +446,7 @@ help.innerHTML =
   '<dt>P R H N E</dt><dd>Pen · aRrow · Highlighter · Note · Erase, while writing</dd>' +
   '<dt>1 … 5</dt><dd>Pick a pen colour</dd>' +
   '<dt>Z / X</dt><dd>Undo · clear this page</dd>' +
-  '<dt>Alt + click</dt><dd>Zoom into part of a slide</dd>' +
+  '<dt>Tab</dt><dd>Step through the controls on a figure — chips, buttons, sliders</dd><dt>Enter</dt><dd>Press the focused button (not Space — that advances the slide)</dd><dt>← / →</dt><dd>Move a focused slider, without changing slide</dd><dt>Alt + click</dt><dd>Zoom into part of a slide</dd>' +
   '<dt>Ctrl/⌘ + F</dt><dd>Search the deck</dd>' +
   '</dl>' +
   '<p class="inknote">Written notes and boards are kept in this browser and are drawn into the ' +
