@@ -187,19 +187,26 @@ window.EPHE341_LECTURES = [
 
   { n: '10', title: 'Angular kinematics',
     path: 'lectures/10-angular-kinematics',
-    blurb: 'Absolute against relative angles, what a radian actually is, and the three ' +
-           'angular quantities with their linear partners — l = rθ, v = rω, ' +
-           'a = rα — ending with a gyroscope on a racing wheelchair wheel.',
-    slides: 44, widgets: 8, updated: '2026-10-03',
+    blurb: 'Absolute against relative angles, the planar covariation law on a measured ' +
+           'stride, what a radian actually is, and the three angular quantities with ' +
+           'their linear partners — l = rθ, v = rω, a = rα — ending with a gyroscope ' +
+           'on a racing wheelchair wheel and a force–velocity profile built from its trace.',
+    slides: 56, widgets: 14, updated: '2026-10-03',
     handout: 'handout.pdf',
     live: [['absolute against relative angles', 'w-angles'],
+           ['the planar covariation law, on a measured stride', 'w-covar'],
            ['what a radian is, by laying the radius on the rim', 'w-radian'],
+           ['predicted sprint kinematics, from speed and leg length', 'w-sprintkin'],
            ['one angle, two points, two distances', 'w-arclen'],
            ['tangential velocity, and why a longer bat is faster', 'w-tangential'],
-           ['centripetal acceleration — then cut the wire', 'w-centripetal'],
+           ['the hammer throw — set ω and r, then release', 'w-hammerv'],
+           ['centripetal acceleration — then cut the wire and watch it fly straight', 'w-centripetal'],
            ['tangential and radial, combined', 'w-atotal'],
            ['the bicycle wheel, all six steps in one column', 'w-bikewheel'],
-           ['a gyroscope reading turned into km/h', 'w-gyroconv']] },
+           ['roll, pitch and yaw inside a MEMS gyroscope', 'w-gyromems'],
+           ['a gyroscope reading turned into km/h', 'w-gyroconv'],
+           ['the measured wheelchair trace, in four units', 'w-wcdata'],
+           ['a force–velocity profile fitted to that sprint', 'w-wcfv']] },
 
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },

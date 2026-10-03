@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20261003b">
+<link rel="stylesheet" href="theme.css?v=20261004">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -37,6 +37,7 @@
 <div class="reveal">
 <div class="slides">
 
+
 <!-- 1 -->
 <section>
   <div class="title-slide">
@@ -46,6 +47,7 @@
     <p class="sub">McGinnis Chpt 6, pg 147–158</p>
   </div>
 </section>
+
 
 <!-- 2 -->
 <section>
@@ -63,6 +65,7 @@
 
 The last objective is the modern half — the lab uses wheel-mounted inertial sensors, and the arithmetic that turns a gyroscope reading into a wheelchair's speed is exactly v = rω.</aside>
 </section>
+
 
 <!-- 3 -->
 <section>
@@ -93,6 +96,7 @@ The last objective is the modern half — the lab uses wheel-mounted inertial se
 Point at the figure: the hand travels a long way, the elbow barely moves, and yet both have turned through the same angle. That observation is most of the lecture.</aside>
 </section>
 
+
 <!-- 4 -->
 <section>
   <div class="section-slide">
@@ -101,6 +105,7 @@ Point at the figure: the hand travels a long way, the elbow barely moves, and ye
     <p class="sub">Angles, radians, and the link to distance travelled</p>
   </div>
 </section>
+
 
 <!-- 5 -->
 <section>
@@ -119,6 +124,7 @@ Point at the figure: the hand travels a long way, the elbow barely moves, and ye
 
 Write them on the board and leave them up.</aside>
 </section>
+
 
 <!-- 6 -->
 <section>
@@ -152,6 +158,7 @@ Write them on the board and leave them up.</aside>
 The next figure makes the distinction concrete: rotate the whole leg and the absolute angles change while the joint angle does not.</aside>
 </section>
 
+
 <!-- 7 -->
 <section id="w-angles">
   <h2>Absolute and relative angles</h2>
@@ -164,7 +171,141 @@ Now move both sliders together by the same amount — rotate the whole limb. The
 Use "absolute only" and "relative only" if the three arcs at once are too busy. Worth asking which of the two a goniometer measures, and which a motion capture system naturally produces.</aside>
 </section>
 
+
 <!-- 8 -->
+<section>
+  <h2>Elevation angles and the nervous system</h2>
+  <p class="subhead">Absolute angles are not just a measurement convention</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>An <strong>elevation angle</strong> is an absolute angle measured from the
+            <strong>vertical</strong> — one for the thigh, one for the shank, one for the foot</li>
+        <li>It has been suggested that the central nervous system coordinates the
+            <strong>orientation of the segments</strong>, not the individual joints</li>
+        <li>That is a different control problem: three segment angles in space rather than
+            three joint angles against each other</li>
+        <li>And it turns out the three do not move independently</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">If the nervous system controlled each joint separately,
+           the three elevation angles could in principle take any combination. They do not.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <div class="box accent workblock" style="max-width:20em">
+        <p class="eq" style="margin-bottom:.35em">θ<sub>thigh</sub> &nbsp; hip → knee</p>
+        <p class="eq" style="margin-bottom:.35em">θ<sub>shank</sub> &nbsp; knee → ankle</p>
+        <p class="eq" style="margin-bottom:0">θ<sub>foot</sub> &nbsp; heel → toe</p>
+      </div>
+      <figcaption>All three measured from the vertical, positive when the distal end leads</figcaption>
+    </div>
+  </div>
+  <aside class="notes">Come back to the absolute-versus-relative slide for a moment. Everything so far has treated the choice as a reporting convention — a goniometer gives you one, a motion capture system gives you the other. This slide says the choice may be more than that.
+
+The elevation angles are the absolute angles of the three lower-limb segments against vertical. The claim on the next slide is that the nervous system appears to organise locomotion in terms of these, and that the three of them are locked together far more tightly than three independent joints would be.
+
+Worth flagging the foot convention now: heel to toe, so a flat foot sits near 90°, not near 0°. Students who expect 0° will think the data is wrong.</aside>
+</section>
+
+
+<!-- 9 -->
+<section>
+  <h2>The planar covariation law</h2>
+  <p class="subhead">Three angles, two degrees of freedom</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Plot the three elevation angles against each other in <strong>3D</strong> over a gait
+            cycle and you get a <strong>loop</strong></li>
+        <li>That loop does not fill the space — it lies, very nearly, on a
+            <strong>plane</strong></li>
+        <li>So the three angles are not independent: fix two and the third follows</li>
+        <li>The changes in segment orientation over the cycle are
+            <strong>tightly coordinated</strong>, not separately controlled</li>
+      </ul>
+      <div class="box accent workblock" style="max-width:26em">
+        <p style="margin-bottom:0" class="small">“Temporal changes in lower-limb segment angles
+           during walking covary in such a way that the trajectory lies close to a plane.”</p>
+      </div>
+    </div>
+    <div class="fig">
+      <ul class="small">
+        <li><strong>Why it matters</strong> — three joints' worth of coordination reduced to
+            two numbers is a large saving for whatever is doing the controlling</li>
+        <li>The <strong>orientation</strong> of the plane changes with speed and condition;
+            the <strong>planarity</strong> itself does not</li>
+        <li>It is measurable in any gait lab, on any subject, from marker data you already have</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">This is the one slide in the lecture where angular kinematics stops being bookkeeping and becomes a claim about motor control.
+
+The honest framing: planarity is an empirical regularity that is extremely robust. What it means is still argued about — whether it reflects a genuine control strategy, or whether it falls out of the mechanics and the anatomy for free. Both camps have published. Say so; students should not leave thinking it is settled.
+
+The next slide computes it live on measured data, so nobody has to take the claim on trust.</aside>
+</section>
+
+
+<!-- 10 -->
+<section id="w-covar">
+  <h2>The planar covariation law</h2>
+  <p class="subhead">A measured stride — turn the loop and see the plane</p>
+  <div class="iplot wide" data-widget="covar"></div>
+  <aside class="notes">This is SUSU-30 from the youth motion dataset, the same subject and the same recording the Forces deck uses. The angles are computed from the markers, and the plane is fitted here by principal components when the figure loads — nothing is drawn in by hand.
+
+Start in the default view and walk the three panels together: the pose, the three traces, the point moving round the loop. Press play.
+
+Then the two buttons, in this order. "Face the plane" puts the camera along the fitted normal, which opens the loop out. "Edge on" puts the camera in the plane, and the loop collapses to a sliver — that is the demonstration. The number in the readout says 99% of the variation lies in two dimensions, with an rms deviation of under 4° against a range of about 100°.
+
+Then switch to running. The planarity survives — a little looser, 96% rather than 99% — and the plane has tilted. That is the robustness claim and the caveat in one click.</aside>
+</section>
+
+
+<!-- 11 -->
+<section>
+  <h2>Robust across conditions</h2>
+  <p class="subhead">Same law, different plane</p>
+  <div class="textstrip three">
+    <div class="firstcol">
+      <p><strong>WHAT HOLDS</strong></p>
+      <ul class="small">
+        <li>Planarity is seen across <strong>walking and running</strong></li>
+        <li>Across a wide range of <strong>speeds</strong></li>
+        <li>On <strong>inclines</strong>, in <strong>children and older adults</strong>,
+            and with <strong>prosthetic</strong> limbs</li>
+      </ul>
+    </div>
+    <div>
+      <p><strong>WHAT CHANGES</strong></p>
+      <ul class="small">
+        <li>The <strong>orientation</strong> of the plane</li>
+        <li>The <strong>shape and size</strong> of the loop on it</li>
+        <li>Both shift systematically with <strong>speed</strong></li>
+      </ul>
+    </div>
+    <div>
+      <p><strong>WHY YOU CARE</strong></p>
+      <ul class="small">
+        <li>A measure of <strong>coordination</strong>, not just range of motion</li>
+        <li>Plane orientation has been used as a marker of
+            <strong>gait quality</strong> and of change after injury</li>
+        <li>It needs nothing but segment angles</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">The nervous system appears to coordinate the segments as a
+       <strong>synergy</strong> rather than controlling each one separately — which is why
+       the loop stays flat while everything about its shape changes.</p>
+  </div>
+  <aside class="notes">The practical payoff is in the third column. Range of motion tells you how far a joint went. Planarity tells you whether the segments are still working together, and the orientation of the plane tells you how. Two patients can have identical joint ranges and quite different planes.
+
+Ask them what would have to go wrong for the loop to leave the plane — the answer is that one segment would have to stop being coordinated with the other two, which is exactly what you would expect after a nerve injury or with a passive prosthesis.</aside>
+</section>
+
+
+<!-- 12 -->
 <section>
   <h2>Angular distance and angular displacement</h2>
   <p class="subhead">The same scalar-and-vector pairing as in linear kinematics</p>
@@ -191,7 +332,8 @@ Use "absolute only" and "relative only" if the three arcs at once are too busy. 
 This is exactly the distance-and-displacement distinction from linear kinematics, which is why it gets one table rather than a whole slide of its own.</aside>
 </section>
 
-<!-- 9 -->
+
+<!-- 13 -->
 <section>
   <h2>Units of angular measurement</h2>
   <p class="subhead">Three in common use, and only one of them works in equations</p>
@@ -211,7 +353,8 @@ This is exactly the distance-and-displacement distinction from linear kinematics
 Revolutions per minute will come back in Part 04 and in the tutor problems, so flag it now.</aside>
 </section>
 
-<!-- 10 -->
+
+<!-- 14 -->
 <section>
   <h2>What is a radian?</h2>
   <p class="subhead">The angle subtended by an arc one radius long</p>
@@ -230,7 +373,8 @@ Revolutions per minute will come back in Part 04 and in the tutor problems, so f
 That is also why you cannot do the same with degrees. A degree is an arbitrary 1/360th; a radian is built from the circle's own geometry.</aside>
 </section>
 
-<!-- 11 -->
+
+<!-- 15 -->
 <section id="w-radian">
   <h2>What is a radian?</h2>
   <p class="subhead">Lay the radius along the rim and count how many fit</p>
@@ -242,7 +386,8 @@ Then walk the chips: π/2 is a quarter turn, π is a half turn, 2π is the whole
 The bars at the right are the point of the figure. The arc straightens out and you can see it against one radius. Ask how many radii fit around a circle before pressing 2π.</aside>
 </section>
 
-<!-- 12 -->
+
+<!-- 16 -->
 <section>
   <h2>Converting degrees to radians</h2>
   <p class="subhead">One relationship, used in both directions</p>
@@ -275,7 +420,8 @@ The bars at the right are the point of the figure. The arc straightens out and y
 Going the other way — radians to degrees — multiply by 180/π. Students reliably use the wrong one of the two, so the sanity check is: radians are the smaller number, because a radian is big.</aside>
 </section>
 
-<!-- 13 -->
+
+<!-- 17 -->
 <section>
   <h2>Direction conventions</h2>
   <p class="subhead">Angular quantities are vectors, so they need a sign</p>
@@ -320,7 +466,87 @@ Going the other way — radians to degrees — multiply by 180/π. Students reli
 The sign convention matters most in Angular Kinetics, where a moment and an angular velocity with the same sign means the joint is generating power and opposite signs means it is absorbing. Flag that this convention is the one that makes that work.</aside>
 </section>
 
-<!-- 14 -->
+
+<!-- 18 -->
+<section>
+  <h2>Angular kinematics of maximal sprinting</h2>
+  <p class="subhead">Seventy-nine sprinters, 60 m, flat out</p>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li><strong>79 male sprinters</strong> ran a maximal-effort <strong>60 m</strong></li>
+        <li>Leg angular kinematics were the <strong>dependent</strong> variables</li>
+        <li>Predictors: <strong>running speed</strong>, <strong>leg length</strong>,
+            <strong>step frequency</strong>, and the <strong>swing / support ratio</strong></li>
+        <li>Note which angles they chose: <strong>thigh, shank, foot and leg</strong> angles —
+            absolute — alongside hip, knee and ankle — relative</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">The same absolute-versus-relative distinction from the start
+           of the lecture, doing real work in a real study.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/sprint-angles.jpg" alt="Sprint gait phases from left foot strike to left foot strike, and the joint and segment angle definitions used">
+      <figcaption>Miyashiro, Nagahara, Yamamoto &amp; Nishijima (2019),
+        <em>Front. Sports Act. Living</em> 1:37 · CC&nbsp;BY</figcaption>
+    </div>
+  </div>
+  <aside class="notes">Panel A is worth a minute on its own. It lays out one full cycle — left foot strike, left toe-off, right foot strike, right toe-off — and names the support and flight phases for each leg. Sprinting has a flight phase where walking has double support, and that is the structural difference the rest of the study rests on.
+
+Panel B is the payoff for the first part of this lecture. On the left, hip, knee and ankle angles: relative. In the middle and on the right, thigh, shank, foot and leg angles: absolute, each measured against the vertical with a sign convention marked. The authors report both because they answer different questions.</aside>
+</section>
+
+
+<!-- 19 -->
+<section>
+  <h2>What changes when you run faster</h2>
+  <p class="subhead">And what changes when your legs are longer</p>
+  <div class="textstrip">
+    <div class="firstcol">
+      <p><strong>AS RUNNING SPEED INCREASES</strong></p>
+      <ul class="small">
+        <li>Thigh angle at <strong>contralateral foot strike increases</strong> — the swing leg
+            is further forward when the other foot lands</li>
+        <li>Knee extension range during support <strong>decreases</strong></li>
+        <li>Backward swing angular velocities become <strong>more negative</strong></li>
+      </ul>
+    </div>
+    <div>
+      <p><strong>AS LEG LENGTH INCREASES</strong> <span class="small">(at the same speed)</span></p>
+      <ul class="small">
+        <li>Greater thigh angle at contralateral foot strike</li>
+        <li>Changes in support-phase knee extension displacement</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">Faster sprinting is not a bigger version of slower sprinting.
+       The support leg extends <strong>less</strong>, not more — it gets
+       <strong>stiffer</strong>, and the speed comes from turning the limb over faster.</p>
+  </div>
+  <aside class="notes">The counter-intuitive finding is the knee one, and it is worth dwelling on because it contradicts what students expect and what a lot of coaching language implies. Nobody is "driving through" and extending the support knee more at top speed. Support time is around a tenth of a second; there is no time for a big extension and any that happened would cost more than it bought.
+
+The thigh-angle result is the one that transfers to coaching: at top speed the swing thigh is further forward at the instant the other foot lands. That is a position, it is visible on video, and it is measurable with a protractor on a still frame.</aside>
+</section>
+
+
+<!-- 20 -->
+<section id="w-sprintkin">
+  <h2>Predicted sprint kinematics</h2>
+  <p class="subhead">Move the two predictors and watch both angles</p>
+  <div class="iplot wide" data-widget="sprintkin"></div>
+  <aside class="notes">Two of the four predictors from the paper, held against each other. Start at the centre — 9.90 m/s and a 0.812 m leg, which is where the published prediction plots were drawn — and then move speed on its own.
+
+The thigh angle climbs from about −4° to +12° across the speed range. The knee extension falls from about 20° to 14°. Two trends in opposite directions, from the same change.
+
+Then switch the plot to leg length and hold speed. A longer leg at the same speed also puts the thigh further forward, which is the part students find surprising: it is not only about how fast you are going.
+
+Say plainly that this is a two-predictor slice of a four-predictor model. Step frequency and the swing/support ratio are in the published equation and are not on these sliders.</aside>
+</section>
+
+
+<!-- 21 -->
 <section>
   <h2>Angular and linear displacement</h2>
   <p class="subhead">The angle is shared; the distance is not</p>
@@ -349,7 +575,8 @@ The sign convention matters most in Angular Kinetics, where a moment and an angu
 The hands and the tip rotate through the same angle in the same time. The tip travels several times further, so it must be moving several times faster. That is the entire argument for a long implement, and also the entire argument against one if you cannot swing it fast enough.</aside>
 </section>
 
-<!-- 15 -->
+
+<!-- 22 -->
 <section id="w-arclen">
   <h2>Angular and linear displacement</h2>
   <p class="subhead">One angle, two points, two distances</p>
@@ -361,7 +588,8 @@ Drag the angle. Both arcs grow together and their ratio never changes, because t
 The bars on the right are the same two lengths straightened out, which is what l = rθ actually computes. Note the readout converts the degrees to radians first — if you put degrees into rθ you get an answer 57 times too big, and that is the most common mistake on this material.</aside>
 </section>
 
-<!-- 16 -->
+
+<!-- 23 -->
 <section>
   <h2>Angular displacement</h2>
   <p class="subhead">Example Problem</p>
@@ -383,7 +611,8 @@ The bars on the right are the same two lengths straightened out, which is what l
 This same wheel runs through the whole lecture, and the Biomechanics Tutor's Angular Kinematics section uses the same 0.34 m radius, so the numbers will look familiar when they practise.</aside>
 </section>
 
-<!-- 17 -->
+
+<!-- 24 -->
 <section>
   <h2>Angular displacement</h2>
   <p class="subhead">Solution</p>
@@ -407,7 +636,8 @@ This same wheel runs through the whole lecture, and the Biomechanics Tutor's Ang
 If anyone's calculator gives 0.1780 rather than 0.1768, they kept more decimal places in the radian conversion — 0.5236 rather than 0.52. Both are right; the difference is rounding, and it is a good moment to mention carrying precision through a chain.</aside>
 </section>
 
-<!-- 18 -->
+
+<!-- 25 -->
 <section>
   <div class="section-slide">
     <div class="course">Part 02</div>
@@ -416,7 +646,8 @@ If anyone's calculator gives 0.1780 rather than 0.1768, they kept more decimal p
   </div>
 </section>
 
-<!-- 19 -->
+
+<!-- 26 -->
 <section>
   <h2>Angular speed and angular velocity</h2>
   <p class="subhead">Again, a scalar and a vector</p>
@@ -437,7 +668,8 @@ If anyone's calculator gives 0.1780 rather than 0.1768, they kept more decimal p
 Angular velocity is also reported in revolutions per minute in a great deal of equipment — cycle ergometers, centrifuges, engines. Converting rpm to rad/s is multiply by 2π and divide by 60, and it turns up in the tutor problems.</aside>
 </section>
 
-<!-- 20 -->
+
+<!-- 27 -->
 <section>
   <h2>Tangential velocity</h2>
   <p class="subhead">The linear velocity of a point travelling an angular path</p>
@@ -480,7 +712,8 @@ Angular velocity is also reported in revolutions per minute in a great deal of e
 Ask what happens to a point's velocity direction a quarter turn later. It has rotated by the same quarter turn — the magnitude is unchanged but the direction is completely different, and that change of direction is what Part 03 is about.</aside>
 </section>
 
-<!-- 21 -->
+
+<!-- 28 -->
 <section id="w-tangential">
   <h2>Tangential velocity</h2>
   <p class="subhead">Same ω everywhere — press play and watch the two arrows</p>
@@ -492,7 +725,8 @@ The arrow lengths are the point: A's is about twice B's, because A is about twic
 Then drag ω. Both arrows grow together, in proportion. Two different ways to make the bat tip faster — swing faster, or use a longer bat — and the figure shows them as two different sliders.</aside>
 </section>
 
-<!-- 22 -->
+
+<!-- 29 -->
 <section>
   <h2>Angular velocity</h2>
   <p class="subhead">Example Problem</p>
@@ -515,7 +749,8 @@ Then drag ω. Both arrows grow together, in proportion. Two different ways to ma
 Getting students to name the route before doing arithmetic is the habit that makes the harder problems tractable.</aside>
 </section>
 
-<!-- 23 -->
+
+<!-- 30 -->
 <section>
   <h2>Angular velocity</h2>
   <p class="subhead">Solution</p>
@@ -552,7 +787,60 @@ Getting students to name the route before doing arithmetic is the habit that mak
 Students who have slipped a factor of 57 somewhere — degrees instead of radians — would get 50 m/s here, and a sanity check catches it instantly.</aside>
 </section>
 
-<!-- 24 -->
+
+<!-- 31 -->
+<section>
+  <h2>The hammer throw</h2>
+  <p class="subhead">v<sub>t</sub> = rω, with only two things to change</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>The ball travels a circle, so its speed at release is the
+            <strong>tangential</strong> speed, v<sub>t</sub> = rω</li>
+        <li>Once it leaves, it is a projectile — the range depends on that speed
+            <strong>squared</strong></li>
+        <li>So the thrower has exactly two levers:
+          <ul>
+            <li>increase <strong>ω</strong> across successive turns</li>
+            <li>keep the hammer at a <strong>large effective radius</strong></li>
+          </ul>
+        </li>
+        <li>The second is why throwers fight to keep the arms long and the shoulders back
+            as the turns speed up</li>
+      </ul>
+      <div class="box accent workblock" style="max-width:22em">
+        <p class="eq" style="margin-bottom:0">v<sub>t</sub> = rω</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/hammer.jpg" alt="A hammer thrower turning, the ball at the end of the wire">
+      <figcaption>The release speed is tangential — the throw leaves along a straight line</figcaption>
+    </div>
+  </div>
+  <aside class="notes">This is the slide the centripetal figure was setting up. When the thrower lets go, the hammer does not fly outward along the wire's direction — it carries on along the tangent it already had. Every thrower knows which way to face at release; this is why.
+
+The squared term is the thing to insist on. Range goes as v², so a 10% gain in release speed is a 21% gain in distance. That is why the whole event is organised around the last turn.
+
+The radius point is subtle and worth drawing out: the "effective radius" is from the axis of rotation to the ball, and it is not fixed — it shrinks if the thrower lets the arms bend or the shoulders come forward under the load. Losing 10 cm of radius costs as much as losing the corresponding fraction of ω.</aside>
+</section>
+
+
+<!-- 32 -->
+<section id="w-hammerv">
+  <h2>The hammer throw</h2>
+  <p class="subhead">Set ω and r, then release</p>
+  <div class="iplot wide" data-widget="hammerv"></div>
+  <aside class="notes">Walk the three chips: turn 1 at ω = 5, turn 3 at ω = 11, release at ω = 17. The radius stays the same and the tangential speed roughly triples, and the predicted throw goes from a few metres to near the world record.
+
+Then hold ω and drag the radius instead. From 1.0 m to 2.2 m at fixed ω does the same job — which makes the point that these are two routes to the same place, and that losing radius under load is as expensive as losing turn speed.
+
+Press release while it is turning. It leaves along the tangent, not outward, exactly as the centripetal figure showed. Pause it just before release and ask the room to point at where it will go, before pressing.
+
+The range uses the projectile equation from lecture 8, at 44° from a 1.6 m release height — worth saying out loud, because it is the first time in this lecture that two lectures have been chained together.</aside>
+</section>
+
+
+<!-- 33 -->
 <section>
   <div class="section-slide">
     <div class="course">Part 03</div>
@@ -561,7 +849,8 @@ Students who have slipped a factor of 57 somewhere — degrees instead of radian
   </div>
 </section>
 
-<!-- 25 -->
+
+<!-- 34 -->
 <section>
   <h2>Angular acceleration</h2>
   <p class="subhead">The rate of change of angular velocity</p>
@@ -595,7 +884,8 @@ Students who have slipped a factor of 57 somewhere — degrees instead of radian
 That is also why lengthening an implement is such a blunt instrument: it scales the distance, the speed and the acceleration at the tip all by the same amount, and it scales the moment of inertia by rather more — which is the catch, and it belongs to Angular Kinetics.</aside>
 </section>
 
-<!-- 26 -->
+
+<!-- 35 -->
 <section>
   <h2>Angular acceleration</h2>
   <p class="subhead">Example Problem, and solution</p>
@@ -628,7 +918,8 @@ That is also why lengthening an implement is such a blunt instrument: it scales 
 The next figure puts all six steps in one column so they can see the chain whole rather than spread over four slides.</aside>
 </section>
 
-<!-- 27 -->
+
+<!-- 36 -->
 <section id="w-bikewheel">
   <h2>The bicycle wheel, all the way through</h2>
   <p class="subhead">Every step is either × r or ÷ Δt</p>
@@ -640,7 +931,8 @@ The numbers are the ones just worked — 0.524 rad, 0.178 m, 2.62 rad/s, 0.890 m
 Then change the radius and watch which rows move. The first row does not — the angle is the angle regardless. Everything below it scales. That is the lecture's whole point, made in one gesture.</aside>
 </section>
 
-<!-- 28 -->
+
+<!-- 37 -->
 <section>
   <h2>Centripetal acceleration</h2>
   <p class="subhead">Turning is accelerating, even at constant speed</p>
@@ -669,7 +961,8 @@ Then change the radius and watch which rows move. The first row does not — the
 Note the ω is squared. That is why this term dominates everything once the rotation is fast, and it is the reason the hammer answer two slides on is so lopsided.</aside>
 </section>
 
-<!-- 29 -->
+
+<!-- 38 -->
 <section id="w-centripetal">
   <h2>Centripetal acceleration</h2>
   <p class="subhead">Press play — then cut the wire</p>
@@ -681,7 +974,8 @@ Now press "cut the wire". The inward acceleration vanishes and the dashed line s
 Then drag ω. Doubling it quadruples the radial acceleration, because of the square. Doubling the radius only doubles it. Those two sliders behaving differently is the thing to leave them with.</aside>
 </section>
 
-<!-- 30 -->
+
+<!-- 39 -->
 <section>
   <h2>Total linear acceleration</h2>
   <p class="subhead">Two perpendicular components, one resultant</p>
@@ -727,7 +1021,8 @@ Then drag ω. Doubling it quadruples the radial acceleration, because of the squ
 Because the two are perpendicular the resultant is never simply their sum, and it is always dominated by whichever is larger. The next problem makes that extreme.</aside>
 </section>
 
-<!-- 31 -->
+
+<!-- 40 -->
 <section id="w-atotal">
   <h2>Total linear acceleration</h2>
   <p class="subhead">Change ω and α separately, and watch which one matters</p>
@@ -739,7 +1034,8 @@ So do this deliberately. Note the two arrows at ω = 6, where radial is already 
 Then set ω to zero. Now there is only tangential acceleration — a body that is speeding up but not yet turning. Those are the two extremes, and real movements sit between them.</aside>
 </section>
 
-<!-- 32 -->
+
+<!-- 41 -->
 <section>
   <h2>Total acceleration</h2>
   <p class="subhead">Example Problem</p>
@@ -771,7 +1067,8 @@ Then set ω to zero. Now there is only tangential acceleration — a body that i
 Ask also which ω to use for the radial part. The final one, 12 rad/s, because the question asks for the acceleration at the end of the wind-up. Using the average is the most common wrong turn here.</aside>
 </section>
 
-<!-- 33 -->
+
+<!-- 42 -->
 <section>
   <h2>Total acceleration</h2>
   <p class="subhead">Solution</p>
@@ -811,7 +1108,8 @@ Ask also which ω to use for the radial part. The final one, 12 rad/s, because t
 Note how little the tangential part contributed: the total is 173 against a radial of 172.8. Including a_t changed the answer by about a tenth of a percent. That is not a reason to leave it out of the method — it is a reason to understand which term dominates and why.</aside>
 </section>
 
-<!-- 34 -->
+
+<!-- 43 -->
 <section>
   <h2>Summary of concepts and equations</h2>
   <p class="subhead">Three angular quantities, three linear partners, one radius</p>
@@ -843,7 +1141,8 @@ Note how little the tangential part contributed: the total is 173 against a radi
 The callout's last sentence is worth saying slowly. a_r exists because the direction is changing, and direction change is the thing that makes circular motion different from linear motion in a way that no amount of relabelling will fix.</aside>
 </section>
 
-<!-- 35 -->
+
+<!-- 44 -->
 <section>
   <div class="section-slide">
     <div class="course">Part 04</div>
@@ -852,7 +1151,8 @@ The callout's last sentence is worth saying slowly. a_r exists because the direc
   </div>
 </section>
 
-<!-- 36 -->
+
+<!-- 45 -->
 <section>
   <h2>The Coriolis effect</h2>
   <p class="subhead">How a sensor with no moving parts detects rotation</p>
@@ -871,7 +1171,45 @@ The callout's last sentence is worth saying slowly. a_r exists because the direc
       </div>
     </div>
     <div class="fig">
-      <img src="assets/coriolis-cube.jpg" alt="A mass moving along x while rotating about z experiences a Coriolis force perpendicular to both">
+      <svg viewBox="0 0 340 290" role="img"
+           aria-label="A mass moving along x on a platform rotating about z is pushed sideways along y by the Coriolis force">
+        <defs>
+          <marker id="cah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" fill="currentColor"/>
+          </marker>
+          <marker id="cag" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" fill="var(--good)"/>
+          </marker>
+        </defs>
+        <!-- the platform -->
+        <path d="M30,210 L190,160 L310,200 L150,250 Z" fill="currentColor" opacity=".10"/>
+        <path d="M30,210 L190,160 L310,200 L150,250 Z" fill="none"
+              stroke="currentColor" stroke-width="1.6" opacity=".55"/>
+        <!-- rotation about z -->
+        <line x1="170" y1="205" x2="170" y2="42" stroke="currentColor" stroke-width="1.4"
+              stroke-dasharray="5 5"/>
+        <ellipse cx="170" cy="48" rx="46" ry="16" fill="none" stroke="var(--accent)"
+                 stroke-width="2.6"/>
+        <path d="M214,44 L222,48 L212,54" fill="none" stroke="var(--accent)" stroke-width="2.6"/>
+        <text x="96" y="44" font-size="17" font-weight="700" fill="var(--accent)">Ω</text>
+        <text x="110" y="50" font-size="11" font-weight="700" fill="var(--accent)">z</text>
+        <!-- the mass -->
+        <path d="M110,200 L150,188 L186,200 L146,213 Z" fill="var(--brand)" opacity="0.45"/>
+        <path d="M110,200 L110,180 L150,168 L150,188 Z" fill="var(--brand)" opacity="0.8"/>
+        <path d="M150,168 L186,180 L186,200 L150,188 Z" fill="var(--brand)" opacity="0.65"/>
+        <text x="148" y="194" font-size="13" font-weight="700" fill="currentColor"
+              text-anchor="middle">m</text>
+        <!-- its velocity, and the push it gets -->
+        <line x1="190" y1="186" x2="262" y2="210" stroke="currentColor" stroke-width="3"
+              marker-end="url(#cah)"/>
+        <text x="258" y="232" font-size="15" font-weight="700" fill="currentColor">v</text>
+        <line x1="148" y1="176" x2="196" y2="128" stroke="var(--good)" stroke-width="3"
+              marker-end="url(#cag)"/>
+        <text x="202" y="122" font-size="14" font-weight="700" fill="var(--good)">F</text>
+        <text x="213" y="127" font-size="10" font-weight="700" fill="var(--good)">Coriolis</text>
+      </svg>
+      <figcaption>Move across a turning platform and something pushes you sideways —
+        perpendicular to both Ω and v</figcaption>
     </div>
   </div>
   <aside class="notes">This is the bridge from the physics to the instrument, and it is the part of the lecture students find genuinely surprising: a solid-state chip with nothing spinning in it can measure rotation.
@@ -879,7 +1217,8 @@ The callout's last sentence is worth saying slowly. a_r exists because the direc
 The cross product in the equation means the force is perpendicular to both the velocity and the rotation axis, which is what makes the effect usable — the sideways displacement is clean, separate from the driven motion, and proportional to Ω.</aside>
 </section>
 
-<!-- 37 -->
+
+<!-- 46 -->
 <section>
   <h2>Inside a MEMS gyroscope</h2>
   <p class="subhead">Four masses, kept permanently vibrating</p>
@@ -896,7 +1235,35 @@ The cross product in the equation means the force is perpendicular to both the v
       </ul>
     </div>
     <div class="fig">
-      <img src="assets/gyro-mass.jpg" alt="A MEMS gyroscope proof mass divided into four parts M1 to M4">
+      <svg viewBox="0 0 320 300" role="img"
+           aria-label="Four proof masses on the two in-plane axes around a central anchor, each driven in and out along its own radius">
+        <g fill="none" stroke="currentColor" stroke-width="1.6">
+          <rect x="24" y="24" width="272" height="252" rx="4"/>
+        </g>
+        <rect x="148" y="138" width="24" height="24" fill="none"
+              stroke="currentColor" stroke-width="2"/>
+        <g stroke="currentColor" stroke-width="1.4">
+          <line x1="160" y1="138" x2="160" y2="92"/><line x1="160" y1="162" x2="160" y2="208"/>
+          <line x1="148" y1="150" x2="102" y2="150"/><line x1="172" y1="150" x2="218" y2="150"/>
+        </g>
+        <g fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="134" y="52" width="52" height="40"/>
+          <rect x="134" y="208" width="52" height="40"/>
+          <rect x="52" y="130" width="50" height="40"/>
+          <rect x="218" y="130" width="50" height="40"/>
+        </g>
+        <g fill="currentColor" font-size="15" font-weight="700" text-anchor="middle">
+          <text x="160" y="77">M1</text><text x="160" y="233">M3</text>
+          <text x="77" y="155">M2</text><text x="243" y="155">M4</text>
+        </g>
+        <g stroke="var(--accent)" stroke-width="2" marker-end="url(#ghd)">
+          <line x1="160" y1="44" x2="160" y2="28"/><line x1="160" y1="256" x2="160" y2="272"/>
+          <line x1="44" y1="150" x2="28" y2="150"/><line x1="276" y1="150" x2="292" y2="150"/>
+        </g>
+        <defs><marker id="ghd" markerWidth="7" markerHeight="7" refX="6" refY="3.5"
+                      orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--accent)"/></marker></defs>
+      </svg>
+      <figcaption>M1 and M3 on one axis, M2 and M4 on the other — all four driven together</figcaption>
     </div>
   </div>
   <aside class="notes">The chain is worth stating as a chain: rotation causes a Coriolis force, which moves masses, which changes a capacitance, which changes a voltage, which is what the chip reports. Four conversions between the physical thing and the number.
@@ -904,7 +1271,8 @@ The cross product in the equation means the force is perpendicular to both the v
 That is a theme from Sensors and Data Acquisition earlier in the course — nothing measures what you want directly, it measures something that varies with it.</aside>
 </section>
 
-<!-- 38 -->
+
+<!-- 47 -->
 <section>
   <h2>Three axes, three modes</h2>
   <p class="subhead">Roll, pitch and yaw come from which masses move</p>
@@ -925,7 +1293,13 @@ That is a theme from Sensors and Data Acquisition earlier in the course — noth
          voltage signal.</p>
     </div>
     <div class="fig">
-      <img src="assets/gyro-modes.jpg" alt="The gyroscope proof mass responding to an angular rate about one axis">
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq" style="margin-bottom:.4em">a<sub>Coriolis</sub> = −2 Ω × v</p>
+        <p class="small" style="margin-bottom:0">The pair that responds is always the pair whose
+           drive velocity runs <strong>across</strong> the rotation axis. Everything in the table
+           is that cross product, worked out three times.</p>
+      </div>
+      <figcaption>The next slide does it live — pick an axis and watch</figcaption>
     </div>
   </div>
   <aside class="notes">Students do not need to memorise which masses do what. What they need is that one chip resolves rotation about three independent axes, which is why a single sensor on a wheel can tell you about the wheel's spin and separately about the chair's turning and tilting.
@@ -933,7 +1307,23 @@ That is a theme from Sensors and Data Acquisition earlier in the course — noth
 Mounting orientation therefore matters enormously in the lab. A gyroscope mounted at the wrong angle reports a mixture of axes and there is no way to unmix it afterwards without knowing the orientation.</aside>
 </section>
 
-<!-- 39 -->
+
+<!-- 48 -->
+<section id="w-gyromems">
+  <h2>Roll, pitch and yaw inside the chip</h2>
+  <p class="subhead">Turn it and watch which pair gets pushed</p>
+  <div class="iplot wide" data-widget="gyromems"></div>
+  <aside class="notes">Start on "no rotation" and press play. All four masses oscillate in and out together, nothing is pushed off its line, and the capacitance trace is flat. That is a gyroscope reading zero — not a gyroscope doing nothing.
+
+Then take the three axes in turn and let them predict before you click. The rule is in the cross product and it is on the readout each time: the pair that responds is the pair whose drive velocity is across the rotation axis. Roll pushes M1 and M3 out of the plane. Pitch pushes M2 and M4 out of the plane. Yaw pushes M2 and M4 sideways, in opposite directions.
+
+Now the rotation-rate slider, which is the whole measurement. The deflection grows with Ω and so does the capacitance wobble. Take Ω negative and the wobble flips phase — which is how the chip knows the direction as well as the rate.
+
+The thing to leave them with: nothing in here spins. A mechanical gyroscope resists being turned; this one does not resist anything. It just lets the Coriolis term push some very small masses a very small distance, and measures the gap.</aside>
+</section>
+
+
+<!-- 49 -->
 <section>
   <h2>A wheel-mounted sensor</h2>
   <p class="subhead">Wheelchair racing metrics from an IMU on the wheel</p>
@@ -956,7 +1346,8 @@ Mounting orientation therefore matters enormously in the lab. A gyroscope mounte
 This is the measurement the lab works with, and the next slide is the arithmetic that makes it interpretable.</aside>
 </section>
 
-<!-- 40 -->
+
+<!-- 50 -->
 <section>
   <h2>From degrees per second to km/h</h2>
   <p class="subhead">Three conversions, and the middle one is this lecture</p>
@@ -987,19 +1378,38 @@ This is the measurement the lab works with, and the next slide is the arithmetic
 Worth flagging the assumption buried in it: this only gives ground speed if the wheel is not slipping. On a track that is safe. On a treadmill or a loose surface it is not, and the same arithmetic would quietly give the wrong answer.</aside>
 </section>
 
-<!-- 41 -->
+
+<!-- 51 -->
 <section id="w-gyroconv">
-  <h2>From degrees per second to km/h</h2>
-  <p class="subhead">Move the sensor reading and watch the chain</p>
+  <h2>The conversion chain</h2>
+  <p class="subhead">Move the sensor reading and watch it propagate</p>
   <div class="iplot wide" data-widget="gyroconv"></div>
-  <aside class="notes">Walk the three chips. A first push is around 200 deg/s, which is about 4 km/h — slow, because the chair is still accelerating. Cruising is around 600, about 12 km/h. A sprint peak is around 1000, which is over 20 km/h.
+  <aside class="notes">Walk the three chips, which are read off the trace on the next slide. A first push clears about 200 deg/s, which is only 4 km/h — the chair is barely moving. Ten seconds later it is through 1000, about 21 km/h. Top speed is just under 1900, which is a shade under 40 km/h.
 
 Then change the wheel radius and watch everything downstream of the second box move while the first two boxes do not. The gyroscope reading and the rad/s are properties of the wheel's rotation; only the speed depends on how big the wheel is.
 
 That is a practical point for the lab: get the radius wrong and every speed is wrong in proportion, and nothing in the data will look suspicious.</aside>
 </section>
 
-<!-- 42 -->
+
+<!-- 52 -->
+<section id="w-wcdata">
+  <h2>The measured trace</h2>
+  <p class="subhead">Scrub the cursor and run the chain on real data</p>
+  <div class="iplot wide" data-widget="wcdata"></div>
+  <aside class="notes">This is the measured trace from the wheel-mounted sensor, digitised from the recording. Nothing on the figure is drawn in: every number in the four boxes is computed from the array at whatever time the cursor sits on.
+
+Park the cursor in three places. Around 12 s, just after the first push, the wheel is near 200 deg/s — about 4 km/h, and the chair is barely moving. Around 22 s it is through 1000. On the plateau after 40 s it is just under 1900 deg/s, which is close to 40 km/h.
+
+Then switch the unit buttons and watch the trace keep its shape while the axis changes. That is the point: the sensor measured one thing, and all four of these are the same measurement in different clothes.
+
+The ripples are worth naming. Each one is a push — the wheel speeds up under the hand and coasts slightly between contacts. Count them across ten seconds and you have push frequency, from a sensor that never measured a push.
+
+Finally drag the wheel radius and watch only the last two boxes move. If you get the radius wrong, your speeds are wrong by exactly that ratio, and nothing in the data will tell you.</aside>
+</section>
+
+
+<!-- 53 -->
 <section>
   <h2>What you can get from it</h2>
   <p class="subhead">Velocity over time is the raw material for everything else</p>
@@ -1024,7 +1434,25 @@ That is a practical point for the lab: get the radius wrong and every speed is w
 The shapes are the same because the underlying constraint is the same. That is worth saying explicitly — it is one of the few places in the course where a reductionist property shows up intact at the whole-body level.</aside>
 </section>
 
-<!-- 43 -->
+
+<!-- 54 -->
+<section id="w-wcfv">
+  <h2>A force–velocity profile from one sprint</h2>
+  <p class="subhead">Fit the rise, differentiate it, multiply by mass</p>
+  <div class="iplot wide" data-widget="wcfv"></div>
+  <aside class="notes">This is the sprint-profiling method, applied to the trace on the previous slide. The recipe is four steps and each one is something this lecture has already done.
+
+One: fit a rising exponential to the velocity. Two: differentiate it, which gives acceleration. Three: multiply by the system mass — athlete plus chair — which gives force. Four: plot that force against the velocity it occurred at, and the relationship comes out as a straight line.
+
+The two intercepts are the profile. F₀ is the force the athlete could apply if the chair were held still. v₀ is the speed at which no force is left over. Maximum power sits exactly halfway between them, at F₀v₀/4, and that is a result worth deriving on the board.
+
+Use the fit-window slider deliberately. Start it at 11 s and the fit is poor, because the first several seconds are a rolling start rather than a maximal effort and the exponential cannot describe both. Move it to 18 s and the residual drops to about 0.1 m/s — one per cent. Knowing which part of a trial to throw away is most of applied biomechanics.
+
+Then the mass slider. v₀ and τ do not move, because they are kinematics. F₀ and P<sub>max</sub> scale directly with mass. Ask what that means for comparing two athletes in different chairs.</aside>
+</section>
+
+
+<!-- 55 -->
 <section>
   <h2>Summary</h2>
   <div class="textstrip three">
@@ -1055,7 +1483,8 @@ The shapes are the same because the underlying constraint is the same. That is w
 Flag what carries forward: ω and α return immediately in Angular Kinetics, where they meet moments and moment of inertia; the sign convention returns there too; and v = rω is already in use in the lab.</aside>
 </section>
 
-<!-- 44 -->
+
+<!-- 56 -->
 <section>
   <div class="title-slide">
     <div class="course">EPHE 341 · Biomechanics</div>
@@ -1072,8 +1501,8 @@ Flag what carries forward: ω and α return immediately in Angular Kinetics, whe
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20261003b"></script>
-<script src="mobile.js?v=20261003b"></script>
+<script src="annotate.js?v=20261004"></script>
+<script src="mobile.js?v=20261004"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -1095,9 +1524,9 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="deck-core.js?v=20261003b"></script>
-<script src="angular.js?v=20261003b"></script>
-<script src="deck-tools.js?v=20261003b"></script>
-<script src="fit.js?v=20261003b"></script>
+<script src="deck-core.js?v=20261004"></script>
+<script src="angular.js?v=20261004"></script>
+<script src="deck-tools.js?v=20261004"></script>
+<script src="fit.js?v=20261004"></script>
 </body>
 </html>
