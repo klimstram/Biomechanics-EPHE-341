@@ -870,3 +870,26 @@ html[data-portrait] .ivid video{ max-width:100%; }
 }
 /* the slider thumb is the part that moves, so mark the track as a whole */
 .reveal input[type="range"]:focus-visible{ outline-offset:5px; }
+
+/* ---------- Virtual Muscle Lab: eleven controls and a six-column table ---- */
+.vml-ctl > .vml-table,
+.vml-ctl > .vml-adv{ grid-column:1 / -1; }
+.vml-adv{ display:grid; grid-template-columns:1fr 1fr; gap:.18em 1.4em; }
+.vml-adv .ictl{ grid-template-columns:9.2em 1fr 4.6em; gap:.5em; }
+.ictls.g2.vml-ctl .ictl{ grid-template-columns:7.2em 1fr 4.2em; }
+.ditable.vml{ font-size:.52em; }
+.ditable.vml th,.ditable.vml td{ padding:.3em .55em; text-align:right; white-space:nowrap; }
+.ditable.vml tr th:first-child{ text-align:left; width:11em; }
+.ditable.vml tr:first-child th{ color:var(--muted); font-weight:600; line-height:1.15; }
+
+/* on a phone the table keeps the two columns the argument needs */
+html[data-portrait] .ditable.vml th:nth-child(3),
+html[data-portrait] .ditable.vml td:nth-child(3),
+html[data-portrait] .ditable.vml th:nth-child(4),
+html[data-portrait] .ditable.vml td:nth-child(4),
+html[data-portrait] .ditable.vml th:nth-child(6),
+html[data-portrait] .ditable.vml td:nth-child(6),
+html[data-portrait] .ditable.vml th:nth-child(7),
+html[data-portrait] .ditable.vml td:nth-child(7){ display:none; }
+html[data-portrait] .ditable.vml{ font-size:.68em; }
+html[data-portrait] .vml-adv{ grid-template-columns:1fr; }
