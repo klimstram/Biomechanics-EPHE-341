@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a2e">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Angular Kinematics</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css?v=20261003b">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'dark';
+  try { t = localStorage.getItem('ephe341-theme') || 'dark'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Angular kinematics</h1>
+    <div class="rule"></div>
+    <p class="sub">McGinnis Chpt 6, pg 147–158</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Angular Kinematics</h2>
+  <p class="subhead">By the end of this lecture you should be able to…</p>
+  <ul class="small two">
+    <li><strong>Distinguish</strong> absolute from relative angles, and distance from displacement</li>
+    <li><strong>Convert</strong> between degrees, radians and revolutions</li>
+    <li><strong>Define</strong> angular displacement, velocity and acceleration, with their units</li>
+    <li><strong>Relate</strong> angular to linear quantities through the radius: l = rθ, v<sub>t</sub> = rω, a<sub>t</sub> = αr</li>
+    <li><strong>Calculate</strong> radial and total linear acceleration</li>
+    <li><strong>Explain</strong> how a gyroscope measures angular velocity, and convert its output to a speed</li>
+  </ul>
+  <aside class="notes">The spine of this lecture is a single idea repeated three times: every angular quantity has a linear partner, and the radius is what connects them. Displacement, velocity and acceleration each get the same treatment.
+
+The last objective is the modern half — the lab uses wheel-mounted inertial sensors, and the arithmetic that turns a gyroscope reading into a wheelchair's speed is exactly v = rω.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>What angular kinematics is</h2>
+  <p class="subhead">Motion about an axis, without asking what caused it</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>The study of motion of an object <strong>about a circular path</strong>, exclusive of
+            the influences of mass and force</li>
+        <li>It includes <strong>angular displacement</strong>, <strong>angular velocity</strong>
+            and <strong>angular acceleration</strong></li>
+        <li>Angular motion occurs when <strong>all points on an object move in a circular path
+            around the same axis</strong></li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">"Kinematics" means we describe the motion and say nothing about
+           what produced it. Forces and moments arrive in Angular Kinetics; this lecture is
+           geometry and clocks.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/arm-angles.jpg" alt="An arm rotating about the elbow, with the angular displacement marked">
+    </div>
+  </div>
+  <aside class="notes">The phrase worth underlining is "all points around the same axis". That is what makes a motion angular rather than merely curved — a thrown ball follows a curved path but is not rotating about an axis in the sense meant here.
+
+Point at the figure: the hand travels a long way, the elbow barely moves, and yet both have turned through the same angle. That observation is most of the lecture.</aside>
+</section>
+
+<!-- 4 -->
+<section>
+  <div class="section-slide">
+    <div class="course">Part 01</div>
+    <h2>Angular displacement</h2>
+    <p class="sub">Angles, radians, and the link to distance travelled</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Angular displacement</h2>
+  <p class="subhead">The angle moved through, from a starting position</p>
+  <div class="box accent workblock" style="max-width:30em">
+    <p class="eq big" style="margin-bottom:0">θ = angle<sub>2</sub> − angle<sub>1</sub></p>
+  </div>
+  <ul class="small two">
+    <li>Defined relative to an <strong>axis of rotation</strong></li>
+    <li><strong>Theta (θ)</strong> represents angular displacement</li>
+    <li>A <strong>vector</strong>: it has magnitude and direction</li>
+    <li>SI unit: the <strong>radian</strong></li>
+  </ul>
+  <aside class="notes">Keep the symbol discipline from the start, because this lecture has more Greek letters than any other in the course: θ displacement, φ distance, ω velocity, σ speed, α acceleration.
+
+Write them on the board and leave them up.</aside>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>Absolute and relative angular position</h2>
+  <p class="subhead">Measured against what?</p>
+  <div class="textstrip">
+    <div class="firstcol">
+      <p><strong>ABSOLUTE ANGLES</strong></p>
+      <ul class="small">
+        <li>Measured from an <strong>external frame of reference</strong> — one that does not move</li>
+        <li>Usually from the vertical or the horizontal</li>
+        <li>Describes the <strong>orientation of a segment in space</strong></li>
+      </ul>
+    </div>
+    <div>
+      <p><strong>RELATIVE ANGLES</strong></p>
+      <ul class="small">
+        <li>The angle formed <strong>between two limb segments</strong></li>
+        <li>Measured against a line that is itself capable of moving</li>
+        <li>By convention, in the anatomical position all relative joint angles are
+            <strong>0°</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">A joint angle is relative. A segment angle is absolute. Reporting
+       one when you mean the other is the most common error in a gait report.</p>
+  </div>
+  <aside class="notes">The anatomical-position convention matters and it is not universal — some labs report a straight knee as 0° and others as 180°. Say which you are using before you report a number.
+
+The next figure makes the distinction concrete: rotate the whole leg and the absolute angles change while the joint angle does not.</aside>
+</section>
+
+<!-- 7 -->
+<section id="w-angles">
+  <h2>Absolute and relative angles</h2>
+  <p class="subhead">Move the thigh and watch which numbers change</p>
+  <div class="iplot wide" data-widget="angles"></div>
+  <aside class="notes">Start with both shown. Drag the thigh slider on its own: both absolute angles change, and so does the knee angle, because only one segment moved.
+
+Now move both sliders together by the same amount — rotate the whole limb. The two absolute angles change and the knee angle does not move at all. That is the definition, demonstrated rather than asserted.
+
+Use "absolute only" and "relative only" if the three arcs at once are too busy. Worth asking which of the two a goniometer measures, and which a motion capture system naturally produces.</aside>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Angular distance and angular displacement</h2>
+  <p class="subhead">The same scalar-and-vector pairing as in linear kinematics</p>
+  <div class="ditable-wrap">
+    <table class="ditable">
+      <thead><tr><th></th><th>Angular distance  φ</th><th>Angular displacement  θ</th></tr></thead>
+      <tbody>
+        <tr><th>What it is</th><td>Length of the angular pathway, start to finish</td>
+            <td>Angle between the initial and final positions</td></tr>
+        <tr><th>Type</th><td>Scalar — magnitude only</td><td>Vector — magnitude and direction</td></tr>
+        <tr><th>SI unit</th><td class="eq">radians</td><td class="eq">radians</td></tr>
+        <tr><th>Equation</th><td>no simple equation</td>
+            <td class="eq">θ = angle<sub>2</sub> − angle<sub>1</sub></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">A gymnast who completes a full backward giant has turned through an
+       angular <strong>distance</strong> of 2π but an angular <strong>displacement</strong> of
+       zero — they finish where they started.</p>
+  </div>
+  <aside class="notes">The callout is the example to use, and it is worth asking before revealing it: what is the angular displacement after a complete revolution? Zero, every time.
+
+This is exactly the distance-and-displacement distinction from linear kinematics, which is why it gets one table rather than a whole slide of its own.</aside>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Units of angular measurement</h2>
+  <p class="subhead">Three in common use, and only one of them works in equations</p>
+  <div class="ditable-wrap">
+    <table class="ditable">
+      <tr><th>Revolution</th><td>Angular motion that proceeds in one direction and returns to the start</td></tr>
+      <tr><th>Degree</th><td>One revolution contains 360 degrees</td></tr>
+      <tr><th>Radian</th><td>The ratio of the length of an arc to the length of the radii that enclose it</td></tr>
+    </table>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0"><strong>Every equation in this lecture needs radians.</strong>
+       Degrees are for reporting; revolutions are for counting; radians are for calculating.</p>
+  </div>
+  <aside class="notes">The callout is the single most practical thing on this slide and it is the source of most wrong answers on the problem set. If l = rθ gives a number that looks 57 times too big, the angle went in as degrees.
+
+Revolutions per minute will come back in Part 04 and in the tutor problems, so flag it now.</aside>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>What is a radian?</h2>
+  <p class="subhead">The angle subtended by an arc one radius long</p>
+  <div class="box accent workblock" style="max-width:22em">
+    <p class="eq big" style="margin-bottom:0">θ = l / r</p>
+  </div>
+  <ul class="small two">
+    <li><strong>1 rad</strong>: the angle at the centre of a circle subtended by an arc equal in
+        length to the radius</li>
+    <li>1 rad ≈ <strong>57.3°</strong></li>
+    <li>A whole revolution is the circumference over the radius, 2πr / r = <strong>2π</strong></li>
+    <li>Because it is a ratio of two lengths, a radian has <strong>no units</strong></li>
+  </ul>
+  <aside class="notes">The last bullet is the one that explains everything else. A radian is dimensionless, which is exactly why rθ comes out in metres and rω comes out in metres per second — the radian contributes nothing to the units, it just scales.
+
+That is also why you cannot do the same with degrees. A degree is an arbitrary 1/360th; a radian is built from the circle's own geometry.</aside>
+</section>
+
+<!-- 11 -->
+<section id="w-radian">
+  <h2>What is a radian?</h2>
+  <p class="subhead">Lay the radius along the rim and count how many fit</p>
+  <div class="iplot wide" data-widget="radian"></div>
+  <aside class="notes">Start on 1 rad. The red arc and the blue radius below it are the same length — that is the definition, and the readout says 57.3°.
+
+Then walk the chips: π/2 is a quarter turn, π is a half turn, 2π is the whole way round. At 2π the numbered marks show six whole radians with a bit left over, which is the intuition behind 6.28.
+
+The bars at the right are the point of the figure. The arc straightens out and you can see it against one radius. Ask how many radii fit around a circle before pressing 2π.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Converting degrees to radians</h2>
+  <p class="subhead">One relationship, used in both directions</p>
+  <div class="cols a top">
+    <div>
+      <div class="box accent workblock" style="max-width:26em">
+        <p class="eq" style="margin-bottom:.3em">? radians = degrees × <span class="frac"><span>π radians</span><span class="den">180 degrees</span></span></p>
+      </div>
+      <p class="small">Multiply the number of degrees by π and divide by 180.</p>
+      <p class="small"><strong>Example:</strong> what is 45° in radians?</p>
+      <div class="box accent workblock" style="max-width:26em">
+        <p class="eq" style="margin-bottom:.25em">45 × π / 180</p>
+        <p class="eq" style="margin-bottom:0">= <strong>0.785 radians</strong></p>
+      </div>
+    </div>
+    <div>
+      <div class="ditable-wrap">
+        <table class="ditable">
+          <tr><th>1 rad</th><td class="eq">360° / 2π = 57.3°</td></tr>
+          <tr><th>π/2 rad</th><td class="eq">90°</td></tr>
+          <tr><th>π rad</th><td class="eq">180°</td></tr>
+          <tr><th>2π rad</th><td class="eq">360°</td></tr>
+          <tr><th>1°</th><td class="eq">2π / 360 rad</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Get them to do 45° in their heads against the table: it is half of 90°, so half of π/2, so π/4, so 0.785. Checking an answer against the table is faster than redoing the arithmetic.
+
+Going the other way — radians to degrees — multiply by 180/π. Students reliably use the wrong one of the two, so the sanity check is: radians are the smaller number, because a radian is big.</aside>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Direction conventions</h2>
+  <p class="subhead">Angular quantities are vectors, so they need a sign</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Angular displacement, velocity and acceleration are all <strong>vector
+            quantities</strong> — magnitude and direction</li>
+        <li>The direction is either <strong>positive</strong> or <strong>negative</strong>, set by
+            the <strong>right hand rule</strong></li>
+        <li><strong>Counterclockwise is positive</strong></li>
+        <li><strong>Clockwise is negative</strong></li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Curl the fingers of your right hand the way the object is
+           turning; your thumb points along the vector. For motion in the plane of the page that
+           thumb points out of the page for positive, into it for negative.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <svg viewBox="0 0 280 220" role="img" aria-label="A circle with a counterclockwise arrow marked positive and a clockwise arrow marked negative">
+        <g fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="140" cy="108" r="74" stroke-dasharray="5 5" opacity=".45"/>
+          <path d="M196 60 A74 74 0 0 0 84 60" stroke-width="3.4"/>
+          <path d="M84 60 l1 14 l13 -6 z" fill="currentColor" stroke="none"/>
+          <path d="M84 156 A74 74 0 0 0 196 156" stroke-width="3.4" opacity=".55"/>
+          <path d="M196 156 l-1 -14 l-13 6 z" fill="currentColor" stroke="none" opacity=".55"/>
+        </g>
+        <g fill="currentColor" font-size="22" font-family="Cambria,Georgia,serif">
+          <text x="62" y="46">+</text>
+          <text x="206" y="184" opacity=".6">−</text>
+        </g>
+        <g fill="currentColor" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">
+          <text x="140" y="30" text-anchor="middle">counterclockwise</text>
+          <text x="140" y="202" text-anchor="middle" opacity=".6">clockwise</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <aside class="notes">Have them actually do it with their hands — it takes ten seconds and it sticks far better than the diagram.
+
+The sign convention matters most in Angular Kinetics, where a moment and an angular velocity with the same sign means the joint is generating power and opposite signs means it is absorbing. Flag that this convention is the one that makes that work.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Angular and linear displacement</h2>
+  <p class="subhead">The angle is shared; the distance is not</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>The angular displacement of <strong>all points</strong> along a rotating object is the
+            <strong>same θ</strong>, however large the radius</li>
+        <li>But the <strong>linear path</strong> each point takes depends on how far it is from the
+            axis</li>
+        <li>A point twice as far out travels twice as far</li>
+      </ul>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq big" style="margin-bottom:.25em">l = rθ</p>
+        <p class="small" style="margin-bottom:0">l is the curvilinear distance (m), r the radius of
+           rotation (m), θ the angular displacement <strong>in radians</strong></p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/batter.jpg" alt="A batter swinging, the bat sweeping through an arc">
+      <figcaption>The hands and the bat tip share θ — not l</figcaption>
+    </div>
+  </div>
+  <aside class="notes">The bat is the example to carry through the rest of the lecture, because it comes back for velocity and again for acceleration.
+
+The hands and the tip rotate through the same angle in the same time. The tip travels several times further, so it must be moving several times faster. That is the entire argument for a long implement, and also the entire argument against one if you cannot swing it fast enough.</aside>
+</section>
+
+<!-- 15 -->
+<section id="w-arclen">
+  <h2>Angular and linear displacement</h2>
+  <p class="subhead">One angle, two points, two distances</p>
+  <div class="iplot wide" data-widget="arclen"></div>
+  <aside class="notes">Both points sweep the same angle — the purple arc at the centre — and the two coloured arcs are visibly different lengths.
+
+Drag the angle. Both arcs grow together and their ratio never changes, because that ratio is just the ratio of the radii. Then drag B's radius and watch its arc close on A's.
+
+The bars on the right are the same two lengths straightened out, which is what l = rθ actually computes. Note the readout converts the degrees to radians first — if you put degrees into rθ you get an answer 57 times too big, and that is the most common mistake on this material.</aside>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>Angular displacement</h2>
+  <p class="subhead">Example Problem</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">What is the linear displacement of a point on a bicycle wheel
+         (radius = 34 cm) if the wheel rotates 30°?</p>
+    </div>
+    <div>
+      <p class="small"><strong>Given:</strong></p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">r = 0.34 m</p>
+        <p class="eq" style="margin-bottom:0">θ = 30°</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Ask what has to happen before anything else. The degrees have to become radians — that is always step one, and saying so now saves repeating it for the next three problems.
+
+This same wheel runs through the whole lecture, and the Biomechanics Tutor's Angular Kinematics section uses the same 0.34 m radius, so the numbers will look familiar when they practise.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Angular displacement</h2>
+  <p class="subhead">Solution</p>
+  <ul class="small">
+    <li>First, convert the angle to radians</li>
+  </ul>
+  <div class="box accent workblock" style="max-width:28em">
+    <p class="eq" style="margin-bottom:.25em">θ = 30 × π / 180</p>
+    <p class="eq" style="margin-bottom:0">θ = 0.52 rad</p>
+  </div>
+  <ul class="small">
+    <li>Then convert angular displacement to linear displacement</li>
+  </ul>
+  <div class="box accent workblock" style="max-width:28em">
+    <p class="eq" style="margin-bottom:.25em">l = rθ</p>
+    <p class="eq" style="margin-bottom:.25em">l = (0.34 m)(0.52 rad)</p>
+    <p class="eq" style="margin-bottom:0">l = <strong>0.1768 m</strong></p>
+  </div>
+  <aside class="notes">Note the units: metres times radians gives metres, because the radian is dimensionless. That is worth saying out loud the first time it happens.
+
+If anyone's calculator gives 0.1780 rather than 0.1768, they kept more decimal places in the radian conversion — 0.5236 rather than 0.52. Both are right; the difference is rounding, and it is a good moment to mention carrying precision through a chain.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <div class="section-slide">
+    <div class="course">Part 02</div>
+    <h2>Angular velocity</h2>
+    <p class="sub">How fast the angle changes — and what that means at the rim</p>
+  </div>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Angular speed and angular velocity</h2>
+  <p class="subhead">Again, a scalar and a vector</p>
+  <div class="ditable-wrap">
+    <table class="ditable">
+      <thead><tr><th></th><th>Angular speed  σ</th><th>Angular velocity  ω</th></tr></thead>
+      <tbody>
+        <tr><th>What it is</th><td>Angular distance covered, divided by the time taken</td>
+            <td>Angular displacement occurring in a given time</td></tr>
+        <tr><th>Type</th><td>Scalar</td><td>Vector</td></tr>
+        <tr><th>Equation</th><td class="eq">σ = Δφ / Δt</td><td class="eq">ω = Δθ / Δt</td></tr>
+        <tr><th>SI unit</th><td class="eq">rad/s</td><td class="eq">rad/s</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notes">Same structure as the displacement table, deliberately. Once they see that angular kinematics is linear kinematics with different letters, the rest of the lecture gets much easier.
+
+Angular velocity is also reported in revolutions per minute in a great deal of equipment — cycle ergometers, centrifuges, engines. Converting rpm to rad/s is multiply by 2π and divide by 60, and it turns up in the tutor problems.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Tangential velocity</h2>
+  <p class="subhead">The linear velocity of a point travelling an angular path</p>
+  <div class="cols a top">
+    <div>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq big" style="margin-bottom:.25em">v<sub>t</sub> = rω</p>
+        <p class="small" style="margin-bottom:0">v<sub>t</sub> in m/s, r in m, ω in rad/s</p>
+      </div>
+      <ul class="small">
+        <li>For a given ω, linear velocities differ with distance from the axis</li>
+        <li>The angular velocities of the hands and the bat tip are the <strong>same</strong>;
+            their linear velocities are <strong>not</strong></li>
+        <li>Although it results from angular motion, tangential velocity is a form of
+            <strong>linear</strong> velocity</li>
+        <li>Its direction is a straight line <strong>tangent to the circular path</strong></li>
+      </ul>
+    </div>
+    <div class="fig">
+      <svg viewBox="0 0 280 240" role="img" aria-label="A point on a circle with its tangential velocity drawn at right angles to the radius">
+        <g fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="120" cy="140" r="78" stroke-dasharray="5 5" opacity=".45"/>
+          <line x1="120" y1="140" x2="175" y2="85" stroke-width="2.6"/>
+          <line x1="175" y1="85" x2="230" y2="140" stroke-width="3.4"/>
+          <path d="M230 140 l-4 -13 l-9 9 z" fill="currentColor" stroke="none"/>
+          <path d="M163 97 l10 10" stroke-width="1.6"/>
+          <circle cx="120" cy="140" r="4" fill="currentColor" stroke="none"/>
+          <circle cx="175" cy="85" r="5" fill="currentColor" stroke="none"/>
+        </g>
+        <g fill="currentColor" font-size="16" font-family="Cambria,Georgia,serif">
+          <text x="136" y="104">r</text>
+          <text x="214" y="104">v<tspan font-size="11" dy="3">t</tspan></text>
+        </g>
+      </svg>
+      <figcaption>v<sub>t</sub> is always perpendicular to r</figcaption>
+    </div>
+  </div>
+  <aside class="notes">The perpendicularity is the thing to insist on. Tangential velocity is at right angles to the radius, always, and that is why a hammer released at the right instant flies off at a tangent rather than radially outward.
+
+Ask what happens to a point's velocity direction a quarter turn later. It has rotated by the same quarter turn — the magnitude is unchanged but the direction is completely different, and that change of direction is what Part 03 is about.</aside>
+</section>
+
+<!-- 21 -->
+<section id="w-tangential">
+  <h2>Tangential velocity</h2>
+  <p class="subhead">Same ω everywhere — press play and watch the two arrows</p>
+  <div class="iplot wide" data-widget="tangential"></div>
+  <aside class="notes">Press play and let it turn. The two points stay on the same radius line, so they share ω exactly, and the arrows stay perpendicular to that line as it sweeps round.
+
+The arrow lengths are the point: A's is about twice B's, because A is about twice as far out. Drag A's radius and watch the outer arrow grow while the inner one does not move.
+
+Then drag ω. Both arrows grow together, in proportion. Two different ways to make the bat tip faster — swing faster, or use a longer bat — and the figure shows them as two different sliders.</aside>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Angular velocity</h2>
+  <p class="subhead">Example Problem</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">What is the linear velocity of a point on a bicycle wheel
+         (radius = 34 cm) if the wheel rotates 30° in 0.2 s?</p>
+    </div>
+    <div>
+      <p class="small"><strong>Given:</strong></p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">r = 0.34 m</p>
+        <p class="eq" style="margin-bottom:.25em">θ = 30°</p>
+        <p class="eq" style="margin-bottom:0">Δt = 0.2 s</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Same wheel, one extra piece of information. Ask them to lay out the route before calculating anything: degrees to radians, radians to angular velocity, angular velocity to tangential velocity. Three steps, and each one is a single multiplication or division.
+
+Getting students to name the route before doing arithmetic is the habit that makes the harder problems tractable.</aside>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Angular velocity</h2>
+  <p class="subhead">Solution</p>
+  <div class="cols top">
+    <div>
+      <ul class="small"><li>Convert to radians</li></ul>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">θ = 30 × π / 180</p>
+        <p class="eq" style="margin-bottom:0">θ = 0.52 rad</p>
+      </div>
+      <ul class="small"><li>Solve for angular velocity</li></ul>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">ω = Δθ / Δt</p>
+        <p class="eq" style="margin-bottom:.25em">ω = (0.52 − 0) / 0.2</p>
+        <p class="eq" style="margin-bottom:0">ω = <strong>2.6 rad/s</strong></p>
+      </div>
+    </div>
+    <div>
+      <ul class="small"><li>Convert angular to tangential velocity</li></ul>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">v<sub>t</sub> = ωr</p>
+        <p class="eq" style="margin-bottom:.25em">v<sub>t</sub> = (2.6 rad/s)(0.34 m)</p>
+        <p class="eq" style="margin-bottom:0">v<sub>t</sub> = <strong>0.884 m/s</strong></p>
+      </div>
+      <div class="callout small">
+        <p style="margin-bottom:0">0.884 m/s is about 3 km/h, which is a very slow wheel — 30° in a
+           fifth of a second is barely moving. The arithmetic is worth sanity-checking against
+           something physical.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The callout is a habit worth teaching: after any answer, ask whether the number is plausible for the thing described. A bicycle wheel at 0.884 m/s is walking pace, which matches a wheel that has turned only a twelfth of a revolution in a fifth of a second.
+
+Students who have slipped a factor of 57 somewhere — degrees instead of radians — would get 50 m/s here, and a sanity check catches it instantly.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <div class="section-slide">
+    <div class="course">Part 03</div>
+    <h2>Angular acceleration</h2>
+    <p class="sub">Speeding up, slowing down — and simply turning</p>
+  </div>
+</section>
+
+<!-- 25 -->
+<section>
+  <h2>Angular acceleration</h2>
+  <p class="subhead">The rate of change of angular velocity</p>
+  <div class="cols a top">
+    <div>
+      <div class="box accent workblock" style="max-width:22em">
+        <p class="eq big" style="margin-bottom:0">α = Δω / Δt</p>
+      </div>
+      <ul class="small">
+        <li>Represented by the Greek letter <strong>alpha, α</strong></li>
+        <li>The change in angular velocity occurring over a given period of time</li>
+        <li>A <strong>vector</strong> quantity</li>
+        <li>SI unit: <strong>rad/s²</strong></li>
+      </ul>
+    </div>
+    <div>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq big" style="margin-bottom:.25em">a<sub>t</sub> = αr</p>
+        <p class="small" style="margin-bottom:0">The component of linear acceleration
+           <strong>tangent</strong> to the circular path is the tangential acceleration</p>
+      </div>
+      <div class="callout small">
+        <p style="margin-bottom:0">Notice that <strong>r is the common factor</strong> in all three:
+           l = rθ, v<sub>t</sub> = rω, a<sub>t</sub> = rα. Changing the radius changes every linear
+           quantity in the same proportion.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The callout is the organising observation of the whole lecture and it is worth pausing on. Three angular quantities, three linear partners, one conversion factor.
+
+That is also why lengthening an implement is such a blunt instrument: it scales the distance, the speed and the acceleration at the tip all by the same amount, and it scales the moment of inertia by rather more — which is the catch, and it belongs to Angular Kinetics.</aside>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Angular acceleration</h2>
+  <p class="subhead">Example Problem, and solution</p>
+  <div class="cols top">
+    <div>
+      <p class="small">What is the tangential acceleration of a point on a bicycle wheel
+         (radius = 34 cm) if the wheel's angular velocity changes from 0 to 2.6 rad/s in 0.2 s?</p>
+      <ul class="small"><li>First solve for the angular acceleration</li></ul>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">α = Δω / Δt</p>
+        <p class="eq" style="margin-bottom:.25em">α = (2.6 − 0) / 0.2</p>
+        <p class="eq" style="margin-bottom:0">α = <strong>13 rad/s²</strong></p>
+      </div>
+    </div>
+    <div>
+      <ul class="small"><li>Then convert to tangential acceleration</li></ul>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">a<sub>t</sub> = αr</p>
+        <p class="eq" style="margin-bottom:.25em">a<sub>t</sub> = (13 rad/s²)(0.34 m)</p>
+        <p class="eq" style="margin-bottom:0">a<sub>t</sub> = <strong>4.42 m/s²</strong></p>
+      </div>
+      <div class="callout small">
+        <p style="margin-bottom:0">Exactly the same shape as the velocity problem: divide by time
+           to get the angular quantity, multiply by r to get the linear one.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Third time through the same wheel, and by now the route should be automatic. That repetition is deliberate — it is Marc's own structure and it works.
+
+The next figure puts all six steps in one column so they can see the chain whole rather than spread over four slides.</aside>
+</section>
+
+<!-- 27 -->
+<section id="w-bikewheel">
+  <h2>The bicycle wheel, all the way through</h2>
+  <p class="subhead">Every step is either × r or ÷ Δt</p>
+  <div class="iplot wide" data-widget="bikewheel"></div>
+  <aside class="notes">Reveal the chips one at a time and the whole lecture appears as a single column: degrees to radians, arc length, angular velocity, tangential velocity, angular acceleration, tangential acceleration.
+
+The numbers are the ones just worked — 0.524 rad, 0.178 m, 2.62 rad/s, 0.890 m/s, 13.1 rad/s², 4.45 m/s². They differ in the third decimal from the slides because the slides rounded 0.52 early and this carries full precision. Worth one sentence on when that matters and when it does not.
+
+Then change the radius and watch which rows move. The first row does not — the angle is the angle regardless. Everything below it scales. That is the lecture's whole point, made in one gesture.</aside>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Centripetal acceleration</h2>
+  <p class="subhead">Turning is accelerating, even at constant speed</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>If something is travelling round a circle then an external force or acceleration is
+            required to change its direction — <strong>Newton's first law</strong></li>
+        <li>That acceleration is <strong>centripetal</strong>, meaning centre-seeking</li>
+        <li>The force producing it points <strong>toward the centre</strong></li>
+        <li>It is also called <strong>radial</strong> acceleration</li>
+      </ul>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq big" style="margin-bottom:.25em">a<sub>r</sub> = ω²r</p>
+        <p class="small" style="margin-bottom:0">To keep an object at angular velocity ω on a circle
+           of radius r, an inward acceleration of a<sub>r</sub> is required</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/hammer.jpg" alt="A hammer thrower rotating with the hammer extended on its wire">
+      <figcaption>The wire supplies the centre-seeking force</figcaption>
+    </div>
+  </div>
+  <aside class="notes">The misconception to kill here is centrifugal force. There is no outward force on the hammer; there is an inward one, supplied by the wire, and without it the hammer travels in a straight line. What the thrower feels pulling outward on their hands is the hammer's reaction on them, which is a different force on a different body.
+
+Note the ω is squared. That is why this term dominates everything once the rotation is fast, and it is the reason the hammer answer two slides on is so lopsided.</aside>
+</section>
+
+<!-- 29 -->
+<section id="w-centripetal">
+  <h2>Centripetal acceleration</h2>
+  <p class="subhead">Press play — then cut the wire</p>
+  <div class="iplot wide" data-widget="centripetal"></div>
+  <aside class="notes">Press play. The red arrow always points at the centre and the blue one is always tangent, and both rotate with the ball.
+
+Now press "cut the wire". The inward acceleration vanishes and the dashed line shows where the ball goes — straight along the tangent, not radially outward. Ask the class to predict before pressing it; a good number will expect it to fly outward, and this is the cleanest way to settle that.
+
+Then drag ω. Doubling it quadruples the radial acceleration, because of the square. Doubling the radius only doubles it. Those two sliders behaving differently is the thing to leave them with.</aside>
+</section>
+
+<!-- 30 -->
+<section>
+  <h2>Total linear acceleration</h2>
+  <p class="subhead">Two perpendicular components, one resultant</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>When an object rotates there are <strong>two</strong> linear accelerations acting:</li>
+        <li><strong>a<sub>t</sub></strong>, tangential — because it is speeding up or slowing down</li>
+        <li><strong>a<sub>r</sub></strong>, radial — because it is turning</li>
+        <li>Both are <strong>linear</strong> accelerations, even though both arise from angular motion</li>
+        <li>They are perpendicular, so they combine by <strong>Pythagoras</strong></li>
+      </ul>
+      <div class="box accent workblock" style="max-width:26em">
+        <p class="eq big" style="margin-bottom:0">a<sub>total</sub>² = a<sub>r</sub>² + a<sub>t</sub>²</p>
+      </div>
+    </div>
+    <div class="fig">
+      <svg viewBox="0 0 280 230" role="img" aria-label="A point on a circle with radial and tangential acceleration components and their resultant">
+        <g fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="92" cy="150" r="76" stroke-dasharray="5 5" opacity=".4"/>
+          <line x1="92" y1="150" x2="146" y2="96" stroke-width="1.6" opacity=".6"/>
+          <line x1="146" y1="96" x2="104" y2="138" stroke-width="3.2"/>
+          <path d="M104 138 l13 -2 l-4 -11 z" fill="currentColor" stroke="none"/>
+          <line x1="146" y1="96" x2="202" y2="152" stroke-width="3.2"/>
+          <path d="M202 152 l-4 -13 l-9 9 z" fill="currentColor" stroke="none"/>
+          <line x1="146" y1="96" x2="160" y2="194" stroke-width="3.6"/>
+          <path d="M160 194 l4 -13 l-13 2 z" fill="currentColor" stroke="none"/>
+          <g stroke-dasharray="4 4" stroke-width="1.3" opacity=".55">
+            <line x1="104" y1="138" x2="160" y2="194"/>
+            <line x1="202" y1="152" x2="160" y2="194"/>
+          </g>
+        </g>
+        <g fill="currentColor" font-size="15" font-family="Cambria,Georgia,serif">
+          <text x="92" y="128">a<tspan font-size="10" dy="3">r</tspan></text>
+          <text x="196" y="132">a<tspan font-size="10" dy="3">t</tspan></text>
+          <text x="166" y="186">a<tspan font-size="10" dy="3">total</tspan></text>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <aside class="notes">Emphasise "both are linear". Students coming off the last two slides expect a_r and a_t to be angular because they came from ω and α, and they are not — they are in m/s², they act on a point, and they add as vectors.
+
+Because the two are perpendicular the resultant is never simply their sum, and it is always dominated by whichever is larger. The next problem makes that extreme.</aside>
+</section>
+
+<!-- 31 -->
+<section id="w-atotal">
+  <h2>Total linear acceleration</h2>
+  <p class="subhead">Change ω and α separately, and watch which one matters</p>
+  <div class="iplot wide" data-widget="atotal"></div>
+  <aside class="notes">It opens at ω = 6 rad/s so that both component arrows are actually visible — at the hammer's 12 rad/s the radial arrow is eighteen times the tangential one and they draw on top of each other.
+
+So do this deliberately. Note the two arrows at ω = 6, where radial is already 98% of the total. Then push ω to 12 and watch the green arrow shrink to nothing while the readout climbs to 173 m/s². That is the hammer throw answer, and the figure has just explained why the tangential part is irrelevant to it.
+
+Then set ω to zero. Now there is only tangential acceleration — a body that is speeding up but not yet turning. Those are the two extremes, and real movements sit between them.</aside>
+</section>
+
+<!-- 32 -->
+<section>
+  <h2>Total acceleration</h2>
+  <p class="subhead">Example Problem</p>
+  <div class="cols a top">
+    <div>
+      <div class="fig">
+        <img src="assets/hammer.jpg" alt="An athlete in the hammer throw" style="max-height:30vh">
+      </div>
+      <p class="small">During the hammer throw an athlete changes the angular velocity of the hammer
+         (1.2 m radius) from <strong>0 to 12 rad/s in 1.5 seconds</strong>.</p>
+      <p class="small">What is the total acceleration of the hammer?</p>
+    </div>
+    <div>
+      <p class="small"><strong>Given:</strong></p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">t = 1.5 s</p>
+        <p class="eq" style="margin-bottom:.25em">r = 1.2 m</p>
+        <p class="eq" style="margin-bottom:.25em">ω<sub>i</sub> = 0 rad/s</p>
+        <p class="eq" style="margin-bottom:0">ω<sub>f</sub> = 12 rad/s</p>
+      </div>
+      <div class="callout small">
+        <p style="margin-bottom:0">To get the total we need <strong>both</strong> the tangential and
+           the radial accelerations, so this is three calculations and then a Pythagoras.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Ask for a guess at the ratio of the two components before working it. Most will expect them to be comparable. They are not — radial is eighteen times tangential, because ω is squared and ω is large.
+
+Ask also which ω to use for the radial part. The final one, 12 rad/s, because the question asks for the acceleration at the end of the wind-up. Using the average is the most common wrong turn here.</aside>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>Total acceleration</h2>
+  <p class="subhead">Solution</p>
+  <div class="cols top">
+    <div>
+      <ul class="small"><li>Angular acceleration</li></ul>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">α = Δω / t = (12 − 0) / 1.5</p>
+        <p class="eq" style="margin-bottom:0">α = <strong>8 rad/s²</strong></p>
+      </div>
+      <ul class="small"><li>Tangential acceleration</li></ul>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">a<sub>t</sub> = αr = (8)(1.2)</p>
+        <p class="eq" style="margin-bottom:0">a<sub>t</sub> = <strong>9.6 m/s²</strong></p>
+      </div>
+    </div>
+    <div>
+      <ul class="small"><li>Radial acceleration</li></ul>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">a<sub>r</sub> = ω²r = (12)²(1.2)</p>
+        <p class="eq" style="margin-bottom:0">a<sub>r</sub> = <strong>172.8 m/s²</strong></p>
+      </div>
+      <ul class="small"><li>Total, by vector composition</li></ul>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.25em">a<sub>total</sub> = √(9.6² + 172.8²)</p>
+        <p class="eq" style="margin-bottom:0">a<sub>total</sub> ≈ <strong>173 m/s²</strong></p>
+      </div>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">173 m/s² is about <strong>17.6 g</strong>. On a 7.26 kg hammer that
+       is roughly <strong>1260 N</strong> through the wire and the thrower's arms — which is why the
+       event looks the way it does.</p>
+  </div>
+  <aside class="notes">The callout converts the answer into something a body can feel, which is the step that makes the number mean anything. 1260 N is about 1.7 times a thrower's own body weight, applied through two straight arms while spinning.
+
+Note how little the tangential part contributed: the total is 173 against a radial of 172.8. Including a_t changed the answer by about a tenth of a percent. That is not a reason to leave it out of the method — it is a reason to understand which term dominates and why.</aside>
+</section>
+
+<!-- 34 -->
+<section>
+  <h2>Summary of concepts and equations</h2>
+  <p class="subhead">Three angular quantities, three linear partners, one radius</p>
+  <div class="ditable-wrap">
+    <table class="ditable">
+      <thead><tr><th></th><th>Angular</th><th>Unit</th><th>Linear partner</th><th>Unit</th></tr></thead>
+      <tbody>
+        <tr><th>Displacement</th><td class="eq">θ = angle₂ − angle₁</td><td>rad</td>
+            <td class="eq">l = rθ</td><td>m</td></tr>
+        <tr><th>Velocity</th><td class="eq">ω = Δθ / Δt</td><td>rad/s</td>
+            <td class="eq">v<sub>t</sub> = rω</td><td>m/s</td></tr>
+        <tr><th>Acceleration</th><td class="eq">α = Δω / Δt</td><td>rad/s²</td>
+            <td class="eq">a<sub>t</sub> = rα</td><td>m/s²</td></tr>
+        <tr><th>Turning</th><td class="eq">—</td><td></td>
+            <td class="eq">a<sub>r</sub> = ω²r</td><td>m/s²</td></tr>
+        <tr><th>Resultant</th><td class="eq">—</td><td></td>
+            <td class="eq">a<sub>total</sub> = √(a<sub>r</sub>² + a<sub>t</sub>²)</td><td>m/s²</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">Read the table across: every row is "divide by time to go down the
+       angular column, multiply by r to cross to the linear one". The only row without an angular
+       partner is radial acceleration, because turning has no angular equivalent — it is what
+       angular motion <em>does</em> to a linear path.</p>
+  </div>
+  <aside class="notes">This is the slide to photograph. Everything in Parts 01 to 03 is in it.
+
+The callout's last sentence is worth saying slowly. a_r exists because the direction is changing, and direction change is the thing that makes circular motion different from linear motion in a way that no amount of relabelling will fix.</aside>
+</section>
+
+<!-- 35 -->
+<section>
+  <div class="section-slide">
+    <div class="course">Part 04</div>
+    <h2>Measuring angular motion</h2>
+    <p class="sub">Gyroscopes, the Coriolis effect, and a racing wheelchair</p>
+  </div>
+</section>
+
+<!-- 36 -->
+<section>
+  <h2>The Coriolis effect</h2>
+  <p class="subhead">How a sensor with no moving parts detects rotation</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>When a mass <strong>m</strong> moves with velocity <strong>v</strong> and an external
+            angular rate <strong>Ω</strong> is applied…</li>
+        <li>…the Coriolis effect generates a force that pushes the mass
+            <strong>perpendicular</strong> to its motion</li>
+        <li>The size of that displacement is <strong>directly related to the angular rate</strong></li>
+        <li>So measuring the sideways push measures the rotation</li>
+      </ul>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq" style="margin-bottom:0">F<sub>Coriolis</sub> = −2mΩ × v</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/coriolis-cube.jpg" alt="A mass moving along x while rotating about z experiences a Coriolis force perpendicular to both">
+    </div>
+  </div>
+  <aside class="notes">This is the bridge from the physics to the instrument, and it is the part of the lecture students find genuinely surprising: a solid-state chip with nothing spinning in it can measure rotation.
+
+The cross product in the equation means the force is perpendicular to both the velocity and the rotation axis, which is what makes the effect usable — the sideways displacement is clean, separate from the driven motion, and proportional to Ω.</aside>
+</section>
+
+<!-- 37 -->
+<section>
+  <h2>Inside a MEMS gyroscope</h2>
+  <p class="subhead">Four masses, kept permanently vibrating</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>A <strong>proof mass</strong> in four parts (M1–M4) is held in continuous oscillation,
+            moving inward and outward in the horizontal plane</li>
+        <li>Rotate the structure and the Coriolis force <strong>changes that vibration</strong></li>
+        <li>Two masses oscillating in opposite directions get pushed in opposite directions, so they
+            move <strong>apart</strong></li>
+        <li>That changes the <strong>capacitance</strong> between them — the system's ability to
+            store charge — and the change is converted to a voltage</li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/gyro-mass.jpg" alt="A MEMS gyroscope proof mass divided into four parts M1 to M4">
+    </div>
+  </div>
+  <aside class="notes">The chain is worth stating as a chain: rotation causes a Coriolis force, which moves masses, which changes a capacitance, which changes a voltage, which is what the chip reports. Four conversions between the physical thing and the number.
+
+That is a theme from Sensors and Data Acquisition earlier in the course — nothing measures what you want directly, it measures something that varies with it.</aside>
+</section>
+
+<!-- 38 -->
+<section>
+  <h2>Three axes, three modes</h2>
+  <p class="subhead">Roll, pitch and yaw come from which masses move</p>
+  <div class="cols a top">
+    <div>
+      <div class="ditable-wrap">
+        <table class="ditable">
+          <tr><th>Roll</th><td>Angular rate along <strong>X</strong>. M1 and M3 move up and down out
+              of the plane</td></tr>
+          <tr><th>Pitch</th><td>Angular rate along <strong>Y</strong>. M2 and M4 move up and down out
+              of the plane</td></tr>
+          <tr><th>Yaw</th><td>Angular rate along <strong>Z</strong>. M2 and M4 move horizontally in
+              opposite directions</td></tr>
+        </table>
+      </div>
+      <p class="small">Whenever the Coriolis effect is detected, the constant motion of the driving
+         mass causes a change in capacitance (∆C) that the sensing structure converts into a
+         voltage signal.</p>
+    </div>
+    <div class="fig">
+      <img src="assets/gyro-modes.jpg" alt="The gyroscope proof mass responding to an angular rate about one axis">
+    </div>
+  </div>
+  <aside class="notes">Students do not need to memorise which masses do what. What they need is that one chip resolves rotation about three independent axes, which is why a single sensor on a wheel can tell you about the wheel's spin and separately about the chair's turning and tilting.
+
+Mounting orientation therefore matters enormously in the lab. A gyroscope mounted at the wrong angle reports a mixture of axes and there is no way to unmix it afterwards without knowing the orientation.</aside>
+</section>
+
+<!-- 39 -->
+<section>
+  <h2>A wheel-mounted sensor</h2>
+  <p class="subhead">Wheelchair racing metrics from an IMU on the wheel</p>
+  <div class="cols top">
+    <div class="fig">
+      <img src="assets/wheelchair.jpg" alt="A wheelchair racer on a track">
+    </div>
+    <div class="fig">
+      <img src="assets/wc-speed.jpg" alt="A trace of wheel angular velocity across a sprint, rising then plateauing">
+    </div>
+  </div>
+  <ul class="small two">
+    <li>The gyroscope reports the wheel's angular velocity, in <strong>degrees per second</strong></li>
+    <li>The trace shows a start, a build, a plateau at top speed, and the slowing at the end</li>
+    <li>Every push is visible as a step in the rise</li>
+    <li>Nothing here is a speed yet — turning it into one needs the radius</li>
+  </ul>
+  <aside class="notes">Point at the staircase in the rising part of the trace. Each step is one push; between pushes the wheel coasts and the angular velocity flattens or decays slightly. You can count pushes straight off the trace, and the spacing gives push frequency.
+
+This is the measurement the lab works with, and the next slide is the arithmetic that makes it interpretable.</aside>
+</section>
+
+<!-- 40 -->
+<section>
+  <h2>From degrees per second to km/h</h2>
+  <p class="subhead">Three conversions, and the middle one is this lecture</p>
+  <div class="textstrip three">
+    <div class="firstcol">
+      <p><strong>deg/s → rad/s</strong></p>
+      <p class="eq" style="margin:.2em 0 .3em">× π / 180</p>
+      <p class="small">Because every equation needs radians</p>
+    </div>
+    <div>
+      <p><strong>rad/s → m/s</strong></p>
+      <p class="eq" style="margin:.2em 0 .3em">v<sub>t</sub> = rω</p>
+      <p class="small">The wheel is 66 cm across, so r = 0.33 m</p>
+    </div>
+    <div>
+      <p><strong>m/s → km/h</strong></p>
+      <p class="eq" style="margin:.2em 0 .3em">× 3600 / 1000</p>
+      <p class="small">That is just × 3.6</p>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">Only the middle step needs anything you did not already know. The
+       sensor never measures speed — it measures <strong>turning</strong>, and the radius is what
+       turns one into the other.</p>
+  </div>
+  <aside class="notes">This is the payoff slide for the whole lecture. The thing that makes a wheel-mounted gyroscope useful as a speedometer is v = rω, which is three slides of theory ago.
+
+Worth flagging the assumption buried in it: this only gives ground speed if the wheel is not slipping. On a track that is safe. On a treadmill or a loose surface it is not, and the same arithmetic would quietly give the wrong answer.</aside>
+</section>
+
+<!-- 41 -->
+<section id="w-gyroconv">
+  <h2>From degrees per second to km/h</h2>
+  <p class="subhead">Move the sensor reading and watch the chain</p>
+  <div class="iplot wide" data-widget="gyroconv"></div>
+  <aside class="notes">Walk the three chips. A first push is around 200 deg/s, which is about 4 km/h — slow, because the chair is still accelerating. Cruising is around 600, about 12 km/h. A sprint peak is around 1000, which is over 20 km/h.
+
+Then change the wheel radius and watch everything downstream of the second box move while the first two boxes do not. The gyroscope reading and the rad/s are properties of the wheel's rotation; only the speed depends on how big the wheel is.
+
+That is a practical point for the lab: get the radius wrong and every speed is wrong in proportion, and nothing in the data will look suspicious.</aside>
+</section>
+
+<!-- 42 -->
+<section>
+  <h2>What you can get from it</h2>
+  <p class="subhead">Velocity over time is the raw material for everything else</p>
+  <div class="cols top">
+    <div class="fig">
+      <img src="assets/fv-profile.jpg" alt="A force-velocity profile fitted from wheelchair sprint data">
+    </div>
+    <div class="fig">
+      <img src="assets/power-profile.jpg" alt="A force-power profile showing maximum power at an intermediate velocity">
+    </div>
+  </div>
+  <ul class="small two">
+    <li>Differentiate the velocity and you have acceleration, and with mass, force</li>
+    <li>Plot force against velocity across a sprint and you recover a
+        <strong>force–velocity profile</strong> — F<sub>0</sub> and v<sub>0</sub> for the athlete
+        in their chair</li>
+    <li>Force times velocity gives <strong>power</strong>, peaking at an intermediate speed</li>
+    <li>Push-by-push metrics — frequency, contact time, impulse per push — come from the same trace</li>
+  </ul>
+  <aside class="notes">This closes the loop back to Work, Energy and Power and forward to Muscle Mechanics: the force–velocity relationship that was a property of a muscle fibre there appears here as a property of a whole athlete-plus-chair system, measured on a track with one sensor.
+
+The shapes are the same because the underlying constraint is the same. That is worth saying explicitly — it is one of the few places in the course where a reductionist property shows up intact at the whole-body level.</aside>
+</section>
+
+<!-- 43 -->
+<section>
+  <h2>Summary</h2>
+  <div class="textstrip three">
+    <div class="firstcol">
+      <p><strong>ANGLES</strong></p>
+      <p class="small">Absolute angles are measured from a fixed reference, relative angles between
+         two segments. Distance φ is a scalar, displacement θ a vector. Calculations use
+         <strong>radians</strong>, where θ = l/r.</p>
+    </div>
+    <div>
+      <p><strong>RATES</strong></p>
+      <p class="small">ω = Δθ/Δt and α = Δω/Δt. Every angular quantity has a linear partner through
+         the radius: l = rθ, v<sub>t</sub> = rω, a<sub>t</sub> = rα.</p>
+    </div>
+    <div>
+      <p><strong>TURNING</strong></p>
+      <p class="small">Circular motion needs a centre-seeking acceleration a<sub>r</sub> = ω²r, even
+         at constant speed. With a<sub>t</sub> it gives the total linear acceleration by Pythagoras.</p>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">If you remember one thing: <strong>the angle is shared, the distance
+       is not.</strong> Every point on a rotating body turns through the same θ, and the radius
+       decides what that means in metres, metres per second, and metres per second squared.</p>
+  </div>
+  <aside class="notes">Close on the callout — it is the sentence that generates all six equations in the summary table.
+
+Flag what carries forward: ω and α return immediately in Angular Kinetics, where they meet moments and moment of inertia; the sign convention returns there too; and v = rω is already in use in the lab.</aside>
+</section>
+
+<!-- 44 -->
+<section>
+  <div class="title-slide">
+    <div class="course">EPHE 341 · Biomechanics</div>
+    <h1>Questions?</h1>
+    <div class="rule"></div>
+    <p class="sub">Next up: general kinematics · Further reading: McGinnis Chpt 6, pg 147–158</p>
+  </div>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js?v=20261003b"></script>
+<script src="mobile.js?v=20261003b"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="deck-core.js?v=20261003b"></script>
+<script src="angular.js?v=20261003b"></script>
+<script src="deck-tools.js?v=20261003b"></script>
+<script src="fit.js?v=20261003b"></script>
+</body>
+</html>

@@ -185,6 +185,22 @@ window.EPHE341_LECTURES = [
            ['the model equation, as four dials', 'w-musclemodel'],
            ['the work loop, and what timing does to it', 'w-workloop']] },
 
+  { n: '10', title: 'Angular kinematics',
+    path: 'lectures/10-angular-kinematics',
+    blurb: 'Absolute against relative angles, what a radian actually is, and the three ' +
+           'angular quantities with their linear partners — l = rθ, v = rω, ' +
+           'a = rα — ending with a gyroscope on a racing wheelchair wheel.',
+    slides: 44, widgets: 8, updated: '2026-10-03',
+    handout: 'handout.pdf',
+    live: [['absolute against relative angles', 'w-angles'],
+           ['what a radian is, by laying the radius on the rim', 'w-radian'],
+           ['one angle, two points, two distances', 'w-arclen'],
+           ['tangential velocity, and why a longer bat is faster', 'w-tangential'],
+           ['centripetal acceleration — then cut the wire', 'w-centripetal'],
+           ['tangential and radial, combined', 'w-atotal'],
+           ['the bicycle wheel, all six steps in one column', 'w-bikewheel'],
+           ['a gyroscope reading turned into km/h', 'w-gyroconv']] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
@@ -193,7 +209,6 @@ window.EPHE341_LECTURES = [
      by one so the converted decks stay sequential \u2014 these numbers no longer
      match the numbers in the source .pptx filenames. Change them here if you
      would rather they did. */
-  { n: '10', title: 'Angular kinematics' },
   { n: '11', title: 'General kinematics' },
   { n: '13', title: 'Virtual Muscle Lab' },
   { n: '14', title: 'Electromyography' },
