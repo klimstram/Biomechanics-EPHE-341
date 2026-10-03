@@ -446,7 +446,7 @@ help.innerHTML =
   '<dt>P R H N E</dt><dd>Pen · aRrow · Highlighter · Note · Erase, while writing</dd>' +
   '<dt>1 … 5</dt><dd>Pick a pen colour</dd>' +
   '<dt>Z / X</dt><dd>Undo · clear this page</dd>' +
-  '<dt>Tab</dt><dd>Step through the controls on a figure — chips, buttons, sliders</dd><dt>Enter</dt><dd>Press the focused button (not Space — that advances the slide)</dd><dt>← / →</dt><dd>Move a focused slider, without changing slide</dd><dt>Alt + click</dt><dd>Zoom into part of a slide</dd>' +
+  '<dt>Enter</dt><dd>Play / pause the figure on this slide — no need to click it first</dd><dt>Tab</dt><dd>Step through a figure’s controls. In Safari this needs <em>Press Tab to highlight each item on a webpage</em> turned on, in Settings › Advanced</dd><dt>← / →</dt><dd>Move a focused slider, without changing slide</dd><dt>Alt + click</dt><dd>Zoom into part of a slide</dd>' +
   '<dt>Ctrl/⌘ + F</dt><dd>Search the deck</dd>' +
   '</dl>' +
   '<p class="inknote">Written notes and boards are kept in this browser and are drawn into the ' +
@@ -469,6 +469,42 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && help.classList.contains('show')) {
     help.classList.remove('show'); e.stopPropagation();
   }
+}, true);
+
+/* ============================================================
+   PRESSING A FIGURE'S BUTTON FROM THE KEYBOARD
+
+   Tab does reach these controls, but Safari only tabs to buttons when
+   "Press Tab to highlight each item on a webpage" is switched on in its
+   Advanced settings, and it is off by default. From a lectern that is not
+   something to rely on, so Enter presses the current slide's Play / Run
+   button directly, with no focus to find and nothing to look at.
+
+   The handler runs on the capture phase so it gets the key before reveal
+   does, and it stands aside whenever something is already focused, so a
+   deliberate Tab-and-Enter still does what it looks like it will.
+   ============================================================ */
+function liveSlide() {
+  var s = document.querySelector('.reveal .slides section.present');
+  if (s) return s;
+  try { return Reveal.getCurrentSlide(); } catch (e) { return null; }
+}
+function slidePlayButtons() {
+  var s = liveSlide();
+  return s ? Array.prototype.slice.call(s.querySelectorAll('.ibtn')) : [];
+}
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Enter' || e.metaKey || e.ctrlKey || e.altKey) return;
+  var t = e.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+  /* something already has focus — let the browser press that instead */
+  var a = document.activeElement;
+  if (a && a !== document.body && /^(BUTTON|INPUT|A|SELECT|TEXTAREA)$/.test(a.tagName)) return;
+  var btns = slidePlayButtons();
+  if (!btns.length) return;
+  btns[0].click();
+  btns[0].blur();                 /* so the ring does not linger on screen */
+  e.preventDefault(); e.stopPropagation();
 }, true);
 
 /* keep the button in sync when the deck's own S / F shortcuts are used */
