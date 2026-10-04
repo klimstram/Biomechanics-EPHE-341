@@ -870,3 +870,97 @@ html[data-portrait] .ivid video{ max-width:100%; }
 }
 /* the slider thumb is the part that moves, so mark the track as a whole */
 .reveal input[type="range"]:focus-visible{ outline-offset:5px; }
+
+/* ---------- Virtual Muscle Lab: eleven controls and a six-column table ---- */
+.ditable.vml{ font-size:.45em; }
+.ditable.vml th,.ditable.vml td{ padding:.24em .5em; text-align:right; white-space:nowrap; }
+.vml-main > .iread{ font-size:.82em; padding:.5em .8em; }
+.ditable.vml tr th:first-child{ text-align:left; width:11em; }
+.ditable.vml tr:first-child th{ color:var(--muted); font-weight:600; line-height:1.15; }
+
+/* on a phone the table keeps the two columns the argument needs */
+html[data-portrait] .ditable.vml th:nth-child(3),
+html[data-portrait] .ditable.vml td:nth-child(3),
+html[data-portrait] .ditable.vml th:nth-child(4),
+html[data-portrait] .ditable.vml td:nth-child(4),
+html[data-portrait] .ditable.vml th:nth-child(6),
+html[data-portrait] .ditable.vml td:nth-child(6),
+html[data-portrait] .ditable.vml th:nth-child(7),
+html[data-portrait] .ditable.vml td:nth-child(7){ display:none; }
+html[data-portrait] .ditable.vml{ font-size:.68em; }
+
+/* ---------- Virtual Muscle Lab -------------------------------------------
+   The app is a sidebar beside a card. The widget is built stage-then-controls
+   like every other one, then rearranged here: .ictls becomes the sidebar and
+   .vml-main carries the tabs, the figure, the table and the readout. The
+   sidebar collapses to a thin rail with just its toggle. */
+.iwrap.vml-wrap{ flex-direction:row; align-items:stretch; gap:.9em; }
+.vml-wrap > .ictls{
+  order:0; flex:0 0 15.5em; min-width:0; gap:.42em;
+  border-right:1px solid var(--hair); padding-right:.9em;
+  transition:flex-basis .18s ease;
+}
+.vml-wrap > .vml-main{ order:1; flex:1 1 auto; min-width:0;
+  display:flex; flex-direction:column; gap:.45em; }
+.vml-main > .istage{ flex:0 0 auto; }
+.vml-main > .istage canvas{ width:100%; }
+
+.vml-side-h{ display:flex; align-items:center; justify-content:space-between;
+  gap:.5em; margin-bottom:.1em; }
+.vml-side-t{ font-size:.92em; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--muted); font-weight:700; }
+.vml-collapse{
+  font:inherit; font-size:.92em; line-height:1; cursor:pointer;
+  color:var(--muted); background:var(--chip); border:1px solid var(--rule);
+  border-radius:7px; padding:.2em .5em;
+}
+.vml-collapse:hover{ color:var(--ink-strong); border-color:var(--brand); }
+
+/* a slider in a 15em column needs its label above, not beside */
+.vml-wrap > .ictls .ictl,
+.vml-wrap .vml-adv .ictl{
+  grid-template-columns:1fr auto; grid-template-areas:"l v" "s s"; gap:.05em .5em;
+}
+.vml-wrap .ictl-l{ grid-area:l; text-align:left; }
+.vml-wrap .ictl-v{ grid-area:v; }
+.vml-wrap .ictl input[type=range]{ grid-area:s; }
+.vml-wrap > .ictls .icalc-chips{ justify-content:flex-start; gap:.3em; }
+.vml-wrap > .ictls .icalc-chip{ font-size:.92em; padding:.26em .6em; }
+.vml-adv{ display:flex; flex-direction:column; gap:.42em;
+  border-top:1px solid var(--hair); padding-top:.45em; margin-top:.15em; }
+
+/* collapsed: a rail with the toggle on it */
+.vml-wrap.collapsed > .ictls{ flex-basis:2.6em; padding-right:.5em; overflow:hidden; }
+.vml-wrap.collapsed > .ictls > *{ display:none; }
+.vml-wrap.collapsed > .ictls > .vml-side-h{ display:flex; }
+.vml-wrap.collapsed .vml-side-t{ display:none; }
+
+.vml-tabs{ display:flex; justify-content:flex-start; }
+.vml-tabs .iseg{ flex-wrap:nowrap; }
+.vml-tabs .iseg-b{ white-space:nowrap; font-size:.88em; padding:.3em .78em; }
+.ditable.vml{ font-size:.45em; }
+.ditable.vml th,.ditable.vml td{ padding:.24em .5em; text-align:right; white-space:nowrap; }
+.vml-main > .iread{ font-size:.82em; padding:.5em .8em; }
+.ditable.vml tr th:first-child{ text-align:left; width:11em; }
+.ditable.vml tr:first-child th{ color:var(--muted); font-weight:600; line-height:1.15; }
+
+/* a phone has no room for a sidebar: stack it back up */
+html[data-portrait] .iwrap.vml-wrap{ flex-direction:column; }
+html[data-portrait] .vml-wrap > .ictls{
+  order:1; flex:1 1 auto; border-right:0; padding-right:0; }
+html[data-portrait] .vml-wrap > .vml-main{ order:0; }
+html[data-portrait] .vml-wrap > .ictls .ictl{
+  grid-template-columns:6.2em 1fr 4.2em; grid-template-areas:"l s v"; gap:.6em; }
+html[data-portrait] .vml-wrap.collapsed > .ictls{ flex-basis:auto; }
+html[data-portrait] .vml-collapse{ display:none; }
+
+/* ---------- the standalone simulator page ------------------------------
+   One slide, no heading: the widget gets the whole thing. The UViC badge
+   sits top right and the tool bar sits bottom left, so the tab strip keeps
+   clear of one and the readout of the other. */
+.reveal section.vml-page{ padding:0; }
+.reveal section.vml-page .iplot{ margin:0; }
+/* the tab strip runs along the top of the card, where the badge normally
+   sits, so the badge moves to the free corner on this page */
+body:has(section.vml-page) #uvic-badge{ top:auto; bottom:18px; right:20px; }
+

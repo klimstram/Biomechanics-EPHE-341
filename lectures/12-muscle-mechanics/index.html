@@ -863,32 +863,11 @@ Then raise the cycle frequency to 4 or 5 Hz without touching the timing, and wat
 
 Most students guess force–length, because it has the most dramatic curve. The answer at higher frequencies is usually force–time, and that surprises them, which is the point.
 
-The Virtual Muscle Lab was built by Jim Martin at Utah with Jenna Link and me, so questions about why it does something are answerable rather than rhetorical.</aside>
+The simulator runs in the course site now — Tools, Work loop simulator — so it works offline and nobody has to find the original URL. It was built by Jim Martin at Utah with Jenna Link and me, so questions about why it does something are answerable rather than rhetorical.</aside>
 </section>
 
 
 <!-- 38 -->
-<section id="w-vml">
-  <h2>The Virtual Muscle Lab</h2>
-  <p class="subhead">The app itself — same model, same numbers, running here</p>
-  <div class="iplot wide" data-widget="vml"></div>
-  <aside class="notes">This is the app, ported: the same Thelen model, the same five conditions, the same optimiser, and the numbers agree with it to six figures.
-
-Start on the first tab with the defaults and read the table from the bottom up. Force–velocity alone would give 33.18 J a cycle. Add force–length and it drops to 31.71. Add the real switching times instead and it drops to 28.28. Both together and you are at 27.15. So at 2 Hz, timing costs about three times what the length–tension relation costs — which is the opposite of what most people guess, because force–length has the more dramatic curve.
-
-Now take the frequency to 4 Hz and read it again. The real muscle goes <b>negative</b> — it absorbs energy over the cycle — while the theoretical one is still making 16 J. That is the whole argument for why activation dynamics matter, in one slider move.
-
-Second tab: drag across the force graph. The loop grows as you go, and you can see exactly which part of the cycle is enclosing area and which part is paying it back.
-
-Third tab: the shaded band is the slice of the force–velocity curve this cycle actually uses. At the defaults it sits right across the power peak, which is not a coincidence — it is what the excursion and frequency were chosen to do.
-
-Turn on "Optimize onset/offset" and it finds 23 % and 66 %, almost exactly the defaults. Worth saying out loud: the app's default timing is already near optimal, and it leads the shortening phase because activation takes 10 ms to rise and 40 ms to fall.
-
-The full app is at jimmartinutah.github.io/VML — built by Jim Martin at Utah with Jenna Link and me.</aside>
-</section>
-
-
-<!-- 39 -->
 <section>
   <h2>Summary</h2>
   <div class="textstrip three">
@@ -922,7 +901,7 @@ Flag what carries forward: the force–velocity curve returns in the work loop n
 </section>
 
 
-<!-- 40 -->
+<!-- 39 -->
 <section>
   <div class="title-slide">
     <div class="course">EPHE 341 · Biomechanics</div>

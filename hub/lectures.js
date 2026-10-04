@@ -171,7 +171,7 @@ window.EPHE341_LECTURES = [
     blurb: 'Where force actually comes from — filament overlap, pennation and the moment ' +
            'arm — then the three reductionist properties one at a time, assembled into ' +
            'F = F₀·a·Fₗ·Fᵥ and finally into a work loop.',
-    slides: 40, widgets: 12, updated: '2026-10-03',
+    slides: 39, widgets: 11, updated: '2026-10-03',
     handout: 'handout.pdf',
     live: [['the sliding filament, and what sets the force', 'w-sarcomere'],
            ['what pennation buys and what it costs', 'w-pennation'],
@@ -183,8 +183,7 @@ window.EPHE341_LECTURES = [
            ['activation against excitation — 10 ms up, 40 ms down', 'w-actdyn'],
            ['force as a surface over length and velocity', 'w-flvsurface'],
            ['the model equation, as four dials', 'w-musclemodel'],
-           ['the work loop, and what timing does to it', 'w-workloop'],
-           ['the Virtual Muscle Lab itself, ported and running', 'w-vml']] },
+           ['the work loop, and what timing does to it', 'w-workloop']] },
 
   { n: '10', title: 'Angular kinematics',
     path: 'lectures/10-angular-kinematics',
