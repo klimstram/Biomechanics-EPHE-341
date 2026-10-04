@@ -996,25 +996,25 @@ body.vml-app #deck-tools{ display:none !important; }
    institutions either side and an info button on the right */
 .vml-banner{
   display:flex; align-items:center; gap:1em;
-  background:#a6192e; color:#fff; border-radius:9px;
-  padding:.3em 1em; min-height:1.9em;
+  background:#a6192e; color:#fff; border-radius:7px;
+  padding:.14em .9em; min-height:1.35em;
 }
 html[data-theme="light"] .vml-banner{ background:#a6192e; }
-.vml-banner-l,.vml-banner-r{ display:flex; align-items:center; gap:.7em; flex:1 1 0; }
+.vml-banner-l,.vml-banner-r{ display:flex; align-items:center; gap:.55em; flex:1 1 0; }
 .vml-banner-r{ justify-content:flex-end; }
 .vml-banner h1{
   flex:0 0 auto; margin:0; padding:0; color:#fff; text-transform:none;
-  font-size:1.02em; font-weight:650; letter-spacing:.01em; line-height:1.1;
+  font-size:.86em; font-weight:650; letter-spacing:.01em; line-height:1;
 }
 .vml-inst{
-  font-size:.5em; font-weight:700; letter-spacing:.11em; text-transform:uppercase;
-  color:rgba(255,255,255,.88); line-height:1.1; white-space:nowrap;
+  font-size:.44em; font-weight:700; letter-spacing:.13em; text-transform:uppercase;
+  color:rgba(255,255,255,.9); line-height:1; white-space:nowrap;
 }
-.vml-banner img{ height:1.28em; width:auto; display:block; }
+.vml-banner .vml-logo{ height:.98em; width:auto; display:block; }
 .vml-bbtn{
-  font:inherit; font-size:.62em; line-height:1; cursor:pointer;
+  font:inherit; font-size:.53em; line-height:1; cursor:pointer;
   color:#fff; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.34);
-  border-radius:6px; padding:.42em .62em;
+  border-radius:5px; padding:.36em .6em;
 }
 .vml-bbtn:hover{ background:rgba(255,255,255,.26); }
 
@@ -1043,7 +1043,7 @@ html[data-theme="light"] .vml-banner{ background:#a6192e; }
    buttons, and nothing else */
 html[data-portrait] .vml-banner{ gap:.5em; padding:.26em .6em; min-height:0; }
 html[data-portrait] .vml-banner-l,
-html[data-portrait] .vml-banner img{ display:none; }
+html[data-portrait] .vml-banner .vml-logo{ display:none; }
 html[data-portrait] .vml-banner h1{ flex:1 1 auto; font-size:.94em; }
 html[data-portrait] .vml-banner-r{ flex:0 0 auto; gap:.45em; }
 html[data-portrait] .vml-bbtn{ font-size:.58em; padding:.46em .6em; }

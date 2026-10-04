@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#0b1a2e">
+<meta name="theme-color" content="#fdfdfc">
 <link rel="manifest" href="app.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
@@ -21,8 +21,8 @@
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
-  var t = 'dark';
-  try { t = localStorage.getItem('ephe341-theme') || 'dark'; } catch(e) {}
+  var t = 'light';
+  try { t = localStorage.getItem('ephe341-theme') || 'light'; } catch(e) {}
   if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
   document.documentElement.setAttribute('data-theme', t);
 })();
@@ -1082,7 +1082,7 @@ Reveal.initialize(Object.assign({
 </script>
 <script src="deck-core.js?v=20260930"></script>
 <script src="projectile.js?v=20260930"></script>
-<script src="deck-tools.js?v=20260930"></script>
+<script src="deck-tools.js?v=20261005"></script>
 <script src="fit.js?v=20260930"></script>
 </body>
 </html>

@@ -519,7 +519,9 @@ D.register('vml', function (node, d) {
   function loopPanel(x0, y0, w, h, upto, arrows) {
     var c = ax.c, K = C(), i;
     var sim = R.sim;
-    var bx = bounds([sim.pos]), by = bounds([sim.force, R.theo.force], 0);
+    var forces = [sim.force, R.theo.force];
+    if (R.opt) forces.push(R.opt.force);
+    var bx = bounds([sim.pos]), by = bounds(forces, 0);
     var PL = 58, PB = 34, PT = 24, PR = 14;
     function X(v) { return x0 + PL + (v - bx[0]) / (bx[1] - bx[0]) * (w - PL - PR); }
     function Y(v) { return y0 + h - PB - (v - by[0]) / (by[1] - by[0]) * (h - PB - PT); }
@@ -545,6 +547,18 @@ D.register('vml', function (node, d) {
       i ? c.lineTo(tx, ty) : c.moveTo(tx, ty);
     }
     c.stroke(); c.restore();
+
+    /* and the optimised loop, when the switch is on — same colour as its row
+       in the table, so the table doubles as the key */
+    if (R.opt) {
+      c.save(); c.strokeStyle = K.GRN; c.globalAlpha = .9; c.lineWidth = 2.1;
+      c.beginPath();
+      for (i = 0; i < R.opt.n; i++) {
+        var ox = X(R.opt.pos[i]), oy = Y(R.opt.force[i]);
+        i ? c.lineTo(ox, oy) : c.moveTo(ox, oy);
+      }
+      c.stroke(); c.restore();
+    }
 
     var lim = upto == null ? sim.n - 1 : Math.min(sim.n - 1, Math.round(upto * (sim.n - 1)));
     if (upto == null || upto >= 0.999) {
@@ -585,18 +599,22 @@ D.register('vml', function (node, d) {
   /* ---------------- tab 1 ---------------- */
   function drawFVP() {
     var W = ax.W, H = ax.H;
-    var sim = R.sim, theo = R.theo;
+    var sim = R.sim, theo = R.theo, O = R.opt;
     var P = sim.pct, T = theo.pct;
+    /* The optimised cycle only differs in force and power: position and
+       velocity are set by excursion and frequency, so an opt trace on those
+       two panels would sit exactly on top of the blue one. */
+    function optS(k) { return O ? [{ x: O.pct, y: O[k], c: C().GRN, w: 2.1 }] : []; }
     /* A phone gets the two panels that carry the argument, stacked. Four
        panels at this width are unreadable, and the app is a lab tool. */
     if (port) {
       var hh = S.showLoop ? H / 3 : H / 2;
       panel(0, 0, W, hh, 'Force (N)',
-            [{ x: T, y: theo.force, c: C().ORG, dash: [5, 4], w: 1.8 },
-             { x: P, y: sim.force, c: C().BLUE }]);
+            [{ x: T, y: theo.force, c: C().ORG, dash: [5, 4], w: 1.8 }]
+              .concat(optS('force'), [{ x: P, y: sim.force, c: C().BLUE }]));
       panel(0, hh, W, hh, 'Power (W)',
-            [{ x: T, y: theo.power, c: C().ORG, dash: [5, 4], w: 1.8 },
-             { x: P, y: sim.power, c: C().ACC }]);
+            [{ x: T, y: theo.power, c: C().ORG, dash: [5, 4], w: 1.8 }]
+              .concat(optS('power'), [{ x: P, y: sim.power, c: C().ACC }]));
       if (S.showLoop) loopPanel(0, hh * 2, W, H - hh * 2, null, true);
       return;
     }
@@ -609,36 +627,45 @@ D.register('vml', function (node, d) {
           [{ x: T, y: theo.vel, c: C().ORG, dash: [5, 4], w: 1.8 },
            { x: P, y: sim.vel, c: C().GRN }]);
     panel(0, ph, pw, ph, 'Force (N)',
-          [{ x: T, y: theo.force, c: C().ORG, dash: [5, 4], w: 1.8 },
-           { x: P, y: sim.force, c: C().BLUE }]);
+          [{ x: T, y: theo.force, c: C().ORG, dash: [5, 4], w: 1.8 }]
+            .concat(optS('force'), [{ x: P, y: sim.force, c: C().BLUE }]));
     panel(pw, ph, pw, ph, 'Power (W)',
-          [{ x: T, y: theo.power, c: C().ORG, dash: [5, 4], w: 1.8 },
-           { x: P, y: sim.power, c: C().ACC }]);
+          [{ x: T, y: theo.power, c: C().ORG, dash: [5, 4], w: 1.8 }]
+            .concat(optS('power'), [{ x: P, y: sim.power, c: C().ACC }]));
     if (S.showLoop) loopPanel(gw, H * 0.12, W - gw, H * 0.76, null, true);
   }
 
   /* ---------------- tab 2 ---------------- */
   function drawLoopTab() {
-    var W = ax.W, H = ax.H, K = C();
-    var sim = R.sim;
+    var W = ax.W, H = ax.H, K = C(), i;
+    var sim = R.sim, O = R.opt;
+    /* the optimised force runs full-length behind the scrubbed record */
+    var optF = O ? [{ x: O.pct, y: O.force, c: K.GRN, w: 2.1, full: true }] : [];
+    /* the loop's two axes are force and excursion, so those are the two
+       traces worth showing beside it — power belongs on the first tab */
+    var posMM = new Float64Array(sim.n);
+    for (i = 0; i < sim.n; i++) posMM[i] = sim.pos[i] * 1000;
     if (port) {
-      loopPanel(0, 0, W, H * 0.56, scrub, true);
-      var pp = panel(0, H * 0.56, W, H * 0.42, 'Force (N) — drag to scrub',
-                     [{ x: sim.pct, y: sim.force, c: K.MUT, w: 1.4, full: true },
-                      { x: sim.pct, y: sim.force, c: K.BLUE, w: 2.8 }], scrub);
+      loopPanel(0, 0, W, H * 0.50, scrub, true);
+      var pp = panel(0, H * 0.50, W, H * 0.26, 'Force (N) — drag to scrub',
+                     [{ x: sim.pct, y: sim.force, c: K.MUT, w: 1.4, full: true }]
+                       .concat(optF, [{ x: sim.pct, y: sim.force, c: K.BLUE, w: 2.8 }]), scrub);
+      panel(0, H * 0.74, W, H * 0.26, 'Excursion (mm)',
+            [{ x: sim.pct, y: posMM, c: K.MUT, w: 1.4, full: true },
+             { x: sim.pct, y: posMM, c: K.VIO, w: 2.8 }], scrub);
       var cc = ax.c, cx2 = pp.X(scrub * 125);
       cc.save(); cc.strokeStyle = K.ACC; cc.lineWidth = 1.6;
-      cc.beginPath(); cc.moveTo(cx2, H * 0.56); cc.lineTo(cx2, H * 0.98); cc.stroke(); cc.restore();
+      cc.beginPath(); cc.moveTo(cx2, H * 0.50); cc.lineTo(cx2, H * 0.99); cc.stroke(); cc.restore();
       return;
     }
     var lw = W * 0.46;
     loopPanel(0, 0, lw, H, scrub, true);
     var p = panel(lw, H * 0.04, W - lw, H * 0.44, 'Force (N) — click to scrub',
-                  [{ x: sim.pct, y: sim.force, c: K.MUT, w: 1.4, full: true },
-                   { x: sim.pct, y: sim.force, c: K.BLUE, w: 2.8 }], scrub);
-    panel(lw, H * 0.52, W - lw, H * 0.44, 'Power (W)',
-          [{ x: sim.pct, y: sim.power, c: K.MUT, w: 1.4, full: true },
-           { x: sim.pct, y: sim.power, c: K.ACC, w: 2.8 }], scrub);
+                  [{ x: sim.pct, y: sim.force, c: K.MUT, w: 1.4, full: true }]
+                    .concat(optF, [{ x: sim.pct, y: sim.force, c: K.BLUE, w: 2.8 }]), scrub);
+    panel(lw, H * 0.52, W - lw, H * 0.44, 'Excursion (mm)',
+          [{ x: sim.pct, y: posMM, c: K.MUT, w: 1.4, full: true },
+           { x: sim.pct, y: posMM, c: K.VIO, w: 2.8 }], scrub);
     var c = ax.c;
     var cx = p.X(scrub * 125);
     c.save(); c.strokeStyle = K.ACC; c.lineWidth = 1.6;

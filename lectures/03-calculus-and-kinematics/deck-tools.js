@@ -253,7 +253,7 @@ document.addEventListener('keydown', function (e) {
 }, true);
 
 /* ---------------- theme ---------------- */
-function currentTheme() { return document.documentElement.getAttribute('data-theme') || 'dark'; }
+function currentTheme() { return document.documentElement.getAttribute('data-theme') || 'light'; }
 function syncThemeBtn() {
   var dark = currentTheme() === 'dark';
   setBtn(themeBtn, dark ? ICON.sun : ICON.moon, '',
