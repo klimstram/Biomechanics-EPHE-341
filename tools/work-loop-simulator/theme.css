@@ -872,9 +872,9 @@ html[data-portrait] .ivid video{ max-width:100%; }
 .reveal input[type="range"]:focus-visible{ outline-offset:5px; }
 
 /* ---------- Virtual Muscle Lab: eleven controls and a six-column table ---- */
-.ditable.vml{ font-size:.45em; }
+.ditable.vml{ font-size:.44em; }
 .ditable.vml th,.ditable.vml td{ padding:.24em .5em; text-align:right; white-space:nowrap; }
-.vml-main > .iread{ font-size:.82em; padding:.5em .8em; }
+.vml-main > .iread{ font-size:.74em; padding:.42em .75em; line-height:1.32; }
 .ditable.vml tr th:first-child{ text-align:left; width:11em; }
 .ditable.vml tr:first-child th{ color:var(--muted); font-weight:600; line-height:1.15; }
 
@@ -901,7 +901,7 @@ html[data-portrait] .ditable.vml{ font-size:.68em; }
   transition:flex-basis .18s ease;
 }
 .vml-wrap > .vml-main{ order:1; flex:1 1 auto; min-width:0;
-  display:flex; flex-direction:column; gap:.45em; }
+  display:flex; flex-direction:column; gap:.34em; }
 .vml-main > .istage{ flex:0 0 auto; }
 .vml-main > .istage canvas{ width:100%; }
 
@@ -924,8 +924,27 @@ html[data-portrait] .ditable.vml{ font-size:.68em; }
 .vml-wrap .ictl-l{ grid-area:l; text-align:left; }
 .vml-wrap .ictl-v{ grid-area:v; }
 .vml-wrap .ictl input[type=range]{ grid-area:s; }
-.vml-wrap > .ictls .icalc-chips{ justify-content:flex-start; gap:.3em; }
-.vml-wrap > .ictls .icalc-chip{ font-size:.92em; padding:.26em .6em; }
+.vml-switches{ display:flex; flex-direction:column; gap:.1em; margin-bottom:.15em; }
+.vml-switch{
+  display:flex; align-items:center; gap:.52em; width:100%;
+  font:inherit; font-size:.94em; text-align:left; cursor:pointer;
+  background:none; border:0; border-radius:5px;
+  padding:.17em .25em; color:var(--muted); font-weight:500;
+}
+.vml-switch:hover{ color:var(--ink-strong); background:var(--chip); }
+.vml-switch.on{ background:none; color:var(--ink-strong); font-weight:650; }
+.vml-box{
+  flex:none; width:1.02em; height:1.02em; border-radius:4px;
+  border:1.5px solid var(--rule); background:var(--chip); position:relative;
+}
+.vml-switch:hover .vml-box{ border-color:var(--brand); }
+.vml-switch.on .vml-box{ background:var(--brand); border-color:var(--brand); }
+.vml-switch.on .vml-box::after{
+  content:""; position:absolute; left:.3em; top:.08em;
+  width:.22em; height:.5em; border:solid var(--bg);
+  border-width:0 2px 2px 0; transform:rotate(42deg);
+}
+.vml-swlab{ flex:1 1 auto; }
 .vml-adv{ display:flex; flex-direction:column; gap:.42em;
   border-top:1px solid var(--hair); padding-top:.45em; margin-top:.15em; }
 
@@ -935,12 +954,23 @@ html[data-portrait] .ditable.vml{ font-size:.68em; }
 .vml-wrap.collapsed > .ictls > .vml-side-h{ display:flex; }
 .vml-wrap.collapsed .vml-side-t{ display:none; }
 
-.vml-tabs{ display:flex; justify-content:flex-start; }
-.vml-tabs .iseg{ flex-wrap:nowrap; }
-.vml-tabs .iseg-b{ white-space:nowrap; font-size:.88em; padding:.3em .78em; }
-.ditable.vml{ font-size:.45em; }
+.vml-tabs{ display:flex; justify-content:flex-start;
+  border-bottom:1px solid var(--rule); }
+.vml-tabs .iseg{ flex-wrap:nowrap; gap:0; margin-bottom:-1px; }
+.vml-tabs .iseg-b{
+  white-space:nowrap; font-size:.86em; padding:.26em 1em .32em;
+  background:none; border:0; border-bottom:2.5px solid transparent;
+  border-radius:0; color:var(--muted); font-weight:550;
+}
+.vml-tabs .iseg-b:hover{ color:var(--ink); }
+.vml-tabs .iseg-b.on{
+  background:none; color:var(--brand); border-bottom-color:var(--brand);
+  font-weight:700;
+}
+html[data-theme="light"] .vml-tabs .iseg-b.on{ color:var(--brand); }
+.ditable.vml{ font-size:.44em; }
 .ditable.vml th,.ditable.vml td{ padding:.24em .5em; text-align:right; white-space:nowrap; }
-.vml-main > .iread{ font-size:.82em; padding:.5em .8em; }
+.vml-main > .iread{ font-size:.74em; padding:.42em .75em; line-height:1.32; }
 .ditable.vml tr th:first-child{ text-align:left; width:11em; }
 .ditable.vml tr:first-child th{ color:var(--muted); font-weight:600; line-height:1.15; }
 
@@ -955,12 +985,65 @@ html[data-portrait] .vml-wrap.collapsed > .ictls{ flex-basis:auto; }
 html[data-portrait] .vml-collapse{ display:none; }
 
 /* ---------- the standalone simulator page ------------------------------
-   One slide, no heading: the widget gets the whole thing. The UViC badge
-   sits top right and the tool bar sits bottom left, so the tab strip keeps
-   clear of one and the readout of the other. */
-.reveal section.vml-page{ padding:0; }
+   One page, one slide: a banner across the top, the widget under it, and
+   none of the deck furniture a lecture needs. */
+.reveal section.vml-page{ padding:0; display:flex; flex-direction:column; gap:.36em; }
 .reveal section.vml-page .iplot{ margin:0; }
-/* the tab strip runs along the top of the card, where the badge normally
-   sits, so the badge moves to the free corner on this page */
-body:has(section.vml-page) #uvic-badge{ top:auto; bottom:18px; right:20px; }
+body.vml-app #uvic-badge,
+body.vml-app #deck-tools{ display:none !important; }
 
+/* the banner, after the app's own: a red bar with the title centred, the
+   institutions either side and an info button on the right */
+.vml-banner{
+  display:flex; align-items:center; gap:1em;
+  background:#a6192e; color:#fff; border-radius:9px;
+  padding:.3em 1em; min-height:1.9em;
+}
+html[data-theme="light"] .vml-banner{ background:#a6192e; }
+.vml-banner-l,.vml-banner-r{ display:flex; align-items:center; gap:.7em; flex:1 1 0; }
+.vml-banner-r{ justify-content:flex-end; }
+.vml-banner h1{
+  flex:0 0 auto; margin:0; padding:0; color:#fff; text-transform:none;
+  font-size:1.02em; font-weight:650; letter-spacing:.01em; line-height:1.1;
+}
+.vml-inst{
+  font-size:.5em; font-weight:700; letter-spacing:.11em; text-transform:uppercase;
+  color:rgba(255,255,255,.88); line-height:1.1; white-space:nowrap;
+}
+.vml-banner img{ height:1.28em; width:auto; display:block; }
+.vml-bbtn{
+  font:inherit; font-size:.62em; line-height:1; cursor:pointer;
+  color:#fff; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.34);
+  border-radius:6px; padding:.42em .62em;
+}
+.vml-bbtn:hover{ background:rgba(255,255,255,.26); }
+
+/* the about box the info button opens */
+#vml-about{
+  position:fixed; inset:0; z-index:80; display:none;
+  align-items:center; justify-content:center; background:rgba(4,8,16,.62);
+}
+#vml-about.show{ display:flex; }
+#vml-about .card{
+  max-width:30em; background:var(--surface-solid); color:var(--ink);
+  border:1px solid var(--rule); border-radius:11px; padding:1.3em 1.5em;
+  box-shadow:0 10px 40px rgba(0,0,0,.4);
+  font:400 15px/1.5 ui-sans-serif,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;
+}
+#vml-about h2{ margin:0 0 .5em; font-size:1.2em; color:var(--ink-strong); }
+#vml-about p{ margin:0 0 .7em; }
+#vml-about a{ color:var(--brand); }
+#vml-about button{
+  font:inherit; cursor:pointer; color:var(--ink); background:var(--chip);
+  border:1px solid var(--rule); border-radius:7px; padding:.4em .9em;
+}
+
+
+/* a phone has no room for the institutions in the banner: title and the two
+   buttons, and nothing else */
+html[data-portrait] .vml-banner{ gap:.5em; padding:.26em .6em; min-height:0; }
+html[data-portrait] .vml-banner-l,
+html[data-portrait] .vml-banner img{ display:none; }
+html[data-portrait] .vml-banner h1{ flex:1 1 auto; font-size:.94em; }
+html[data-portrait] .vml-banner-r{ flex:0 0 auto; gap:.45em; }
+html[data-portrait] .vml-bbtn{ font-size:.58em; padding:.46em .6em; }

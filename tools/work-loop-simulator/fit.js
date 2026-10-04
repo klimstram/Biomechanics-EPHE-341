@@ -9,7 +9,9 @@
    The PDF export uses the SAME limit even though it has no toolbar: annotations
    are anchored to the slide box, so any difference here would shift written
    notes relative to the content they were drawn against. */
-var FIT_LIMIT = 676, FIT_MIN = 0.58;
+/* 676 on a lecture slide leaves the deck tool bar its strip along the bottom.
+   This page has no tool bar, so the content can have that strip back. */
+var FIT_LIMIT = 706, FIT_MIN = 0.58;
 
 /* Portrait phones run a 720 × 1080 slide instead of 1280 × 720, so the budget
    is a different number. Measure the section we are about to fit rather than

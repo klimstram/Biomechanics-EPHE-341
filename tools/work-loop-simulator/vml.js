@@ -368,16 +368,23 @@ function thelenOpt(base) {
   return r2;
 }
 
-/* chips() is an exclusive picker; these four are independent switches, so
-   they need their own little helper that toggles rather than selects */
+/* chips() is an exclusive picker; these four are independent switches. They
+   are drawn as clickable text with a tick box rather than as pill buttons,
+   which is what the app's sidebar looks like. The `icalc-chip` class stays on
+   them so fit.js's keepOut() still recognises them. */
 function toggles(host, items, state, onPick) {
-  var row = el('div', 'icalc-chips');
+  var row = el('div', 'vml-switches');
   items.forEach(function (it) {
-    var b = el('button', 'icalc-chip' + (state[it[0]] ? ' on' : ''));
-    b.innerHTML = it[1];
+    var b = el('button', 'icalc-chip vml-switch' + (state[it[0]] ? ' on' : ''));
+    b.type = 'button';
+    var box = el('span', 'vml-box');
+    var lab = el('span', 'vml-swlab'); lab.innerHTML = it[1];
+    b.appendChild(box); b.appendChild(lab);
+    b.setAttribute('aria-pressed', state[it[0]] ? 'true' : 'false');
     b.addEventListener('click', function () {
       state[it[0]] = !state[it[0]];
       b.classList.toggle('on', !!state[it[0]]);
+      b.setAttribute('aria-pressed', state[it[0]] ? 'true' : 'false');
       onPick(it[0]);
     });
     row.appendChild(b);
@@ -392,7 +399,7 @@ D.register('vml', function (node, d) {
      collapsing the sidebar makes the panels WIDER rather than taller. Letting
      a fixed-aspect canvas stretch would grow its height too, and the slide
      would stop fitting the moment the sidebar went away. */
-  var AXH = port ? 500 : 362;
+  var AXH = port ? 500 : 400;
   var ax = null;
   function sizeAxes() {
     /* offsetWidth, not getBoundingClientRect: it is the layout width before
@@ -779,8 +786,8 @@ D.register('vml', function (node, d) {
   function drawTable() {
     var K = C();
     var h = '<div class="ditable-wrap"><table class="ditable vml"><tr><th></th>' +
-            '<th>Work net<br>(J)</th><th>Work +<br>(J)</th><th>Work −<br>(J)</th>' +
-            '<th>Power mean<br>(W)</th><th>Power +<br>(W)</th><th>Power −<br>(W)</th></tr>';
+            '<th>Work net (J)</th><th>Work + (J)</th><th>Work − (J)</th>' +
+            '<th>Power mean (W)</th><th>Power + (W)</th><th>Power − (W)</th></tr>';
     ROWS.forEach(function (row) {
       var r = R[row[0]];
       if (!r) return;

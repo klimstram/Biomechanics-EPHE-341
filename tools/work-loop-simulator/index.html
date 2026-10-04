@@ -25,16 +25,22 @@
 })();
 </script>
 </head>
-<body data-home="../../index.html">
-<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
-  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
-  <img class="mark dark" src="icons/uvic-dark.png" alt="">
-  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
-</div>
+<body class="vml-app" data-home="../../index.html">
 <div class="reveal">
 <div class="slides">
 
 <section class="vml-page">
+  <div class="vml-banner">
+    <div class="vml-banner-l">
+      <span class="vml-inst">University<br>of Utah</span>
+    </div>
+    <h1>Virtual Muscle Lab</h1>
+    <div class="vml-banner-r">
+      <img class="mark" src="icons/uvic-light.png" alt="University of Victoria">
+      <button class="vml-bbtn" id="vml-theme" type="button" title="Light or dark">Light</button>
+      <button class="vml-bbtn" id="vml-info" type="button" aria-haspopup="dialog">&#9432; About</button>
+    </div>
+  </div>
   <div class="iplot wide" data-widget="vml"></div>
   <aside class="notes">The Virtual Muscle Lab, built by Jim Martin at the University of Utah with Jenna Link and Marc Klimstra, running here in the course site.
 
@@ -44,6 +50,22 @@ Then take the cycle frequency to 4 Hz and read it again — the real muscle goes
 </section>
 
 </div>
+</div>
+
+<div id="vml-about" role="dialog" aria-modal="true" aria-labelledby="vml-about-h">
+  <div class="card">
+    <h2 id="vml-about-h">About the Virtual Muscle Lab</h2>
+    <p>Developed by <strong>Jim Martin</strong>, <strong>Jenna Link</strong> and
+       <strong>Marc Klimstra</strong> — University of Utah and University of Victoria.</p>
+    <p>A Thelen-type muscle model driven through a sinusoidal length cycle. The same
+       cycle is computed under four conditions so you can see what each property costs:
+       force–velocity alone, plus force–length, plus the real time it takes to switch on
+       and off, and all three together.</p>
+    <p>This is the EPHE 341 build, which runs entirely in the browser. The original is at
+       <a href="https://jimmartinutah.github.io/VML/" target="_blank"
+          rel="noopener">jimmartinutah.github.io/VML</a>.</p>
+    <button type="button" id="vml-about-x">Close</button>
+  </div>
 </div>
 
 <script src="reveal/dist/reveal.js"></script>
@@ -56,7 +78,7 @@ Then take the cycle frequency to 4 Hz and read it again — the real muscle goes
 Reveal.initialize(Object.assign({
   width: 1280,
   height: 720,
-  margin: 0.03,
+  margin: 0.015,
   minScale: 0.2,
   maxScale: 2.0,
   hash: false,
@@ -68,6 +90,31 @@ Reveal.initialize(Object.assign({
   pdfSeparateFragments: false,
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
+</script>
+<script>
+/* The page has no deck tool bar, so the two things worth keeping from it —
+   the theme switch and an about box — live in the banner instead. */
+(function () {
+  var root = document.documentElement;
+  var tbtn = document.getElementById('vml-theme');
+  function label() { tbtn.textContent = root.getAttribute('data-theme') === 'light' ? 'Dark' : 'Light'; }
+  label();
+  tbtn.addEventListener('click', function () {
+    var t = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', t);
+    try { localStorage.setItem('ephe341-theme', t); } catch (e) {}
+    label();
+    window.dispatchEvent(new Event('ephe341-theme'));   /* the figure repaints itself */
+  });
+  var box = document.getElementById('vml-about');
+  function show(on) { box.classList.toggle('show', on); }
+  document.getElementById('vml-info').addEventListener('click', function () { show(true); });
+  document.getElementById('vml-about-x').addEventListener('click', function () { show(false); });
+  box.addEventListener('click', function (e) { if (e.target === box) show(false); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && box.classList.contains('show')) show(false);
+  });
+})();
 </script>
 <script src="deck-core.js?v=20261004"></script>
 <script src="vml.js?v=20261004"></script>
