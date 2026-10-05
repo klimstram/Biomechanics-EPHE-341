@@ -157,7 +157,11 @@ D.register('frames', function (node, d) {
 
   function panel(x0, y0, w, h, title, ground) {
     var c = ax.c, K = C();
-    var th = S.w * t;                        /* segment angle, from +x */
+    /* NEGATIVE so the segment sweeps forward over the top — the same sense as
+       the wheel on slide 16, the pitcher's arm, and every other figure here.
+       With the other sense the hand is SLOWEST at the top of the swing, which
+       is the opposite of the lesson, and the cycloid loops open backwards. */
+    var th = -S.w * t;                       /* segment angle, from +x */
     var PX = 118;                            /* px per metre */
     var cx, cy = y0 + h * 0.56;
     var bx;                                  /* joint x in px */
@@ -180,7 +184,7 @@ D.register('frames', function (node, d) {
     for (var i = 0; i <= n; i++) {
       var tt = t - (n - i) / n * 1.9;
       if (tt < 0) continue;
-      var a = S.w * tt;
+      var a = -S.w * tt;
       var jx = ground ? x0 + 80 + ((S.vb * tt * PX) % (w - 150)) : cx;
       /* break the line where the wrap jumps */
       if (ground && i > 0) {
@@ -209,7 +213,8 @@ D.register('frames', function (node, d) {
 
     /* velocity arrows */
     var VS = 26;
-    var tvx = -Math.sin(th) * S.w * S.r, tvy = -Math.cos(th) * S.w * S.r;   /* screen y down */
+    /* radius (cos th, -sin th) turned 90° in the direction of spin */
+    var tvx = Math.sin(th) * S.w * S.r, tvy = Math.cos(th) * S.w * S.r;    /* screen y down */
     var gvx = tvx + (ground ? S.vb : 0), gvy = tvy;
     arrow(c, ax2, ay2, ax2 + gvx * VS, ay2 + gvy * VS,
           { color: ground ? K.ACC : K.BLUE, width: 3, head: 11 });
@@ -511,7 +516,9 @@ D.register('wheel', function (node, d) {
     /* rim and spokes */
     c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .34; c.lineWidth = 1;
     for (var i = 0; i < 16; i++) {
-      var sa = i / 16 * Math.PI * 2 + w * t * 0.25;
+      /* screen y is down, so SUBTRACTING from the angle turns the spokes
+         clockwise — which is forward for a bicycle travelling to the right. */
+      var sa = i / 16 * Math.PI * 2 - w * t * 0.25;
       c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + Math.cos(sa) * R, cy - Math.sin(sa) * R); c.stroke();
     }
     c.restore();
@@ -526,8 +533,13 @@ D.register('wheel', function (node, d) {
     c.beginPath(); c.moveTo(cx, cy); c.lineTo(px, py); c.stroke(); c.restore();
 
     var VS = Math.min(9.5, (W * 0.34) / Math.max(1, S.v + w * S.r));
-    /* tangential velocity: perpendicular to the radius, in the direction of spin */
-    var tvx = -Math.sin(a) * w * S.r, tvy = -Math.cos(a) * w * S.r;   /* screen-y down */
+    /* Tangential velocity: the radius turned 90° in the direction of spin.
+       The bicycle travels to the right, so the wheel turns CLOCKWISE, which on
+       a y-down canvas is (x, y) -> (-y, x) applied to the radius (cos a, -sin a),
+       giving (sin a, cos a). The other sense spins the wheel backwards: the top
+       of the rim then opposes the bike instead of adding to it, and the figure
+       contradicts the answer table beside it. */
+    var tvx = Math.sin(a) * w * S.r, tvy = Math.cos(a) * w * S.r;     /* screen-y down */
     var gvx = tvx + S.v, gvy = tvy;
     arrow(c, px, py, px + tvx * VS, py + tvy * VS, { color: K.BLUE, width: 3, head: 11 });
     arrow(c, px + tvx * VS, py + tvy * VS, px + tvx * VS + S.v * VS, py + tvy * VS,
