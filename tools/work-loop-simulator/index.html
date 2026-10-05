@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20261005">
+<link rel="stylesheet" href="theme.css?v=20261006">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -78,8 +78,8 @@ Then take the cycle frequency to 4 Hz and read it again — the real muscle goes
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20261005"></script>
-<script src="mobile.js?v=20261005"></script>
+<script src="annotate.js?v=20261006"></script>
+<script src="mobile.js?v=20261006"></script>
 <script>
 Reveal.initialize(Object.assign({
   width: 1280,
@@ -112,12 +112,18 @@ Reveal.initialize(Object.assign({
     label();
     window.dispatchEvent(new Event('ephe341-theme'));   /* the figure repaints itself */
   });
-  /* if the Utah mark is there, the wordmark steps aside */
+  /* if the Utah mark is there, the typographic wordmark steps aside — the
+     mark carries its own. The image may already have finished loading by the
+     time this runs, in which case 'load' never fires again, so check too. */
   var ulogo = document.querySelector('.vml-banner-l .vml-logo');
-  if (ulogo) ulogo.addEventListener('load', function () {
+  function markLoaded() {
     var w = document.querySelector('.vml-banner-l .vml-inst');
     if (w) w.style.display = 'none';
-  });
+  }
+  if (ulogo) {
+    ulogo.addEventListener('load', markLoaded);
+    if (ulogo.complete && ulogo.naturalWidth) markLoaded();
+  }
   var box = document.getElementById('vml-about');
   function show(on) { box.classList.toggle('show', on); }
   document.getElementById('vml-info').addEventListener('click', function () { show(true); });
@@ -128,9 +134,9 @@ Reveal.initialize(Object.assign({
   });
 })();
 </script>
-<script src="deck-core.js?v=20261005"></script>
-<script src="vml.js?v=20261005"></script>
-<script src="deck-tools.js?v=20261005"></script>
-<script src="fit.js?v=20261005"></script>
+<script src="deck-core.js?v=20261006"></script>
+<script src="vml.js?v=20261006"></script>
+<script src="deck-tools.js?v=20261006"></script>
+<script src="fit.js?v=20261006"></script>
 </body>
 </html>

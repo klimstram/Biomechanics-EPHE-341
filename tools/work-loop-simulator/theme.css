@@ -974,6 +974,27 @@ html[data-theme="light"] .vml-tabs .iseg-b.on{ color:var(--brand); }
 .ditable.vml tr th:first-child{ text-align:left; width:11em; }
 .ditable.vml tr:first-child th{ color:var(--muted); font-weight:600; line-height:1.15; }
 
+/* The sidebar is a lab control panel, not a lecture slide: lighter type and
+   slimmer sliders, so the width it gives back goes to the figure. Portrait
+   keeps the bigger type and the fat touch sliders — those rules carry
+   html[data-portrait] and outrank these. */
+.vml-wrap > .ictls{ flex:0 0 13.1em; font-size:.70em; gap:.26em; padding-right:.8em; }
+.vml-wrap .vml-side-t{ font-size:.86em; letter-spacing:.07em; }
+.vml-wrap .vml-collapse{ font-size:.86em; padding:.14em .44em; border-radius:6px; }
+.vml-wrap .ictl-l{ font-weight:450; }
+.vml-wrap .vml-switches{ gap:.02em; margin-bottom:.1em; }
+.vml-wrap .vml-switch{ font-size:.92em; gap:.46em; padding:.1em .2em; }
+.vml-wrap .vml-box{ width:.92em; height:.92em; border-width:1.3px; border-radius:3.5px; }
+.vml-wrap .vml-switch.on .vml-box::after{
+  left:.27em; top:.07em; width:.2em; height:.44em; border-width:0 1.8px 1.8px 0; }
+.vml-wrap .vml-adv{ gap:.26em; padding-top:.36em; }
+.vml-wrap .ictl input[type=range]{ height:3px; border-radius:3px; }
+.vml-wrap .ictl input[type=range]::-webkit-slider-thumb{
+  width:12px; height:12px; border-width:1.5px; box-shadow:0 1px 3px rgba(0,0,0,.28); }
+.vml-wrap .ictl input[type=range]::-moz-range-thumb{
+  width:12px; height:12px; border-width:1.5px; }
+.vml-wrap.collapsed > .ictls{ flex-basis:2.9em; }
+
 /* a phone has no room for a sidebar: stack it back up */
 html[data-portrait] .iwrap.vml-wrap{ flex-direction:column; }
 html[data-portrait] .vml-wrap > .ictls{
@@ -1011,6 +1032,9 @@ html[data-theme="light"] .vml-banner{ background:#a6192e; }
   color:rgba(255,255,255,.9); line-height:1; white-space:nowrap;
 }
 .vml-banner .vml-logo{ height:.98em; width:auto; display:block; }
+/* the Utah lockup carries its own wordmark, so it is set larger than the
+   UVic mark beside it and the typographic wordmark is hidden once it loads */
+.vml-banner-l .vml-logo{ height:1.16em; }
 .vml-bbtn{
   font:inherit; font-size:.53em; line-height:1; cursor:pointer;
   color:#fff; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.34);
