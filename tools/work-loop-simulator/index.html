@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20261006">
+<link rel="stylesheet" href="theme.css?v=20261007">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -43,6 +43,10 @@
     <div class="vml-banner-r">
       <!-- reversed wordmark: the banner is U of U red in both themes -->
       <img class="vml-logo" src="icons/uvic-dark.png" alt="University of Victoria">
+      <a class="vml-bbtn vml-ico" id="vml-home" href="../../index.html"
+         title="Back to the course page" aria-label="Back to the course page"><svg
+         viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5L12 3.5l8.5 7"/><path
+         d="M5.6 9v10.5h12.8V9"/><path d="M9.8 19.5v-6h4.4v6"/></svg></a>
       <button class="vml-bbtn" id="vml-theme" type="button" title="Light or dark">Light</button>
       <button class="vml-bbtn" id="vml-info" type="button" aria-haspopup="dialog">&#9432; About</button>
     </div>
@@ -78,8 +82,8 @@ Then take the cycle frequency to 4 Hz and read it again — the real muscle goes
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20261006"></script>
-<script src="mobile.js?v=20261006"></script>
+<script src="annotate.js?v=20261007"></script>
+<script src="mobile.js?v=20261007"></script>
 <script>
 Reveal.initialize(Object.assign({
   width: 1280,
@@ -102,6 +106,13 @@ Reveal.initialize(Object.assign({
    the theme switch and an about box — live in the banner instead. */
 (function () {
   var root = document.documentElement;
+
+  /* the page has no deck tool bar, so the way back to the course index lives
+     in the banner. data-home stays the one place the path is written. */
+  var home = document.body.getAttribute('data-home');
+  var hbtn = document.getElementById('vml-home');
+  if (hbtn) { if (home) hbtn.setAttribute('href', home); else hbtn.remove(); }
+
   var tbtn = document.getElementById('vml-theme');
   function label() { tbtn.textContent = root.getAttribute('data-theme') === 'light' ? 'Dark' : 'Light'; }
   label();
@@ -134,9 +145,9 @@ Reveal.initialize(Object.assign({
   });
 })();
 </script>
-<script src="deck-core.js?v=20261006"></script>
-<script src="vml.js?v=20261006"></script>
-<script src="deck-tools.js?v=20261006"></script>
-<script src="fit.js?v=20261006"></script>
+<script src="deck-core.js?v=20261007"></script>
+<script src="vml.js?v=20261007"></script>
+<script src="deck-tools.js?v=20261007"></script>
+<script src="fit.js?v=20261007"></script>
 </body>
 </html>

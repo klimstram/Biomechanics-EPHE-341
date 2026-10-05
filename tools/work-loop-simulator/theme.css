@@ -1041,6 +1041,14 @@ html[data-theme="light"] .vml-banner{ background:#a6192e; }
   border-radius:5px; padding:.36em .6em;
 }
 .vml-bbtn:hover{ background:rgba(255,255,255,.26); }
+/* the home link is a real <a>, and the icon-only variant squares up its box */
+a.vml-bbtn{ display:inline-flex; align-items:center; text-decoration:none; }
+.vml-bbtn.vml-ico{ padding:.26em .42em; }
+.vml-bbtn svg{
+  width:1.05em; height:1.05em; display:block; flex:none;
+  fill:none; stroke:currentColor; stroke-width:1.9;
+  stroke-linecap:round; stroke-linejoin:round;
+}
 
 /* the about box the info button opens */
 #vml-about{
