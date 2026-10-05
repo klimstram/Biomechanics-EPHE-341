@@ -945,6 +945,30 @@ html[data-portrait] .ditable.vml{ font-size:.68em; }
   border-width:0 2px 2px 0; transform:rotate(42deg);
 }
 .vml-swlab{ flex:1 1 auto; }
+/* the optimiser's ghost thumb. The ring is a little wider than the real
+   thumb so that when the two coincide it reads as a halo around it rather
+   than disappearing underneath. --vml-thumb has to match the thumb size for
+   the track arithmetic, so it is redeclared wherever that size changes. */
+.vml-slot{ --vml-thumb:19px; position:relative; display:block; min-width:0; }
+.vml-slot input[type=range]{ position:relative; z-index:1; display:block; margin:0; }
+.vml-wrap .ictl .vml-slot{ --vml-thumb:12px; grid-area:s; }
+html[data-portrait] .vml-slot,
+html[data-portrait] .vml-wrap .ictl .vml-slot{ --vml-thumb:26px; }
+.vml-optmark{
+  position:absolute; z-index:0; top:50%; left:0; pointer-events:none;
+  width:calc(var(--vml-thumb) + 5px); height:calc(var(--vml-thumb) + 5px);
+  border:2px solid var(--good); border-radius:50%;
+  transform:translate(-50%,-50%); opacity:0;
+  transition:opacity .15s ease, left .18s ease;
+}
+.vml-optmark.on{ opacity:.95; }
+.vml-optmark.stale{ opacity:.35; }
+.vml-opthint{ color:var(--good); font-weight:650; margin-left:.55em; white-space:nowrap; }
+/* portrait puts the label in a 6.2em cell beside the track, which the hint
+   overflows — so there it drops onto its own line under the label */
+html[data-portrait] .vml-opthint{ display:block; margin-left:0; font-size:.88em; }
+html[data-portrait] .vml-wrap .ictl-l{ line-height:1.15; }
+
 .vml-adv{ display:flex; flex-direction:column; gap:.42em;
   border-top:1px solid var(--hair); padding-top:.45em; margin-top:.15em; }
 

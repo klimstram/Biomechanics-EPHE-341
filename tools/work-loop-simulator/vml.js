@@ -842,6 +842,8 @@ D.register('vml', function (node, d) {
     else if (tab === 'loop') drawLoopTab();
     else drawFV();
     drawTable();
+    markOn(R.opt ? R.opt.bestOnset : null, optStale);
+    markOff(R.opt ? R.opt.bestOffset : null, optStale);
     var sim = R.sim, ceil = R.fvonly;
     var costFL = ceil.workTot - R.theo.workTot;    /* FL on, timing perfect   */
     var costFT = ceil.workTot - R.fvft.workTot;    /* timing real, FL off     */
@@ -876,6 +878,34 @@ D.register('vml', function (node, d) {
     function (v) { return fmt(v, 0) + ' mm'; }, function (v) { S.excursion = v; draw(); });
   slider(u.ctl, 'Cycle frequency', 0.5, 5.0, 0.5, S.freq,
     function (v) { return fmt(v, 1) + ' Hz'; }, function (v) { S.freq = v; draw(); });
+
+  /* A ghost thumb on the onset and offset tracks, showing where the optimiser
+     wants them without moving the slider. The student's own thumb stays put —
+     the gap between the two rings is the whole point, and once they close it
+     the ring sits around the thumb like a halo. */
+  function optMark(sl) {
+    var slot = el('div', 'vml-slot');
+    sl.input.parentNode.insertBefore(slot, sl.input);
+    slot.appendChild(sl.input);
+    var ring = el('div', 'vml-optmark');
+    slot.insertBefore(ring, sl.input);
+    var lab = sl.row.querySelector('.ictl-l');
+    var base = lab.innerHTML;
+    var hint = el('span', 'vml-opthint');
+    return function (v, stale) {
+      if (v == null) { ring.className = 'vml-optmark'; lab.innerHTML = base; return; }
+      var lo = parseFloat(sl.input.min), hi = parseFloat(sl.input.max);
+      var tw = parseFloat(getComputedStyle(slot).getPropertyValue('--vml-thumb')) || 14;
+      var f = Math.max(0, Math.min(1, (v - lo) / (hi - lo)));
+      /* a range thumb's centre runs from tw/2 to W − tw/2, not 0 to W */
+      ring.style.left = 'calc(' + (f * 100) + '% + ' + ((0.5 - f) * tw).toFixed(2) + 'px)';
+      ring.className = 'vml-optmark on' + (stale ? ' stale' : '');
+      hint.textContent = 'best ' + fmt(v, 0) + '%';
+      lab.innerHTML = base;
+      lab.appendChild(hint);
+    };
+  }
+  var markOn = optMark(sOn), markOff = optMark(sOff);
 
   var adv = el('div', 'vml-adv');
   adv.style.display = 'none';
