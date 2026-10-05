@@ -494,7 +494,11 @@ D.register('wheel', function (node, d) {
   var port = D.portrait();
   var u = build(node, {});
   var S = { pos: 90, w: 2, v: 10, r: 0.34, roll: false };
-  var t = 0, playing = false, last = 0, raf = null;
+  /* `spin` is the wheel's accumulated rotation in radians, NEGATIVE as it
+     turns, because a y-down canvas draws an increasing angle anticlockwise.
+     The spokes and the marked point are both driven from it, so the point
+     stays put on the rim instead of sliding along it. */
+  var spin = 0, playing = false, last = 0, raf = null;
 
   var ax = new Axes(u.cv, { w: port ? 460 : 940, h: port ? 470 : 400,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
@@ -516,9 +520,7 @@ D.register('wheel', function (node, d) {
     /* rim and spokes */
     c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .34; c.lineWidth = 1;
     for (var i = 0; i < 16; i++) {
-      /* screen y is down, so SUBTRACTING from the angle turns the spokes
-         clockwise — which is forward for a bicycle travelling to the right. */
-      var sa = i / 16 * Math.PI * 2 - w * t * 0.25;
+      var sa = i / 16 * Math.PI * 2 + spin;
       c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + Math.cos(sa) * R, cy - Math.sin(sa) * R); c.stroke();
     }
     c.restore();
@@ -606,7 +608,15 @@ D.register('wheel', function (node, d) {
   document.addEventListener('visibilitychange', function () { if (document.hidden && playing) stop(); });
   function tick(ts) {
     if (!playing) return;
-    if (last) { t += (ts - last) / 1000; S.pos = (S.pos + omega() * (ts - last) / 1000 / DEG * 0.35) % 360; sPos.quiet(S.pos); }
+    if (last) {
+      /* one angle for the whole wheel, and it goes NEGATIVE: the bicycle
+         travels to the right, so the wheel turns clockwise and the marked
+         point travels top -> front -> bottom -> back. */
+      var dth = omega() * (ts - last) / 1000 * 0.35;
+      spin -= dth;
+      S.pos = ((S.pos - dth / DEG) % 360 + 360) % 360;
+      sPos.quiet(S.pos);
+    }
     last = ts; draw(); raf = requestAnimationFrame(tick);
   }
 
