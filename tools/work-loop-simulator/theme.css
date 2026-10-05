@@ -1020,16 +1020,23 @@ html[data-theme="light"] .vml-tabs .iseg-b.on{ color:var(--brand); }
 .vml-wrap.collapsed > .ictls{ flex-basis:2.9em; }
 
 /* page switcher in the banner — text tabs, same idea as the widget's own */
-.vml-pages{ display:flex; gap:.05em; margin-left:.5em; }
+.vml-pages{ display:flex; gap:.05em; margin-left:.35em; flex:0 0 auto; }
 .vml-pg{
-  font:inherit; font-size:.53em; line-height:1; cursor:pointer; white-space:nowrap;
+  font:inherit; font-size:.46em; line-height:1; cursor:pointer; white-space:nowrap;
   color:rgba(255,255,255,.72); background:none; border:0; border-radius:0;
-  border-bottom:2px solid transparent; padding:.32em .5em;
+  border-bottom:2px solid transparent; padding:.3em .42em;
 }
 .vml-pg:hover{ color:#fff; }
 .vml-pg.on{ color:#fff; font-weight:700; border-bottom-color:#fff; }
-/* the phone hides .vml-banner-l with the logos, switcher and all: reveal is
-   in its scroll view there, so scrolling is already how you change page */
+/* the model page's three views are in the banner now, so the widget's own
+   tab strip is hidden — the buttons stay in the DOM because the banner drives
+   them by clicking them, and hiding it hands ~34px back to the figure */
+body.vml-app .vml-tabs{ display:none; }
+.vml-pg-sep{ margin-left:.45em; border-left:1px solid rgba(255,255,255,.32); padding-left:.65em; }
+
+/* the phone keeps the title but drops the marks and the view links: reveal is
+   in its scroll view there, so scrolling already changes page, and the
+   widget's own tab strip comes back to carry the three model views */
 
 /* the cyclist page: no sidebar, but the same lighter controls as the model
    page so the two read as one app */
@@ -1066,16 +1073,24 @@ body.vml-app #deck-tools{ display:none !important; }
 /* the banner, after the app's own: a red bar with the title centred, the
    institutions either side and an info button on the right */
 .vml-banner{
-  display:flex; align-items:center; gap:1em;
+  display:flex; align-items:center; gap:.7em;
   background:#a6192e; color:#fff; border-radius:7px;
   padding:.14em .9em; min-height:1.35em;
 }
 html[data-theme="light"] .vml-banner{ background:#a6192e; }
-.vml-banner-l,.vml-banner-r{ display:flex; align-items:center; gap:.55em; flex:1 1 0; }
-.vml-banner-r{ justify-content:flex-end; }
+.vml-banner-l,.vml-banner-r{ display:flex; align-items:center; gap:.55em; }
+/* an app bar, not a centred title: the mark, the title and the views sit
+   together on the left and the identity and buttons stay pinned right. Four
+   view links will not fit either side of a centred h1. */
+.vml-banner-l{ flex:1 1 auto; min-width:0; }
+.vml-banner-r{ flex:0 0 auto; justify-content:flex-end; }
 .vml-banner h1{
-  flex:0 0 auto; margin:0; padding:0; color:#fff; text-transform:none;
-  font-size:.86em; font-weight:650; letter-spacing:.01em; line-height:1;
+  /* the title is the one thing here that can give way: 0 1 auto plus an
+     ellipsis means a narrow bar truncates the name rather than letting the
+     view links slide under the identity on the right */
+  flex:0 1 auto; min-width:0; margin:0 .15em 0 .1em; padding:0; color:#fff;
+  text-transform:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  font-size:.74em; font-weight:650; letter-spacing:.01em; line-height:1.25;
 }
 .vml-inst{
   font-size:.44em; font-weight:700; letter-spacing:.13em; text-transform:uppercase;
@@ -1094,6 +1109,7 @@ html[data-theme="light"] .vml-banner{ background:#a6192e; }
 /* the home link is a real <a>, and the icon-only variant squares up its box */
 a.vml-bbtn{ display:inline-flex; align-items:center; text-decoration:none; }
 .vml-bbtn.vml-ico{ padding:.26em .42em; }
+.vml-info.vml-ico{ font-size:.66em; padding:.1em .4em; }
 .vml-bbtn svg{
   width:1.05em; height:1.05em; display:block; flex:none;
   fill:none; stroke:currentColor; stroke-width:1.9;
@@ -1124,8 +1140,10 @@ a.vml-bbtn{ display:inline-flex; align-items:center; text-decoration:none; }
 /* a phone has no room for the institutions in the banner: title and the two
    buttons, and nothing else */
 html[data-portrait] .vml-banner{ gap:.5em; padding:.26em .6em; min-height:0; }
-html[data-portrait] .vml-banner-l,
+html[data-portrait] .vml-pages,
+html[data-portrait] .vml-inst,
 html[data-portrait] .vml-banner .vml-logo{ display:none; }
-html[data-portrait] .vml-banner h1{ flex:1 1 auto; font-size:.94em; }
+html[data-portrait] body.vml-app .vml-tabs{ display:flex; }
+html[data-portrait] .vml-banner h1{ flex:1 1 auto; font-size:.94em; margin:0; }
 html[data-portrait] .vml-banner-r{ flex:0 0 auto; gap:.45em; }
 html[data-portrait] .vml-bbtn{ font-size:.58em; padding:.46em .6em; }

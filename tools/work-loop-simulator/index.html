@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20261009">
+<link rel="stylesheet" href="theme.css?v=20261012">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -38,14 +38,17 @@
       <img class="vml-logo" src="icons/utah.svg" alt="University of Utah"
            onerror="if(this.dataset.try){this.remove();}else{this.dataset.try=1;this.src='icons/utah.png';}">
       <span class="vml-inst">University of Utah</span>
-      <!-- page switcher: the deck tool bar is off, so this is how the second
-           page is found. Cloned onto every slide, wired by class not id. -->
-      <nav class="vml-pages" aria-label="Pages">
-        <button class="vml-pg" type="button" data-pg="0">Model</button>
-        <button class="vml-pg" type="button" data-pg="1">Real cyclist</button>
+      <h1>Virtual Muscle Lab</h1>
+      <!-- the whole app's navigation: the model page's three views, then the
+           cyclist page. Cloned onto every slide, wired by class, not id. -->
+      <nav class="vml-pages" aria-label="Views">
+        <button class="vml-pg" type="button" data-pg="0" data-tab="fvp">Force, Velocity, Power</button>
+        <button class="vml-pg" type="button" data-pg="0" data-tab="loop">Interactive Workloop</button>
+        <button class="vml-pg" type="button" data-pg="0" data-tab="fv">Force–Velocity</button>
+        <button class="vml-pg vml-pg-sep" type="button" data-pg="1">Modelled</button>
+        <button class="vml-pg" type="button" data-pg="2">Measured</button>
       </nav>
     </div>
-    <h1>Virtual Muscle Lab</h1>
     <div class="vml-banner-r">
       <!-- reversed wordmark: the banner is U of U red in both themes -->
       <img class="vml-logo" src="icons/uvic-dark.png" alt="University of Victoria">
@@ -54,7 +57,8 @@
          viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5L12 3.5l8.5 7"/><path
          d="M5.6 9v10.5h12.8V9"/><path d="M9.8 19.5v-6h4.4v6"/></svg></a>
       <button class="vml-bbtn vml-theme" type="button" title="Light or dark">Light</button>
-      <button class="vml-bbtn vml-info" type="button" aria-haspopup="dialog">&#9432; About</button>
+      <button class="vml-bbtn vml-ico vml-info" type="button" aria-haspopup="dialog"
+              title="About this page" aria-label="About this page">&#9432;</button>
     </div>
   </div>
   <div class="iplot wide" data-widget="vml"></div>
@@ -80,6 +84,21 @@ Then switch to Hamstrings and watch the excursion collapse to about 24 mm. Nothi
 Then move Switch on and Switch off and watch the loop open, close and flip over.</aside>
 </section>
 
+<section class="vml-page" data-pg="2">
+  <div class="iplot wide" data-widget="measured"></div>
+  <aside class="notes">And now the same stroke with nothing modelled in it.
+
+Three instruments: an ergometer reading pedal torque every two degrees of crank, motion capture at 100 Hz, and surface EMG at 2148 Hz. One participant, 109 steady revolutions averaged.
+
+The honest bit first: these are three separate machines with three clocks. They were lined up by matching the sequence of revolution durations between the ergometer and the motion capture — the two agree at r = 0.98 with 16 ms of scatter and no drift over two minutes. The check that it worked is on the slide: integrate the measured torque over the crank and you get 162 W; the ergometer's own display said 161 W. Half a per cent apart, from two completely different routes.
+
+The torque panel is the work loop with the model taken out. Shaded green is work done, shaded red is work absorbed — and there IS red, late in the stroke, where the leg is being driven round by the other one. That is the bit riders do not believe.
+
+Then the EMG. Vastus lateralis peaks at 97 per cent — before top dead centre, not after it. The muscle switches on while it is still being lengthened, so that force is already there when the crank arrives where it can be used. Hamstrings peak at 22 per cent, gluteus maximus at 6.
+
+Put the dashed length trace beside it and the question from page one answers itself: is the muscle on while it is shortening? For the vasti, yes, almost perfectly. That is a work loop drawn by a person rather than by a slider.</aside>
+</section>
+
 </div>
 </div>
 
@@ -103,8 +122,8 @@ Then move Switch on and Switch off and watch the loop open, close and flip over.
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20261009"></script>
-<script src="mobile.js?v=20261009"></script>
+<script src="annotate.js?v=20261012"></script>
+<script src="mobile.js?v=20261012"></script>
 <script>
 Reveal.initialize(Object.assign({
   width: 1280,
@@ -186,6 +205,15 @@ Reveal.initialize(Object.assign({
       if (pages[n] && window.Reveal && Reveal.isScrollView && Reveal.isScrollView()) {
         pages[n].scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
+      /* The model page's three views live in the banner now. The widget still
+         owns them — its own tab strip is just hidden — so the banner drives it
+         by pressing the button the widget already built and wired. */
+      var tab = t.getAttribute('data-tab');
+      if (tab) {
+        var b = tabButton(tab);
+        if (b && !b.classList.contains('on')) b.click();
+      }
+      paintPages();
       return;
     }
     var th = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -195,20 +223,37 @@ Reveal.initialize(Object.assign({
     window.dispatchEvent(new Event('ephe341-theme'));   /* the figures repaint themselves */
   });
 
+  var TABS = ['fvp', 'loop', 'fv'];
+  function tabButton(key) {
+    var strip = pages[0].querySelectorAll('.vml-tabs .iseg-b');
+    var i = TABS.indexOf(key);
+    return i < 0 ? null : strip[i];
+  }
+  function liveTab() {
+    var strip = pages[0].querySelectorAll('.vml-tabs .iseg-b');
+    for (var i = 0; i < strip.length; i++) if (strip[i].classList.contains('on')) return TABS[i];
+    return TABS[0];
+  }
   function paintPages() {
     var i = (window.Reveal && Reveal.getIndices) ? (Reveal.getIndices().h || 0) : 0;
     if (i >= pages.length) i = pages.length - 1;
+    var cur = liveTab();
     all('.vml-pg').forEach(function (b) {
-      b.classList.toggle('on', +b.getAttribute('data-pg') === i);
+      var onPage = +b.getAttribute('data-pg') === i;
+      var tab = b.getAttribute('data-tab');
+      b.classList.toggle('on', onPage && (!tab || tab === cur));
     });
   }
   paintPages();
+  /* the widget's strip is hidden but still live — keyboard and search can move
+     it — so keep the banner in step with whatever it ends up on */
+  setTimeout(paintPages, 600);
   if (window.Reveal) Reveal.on('slidechanged', paintPages);
 })();
 </script>
-<script src="deck-core.js?v=20261009"></script>
-<script src="vml.js?v=20261009"></script>
-<script src="deck-tools.js?v=20261009"></script>
-<script src="fit.js?v=20261009"></script>
+<script src="deck-core.js?v=20261012"></script>
+<script src="vml.js?v=20261012"></script>
+<script src="deck-tools.js?v=20261012"></script>
+<script src="fit.js?v=20261012"></script>
 </body>
 </html>

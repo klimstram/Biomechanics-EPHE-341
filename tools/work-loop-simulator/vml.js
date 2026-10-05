@@ -982,9 +982,10 @@ var CYC = {"trial":"2005","rider":"Victor","height_m":1.84,"mass_kg":74,"bike":"
    rider's, and they are on sliders because that is the honest way to
    show a number nobody measured here. */
 var MUSC = {
-  vasti: { nm: 'Vasti', rK:  0.045, rH:  0.000, L0: 0.090, F0: 5000, on: 85, off: 35 },
-  ham:   { nm: 'Hamstrings', rK: -0.035, rH: 0.060, L0: 0.100, F0: 2500, on: 10, off: 60 }
+  vasti: { nm: 'Vasti', col: 'BLUE', rK:  0.045, rH:  0.000, L0: 0.090, F0: 5000, on: 85, off: 35 },
+  ham:   { nm: 'Hamstrings', col: 'VIO', rK: -0.035, rH: 0.060, L0: 0.100, F0: 2500, on: 10, off: 60 }
 };
+var KEYS = ['vasti', 'ham'];
 
 /* Periodic resample through a truncated Fourier series. The cycle really is
    periodic, so this is the natural interpolant — and unlike a linear one it
@@ -1013,10 +1014,13 @@ function cycSmooth(src, n, H) {
 }
 
 /* the first page's model, driven by a measured length instead of a sine */
-function strokeSim(S) {
-  var mu = MUSC[S.muscle], i;
+/* Both muscles are always simulated — the antagonist is the point of the
+   force–time panel — so the parameters live per muscle and only cadence and
+   effort are shared. */
+function strokeSim(S, key) {
+  var mu = MUSC[key], P = S.m[key], i;
   var T = 60 / S.cadence, n = 720, dt = T / n;
-  var L0 = mu.L0, F0 = S.F0, Vx = 10, af = 0.30;
+  var L0 = mu.L0, F0 = P.F0, Vx = 10, af = 0.30;
   var tauA = 0.010, tauD = 0.040, penn0 = 0.087, w = L0 * Math.sin(penn0);
   var V0 = Vx * L0;
 
@@ -1026,7 +1030,7 @@ function strokeSim(S) {
   mk /= n; mh /= n;
   var DEG = Math.PI / 180;
   for (i = 0; i < n; i++) {
-    pos[i] = -S.rK * (kn[i] - mk) * DEG - S.rH * (hp[i] - mh) * DEG;
+    pos[i] = -P.rK * (kn[i] - mk) * DEG - P.rH * (hp[i] - mh) * DEG;
   }
 
   /* velocity by central difference on the closed cycle; + is shortening */
@@ -1037,7 +1041,7 @@ function strokeSim(S) {
 
   /* excitation window in crank per cent, allowed to wrap through top dead
      centre — which is exactly what the knee extensors do */
-  var on = S.onset, off = S.offset;
+  var on = P.onset, off = P.offset;
   function live(p) { return on <= off ? (p >= on && p <= off) : (p >= on || p <= off); }
   var exc = new Float64Array(n);
   for (i = 0; i < n; i++) exc[i] = live(i / n * 100) ? S.effort : 0;
@@ -1076,7 +1080,7 @@ function strokeSim(S) {
   return { n: n, dt: dt, T: T, pct: pct, pos: pos, lenMM: lenMM, vel: vel,
            act: act, force: force, power: power, kn: kn, hp: hp,
            workTot: wTot, workPos: wPos, workNeg: wNeg,
-           powerTot: wTot / T, exc: live };
+           powerTot: wTot / T, exc: live, key: key, onset: on, offset: off };
 }
 
 D.register('cyclist', function (node, d) {
@@ -1087,14 +1091,17 @@ D.register('cyclist', function (node, d) {
   /* effort is the excitation the window is driven to. A steady 20 km/h on a
      treadmill is a long way from a maximal contraction, and at full excitation
      one muscle group comes out making more power than the whole rider. */
-  var S = { muscle: 'vasti', effort: 0.35, cadence: CYC.cadence_rpm, F0: MUSC.vasti.F0,
-            rK: MUSC.vasti.rK, rH: MUSC.vasti.rH,
-            onset: MUSC.vasti.on, offset: MUSC.vasti.off, trail: true };
+  var S = { muscle: 'vasti', effort: 0.35, cadence: CYC.cadence_rpm, m: {} };
+  KEYS.forEach(function (k) {
+    var d = MUSC[k];
+    S.m[k] = { rK: d.rK, rH: d.rH, F0: d.F0, onset: d.on, offset: d.off };
+  });
+  function P() { return S.m[S.muscle]; }
   /* The stroke starts parked a fifth of the way in — mid down-stroke, where
      the interesting things are happening — and plays on request. A canvas
      that animates forever costs a laptop battery all lecture for a loop
      nobody is watching, so nothing runs until someone presses play. */
-  var phase = 20, playing = false, last = 0, R = null;
+  var phase = 20, playing = false, last = 0, R = null, SIM = null;
 
   var AXH = port ? 520 : 400;
   var ax = null;
@@ -1189,6 +1196,70 @@ D.register('cyclist', function (node, d) {
           { color: K.MUT, size: 11, align: 'center' });
   }
 
+  /* the shaded "switched on" band, as one or two runs across the cycle */
+  function bands(sim) {
+    return sim.onset <= sim.offset ? [[sim.onset, sim.offset]]
+                                   : [[sim.onset, 100], [0, sim.offset]];
+  }
+
+  /* ---------------- force against crank angle, BOTH muscles ----------------
+     The point of this panel is the antagonist pair: the knee extensors and the
+     hamstrings are on at different parts of the stroke, and where they overlap
+     they are not fighting each other — the hamstrings are extending the hip
+     while the vasti extend the knee. The selected muscle is drawn heavier, but
+     both are always here. */
+  function forcePanel(x0, y0, w, h) {
+    var c = ax.c, K = C(), i;
+    var PL = 52, PB = 30, PT = 38, PR = 12;   /* room for the key under the title */
+    var hy = 0;
+    KEYS.forEach(function (k) {
+      for (i = 0; i < SIM[k].n; i++) hy = Math.max(hy, SIM[k].force[i]);
+    });
+    hy = hy * 1.14 || 1;
+    function X(p) { return x0 + PL + p / 100 * (w - PL - PR); }
+    function Y(v) { return y0 + h - PB - v / hy * (h - PB - PT); }
+
+    /* each muscle's window, in its own colour, low alpha so they can overlap */
+    KEYS.forEach(function (k) {
+      c.save(); c.fillStyle = K[MUSC[k].col]; c.globalAlpha = .11;
+      bands(SIM[k]).forEach(function (r) {
+        c.fillRect(X(r[0]), y0 + PT, X(r[1]) - X(r[0]), h - PB - PT);
+      });
+      c.restore();
+    });
+    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(x0 + PL, y0 + PT); c.lineTo(x0 + PL, y0 + h - PB);
+    c.lineTo(x0 + w - PR, y0 + h - PB); c.stroke(); c.restore();
+    axisTicks(0, hy).forEach(function (v) {
+      if (v < 0 || v > hy) return;
+      label(c, fmt(v, 0), x0 + PL - 6, Y(v), { color: K.MUT, size: 10.5, align: 'right' });
+    });
+    [0, 25, 50, 75, 100].forEach(function (p) {
+      label(c, fmt(p, 0), X(p), y0 + h - PB + 11, { color: K.MUT, size: 10, align: 'center' });
+    });
+    KEYS.forEach(function (k) {
+      var sim = SIM[k], sel = k === S.muscle;
+      c.save(); c.strokeStyle = K[MUSC[k].col]; c.lineWidth = sel ? 2.6 : 1.7;
+      c.globalAlpha = sel ? 1 : .72;
+      c.beginPath();
+      for (i = 0; i < sim.n; i++) { var px = X(sim.pct[i]), py = Y(sim.force[i]); i ? c.lineTo(px, py) : c.moveTo(px, py); }
+      c.lineTo(X(100), Y(sim.force[0])); c.stroke(); c.restore();
+    });
+    label(c, 'Force (N) — both muscles, shaded where each is switched on',
+          x0 + PL, y0 + 11, { color: K.INK, size: 12, align: 'left' });
+    /* the key goes in its own strip under the title: the vasti trace runs high
+       at both ends of the cycle, so the top corners are not free */
+    var kx = x0 + PL;
+    KEYS.forEach(function (k) {
+      c.save(); c.fillStyle = K[MUSC[k].col];
+      c.fillRect(kx, y0 + 20, 13, 3); c.restore();
+      label(c, MUSC[k].nm, kx + 17, y0 + 22, { color: K[MUSC[k].col], size: 11, align: 'left' });
+      c.save(); c.font = '600 11px ui-sans-serif,system-ui,sans-serif';
+      kx += 17 + c.measureText(MUSC[k].nm).width + 18; c.restore();
+    });
+    return { X: X, Y: Y, top: y0 + PT, bot: y0 + h - PB };
+  }
+
   /* ---------------- length against crank angle ---------------- */
   function lenPanel(x0, y0, w, h, live) {
     var c = ax.c, K = C(), i;
@@ -1201,8 +1272,7 @@ D.register('cyclist', function (node, d) {
 
     /* the window the muscle is switched on for — one band, or two when it
        wraps through top dead centre, never one rectangle per sample */
-    var runs = S.onset <= S.offset ? [[S.onset, S.offset]]
-                                   : [[S.onset, 100], [0, S.offset]];
+    var runs = bands(sim);
     c.save(); c.fillStyle = K.FILL; c.globalAlpha = .6;
     runs.forEach(function (r) { c.fillRect(X(r[0]), y0 + PT, X(r[1]) - X(r[0]), h - PB - PT); });
     c.restore();
@@ -1216,11 +1286,11 @@ D.register('cyclist', function (node, d) {
     [0, 25, 50, 75, 100].forEach(function (p) {
       label(c, fmt(p, 0), X(p), y0 + h - PB + 11, { color: K.MUT, size: 10, align: 'center' });
     });
-    c.save(); c.strokeStyle = K.BLUE; c.lineWidth = 2.4; c.beginPath();
+    c.save(); c.strokeStyle = K[MUSC[sim.key].col]; c.lineWidth = 2.4; c.beginPath();
     for (i = 0; i < sim.n; i++) { var px = X(sim.pct[i]), py = Y(sim.lenMM[i]); i ? c.lineTo(px, py) : c.moveTo(px, py); }
     c.lineTo(X(100), Y(sim.lenMM[0])); c.stroke(); c.restore();
 
-    label(c, MUSC[S.muscle].nm + ' length (mm about the mean) · shaded = switched on',
+    label(c, MUSC[sim.key].nm + ' length (mm about the mean) · shaded = switched on',
           x0 + PL, y0 + 11, { color: K.INK, size: 12, align: 'left' });
     label(c, '% of the crank cycle   ·   0 = top dead centre, 50 = bottom',
           x0 + (PL + w) / 2, y0 + h - 4, { color: K.MUT, size: 10.5, align: 'center' });
@@ -1258,16 +1328,16 @@ D.register('cyclist', function (node, d) {
     c.beginPath();
     for (i = 0; i < sim.n; i++) { var fx = X(sim.lenMM[i]), fy = Y(sim.force[i]); i ? c.lineTo(fx, fy) : c.moveTo(fx, fy); }
     c.closePath(); c.fill(); c.restore();
-    c.save(); c.strokeStyle = K.BLUE; c.lineWidth = 2.6; c.beginPath();
+    c.save(); c.strokeStyle = K[MUSC[sim.key].col]; c.lineWidth = 2.6; c.beginPath();
     for (i = 0; i < sim.n; i++) { var qx = X(sim.lenMM[i]), qy = Y(sim.force[i]); i ? c.lineTo(qx, qy) : c.moveTo(qx, qy); }
     c.closePath(); c.stroke(); c.restore();
     [0.10, 0.35, 0.60, 0.85].forEach(function (f) {
       var i0 = Math.round(f * (sim.n - 1)), i1 = Math.min(sim.n - 1, i0 + 10);
       if (i1 <= i0) return;
       arrow(c, X(sim.lenMM[i0]), Y(sim.force[i0]), X(sim.lenMM[i1]), Y(sim.force[i1]),
-            { color: K.BLUE, width: 2.1, head: 9 });
+            { color: K[MUSC[sim.key].col], width: 2.1, head: 9 });
     });
-    label(c, 'Work loop — force (N) against ' + MUSC[S.muscle].nm.toLowerCase() + ' length',
+    label(c, 'Work loop — force (N) against ' + MUSC[sim.key].nm.toLowerCase() + ' length',
           x0 + PL, y0 + 12, { color: K.INK, size: 12, align: 'left' });
     return { X: X, Y: Y };
   }
@@ -1282,16 +1352,20 @@ D.register('cyclist', function (node, d) {
      browser and the page stops responding to clicks at all. */
   var cacheCv = null, cacheAx = null, cache = null, MAP = {};
   var queued = 0;
+  function runBoth() {
+    SIM = {}; KEYS.forEach(function (k) { SIM[k] = strokeSim(S, k); });
+    R = SIM[S.muscle];
+  }
   function recompute() {
     if (queued) return;
     queued = requestAnimationFrame(function () {
-      queued = 0; R = strokeSim(S); readOut(); draw();
+      queued = 0; runBoth(); readOut(); draw();
     });
   }
-  function recomputeNow() { queued = 0; R = strokeSim(S); readOut(); draw(); }
+  function recomputeNow() { queued = 0; runBoth(); readOut(); draw(); }
   function draw() {
     sizeAxes();
-    if (!R) R = strokeSim(S);
+    if (!SIM) runBoth();
     buildCache();
     paint();
   }
@@ -1305,11 +1379,14 @@ D.register('cyclist', function (node, d) {
     ax.clear();
     var W = real.W, H = real.H;
     if (port) {
-      MAP.loop = cycLoop(0, H * 0.46, W, H * 0.54, false);
+      MAP.force = forcePanel(0, H * 0.46, W, H * 0.27);
+      MAP.loop = cycLoop(0, H * 0.73, W, H * 0.27, false);
       MAP.len = null;
     } else {
-      var fw = W * 0.21, lw = W * 0.38;
-      MAP.len = lenPanel(fw, H * 0.02, lw, H * 0.96, false);
+      /* rider | length over force–time | work loop */
+      var fw = W * 0.19, lw = W * 0.40;
+      MAP.len = lenPanel(fw, H * 0.01, lw, H * 0.49, false);
+      MAP.force = forcePanel(fw, H * 0.50, lw, H * 0.50);
       MAP.loop = cycLoop(fw + lw, H * 0.02, W - fw - lw, H * 0.96, false);
     }
     ax = real;
@@ -1322,7 +1399,7 @@ D.register('cyclist', function (node, d) {
     ax.clear();
     c.drawImage(cache, 0, 0, W, H);
     if (port) figPanel(0, 0, W, H * 0.46);
-    else figPanel(0, 0, W * 0.21, H);
+    else figPanel(0, 0, W * 0.19, H);
     var k = Math.round(phase / 100 * R.n) % R.n;
     if (MAP.len) {
       c.save(); c.strokeStyle = K.ACC; c.lineWidth = 1.5;
@@ -1330,6 +1407,16 @@ D.register('cyclist', function (node, d) {
       c.lineTo(MAP.len.X(phase), MAP.len.bot); c.stroke();
       c.fillStyle = K.ACC;
       c.beginPath(); c.arc(MAP.len.X(phase), MAP.len.Y(R.lenMM[k]), 4, 0, 7); c.fill(); c.restore();
+    }
+    if (MAP.force) {
+      c.save(); c.strokeStyle = K.ACC; c.lineWidth = 1.5;
+      c.beginPath(); c.moveTo(MAP.force.X(phase), MAP.force.top);
+      c.lineTo(MAP.force.X(phase), MAP.force.bot); c.stroke();
+      KEYS.forEach(function (q) {
+        c.fillStyle = K[MUSC[q].col];
+        c.beginPath(); c.arc(MAP.force.X(phase), MAP.force.Y(SIM[q].force[k]), 3.6, 0, 7); c.fill();
+      });
+      c.restore();
     }
     c.save(); c.fillStyle = K.ACC; c.strokeStyle = K.PLATE; c.lineWidth = 2;
     c.beginPath(); c.arc(MAP.loop.X(R.lenMM[k]), MAP.loop.Y(R.force[k]), 5.5, 0, 7);
@@ -1339,9 +1426,11 @@ D.register('cyclist', function (node, d) {
     var mn = 1e9, mx = -1e9, i;
     for (i = 0; i < R.n; i++) { mn = Math.min(mn, R.lenMM[i]); mx = Math.max(mx, R.lenMM[i]); }
     var span = mx - mn;
+    var other = SIM[S.muscle === 'vasti' ? 'ham' : 'vasti'];
     out.innerHTML = '<b>' + MUSC[S.muscle].nm + '</b> moves <b>' + num(span, 1) +
       ' mm</b> per stroke and does <b>' + num(R.workTot, 1) + ' J</b> of net work, ' +
-      '<b>' + num(R.powerTot, 0) + ' W</b> for this leg at ' + fmt(S.cadence, 0) + ' rpm.' +
+      '<b>' + num(R.powerTot, 0) + ' W</b> for this leg at ' + fmt(S.cadence, 0) + ' rpm; ' +
+      MUSC[other.key].nm.toLowerCase() + ' <b>' + num(other.workTot, 1) + ' J</b>.' +
       '<span style="opacity:.72">  ·  the knee and hip angles are measured; the force is the ' +
       'page-one muscle model driven by them, not a measurement</span>';
   }
@@ -1349,27 +1438,27 @@ D.register('cyclist', function (node, d) {
   /* ---------------- controls ---------------- */
   keepOut(chips(u.ctl, [['vasti', 'Vasti'], ['ham', 'Hamstrings']], 'vasti', function (k) {
     S.muscle = k;
-    var m = MUSC[k];
-    S.rK = m.rK; S.rH = m.rH; S.F0 = m.F0; S.onset = m.on; S.offset = m.off;
-    sOn.quiet(m.on); sOff.quiet(m.off); sF0.quiet(m.F0); sRK.quiet(m.rK * 1000); sRH.quiet(m.rH * 1000);
+    var m = P();
+    sOn.quiet(m.onset); sOff.quiet(m.offset); sF0.quiet(m.F0);
+    sRK.quiet(m.rK * 1000); sRH.quiet(m.rH * 1000);
     recompute();
   }));
-  var sOn = slider(u.ctl, 'Switch on', 0, 99, 1, S.onset,
-    function (v) { return fmt(v, 0) + '%'; }, function (v) { S.onset = v; recompute(); });
-  var sOff = slider(u.ctl, 'Switch off', 0, 99, 1, S.offset,
-    function (v) { return fmt(v, 0) + '%'; }, function (v) { S.offset = v; recompute(); });
+  var sOn = slider(u.ctl, 'Switch on', 0, 99, 1, P().onset,
+    function (v) { return fmt(v, 0) + '%'; }, function (v) { P().onset = v; recompute(); });
+  var sOff = slider(u.ctl, 'Switch off', 0, 99, 1, P().offset,
+    function (v) { return fmt(v, 0) + '%'; }, function (v) { P().offset = v; recompute(); });
   var asm = el('div', 'cyc-asm');
   asm.style.display = 'none';
   var sEff = slider(asm, 'Effort', 5, 100, 1, S.effort * 100,
     function (v) { return fmt(v, 0) + '%'; }, function (v) { S.effort = v / 100; recompute(); });
   var sCad = slider(u.ctl, 'Cadence', 40, 130, 1, S.cadence,
     function (v) { return fmt(v, 0) + ' rpm'; }, function (v) { S.cadence = v; recompute(); });
-  var sF0 = slider(asm, 'Peak force F₀', 500, 8000, 10, S.F0,
-    function (v) { return fmt(v, 0) + ' N'; }, function (v) { S.F0 = v; recompute(); });
-  var sRK = slider(asm, 'Knee moment arm', -60, 60, 1, S.rK * 1000,
-    function (v) { return num(v, 0) + ' mm'; }, function (v) { S.rK = v / 1000; recompute(); });
-  var sRH = slider(asm, 'Hip moment arm', -80, 80, 1, S.rH * 1000,
-    function (v) { return num(v, 0) + ' mm'; }, function (v) { S.rH = v / 1000; recompute(); });
+  var sF0 = slider(asm, 'Peak force F₀', 500, 8000, 10, P().F0,
+    function (v) { return fmt(v, 0) + ' N'; }, function (v) { P().F0 = v; recompute(); });
+  var sRK = slider(asm, 'Knee moment arm', -60, 60, 1, P().rK * 1000,
+    function (v) { return num(v, 0) + ' mm'; }, function (v) { P().rK = v / 1000; recompute(); });
+  var sRH = slider(asm, 'Hip moment arm', -80, 80, 1, P().rH * 1000,
+    function (v) { return num(v, 0) + ' mm'; }, function (v) { P().rH = v / 1000; recompute(); });
 
   u.ctl.appendChild(asm);
   var row = ctlRow(u.ctl);
@@ -1431,6 +1520,524 @@ D.register('cyclist', function (node, d) {
   recomputeNow();
   [80, 260, 620, 1200].forEach(function (ms) { setTimeout(draw, ms); });
   window.addEventListener('resize', function () { ax = null; setTimeout(draw, 60); });
+  window.addEventListener('ephe341-theme', function () { cache = null; draw(); });
+  window.addEventListener('ephe341-layout', function () { setTimeout(draw, 160); });
+});
+/* ======================================================================
+   A MEASURED PEDAL STROKE
+   Cartier (2022), figshare 10.6084/m9.figshare.19099754, CC BY 4.0.
+   Participant 1, lower-limb cycling, 109 steady revolutions averaged.
+
+   Three instruments, three measurements, no model in any of them:
+     · pedal torque against crank angle, from the Lode ergometer
+     · joint angles, from 100 Hz motion capture
+     · muscle activation, from surface EMG at 2148 Hz
+
+   The three were synchronised by matching the SEQUENCE OF REVOLUTION
+   DURATIONS between the ergometer and the motion capture — they agree at
+   r = 0.981 with 16 ms of scatter and no drift — so the torque sits on the
+   kinematics revolution by revolution rather than being cycle-averaged and
+   hoped for. The check that it worked: integrating the measured torque over
+   the crank gives 162.1 W, and the ergometer's own reading is 161.3 W.
+
+   The one thing still modelled is muscle LENGTH, which comes from the
+   measured joint angles through assumed moment arms, exactly as on the
+   previous page. Everything else here was measured.
+   ====================================================================== */
+var MEAS = {"sub":"P01","trial":"L_Free_P2","sync_r":0.981,"sync_offset_s":-0.4629,"n_phase":72,"revs":109,"cadence_rpm":82.5,"crank_r_m":0.1649,"power_lode_W":161.3,"power_torque_W":162.1,"work_marked_J":57.28,"work_other_J":60.65,"torque_marked":[7.838,10.425,13.148,15.857,18.736,21.537,24.821,27.912,31.56,34.774,38.045,40.881,43.129,44.601,45.336,45.355,44.573,43.077,41.049,38.191,35.146,32.157,28.815,25.858,23.008,20.372,17.871,15.533,13.181,11.017,8.841,6.677,4.577,2.589,0.739,-0.971,-2.345,-3.476,-4.345,-5.04,-5.713,-6.303,-6.867,-7.298,-7.648,-7.901,-8.054,-8.144,-8.143,-8.068,-8.081,-7.97,-8.006,-7.92,-7.845,-7.776,-7.641,-7.317,-7.012,-6.587,-6.083,-5.666,-5.257,-4.904,-4.596,-4.16,-3.447,-2.392,-0.937,0.896,2.988,5.347],"torque_other":[-0.895,-2.238,-3.507,-4.699,-5.79,-6.963,-7.901,-8.946,-9.694,-10.465,-10.838,-11.239,-11.501,-11.411,-11.36,-11.133,-10.845,-10.41,-10.016,-9.495,-8.907,-8.091,-7.231,-6.284,-5.339,-4.538,-3.999,-3.652,-3.525,-3.331,-3.041,-2.358,-1.271,0.255,2.251,4.635,7.34,10.347,13.591,17.113,20.564,23.983,27.117,30.504,33.442,36.529,39.002,41.669,43.443,44.901,45.723,45.655,45.079,43.984,42.213,40.013,37.702,34.985,31.952,28.981,26.367,23.515,20.87,18.489,15.942,13.615,11.139,8.874,6.505,4.286,2.314,0.594],"knee_deg":[78.79,80.48,82.31,84.36,86.54,88.79,91.22,93.66,96.12,98.53,100.97,103.49,106.11,108.65,111.47,114.26,117.04,120.06,122.94,125.95,128.78,131.55,134.2,136.63,138.9,140.96,142.79,144.35,145.56,146.62,147.2,147.65,147.65,147.21,146.37,145.09,143.39,141.24,138.88,136.35,133.68,130.88,128.01,125.04,122.07,119.12,116.19,113.25,110.42,107.67,104.97,102.31,99.66,97.2,94.87,92.71,90.56,88.67,86.89,85.09,83.36,81.68,80.18,78.83,77.61,76.55,75.79,75.32,75.23,75.54,76.21,77.33],"hip_deg":[108.04,107.95,107.94,108.05,108.37,108.66,109.3,110.05,110.95,111.89,112.93,114.04,115.47,116.79,118.31,119.92,121.34,123.19,124.78,126.38,127.86,129.33,130.71,131.95,133.11,134.19,135.18,136.08,136.94,137.77,138.63,139.37,140.0,140.57,140.93,141.19,141.24,141.02,140.87,140.37,139.89,139.33,138.74,138.06,137.32,136.64,135.86,135.07,134.2,133.27,132.2,131.15,129.93,128.78,127.34,126.15,124.86,123.8,122.44,121.18,119.65,118.15,116.76,115.34,113.97,112.71,111.46,110.38,109.55,108.85,108.39,108.3],"ankle_deg":[111.47,110.82,110.48,110.29,110.12,110.35,110.49,110.8,111.18,111.62,112.11,112.59,112.96,113.78,114.01,114.57,115.36,115.9,116.67,117.54,118.61,119.64,120.72,121.95,123.31,124.8,126.2,127.56,128.8,129.94,131.05,131.76,132.39,132.88,133.04,133.12,132.86,132.48,132.17,131.69,131.1,130.65,130.22,129.82,129.46,129.17,128.95,128.81,128.64,128.57,128.5,128.39,128.35,128.16,128.13,128.02,127.85,127.42,127.22,126.88,126.34,125.63,124.69,123.66,122.37,120.69,119.19,117.7,116.27,114.83,113.88,112.46],"markers":{"knee":[[0.1356,0.6445],[0.1358,0.6454],[0.1356,0.6453],[0.1348,0.6436],[0.1339,0.6403],[0.1327,0.6363],[0.1309,0.6303],[0.1288,0.6236],[0.1264,0.6159],[0.1239,0.6074],[0.1208,0.5985],[0.1175,0.5885],[0.1133,0.5775],[0.1096,0.5668],[0.104,0.5541],[0.0983,0.5417],[0.0924,0.5293],[0.0847,0.5159],[0.0771,0.5029],[0.0683,0.4899],[0.0598,0.4776],[0.0502,0.466],[0.0407,0.4545],[0.0314,0.4439],[0.0219,0.4339],[0.0128,0.4245],[0.0038,0.4159],[-0.0047,0.408],[-0.0122,0.4013],[-0.0198,0.3952],[-0.0259,0.3904],[-0.0321,0.3862],[-0.0367,0.3831],[-0.0402,0.3812],[-0.0425,0.38],[-0.0435,0.3798],[-0.0435,0.3804],[-0.0419,0.3818],[-0.0395,0.3843],[-0.0364,0.3871],[-0.0324,0.3903],[-0.0279,0.3943],[-0.0228,0.3987],[-0.017,0.4036],[-0.011,0.409],[-0.0048,0.415],[0.0017,0.4215],[0.0086,0.4285],[0.0154,0.4357],[0.0222,0.4435],[0.0294,0.4516],[0.0364,0.4604],[0.0438,0.4697],[0.0506,0.4792],[0.0577,0.4884],[0.0641,0.4982],[0.0708,0.5084],[0.0765,0.5177],[0.0825,0.5276],[0.0886,0.5381],[0.0945,0.5488],[0.1002,0.5599],[0.1055,0.5706],[0.1105,0.581],[0.1152,0.5912],[0.1195,0.6009],[0.1234,0.6105],[0.127,0.6189],[0.1301,0.6266],[0.1324,0.6331],[0.1344,0.6389],[0.1352,0.6424]],"ankle":[[-0.0815,0.2929],[-0.0711,0.287],[-0.0609,0.28],[-0.0507,0.2716],[-0.0408,0.2619],[-0.0307,0.2516],[-0.0212,0.2397],[-0.0124,0.2276],[-0.0043,0.215],[0.0031,0.2022],[0.0097,0.1893],[0.0155,0.1758],[0.0203,0.1614],[0.0253,0.148],[0.0279,0.1326],[0.0303,0.1179],[0.0321,0.1035],[0.0323,0.0884],[0.0319,0.0741],[0.0304,0.0599],[0.0284,0.0466],[0.0251,0.034],[0.0211,0.0216],[0.0164,0.0103],[0.011,-0.0002],[0.005,-0.01],[-0.0021,-0.019],[-0.0098,-0.0271],[-0.0181,-0.0338],[-0.0273,-0.0399],[-0.037,-0.0445],[-0.0477,-0.0486],[-0.0585,-0.0512],[-0.0697,-0.0524],[-0.0814,-0.0526],[-0.0932,-0.0513],[-0.1056,-0.0488],[-0.1177,-0.0447],[-0.1291,-0.0391],[-0.14,-0.0324],[-0.1503,-0.0249],[-0.1595,-0.016],[-0.1679,-0.006],[-0.1754,0.005],[-0.182,0.0167],[-0.1875,0.0292],[-0.192,0.0425],[-0.1953,0.0562],[-0.1978,0.0701],[-0.1992,0.0841],[-0.1997,0.0982],[-0.1996,0.1127],[-0.1984,0.1275],[-0.197,0.1419],[-0.1942,0.1556],[-0.1913,0.169],[-0.1876,0.1827],[-0.1845,0.1949],[-0.18,0.2071],[-0.1751,0.2194],[-0.1699,0.2317],[-0.1643,0.2438],[-0.1589,0.2549],[-0.1531,0.2651],[-0.1473,0.2746],[-0.1415,0.283],[-0.1346,0.29],[-0.1273,0.2953],[-0.119,0.2989],[-0.1104,0.3004],[-0.1005,0.3003],[-0.0914,0.2974]],"illiaque":[[-0.219,0.8941],[-0.2194,0.8945],[-0.2201,0.8949],[-0.2207,0.8952],[-0.2211,0.8952],[-0.2214,0.895],[-0.2221,0.8946],[-0.2228,0.8941],[-0.2235,0.8936],[-0.2238,0.8927],[-0.2243,0.8918],[-0.2243,0.891],[-0.2248,0.89],[-0.2247,0.8891],[-0.2246,0.8881],[-0.2243,0.8874],[-0.2234,0.8865],[-0.2232,0.8861],[-0.2221,0.8854],[-0.2212,0.8849],[-0.2197,0.8841],[-0.2191,0.8834],[-0.2179,0.8824],[-0.2167,0.8814],[-0.2156,0.8802],[-0.2145,0.8789],[-0.2134,0.8775],[-0.212,0.8762],[-0.2107,0.875],[-0.2095,0.8739],[-0.2085,0.873],[-0.2074,0.8722],[-0.2063,0.8716],[-0.2058,0.8715],[-0.2053,0.8715],[-0.2055,0.8717],[-0.2058,0.8721],[-0.2062,0.8725],[-0.2073,0.8733],[-0.2081,0.8738],[-0.2088,0.8741],[-0.2099,0.8746],[-0.2109,0.8749],[-0.2117,0.8752],[-0.2124,0.8754],[-0.2134,0.8758],[-0.2143,0.8763],[-0.2151,0.877],[-0.2158,0.8776],[-0.2167,0.8785],[-0.2171,0.8793],[-0.2179,0.8804],[-0.2185,0.8813],[-0.2192,0.8826],[-0.2188,0.8832],[-0.2197,0.8843],[-0.22,0.8852],[-0.2205,0.8861],[-0.2202,0.8868],[-0.2204,0.8876],[-0.22,0.8883],[-0.2198,0.8889],[-0.2195,0.8894],[-0.2192,0.8899],[-0.2188,0.8902],[-0.2184,0.8906],[-0.2182,0.891],[-0.2177,0.8913],[-0.2176,0.8918],[-0.2176,0.8923],[-0.2179,0.893],[-0.2188,0.8937]],"troch":[[-0.2239,0.7788],[-0.2245,0.78],[-0.2253,0.7809],[-0.2263,0.7813],[-0.2269,0.7812],[-0.2277,0.7805],[-0.2285,0.7792],[-0.2293,0.7776],[-0.23,0.7759],[-0.2305,0.7736],[-0.2311,0.7714],[-0.2313,0.7691],[-0.2318,0.7666],[-0.2318,0.7642],[-0.232,0.7617],[-0.2321,0.7594],[-0.2319,0.757],[-0.2321,0.755],[-0.2318,0.7529],[-0.232,0.7509],[-0.2317,0.749],[-0.2323,0.7473],[-0.2325,0.7454],[-0.2328,0.7436],[-0.2332,0.7417],[-0.2336,0.7397],[-0.2339,0.7378],[-0.2341,0.736],[-0.234,0.7343],[-0.234,0.7328],[-0.2335,0.7315],[-0.2332,0.7304],[-0.2327,0.7297],[-0.2323,0.7293],[-0.2319,0.7291],[-0.2318,0.7292],[-0.232,0.7294],[-0.2321,0.7296],[-0.2325,0.7303],[-0.2329,0.7308],[-0.233,0.7313],[-0.2334,0.7319],[-0.2335,0.7325],[-0.2334,0.7331],[-0.2331,0.7336],[-0.2328,0.7343],[-0.2326,0.7353],[-0.2321,0.7362],[-0.2317,0.7373],[-0.2315,0.7387],[-0.231,0.74],[-0.2309,0.7418],[-0.2306,0.7436],[-0.2305,0.7457],[-0.2299,0.7473],[-0.23,0.7496],[-0.2297,0.7515],[-0.2294,0.7535],[-0.2288,0.7555],[-0.2284,0.7576],[-0.2279,0.7596],[-0.2275,0.7616],[-0.2269,0.7635],[-0.2264,0.7653],[-0.2258,0.767],[-0.2253,0.7686],[-0.2249,0.7702],[-0.2242,0.7715],[-0.2236,0.773],[-0.2234,0.7744],[-0.2232,0.776],[-0.2235,0.7774]],"foot":[[0.0078,0.1736],[0.0228,0.1716],[0.037,0.1682],[0.0509,0.1633],[0.0643,0.157],[0.0772,0.1496],[0.0895,0.1408],[0.1007,0.1312],[0.1108,0.121],[0.12,0.1102],[0.128,0.0991],[0.1353,0.0872],[0.1415,0.0747],[0.1473,0.062],[0.1513,0.0485],[0.1547,0.0349],[0.1572,0.021],[0.1583,0.0068],[0.1584,-0.0072],[0.1575,-0.0214],[0.1556,-0.0354],[0.1526,-0.0487],[0.1485,-0.0621],[0.1434,-0.0751],[0.1372,-0.0878],[0.1299,-0.1003],[0.1215,-0.112],[0.112,-0.1231],[0.1018,-0.133],[0.0905,-0.142],[0.0782,-0.1501],[0.0653,-0.1569],[0.0518,-0.1625],[0.0376,-0.1667],[0.0232,-0.1695],[0.0082,-0.1708],[-0.0072,-0.1707],[-0.0225,-0.169],[-0.0375,-0.1658],[-0.0518,-0.1613],[-0.0653,-0.1556],[-0.0781,-0.1487],[-0.0901,-0.1405],[-0.1014,-0.1314],[-0.1117,-0.1213],[-0.121,-0.1104],[-0.1292,-0.0986],[-0.1364,-0.0862],[-0.1424,-0.0735],[-0.1472,-0.0606],[-0.1509,-0.0474],[-0.1536,-0.0337],[-0.1552,-0.0196],[-0.1558,-0.0057],[-0.1552,0.0076],[-0.1538,0.0207],[-0.1514,0.0341],[-0.1485,0.0464],[-0.1445,0.0586],[-0.1395,0.0712],[-0.1335,0.0839],[-0.1264,0.0965],[-0.1187,0.1084],[-0.11,0.1196],[-0.1005,0.1303],[-0.0899,0.1405],[-0.0781,0.1497],[-0.0655,0.1575],[-0.0519,0.164],[-0.0375,0.169],[-0.0226,0.1723],[-0.0074,0.1739]]},"emg_mv":{"GMax":0.0144,"RF":0.0553,"VL":0.119,"VM":0.0647,"BF":0.0411,"Sem":0.0403,"TF":0.0375},"emg":{"GMax":[0.7988,0.8772,0.9278,0.9744,1.0,0.9995,0.9728,0.9302,0.8509,0.7776,0.7006,0.6098,0.5111,0.4141,0.326,0.2504,0.188,0.129,0.0981,0.0701,0.0545,0.05,0.0528,0.0577,0.0677,0.0775,0.0855,0.0918,0.0964,0.0964,0.096,0.0937,0.0913,0.0886,0.0874,0.0881,0.0914,0.0977,0.105,0.1142,0.1247,0.1337,0.1413,0.1483,0.152,0.1534,0.1509,0.1459,0.1395,0.1306,0.1223,0.1151,0.1118,0.1092,0.1104,0.1201,0.133,0.1567,0.1743,0.2005,0.228,0.2611,0.2918,0.3277,0.3624,0.4057,0.4435,0.4903,0.5517,0.592,0.6664,0.7344],"RF":[0.8477,0.7799,0.6928,0.6118,0.518,0.4349,0.362,0.3025,0.242,0.1966,0.1701,0.1343,0.1113,0.0919,0.0785,0.0682,0.0608,0.058,0.0572,0.0568,0.0582,0.0585,0.0614,0.0635,0.0645,0.0656,0.0649,0.0661,0.0662,0.0659,0.0668,0.0698,0.0711,0.0754,0.0786,0.0835,0.0907,0.0972,0.1006,0.1054,0.1082,0.1105,0.1107,0.1106,0.1094,0.1091,0.1086,0.1104,0.1142,0.1195,0.1265,0.1365,0.1573,0.1755,0.2029,0.2381,0.2732,0.3136,0.375,0.4374,0.4984,0.5778,0.6449,0.7314,0.8095,0.8733,0.9369,0.9869,1.0,0.9787,0.9702,0.9097],"VL":[0.9758,0.9314,0.8808,0.8116,0.728,0.6411,0.5414,0.4498,0.3507,0.2764,0.2116,0.1495,0.1001,0.0649,0.0374,0.0226,0.0149,0.0114,0.0127,0.015,0.0196,0.0267,0.0331,0.0382,0.0417,0.0435,0.0434,0.0415,0.0387,0.0356,0.0322,0.0298,0.0269,0.0259,0.0247,0.0251,0.0267,0.0286,0.03,0.0308,0.0307,0.0289,0.026,0.021,0.0153,0.0095,0.005,0.0023,0.0018,0.0033,0.0079,0.0191,0.0378,0.071,0.1062,0.1521,0.2102,0.2722,0.3333,0.4031,0.4731,0.5478,0.6218,0.6897,0.7551,0.8146,0.8678,0.9283,0.9603,0.9761,1.0,0.9958],"VM":[0.9963,0.9765,0.9321,0.8774,0.8023,0.7086,0.621,0.5315,0.4297,0.3511,0.285,0.219,0.1604,0.1193,0.0842,0.059,0.0461,0.0407,0.0411,0.0442,0.0491,0.0566,0.0629,0.0682,0.0728,0.0744,0.0742,0.0725,0.0696,0.0664,0.0631,0.0604,0.0575,0.0568,0.0564,0.0582,0.061,0.0633,0.0644,0.0646,0.0631,0.0606,0.0569,0.0519,0.0464,0.0419,0.0392,0.0396,0.0445,0.0552,0.0707,0.0949,0.1288,0.1671,0.2094,0.2593,0.3137,0.3695,0.4323,0.4877,0.5469,0.6089,0.6588,0.7163,0.7668,0.8089,0.8553,0.9099,0.9373,0.9669,0.9901,1.0],"BF":[0.3213,0.3193,0.3162,0.324,0.3377,0.3705,0.4077,0.4661,0.5328,0.5989,0.6479,0.7638,0.8278,0.9024,0.9386,0.9548,1.0,0.9732,0.943,0.9046,0.8364,0.7851,0.7158,0.6324,0.5781,0.5127,0.4482,0.4031,0.363,0.3313,0.3128,0.2954,0.2708,0.2604,0.2481,0.2456,0.2361,0.237,0.2177,0.211,0.201,0.1865,0.1755,0.1565,0.144,0.1201,0.102,0.0858,0.0712,0.0591,0.0533,0.0477,0.0485,0.0519,0.06,0.0726,0.0879,0.1068,0.1248,0.1445,0.1689,0.1945,0.2173,0.2415,0.2632,0.2786,0.2963,0.3154,0.3215,0.324,0.3237,0.3229],"Sem":[0.1585,0.174,0.2008,0.2421,0.2871,0.3526,0.4246,0.5057,0.5975,0.6826,0.7455,0.8404,0.8704,0.9685,0.9739,0.9975,1.0,0.9746,0.9605,0.931,0.905,0.8267,0.77,0.6886,0.634,0.5631,0.479,0.422,0.3616,0.3096,0.2661,0.2283,0.199,0.1786,0.1553,0.1454,0.1356,0.127,0.1182,0.1123,0.1085,0.0994,0.092,0.0857,0.0764,0.0691,0.0627,0.0563,0.0516,0.048,0.0464,0.0457,0.0471,0.0508,0.0558,0.0609,0.071,0.0802,0.0886,0.0998,0.1116,0.1235,0.1342,0.1445,0.1525,0.1564,0.1615,0.1625,0.1632,0.1572,0.1533,0.1584],"TF":[0.7662,0.7593,0.7344,0.7025,0.6539,0.5979,0.5316,0.4721,0.3836,0.3246,0.2725,0.2181,0.1686,0.1346,0.1071,0.0929,0.0889,0.099,0.108,0.1393,0.177,0.1919,0.2473,0.2863,0.3438,0.4037,0.4563,0.5155,0.5836,0.618,0.6934,0.7554,0.8024,0.8671,0.89,0.922,0.9821,1.0,0.9903,0.9856,0.9784,0.9669,0.9463,0.9346,0.8924,0.8617,0.8172,0.7724,0.7282,0.6619,0.5962,0.5487,0.5008,0.4098,0.3834,0.371,0.3674,0.3772,0.3644,0.3788,0.4093,0.4441,0.4799,0.5326,0.5782,0.625,0.6622,0.7105,0.7295,0.7363,0.7691,0.7659]}};
+
+/* moment arms per recorded channel, metres, same convention as the previous
+   page: dL = -rK*dThetaKnee - rH*dThetaHip, and a positive arm means the
+   muscle shortens as that joint extends */
+var CHAN = [
+  ['VL',   'Vastus lateralis',  'BLUE', 0.045, 0.000],
+  ['VM',   'Vastus medialis',   'BLUE', 0.045, 0.000],
+  ['RF',   'Rectus femoris',    'ORG',  0.045, -0.050],
+  ['BF',   'Biceps femoris',    'VIO', -0.035, 0.060],
+  ['Sem',  'Semitendinosus',    'VIO', -0.035, 0.060],
+  ['GMax', 'Gluteus maximus',   'GRN',  0.000, 0.060],
+  ['TF',   'Tensor fasciae latae', 'ACC', 0.000, -0.050]
+];
+var CH = {};
+CHAN.forEach(function (c) { CH[c[0]] = { nm: c[1], col: c[2], rK: c[3], rH: c[4] }; });
+/* optimal fibre length and peak isometric force per muscle group — the usual
+   representative values, on sliders because nobody measured this rider's */
+var CHP = { VL:[0.090,3000], VM:[0.090,2000], RF:[0.090,1200], BF:[0.100,1500],
+            Sem:[0.100,1000], GMax:[0.120,2500], TF:[0.100,600] };
+CHAN.forEach(function (c) { CH[c[0]].L0 = CHP[c[0]][0]; CH[c[0]].F0 = CHP[c[0]][1]; });
+
+/* THE POINT OF THIS PAGE.
+   Page one drives the muscle model with a sine wave and a slider. Page two
+   swaps the sine for a measured length. Here the slider goes too: activation
+   is the measured EMG envelope. Same model, same force–length and
+   force–velocity curves, same work loop — everything feeding it is now data
+   except the force generation itself, which cannot be measured in a person. */
+function measSim(key, S) {
+  var c = CH[key], i;
+  var n = 360, T = 60 / MEAS.cadence_rpm, dt = T / n;
+  var L0 = c.L0, F0 = S.F0, Vx = 10, af = 0.30, penn0 = 0.087;
+  var w = L0 * Math.sin(penn0), V0 = Vx * L0, DEG = Math.PI / 180;
+
+  var kn = cycSmooth(MEAS.knee_deg, n, 8), hp = cycSmooth(MEAS.hip_deg, n, 8);
+  var env = cycSmooth(MEAS.emg[key], n, 8);
+  var mk = 0, mh = 0;
+  for (i = 0; i < n; i++) { mk += kn[i]; mh += hp[i]; }
+  mk /= n; mh /= n;
+
+  var pos = new Float64Array(n);
+  for (i = 0; i < n; i++) pos[i] = (-S.rK * (kn[i] - mk) - S.rH * (hp[i] - mh)) * DEG;
+
+  /* EMG is not activation. Two things sit between them, and leaving either
+     out puts the force in the wrong half of the stroke — with neither, the
+     vasti come out doing NEGATIVE work, which is plainly wrong for cycling.
+       · electromechanical delay: force lags the signal by a few tens of ms
+       · activation dynamics: the same first-order rise and fall as page one
+     The envelope was filtered zero-phase, so none of this lag is in it yet. */
+  var tauA = 0.010, tauD = 0.040;
+  var shift = Math.round(S.emd / dt);
+  var exc = new Float64Array(n);
+  for (i = 0; i < n; i++) exc[i] = Math.max(0, Math.min(1, env[(i - shift + 2 * n) % n] * S.gain));
+  var a = new Float64Array(n), av = 0;
+  for (var rep2 = 0; rep2 < 3; rep2++) {
+    for (i = 0; i < n; i++) {
+      var ex = exc[(i - 1 + n) % n], tau = ex >= av ? tauA : tauD;
+      av = ex + (av - ex) * Math.exp(-dt / tau);
+      if (rep2 === 2) a[i] = av;
+    }
+  }
+  var vel = new Float64Array(n);
+  for (i = 0; i < n; i++) vel[i] = -(pos[(i + 1) % n] - pos[(i - 1 + n) % n]) / (2 * dt);
+
+  var force = new Float64Array(n), lenMM = new Float64Array(n), pct = new Float64Array(n);
+  var wTot = 0, wPos = 0, wNeg = 0;
+  for (i = 0; i < n; i++) {
+    var penn = Math.asin(w / (pos[i] + L0));
+    var Ln = (pos[i] / Math.cos(penn0) + L0) / L0;
+    var v = vel[i] / Math.cos(penn);
+    var V0a = (Vx / 2) + (Vx / 2) * a[i];
+    var vn = v / (V0 * V0a / Vx);
+    var fv;
+    if (v > V0 * V0a) fv = 0;
+    else if (vn > 0) fv = (1 - vn) / (1 + vn / af);
+    else fv = 1.8 - (0.8 * (1 + v / V0)) / (1 - 7.56 * 0.21 * v / V0);
+    force[i] = a[i] * F0 * vmlFL(Ln) * fv;
+    lenMM[i] = pos[i] * 1000;
+    pct[i] = i / n * 100;
+    var dw = force[i] * v * dt;
+    wTot += dw; if (dw > 0) wPos += dw; else wNeg += dw;
+  }
+  return { n: n, pct: pct, lenMM: lenMM, force: force, act: a, vel: vel,
+           workTot: wTot, workPos: wPos, workNeg: wNeg, powerTot: wTot / T, key: key };
+}
+
+D.register('measured', function (node, d) {
+  var port = D.portrait();
+  var u = D.build(node, {});
+  node.classList.add('cyc-wrap', 'meas-wrap');
+  u.ctl.classList.add('g2');
+
+  var N = MEAS.n_phase;
+  var S = { chan: 'VL', gain: 1.0, emd: 0.040, rK: CH.VL.rK, rH: CH.VL.rH, F0: CH.VL.F0 };
+  var SIM = null, ALL = null;
+  function runSim() {
+    /* every muscle, so the loops can be added up against the measured crank
+       work — that sum is the whole argument of the three pages */
+    ALL = {};
+    CHAN.forEach(function (c) {
+      var k = c[0];
+      ALL[k] = measSim(k, { chan: k, gain: S.gain, emd: S.emd,
+                            rK: k === S.chan ? S.rK : CH[k].rK,
+                            rH: k === S.chan ? S.rH : CH[k].rH,
+                            F0: k === S.chan ? S.F0 : CH[k].F0 });
+    });
+    SIM = ALL[S.chan];
+  }
+  var phase = 20, playing = false, last = 0;
+
+  var AXH = port ? 520 : 400;
+  var ax = null, cacheCv = null, cacheAx = null, cache = null, MAP = {};
+  function sizeAxes() {
+    var before = ax;
+    var wpx = port ? 460 : Math.min(1700, Math.max(620, Math.round(u.stage.offsetWidth) || 1180));
+    if (ax && Math.abs(ax.W - wpx) < 2) return;
+    ax = new Axes(u.cv, { w: wpx, h: AXH, padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
+    u.cv.style.maxWidth = 'none'; u.cv.style.width = '100%';
+    if (before) cache = null;
+  }
+
+  /* ---------------- muscle length from the measured joint angles ------- */
+  var DEG = Math.PI / 180;
+  function lengthOf(key) {
+    var c = CH[key], out = new Float64Array(N), i;
+    var mk = 0, mh = 0;
+    for (i = 0; i < N; i++) { mk += MEAS.knee_deg[i]; mh += MEAS.hip_deg[i]; }
+    mk /= N; mh /= N;
+    for (i = 0; i < N; i++) {
+      out[i] = (-c.rK * (MEAS.knee_deg[i] - mk) - c.rH * (MEAS.hip_deg[i] - mh)) * DEG * 1000;
+    }
+    return out;
+  }
+  var LEN = {};
+  CHAN.forEach(function (c) { LEN[c[0]] = lengthOf(c[0]); });
+
+  function at(arr, p) {
+    var uu = p / 100 * N, k = Math.floor(uu), f = uu - k;
+    return arr[k % N] * (1 - f) + arr[(k + 1) % N] * f;
+  }
+  function mAt(name, p) {
+    var a = MEAS.markers[name], uu = p / 100 * N, k = Math.floor(uu), f = uu - k;
+    var A = a[k % N], B = a[(k + 1) % N];
+    return [A[0] * (1 - f) + B[0] * f, A[1] * (1 - f) + B[1] * f];
+  }
+
+  /* ---------------- the leg ---------------- */
+  var BOX = (function () {
+    var lo = [1e9, 1e9], hi = [-1e9, -1e9];
+    Object.keys(MEAS.markers).forEach(function (k) {
+      MEAS.markers[k].forEach(function (p) {
+        lo[0] = Math.min(lo[0], p[0]); hi[0] = Math.max(hi[0], p[0]);
+        lo[1] = Math.min(lo[1], p[1]); hi[1] = Math.max(hi[1], p[1]);
+      });
+    });
+    var r = MEAS.crank_r_m * 1.2;
+    return { lo: [Math.min(lo[0], -r), Math.min(lo[1], -r)],
+             hi: [Math.max(hi[0], r), Math.max(hi[1], r)] };
+  })();
+  function legPanel(x0, y0, w, h) {
+    var c = ax.c, K = C(), j;
+    var lo = BOX.lo, hi = BOX.hi, PT = 36, PB = 20, PL = 8, PR = 8;
+    var s = Math.min((w - PL - PR) / (hi[0] - lo[0]), (h - PT - PB) / (hi[1] - lo[1]));
+    var ox = x0 + PL + ((w - PL - PR) - (hi[0] - lo[0]) * s) / 2 - lo[0] * s;
+    var oy = y0 + PT + ((h - PT - PB) - (hi[1] - lo[1]) * s) + hi[1] * s;
+    function X(v) { return ox + v * s; }
+    function Y(v) { return oy - v * s; }
+    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .4; c.setLineDash([3, 4]); c.lineWidth = 1.2;
+    c.beginPath(); c.arc(X(0), Y(0), MEAS.crank_r_m * s, 0, 7); c.stroke(); c.restore();
+    c.save(); c.fillStyle = K.MUT; c.globalAlpha = .6;
+    c.beginPath(); c.arc(X(0), Y(0), 2.6, 0, 7); c.fill(); c.restore();
+
+    /* torque at this instant drives the colour: red where the leg is being
+       driven backwards by the other one */
+    var tq = at(MEAS.torque_marked, phase);
+    var col = tq >= 0 ? K.BLUE : K.ACC;
+    [['illiaque', 'troch'], ['troch', 'knee'], ['knee', 'ankle'], ['ankle', 'foot']].forEach(function (seg2, i2) {
+      var A = mAt(seg2[0], phase), B = mAt(seg2[1], phase);
+      c.save(); c.strokeStyle = i2 === 0 ? K.INK : col; c.lineWidth = i2 === 0 ? 4 : 5;
+      c.lineCap = 'round'; c.globalAlpha = i2 === 0 ? .85 : 1;
+      c.beginPath(); c.moveTo(X(A[0]), Y(A[1])); c.lineTo(X(B[0]), Y(B[1])); c.stroke(); c.restore();
+    });
+    ['illiaque', 'troch', 'knee', 'ankle'].forEach(function (k) {
+      var P2 = mAt(k, phase);
+      c.save(); c.fillStyle = K.PLATE; c.strokeStyle = K.INK; c.lineWidth = 1.6;
+      c.beginPath(); c.arc(X(P2[0]), Y(P2[1]), 3, 0, 7); c.fill(); c.stroke(); c.restore();
+    });
+    var F = mAt('foot', phase);
+    c.save(); c.fillStyle = col; c.beginPath(); c.arc(X(F[0]), Y(F[1]), 5.5, 0, 7); c.fill(); c.restore();
+    label(c, 'Participant ' + MEAS.sub.slice(1) + ' · ' + fmt(MEAS.cadence_rpm, 0) + ' rpm · ' +
+             fmt(MEAS.power_lode_W, 0) + ' W', x0 + w / 2, y0 + 12,
+          { color: K.INK, size: 12, align: 'center' });
+    label(c, num(tq, 1) + ' N·m at ' + fmt(phase, 0) + ' %', x0 + w / 2, y0 + 26,
+          { color: col, size: 11.5, align: 'center' });
+    label(c, fmt(MEAS.revs, 0) + ' revolutions averaged', x0 + w / 2, y0 + h - 5,
+          { color: K.MUT, size: 10.5, align: 'center' });
+  }
+
+  /* ---------------- measured pedal torque ---------------- */
+  function torquePanel(x0, y0, w, h) {
+    var c = ax.c, K = C(), i;
+    var A = MEAS.torque_marked, B = MEAS.torque_other;
+    var lo = Math.min(0, Math.min.apply(null, A), Math.min.apply(null, B));
+    var hi = Math.max.apply(null, A.concat(B));
+    var pad = (hi - lo) * .10; lo -= pad; hi += pad;
+    var PL = 54, PB = 32, PT = 38, PR = 12;
+    function X(p) { return x0 + PL + p / 100 * (w - PL - PR); }
+    function Y(v) { return y0 + h - PB - (v - lo) / (hi - lo) * (h - PB - PT); }
+
+    /* the shaded area IS the work: torque integrated over crank angle */
+    c.save(); c.fillStyle = 'rgba(74,222,128,0.16)';
+    c.beginPath(); c.moveTo(X(0), Y(0));
+    for (i = 0; i < N; i++) c.lineTo(X(i / N * 100), Y(Math.max(A[i], 0)));
+    c.lineTo(X(100), Y(0)); c.closePath(); c.fill(); c.restore();
+    var neg = A.some(function (v) { return v < 0; });
+    if (neg) {
+      c.save(); c.fillStyle = 'rgba(248,113,113,0.20)';
+      c.beginPath(); c.moveTo(X(0), Y(0));
+      for (i = 0; i < N; i++) c.lineTo(X(i / N * 100), Y(Math.min(A[i], 0)));
+      c.lineTo(X(100), Y(0)); c.closePath(); c.fill(); c.restore();
+    }
+    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(x0 + PL, y0 + PT); c.lineTo(x0 + PL, y0 + h - PB);
+    c.lineTo(x0 + w - PR, y0 + h - PB); c.stroke(); c.restore();
+    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .5; c.setLineDash([3, 4]);
+    c.beginPath(); c.moveTo(x0 + PL, Y(0)); c.lineTo(x0 + w - PR, Y(0)); c.stroke(); c.restore();
+    axisTicks(lo, hi).forEach(function (v) {
+      if (v < lo || v > hi) return;
+      label(c, num(v, 0), x0 + PL - 6, Y(v), { color: K.MUT, size: 10.5, align: 'right' });
+    });
+    [0, 25, 50, 75, 100].forEach(function (p) {
+      label(c, fmt(p, 0), X(p), y0 + h - PB + 11, { color: K.MUT, size: 10, align: 'center' });
+    });
+    [[B, K.MUT, 1.6, .75], [A, K.BLUE, 2.8, 1]].forEach(function (q) {
+      c.save(); c.strokeStyle = q[1]; c.lineWidth = q[2]; c.globalAlpha = q[3]; c.beginPath();
+      for (i = 0; i < N; i++) { var px = X(i / N * 100), py = Y(q[0][i]); i ? c.lineTo(px, py) : c.moveTo(px, py); }
+      c.lineTo(X(100), Y(q[0][0])); c.stroke(); c.restore();
+    });
+    label(c, 'Measured pedal torque (N·m) — shaded area is the work', x0 + PL, y0 + 11,
+          { color: K.INK, size: 12, align: 'left' });
+    var kx = x0 + PL;
+    [['this leg', K.BLUE], ['the other leg', K.MUT]].forEach(function (q) {
+      c.save(); c.fillStyle = q[1]; c.fillRect(kx, y0 + 20, 13, 3); c.restore();
+      label(c, q[0], kx + 17, y0 + 22, { color: q[1], size: 11, align: 'left' });
+      c.save(); c.font = '600 11px ui-sans-serif,system-ui,sans-serif';
+      kx += 17 + c.measureText(q[0]).width + 18; c.restore();
+    });
+    label(c, '% of the crank cycle   ·   0 = top dead centre',
+          x0 + (PL + w) / 2, y0 + h - 4, { color: K.MUT, size: 10.5, align: 'center' });
+    return { X: X, Y: Y, top: y0 + PT, bot: y0 + h - PB, arr: A };
+  }
+
+  /* ---------------- measured EMG against modelled length ---------------- */
+  function emgPanel(x0, y0, w, h) {
+    var c = ax.c, K = C(), i;
+    var key = S.chan, col = K[CH[key].col];
+    var E = MEAS.emg[key], L = LEN[key];
+    var PL = 54, PB = 32, PT = 38, PR = 62;
+    var llo = 1e9, lhi = -1e9;
+    for (i = 0; i < N; i++) { llo = Math.min(llo, L[i]); lhi = Math.max(lhi, L[i]); }
+    var lp = (lhi - llo) * .18 || 1; llo -= lp; lhi += lp;
+    function X(p) { return x0 + PL + p / 100 * (w - PL - PR); }
+    function YE(v) { return y0 + h - PB - v * (h - PB - PT); }
+    function YL(v) { return y0 + h - PB - (v - llo) / (lhi - llo) * (h - PB - PT); }
+
+    c.save(); c.fillStyle = col; c.globalAlpha = .17;
+    c.beginPath(); c.moveTo(X(0), YE(0));
+    for (i = 0; i < N; i++) c.lineTo(X(i / N * 100), YE(E[i]));
+    c.lineTo(X(100), YE(E[0])); c.lineTo(X(100), YE(0)); c.closePath(); c.fill(); c.restore();
+    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(x0 + PL, y0 + PT); c.lineTo(x0 + PL, y0 + h - PB);
+    c.lineTo(x0 + w - PR, y0 + h - PB); c.stroke(); c.restore();
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
+      label(c, fmt(v * 100, 0) + '%', x0 + PL - 6, YE(v), { color: col, size: 10.5, align: 'right' });
+    });
+    axisTicks(llo, lhi).forEach(function (v) {
+      if (v < llo || v > lhi) return;
+      label(c, num(v, 0), x0 + w - PR + 7, YL(v), { color: K.MUT, size: 10.5, align: 'left' });
+    });
+    [0, 25, 50, 75, 100].forEach(function (p) {
+      label(c, fmt(p, 0), X(p), y0 + h - PB + 11, { color: K.MUT, size: 10, align: 'center' });
+    });
+    c.save(); c.strokeStyle = col; c.lineWidth = 2.6; c.beginPath();
+    for (i = 0; i < N; i++) { var px = X(i / N * 100), py = YE(E[i]); i ? c.lineTo(px, py) : c.moveTo(px, py); }
+    c.lineTo(X(100), YE(E[0])); c.stroke(); c.restore();
+    c.save(); c.strokeStyle = K.MUT; c.lineWidth = 2; c.setLineDash([5, 4]); c.beginPath();
+    for (i = 0; i < N; i++) { var qx = X(i / N * 100), qy = YL(L[i]); i ? c.lineTo(qx, qy) : c.moveTo(qx, qy); }
+    c.lineTo(X(100), YL(L[0])); c.stroke(); c.restore();
+
+    label(c, CH[key].nm + ' — measured EMG against modelled length', x0 + PL, y0 + 11,
+          { color: K.INK, size: 12, align: 'left' });
+    label(c, 'EMG, % of its own peak (' + fmt(MEAS.emg_mv[key] * 1000, 0) + ' µV)',
+          x0 + PL, y0 + 23, { color: col, size: 10.5, align: 'left' });
+    label(c, 'length (mm)', x0 + w - 3, y0 + 23, { color: K.MUT, size: 10.5, align: 'right' });
+    label(c, '% of the crank cycle', x0 + (PL + w - PR) / 2, y0 + h - 4,
+          { color: K.MUT, size: 10.5, align: 'center' });
+    return { X: X, YE: YE, YL: YL, top: y0 + PT, bot: y0 + h - PB, E: E, L: L };
+  }
+
+  /* ---------------- the work loop, same picture as page one ------------- */
+  function loopPanel(x0, y0, w, h) {
+    var c = ax.c, K = C(), i, sim = SIM;
+    var col = K[CH[S.chan].col];
+    var PL = 56, PB = 34, PT = 38, PR = 14;
+    var lx = 1e9, hx = -1e9, hy = 0;
+    for (i = 0; i < sim.n; i++) {
+      lx = Math.min(lx, sim.lenMM[i]); hx = Math.max(hx, sim.lenMM[i]);
+      hy = Math.max(hy, sim.force[i]);
+    }
+    var px = (hx - lx) * .12 || 1; lx -= px; hx += px; hy = hy * 1.14 || 1;
+    function X(v) { return x0 + PL + (v - lx) / (hx - lx) * (w - PL - PR); }
+    function Y(v) { return y0 + h - PB - v / hy * (h - PB - PT); }
+    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(x0 + PL, y0 + PT); c.lineTo(x0 + PL, y0 + h - PB);
+    c.lineTo(x0 + w - PR, y0 + h - PB); c.stroke(); c.restore();
+    axisTicks(0, hy).forEach(function (v) {
+      if (v < 0 || v > hy) return;
+      label(c, fmt(v, 0), x0 + PL - 6, Y(v), { color: K.MUT, size: 10.5, align: 'right' });
+    });
+    axisTicks(lx, hx).forEach(function (v) {
+      if (v < lx || v > hx) return;
+      label(c, num(v, 0), X(v), y0 + h - PB + 12, { color: K.MUT, size: 10, align: 'center' });
+    });
+    c.save();
+    c.fillStyle = sim.workTot >= 0 ? 'rgba(74,222,128,0.16)' : 'rgba(248,113,113,0.16)';
+    c.beginPath();
+    for (i = 0; i < sim.n; i++) { var fx = X(sim.lenMM[i]), fy = Y(sim.force[i]); i ? c.lineTo(fx, fy) : c.moveTo(fx, fy); }
+    c.closePath(); c.fill(); c.restore();
+    c.save(); c.strokeStyle = col; c.lineWidth = 2.6; c.beginPath();
+    for (i = 0; i < sim.n; i++) { var qx = X(sim.lenMM[i]), qy = Y(sim.force[i]); i ? c.lineTo(qx, qy) : c.moveTo(qx, qy); }
+    c.closePath(); c.stroke(); c.restore();
+    [0.10, 0.35, 0.60, 0.85].forEach(function (f) {
+      var i0 = Math.round(f * (sim.n - 1)), i1 = Math.min(sim.n - 1, i0 + 6);
+      if (i1 <= i0) return;
+      arrow(c, X(sim.lenMM[i0]), Y(sim.force[i0]), X(sim.lenMM[i1]), Y(sim.force[i1]),
+            { color: col, width: 2.1, head: 9 });
+    });
+    label(c, 'Work loop — force (N) against length', x0 + PL, y0 + 12,
+          { color: K.INK, size: 12.5, align: 'left' });
+    label(c, 'measured length, measured activation, page-one muscle model',
+          x0 + PL, y0 + 25, { color: K.MUT, size: 10.5, align: 'left' });
+    label(c, 'length (mm)   ← shorter    longer →', x0 + (PL + w) / 2, y0 + h - 6,
+          { color: K.MUT, size: 11, align: 'center' });
+    return { X: X, Y: Y };
+  }
+
+  /* ---------------- draw ---------------- */
+  var out = readout(u.ctl);
+  function buildCache() {
+    var real = ax;
+    if (!cacheCv) cacheCv = document.createElement('canvas');
+    if (!cacheAx || cacheAx.W !== real.W || cacheAx.H !== real.H) {
+      cacheAx = new Axes(cacheCv, { w: real.W, h: real.H, padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
+    }
+    ax = cacheAx; ax.clear();
+    var W = real.W, H = real.H;
+    if (port) {
+      MAP.tq = torquePanel(0, H * 0.34, W, H * 0.22);
+      MAP.em = emgPanel(0, H * 0.56, W, H * 0.22);
+      MAP.loop = loopPanel(0, H * 0.78, W, H * 0.22);
+    } else {
+      var fw = W * 0.17, mw = W * 0.41;
+      MAP.tq = torquePanel(fw, H * 0.01, mw, H * 0.49);
+      MAP.em = emgPanel(fw, H * 0.50, mw, H * 0.50);
+      MAP.loop = loopPanel(fw + mw, H * 0.02, W - fw - mw, H * 0.96);
+    }
+    ax = real; cache = cacheCv;
+  }
+  function draw() { sizeAxes(); if (!SIM) runSim(); buildCache(); paint(); }
+  function paint() {
+    if (!ax) { draw(); return; }
+    if (!cache) buildCache();
+    var W = ax.W, H = ax.H, c = ax.c, K = C();
+    ax.clear(); c.drawImage(cache, 0, 0, W, H);
+    if (port) legPanel(0, 0, W, H * 0.34); else legPanel(0, 0, W * 0.17, H);
+    [[MAP.tq, function (m) { return m.Y(at(m.arr, phase)); }],
+     [MAP.em, function (m) { return m.YE(at(m.E, phase)); }]].forEach(function (q) {
+      var m = q[0]; if (!m) return;
+      c.save(); c.strokeStyle = K.ACC; c.lineWidth = 1.5;
+      c.beginPath(); c.moveTo(m.X(phase), m.top); c.lineTo(m.X(phase), m.bot); c.stroke();
+      c.fillStyle = K.ACC; c.beginPath(); c.arc(m.X(phase), q[1](m), 4, 0, 7); c.fill(); c.restore();
+    });
+    if (MAP.em) {
+      c.save(); c.fillStyle = K.MUT;
+      c.beginPath(); c.arc(MAP.em.X(phase), MAP.em.YL(at(MAP.em.L, phase)), 3.4, 0, 7); c.fill(); c.restore();
+    }
+    if (MAP.loop) {
+      var j = Math.round(phase / 100 * SIM.n) % SIM.n;
+      c.save(); c.fillStyle = K.ACC; c.strokeStyle = K.PLATE; c.lineWidth = 2;
+      c.beginPath(); c.arc(MAP.loop.X(SIM.lenMM[j]), MAP.loop.Y(SIM.force[j]), 5.5, 0, 7);
+      c.fill(); c.stroke(); c.restore();
+    }
+  }
+  function readOut() {
+    var key = S.chan, E = MEAS.emg[key], L = LEN[key], i;
+    var pk = 0; for (i = 0; i < N; i++) if (E[i] > E[pk]) pk = i;
+    /* Is it shortening while it is active? One sample at the EMG peak is too
+       noisy to say, so weight the length velocity by activation across the
+       whole burst, and report how much of the burst is spent shortening. */
+    var wsum = 0, shortSum = 0;
+    for (i = 0; i < N; i++) {
+      var v = L[(i + 1) % N] - L[(i - 1 + N) % N];
+      wsum += E[i];
+      if (v < 0) shortSum += E[i];
+    }
+    var pctShort = wsum > 0 ? shortSum / wsum * 100 : 0;
+    var sum = 0;
+    CHAN.forEach(function (c) { sum += ALL[c[0]].workTot; });
+    out.innerHTML = 'This leg puts <b>' + num(MEAS.work_marked_J, 0) +
+      ' J</b> into the cranks every revolution — measured. The seven muscle loops add up to <b>' +
+      num(sum, 0) + ' J</b>, of which ' + CH[key].nm.toLowerCase() + "'s is <b>" +
+      num(SIM.workTot, 1) + ' J</b>.' +
+      '<span style="opacity:.72">  ·  it peaks at <b>' + fmt(pk / N * 100, 0) +
+      ' %</b> of the stroke and spends <b>' + fmt(pctShort, 0) +
+      ' %</b> of its activity shortening<i> — same model as page one, driven by ' +
+      'measured length and measured activation instead of sliders</i></span>';
+  }
+
+  /* ---------------- controls ---------------- */
+  keepOut(chips(u.ctl, CHAN.map(function (c) { return [c[0], c[0]]; }), 'VL', function (k) {
+    S.chan = k;
+    S.rK = CH[k].rK; S.rH = CH[k].rH; S.F0 = CH[k].F0;
+    sF0.quiet(S.F0); sRK.quiet(S.rK * 1000); sRH.quiet(S.rH * 1000);
+    runSim(); cache = null; readOut(); draw();
+  }));
+
+  var asm = el('div', 'cyc-asm');
+  asm.style.display = 'none';
+  var sGain = slider(asm, 'Activation gain', 20, 200, 1, S.gain * 100,
+    function (v) { return fmt(v, 0) + '%'; },
+    function (v) { S.gain = v / 100; runSim(); cache = null; readOut(); draw(); });
+  var sEmd = slider(asm, 'Electromechanical delay', 0, 120, 1, S.emd * 1000,
+    function (v) { return fmt(v, 0) + ' ms'; },
+    function (v) { S.emd = v / 1000; runSim(); cache = null; readOut(); draw(); });
+  var sF0 = slider(asm, 'Peak force F₀', 200, 6000, 10, S.F0,
+    function (v) { return fmt(v, 0) + ' N'; },
+    function (v) { S.F0 = v; runSim(); cache = null; readOut(); draw(); });
+  var sRK = slider(asm, 'Knee moment arm', -60, 60, 1, S.rK * 1000,
+    function (v) { return num(v, 0) + ' mm'; },
+    function (v) { S.rK = v / 1000; runSim(); cache = null; readOut(); draw(); });
+  var sRH = slider(asm, 'Hip moment arm', -80, 80, 1, S.rH * 1000,
+    function (v) { return num(v, 0) + ' mm'; },
+    function (v) { S.rH = v / 1000; runSim(); cache = null; readOut(); draw(); });
+  u.ctl.appendChild(asm);
+
+  var row = ctlRow(u.ctl);
+  var asmBtn = el('button', 'icalc-chip', 'Model assumptions');
+  asmBtn.type = 'button';
+  asmBtn.setAttribute('data-unsafe', '1');     /* fit.js must not press this */
+  asmBtn.addEventListener('click', function () {
+    var open = asm.style.display === 'none';
+    asm.style.display = open ? '' : 'none';
+    asmBtn.classList.toggle('on', open);
+    setTimeout(draw, 0);
+  });
+  row.appendChild(asmBtn);
+  var play = playBtn(row, '▶ Play');
+  play.setAttribute('data-unsafe', '1');
+  function setPlay(on) {
+    playing = on; play.textContent = playing ? '❚❚ Pause' : '▶ Play';
+    if (playing) { last = 0; requestAnimationFrame(tick); }
+  }
+  play.addEventListener('click', function () { setPlay(!playing); });
+  document.addEventListener('visibilitychange', function () { if (document.hidden && playing) setPlay(false); });
+
+  u.cv.setAttribute('data-prevent-swipe', '');
+  u.cv.style.touchAction = 'none';
+  var down = false;
+  function scrub(e) {
+    var r = u.cv.getBoundingClientRect();
+    var fx = (e.clientX - r.left) / r.width * ax.W;
+    var fw = port ? 0 : ax.W * 0.17;
+    if (!port && fx < fw) return;
+    var m = MAP.tq; if (!m) return;
+    var span = (m.X(100) - m.X(0));
+    phase = Math.max(0, Math.min(99.99, (fx - m.X(0)) / span * 100));
+    if (phase < 0 || phase > 100) return;
+    setPlay(false); paint();
+  }
+  u.cv.addEventListener('pointerdown', function (e) { down = true; scrub(e); e.preventDefault(); });
+  u.cv.addEventListener('pointermove', function (e) { if (down) { scrub(e); e.preventDefault(); } });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) {
+    u.cv.addEventListener(ev, function () { down = false; });
+  });
+
+  function tick(ts) {
+    if (!playing) return;
+    if (last) phase = (phase + (ts - last) / 1000 / (60 / MEAS.cadence_rpm) * 100) % 100;
+    last = ts; paint(); requestAnimationFrame(tick);
+  }
+
+  runSim(); readOut(); draw();
+  [80, 260, 620, 1200].forEach(function (ms) { setTimeout(draw, ms); });
+  window.addEventListener('resize', function () { ax = null; cache = null; setTimeout(draw, 60); });
   window.addEventListener('ephe341-theme', function () { cache = null; draw(); });
   window.addEventListener('ephe341-layout', function () { setTimeout(draw, 160); });
 });
