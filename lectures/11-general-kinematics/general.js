@@ -293,10 +293,16 @@ D.register('vsum', function (node, d) {
        and with half the canvas empty at others. */
     var PX = port ? 140 : 180, VS = port ? 36 : 48;
     function layout(PX, VS) {
-      var a = [Math.cos(th) * S.r * PX, -Math.sin(th) * S.r * PX];        /* hand */
+      /* A sits up and to the LEFT of B. V_A/B is the velocity of A ABOUT B,
+         so it is tangential — at right angles to the segment — and ωr drawn
+         at 90° − θ above the horizontal is perpendicular only to a segment
+         lying at θ on the other side of the vertical. With A up and to the
+         right the two were 10° apart at θ = 50° and the right-angle mark was
+         a lie. */
+      var a = [-Math.cos(th) * S.r * PX, -Math.sin(th) * S.r * PX];       /* hand */
       var p1 = [a[0] + tvx * VS, a[1] - tvy * VS];
       var p2 = [p1[0] + S.vb * VS, p1[1]];
-      var xs = [0, a[0], p1[0], p2[0], 110], ys = [0, a[1], p1[1], p2[1], 0];
+      var xs = [0, a[0], p1[0], p2[0], -110], ys = [0, a[1], p1[1], p2[1], 0];
       return { a: a, p1: p1, p2: p2,
                x0: Math.min.apply(null, xs), x1: Math.max.apply(null, xs),
                y0: Math.min.apply(null, ys), y1: Math.max.apply(null, ys) };
@@ -320,14 +326,14 @@ D.register('vsum', function (node, d) {
     /* segment */
     c.save(); c.strokeStyle = K.INK; c.lineWidth = 4.5; c.lineCap = 'round';
     c.beginPath(); c.moveTo(bx, by); c.lineTo(axp, ayp); c.stroke(); c.restore();
-    arcBetween(c, bx, by, 34, -th, 0, { color: K.MUT });
-    label(c, 'θ = ' + fmt(S.th, 0) + '°', bx + 52, by - 15, { color: K.MUT, size: 12 });
+    arcBetween(c, bx, by, 34, Math.PI, Math.PI + th, { color: K.MUT });
+    label(c, 'θ = ' + fmt(S.th, 0) + '°', bx - 56, by - 15, { color: K.MUT, size: 12 });
     c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .55; c.setLineDash([4, 4]); c.lineWidth = 1.3;
-    c.beginPath(); c.moveTo(bx, by); c.lineTo(bx + 110, by); c.stroke(); c.restore();
+    c.beginPath(); c.moveTo(bx, by); c.lineTo(bx - 110, by); c.stroke(); c.restore();
     c.save(); c.fillStyle = K.PLATE; c.strokeStyle = K.INK; c.lineWidth = 2;
     c.beginPath(); c.arc(bx, by, 6, 0, 7); c.fill(); c.stroke(); c.restore();
-    label(c, 'B', bx - 4, by + 20, { color: K.INK, size: 12.5, align: 'right' });
-    label(c, 'A', axp + 2, ayp - 16, { color: K.INK, size: 12.5, align: 'left' });
+    label(c, 'B', bx + 12, by + 20, { color: K.INK, size: 12.5, align: 'left' });
+    label(c, 'A', axp - 14, ayp - 2, { color: K.INK, size: 12.5, align: 'right' });
 
     /* tip-to-tail at the hand: tangential first, then the joint's own velocity */
     var p1x = bx + L.p1[0], p1y = by + L.p1[1];
@@ -335,8 +341,8 @@ D.register('vsum', function (node, d) {
     arrow(c, axp, ayp, p1x, p1y, { color: K.BLUE, width: 3, head: 12 });
     arrow(c, p1x, p1y, p2x, p2y, { color: K.GRN, width: 3, head: 12 });
     arrow(c, axp, ayp, p2x, p2y, { color: K.ACC, width: 3.4, head: 13 });
-    /* the right angle between segment and tangential velocity */
-    sqAngle(c, axp, ayp, Math.cos(th), -Math.sin(th), Math.sin(th), Math.cos(th), 11, K.BLUE);
+    /* the right angle between the segment (A → B, down-right) and V_A/B */
+    sqAngle(c, axp, ayp, Math.cos(th), Math.sin(th), Math.sin(th), -Math.cos(th), 11, K.BLUE);
 
     label(c, 'V', (axp + p1x) / 2 - 10, (ayp + p1y) / 2 - 13, { color: K.BLUE, size: 12.5 });
     label(c, 'A/B = ' + fmt(S.w * S.r, 2), (axp + p1x) / 2 + 26, (ayp + p1y) / 2 - 11,
@@ -613,13 +619,20 @@ D.register('zpat', function (node, d) {
     var th = S.th * DEG, t = S.w * S.r;
     var right = Math.PI / 2 - th;                 /* the correct angle */
     var PX = port ? 190 : 250, VS = port ? 44 : 56;
+    /* The hand is up and to the LEFT of the shoulder, as in his diagram.
+       That is not decoration: V_H/S is the velocity of the hand ABOUT the
+       shoulder, so it is tangential — perpendicular to the segment — and ωr
+       at 90° − θ above the horizontal is only perpendicular to a segment
+       lying at θ on the OTHER side of the vertical. Drawing the segment up
+       and to the right puts the two within 10° of each other at θ = 50° and
+       makes nonsense of the right-angle mark. */
     var sx = W * 0.30, sy = H * 0.76;             /* shoulder */
-    var hx = sx + Math.cos(th) * S.r * PX, hy = sy - Math.sin(th) * S.r * PX;
+    var hx = sx - Math.cos(th) * S.r * PX, hy = sy - Math.sin(th) * S.r * PX;
 
     /* dotted horizontals through shoulder and hand — his z-pattern */
     c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .6; c.setLineDash([5, 4]); c.lineWidth = 1.3;
-    c.beginPath(); c.moveTo(sx - 70, sy); c.lineTo(sx + 150, sy); c.stroke();
-    c.beginPath(); c.moveTo(hx - 110, hy); c.lineTo(hx + 150, hy); c.stroke();
+    c.beginPath(); c.moveTo(sx - 170, sy); c.lineTo(sx + 60, sy); c.stroke();
+    c.beginPath(); c.moveTo(hx - 60, hy); c.lineTo(hx + 150, hy); c.stroke();
     c.restore();
 
     /* segment */
@@ -627,21 +640,24 @@ D.register('zpat', function (node, d) {
     c.beginPath(); c.moveTo(sx, sy); c.lineTo(hx, hy); c.stroke(); c.restore();
     c.save(); c.fillStyle = K.PLATE; c.strokeStyle = K.INK; c.lineWidth = 2;
     c.beginPath(); c.arc(sx, sy, 6, 0, 7); c.fill(); c.stroke(); c.restore();
-    label(c, 'Shoulder', sx + 4, sy + 22, { color: K.INK, size: 12 });
-    label(c, 'Hand', hx - 44, hy - 6, { color: K.INK, size: 12, align: 'right' });
+    label(c, 'Shoulder', sx + 14, sy + 22, { color: K.INK, size: 12, align: 'left' });
+    label(c, 'Hand', hx - 16, hy - 10, { color: K.INK, size: 12, align: 'right' });
 
-    /* θ at the shoulder, and the alternate θ at the hand */
-    arcBetween(c, sx, sy, 40, -th, 0, { color: K.VIO, width: 2 });
-    label(c, 'θ = ' + fmt(S.th, 0) + '°', sx + 62, sy - 17, { color: K.VIO, size: 12 });
-    arcBetween(c, hx, hy, 34, Math.PI - th, Math.PI, { color: K.VIO, width: 2, dash: [3, 3] });
-    label(c, 'θ = ' + fmt(S.th, 0) + '°', hx - 54, hy + 18, { color: K.VIO, size: 11.5 });
+    /* θ at the shoulder, between the leftward horizontal and the segment,
+       and the same θ repeated under the hand — the z-pattern */
+    arcBetween(c, sx, sy, 40, Math.PI, Math.PI + th, { color: K.VIO, width: 2 });
+    label(c, 'θ = ' + fmt(S.th, 0) + '°', sx - 72, sy - 17, { color: K.VIO, size: 12 });
+    arcBetween(c, hx, hy, 34, 0, th, { color: K.VIO, width: 2, dash: [3, 3] });
+    label(c, 'θ = ' + fmt(S.th, 0) + '°', hx + 66, hy + 20, { color: K.VIO, size: 11.5 });
 
-    /* the tangential velocity, perpendicular to the segment */
+    /* the tangential velocity: perpendicular to the segment, by construction */
     var tvx = Math.sin(th) * t, tvy = Math.cos(th) * t;
     arrow(c, hx, hy, hx + tvx * VS, hy - tvy * VS, { color: K.BLUE, width: 3.2, head: 12 });
-    sqAngle(c, hx, hy, Math.cos(th), -Math.sin(th), Math.sin(th), Math.cos(th), 12, K.BLUE);
+    /* the right angle sits between the segment (hand → shoulder, down-right)
+       and V_H/S (up-right) */
+    sqAngle(c, hx, hy, Math.cos(th), Math.sin(th), Math.sin(th), -Math.cos(th), 12, K.BLUE);
     arcBetween(c, hx, hy, 52, -right, 0, { color: K.BLUE, width: 2 });
-    label(c, fmt(90 - S.th, 0) + '°', hx + 72, hy - 16, { color: K.BLUE, size: 13 });
+    label(c, fmt(90 - S.th, 0) + '°', hx + 74, hy - 18, { color: K.BLUE, size: 13 });
     label(c, 'V H/S', hx + tvx * VS + 8, hy - tvy * VS - 10,
           { color: K.BLUE, size: 12, align: 'left', plate: true });
 
@@ -704,24 +720,26 @@ D.register('pitcher', function (node, d) {
   function figure(x0, y0, w, h) {
     var c = ax.c, K = C(), v = vals(), th = S.th * DEG;
     var PX = Math.min((w - 150) / 0.95, (h - 120) / 0.95);
-    var sx = x0 + w * 0.34, sy = y0 + h * 0.74;
-    var hx = sx + Math.cos(th) * S.r * PX, hy = sy - Math.sin(th) * S.r * PX;
+    /* hand up and to the LEFT of the shoulder, as in his diagram — see the
+       note in zpat: it is what makes V_H/S perpendicular to r. */
+    var sx = x0 + w * 0.56, sy = y0 + h * 0.74;
+    var hx = sx - Math.cos(th) * S.r * PX, hy = sy - Math.sin(th) * S.r * PX;
     var VS = Math.min((w - 120) / Math.max(v.m, 1) * 0.42, 60);
 
     c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .55; c.setLineDash([5, 4]); c.lineWidth = 1.3;
-    c.beginPath(); c.moveTo(sx - 60, sy); c.lineTo(sx + 130, sy); c.stroke();
-    c.beginPath(); c.moveTo(hx - 80, hy); c.lineTo(hx + 120, hy); c.stroke();
+    c.beginPath(); c.moveTo(sx - 130, sy); c.lineTo(sx + 60, sy); c.stroke();
+    c.beginPath(); c.moveTo(hx - 60, hy); c.lineTo(hx + 130, hy); c.stroke();
     c.restore();
     c.save(); c.strokeStyle = K.INK; c.lineWidth = 4.5; c.lineCap = 'round';
     c.beginPath(); c.moveTo(sx, sy); c.lineTo(hx, hy); c.stroke(); c.restore();
     c.save(); c.fillStyle = K.PLATE; c.strokeStyle = K.INK; c.lineWidth = 2;
     c.beginPath(); c.arc(sx, sy, 6, 0, 7); c.fill(); c.stroke(); c.restore();
-    label(c, 'Shoulder', sx - 10, sy + 22, { color: K.INK, size: 12, align: 'right' });
-    label(c, 'Hand', hx - 40, hy - 8, { color: K.INK, size: 12, align: 'right' });
-    arcBetween(c, sx, sy, 38, -th, 0, { color: K.MUT });
-    label(c, 'θ=' + fmt(S.th, 0) + '°', sx + 58, sy - 16, { color: K.MUT, size: 11.5 });
+    label(c, 'Shoulder', sx + 14, sy + 22, { color: K.INK, size: 12, align: 'left' });
+    label(c, 'Hand', hx - 14, hy - 10, { color: K.INK, size: 12, align: 'right' });
+    arcBetween(c, sx, sy, 38, Math.PI, Math.PI + th, { color: K.MUT });
+    label(c, 'θ=' + fmt(S.th, 0) + '°', sx - 62, sy - 16, { color: K.MUT, size: 11.5 });
     label(c, 'r = ' + fmt(S.r, 2) + ' m',
-          (sx + hx) / 2 - 26, (sy + hy) / 2 - 10, { color: K.MUT, size: 11, plate: true });
+          (sx + hx) / 2 - 30, (sy + hy) / 2 - 10, { color: K.MUT, size: 11, plate: true });
 
     /* the shoulder's own velocity, drawn at the shoulder */
     arrow(c, sx, sy, sx + S.vs * VS, sy, { color: K.GRN, width: 3, head: 11 });
@@ -734,7 +752,7 @@ D.register('pitcher', function (node, d) {
     arrow(c, hx, hy, p1x, p1y, { color: K.BLUE, width: 3, head: 11 });
     arrow(c, p1x, p1y, p2x, p2y, { color: K.GRN, width: 3, head: 11 });
     arrow(c, hx, hy, p2x, p2y, { color: K.ACC, width: 3.4, head: 13 });
-    sqAngle(c, hx, hy, Math.cos(th), -Math.sin(th), Math.sin(th), Math.cos(th), 11, K.BLUE);
+    sqAngle(c, hx, hy, Math.cos(th), Math.sin(th), Math.sin(th), -Math.cos(th), 11, K.BLUE);
     label(c, 'V H/S = ' + fmt(v.t, 2), (hx + p1x) / 2 - 6, (hy + p1y) / 2 - 14,
           { color: K.BLUE, size: 11.5, plate: true });
     label(c, 'V H/G', (hx + p2x) / 2 + 14, (hy + p2y) / 2 + 18,
