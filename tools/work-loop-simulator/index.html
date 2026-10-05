@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20261008">
+<link rel="stylesheet" href="theme.css?v=20261009">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -38,17 +38,23 @@
       <img class="vml-logo" src="icons/utah.svg" alt="University of Utah"
            onerror="if(this.dataset.try){this.remove();}else{this.dataset.try=1;this.src='icons/utah.png';}">
       <span class="vml-inst">University of Utah</span>
+      <!-- page switcher: the deck tool bar is off, so this is how the second
+           page is found. Cloned onto every slide, wired by class not id. -->
+      <nav class="vml-pages" aria-label="Pages">
+        <button class="vml-pg" type="button" data-pg="0">Model</button>
+        <button class="vml-pg" type="button" data-pg="1">Real cyclist</button>
+      </nav>
     </div>
     <h1>Virtual Muscle Lab</h1>
     <div class="vml-banner-r">
       <!-- reversed wordmark: the banner is U of U red in both themes -->
       <img class="vml-logo" src="icons/uvic-dark.png" alt="University of Victoria">
-      <a class="vml-bbtn vml-ico" id="vml-home" href="../../index.html"
+      <a class="vml-bbtn vml-ico vml-home" href="../../index.html"
          title="Back to the course page" aria-label="Back to the course page"><svg
          viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5L12 3.5l8.5 7"/><path
          d="M5.6 9v10.5h12.8V9"/><path d="M9.8 19.5v-6h4.4v6"/></svg></a>
-      <button class="vml-bbtn" id="vml-theme" type="button" title="Light or dark">Light</button>
-      <button class="vml-bbtn" id="vml-info" type="button" aria-haspopup="dialog">&#9432; About</button>
+      <button class="vml-bbtn vml-theme" type="button" title="Light or dark">Light</button>
+      <button class="vml-bbtn vml-info" type="button" aria-haspopup="dialog">&#9432; About</button>
     </div>
   </div>
   <div class="iplot wide" data-widget="vml"></div>
@@ -57,6 +63,21 @@
 Read the table from the bottom up. Force–velocity alone would give about 33 J a cycle. Add force–length and it drops. Add the real switching times instead and it drops further. Both together is what the muscle actually does. At 2 Hz the timing costs about three times what the length–tension relation costs, which is the opposite of what most people guess.
 
 Then take the cycle frequency to 4 Hz and read it again — the real muscle goes negative while the theoretical one is still making work.</aside>
+</section>
+
+<section class="vml-page" data-pg="1">
+  <div class="iplot wide" data-widget="cyclist"></div>
+  <aside class="notes">The same muscle model, driven by a real person instead of a sine wave.
+
+The kinematics are measured: 31 markers on an Optotrak Certus, one rider on a treadmill at 20 km/h in gear 3, 82 rpm. Eighty-two pedal revolutions averaged into one stroke. The knee swings 72 to 131 degrees and the hip 83 to 119.
+
+What is NOT measured is force — this dataset has no pedal forces and no EMG — so the force is the page-one model driven by the measured length. Say that out loud; it is the point, not a disclaimer.
+
+Start on Vasti. One joint, so the length trace is just the knee angle upside down: longest at top dead centre, shortest at the bottom. About 47 mm of excursion.
+
+Then switch to Hamstrings and watch the excursion collapse to about 24 mm. Nothing got smaller — the hip and the knee are both extending through the down-stroke, and for a two-joint muscle those cancel. That is why a biarticular muscle can make force through a big joint excursion while barely changing length, which is the cheapest way to make force there is.
+
+Then move Switch on and Switch off and watch the loop open, close and flip over.</aside>
 </section>
 
 </div>
@@ -82,8 +103,8 @@ Then take the cycle frequency to 4 Hz and read it again — the real muscle goes
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20261008"></script>
-<script src="mobile.js?v=20261008"></script>
+<script src="annotate.js?v=20261009"></script>
+<script src="mobile.js?v=20261009"></script>
 <script>
 Reveal.initialize(Object.assign({
   width: 1280,
@@ -102,52 +123,92 @@ Reveal.initialize(Object.assign({
 }, window.DECK_GEOM || {}));
 </script>
 <script>
-/* The page has no deck tool bar, so the two things worth keeping from it —
-   the theme switch and an about box — live in the banner instead. */
+/* The page has no deck tool bar, so the three things worth keeping from it —
+   the way home, the theme switch and an about box — live in the banner, along
+   with the page switcher. The banner is authored once and cloned onto every
+   slide, so everything here is wired by CLASS and by delegation, never by id. */
 (function () {
   var root = document.documentElement;
+  /* Two traps here. Reveal copies each section's classes onto a
+     .slide-background stub, so plain '.vml-page' matches twice as many
+     elements as there are slides — hence section.vml-page, since the stub is
+     a div. And on a narrow screen reveal switches to its scroll view, which
+     wraps every section in .scroll-page-content, so the sections are no
+     longer children of .slides and a '>' selector finds nothing at all. */
+  var pages = [].slice.call(document.querySelectorAll('.reveal section.vml-page'));
+  if (!pages.length) return;
+  var banner = pages[0].querySelector('.vml-banner');
 
-  /* the page has no deck tool bar, so the way back to the course index lives
-     in the banner. data-home stays the one place the path is written. */
+  /* one banner per slide, so it does not scroll away between pages */
+  for (var i = 1; i < pages.length; i++) {
+    pages[i].insertBefore(banner.cloneNode(true), pages[i].firstChild);
+  }
+  function all(sel) { return [].slice.call(document.querySelectorAll(sel)); }
+
+  /* data-home stays the one place the course-page path is written */
   var home = document.body.getAttribute('data-home');
-  var hbtn = document.getElementById('vml-home');
-  if (hbtn) { if (home) hbtn.setAttribute('href', home); else hbtn.remove(); }
-
-  var tbtn = document.getElementById('vml-theme');
-  function label() { tbtn.textContent = root.getAttribute('data-theme') === 'light' ? 'Dark' : 'Light'; }
-  label();
-  tbtn.addEventListener('click', function () {
-    var t = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    root.setAttribute('data-theme', t);
-    try { localStorage.setItem('ephe341-theme', t); } catch (e) {}
-    label();
-    window.dispatchEvent(new Event('ephe341-theme'));   /* the figure repaints itself */
+  all('.vml-home').forEach(function (a) {
+    if (home) a.setAttribute('href', home); else a.remove();
   });
-  /* if the Utah mark is there, the typographic wordmark steps aside — the
-     mark carries its own. The image may already have finished loading by the
-     time this runs, in which case 'load' never fires again, so check too. */
-  var ulogo = document.querySelector('.vml-banner-l .vml-logo');
-  function markLoaded() {
-    var w = document.querySelector('.vml-banner-l .vml-inst');
-    if (w) w.style.display = 'none';
+
+  function label() {
+    var t = root.getAttribute('data-theme') === 'light' ? 'Dark' : 'Light';
+    all('.vml-theme').forEach(function (b) { b.textContent = t; });
   }
-  if (ulogo) {
-    ulogo.addEventListener('load', markLoaded);
-    if (ulogo.complete && ulogo.naturalWidth) markLoaded();
-  }
+  label();
+
+  /* if the Utah mark is there, the typographic wordmark steps aside — the mark
+     carries its own. The image may already have finished loading by the time
+     this runs, in which case 'load' never fires again, so check as well. */
+  function markLoaded() { all('.vml-banner-l .vml-inst').forEach(function (w) { w.style.display = 'none'; }); }
+  all('.vml-banner-l .vml-logo').forEach(function (img) {
+    img.addEventListener('load', markLoaded);
+    if (img.complete && img.naturalWidth) markLoaded();
+  });
+
   var box = document.getElementById('vml-about');
   function show(on) { box.classList.toggle('show', on); }
-  document.getElementById('vml-info').addEventListener('click', function () { show(true); });
-  document.getElementById('vml-about-x').addEventListener('click', function () { show(false); });
   box.addEventListener('click', function (e) { if (e.target === box) show(false); });
+  document.getElementById('vml-about-x').addEventListener('click', function () { show(false); });
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && box.classList.contains('show')) show(false);
   });
+
+  /* one listener for every copy of every banner button */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('.vml-theme,.vml-info,.vml-pg') : null;
+    if (!t) return;
+    if (t.classList.contains('vml-info')) { show(true); return; }
+    if (t.classList.contains('vml-pg')) {
+      var n = +t.getAttribute('data-pg');
+      if (window.Reveal) Reveal.slide(n);
+      /* in the scroll view a slide index is a scroll position */
+      if (pages[n] && window.Reveal && Reveal.isScrollView && Reveal.isScrollView()) {
+        pages[n].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
+    var th = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', th);
+    try { localStorage.setItem('ephe341-theme', th); } catch (err) {}
+    label();
+    window.dispatchEvent(new Event('ephe341-theme'));   /* the figures repaint themselves */
+  });
+
+  function paintPages() {
+    var i = (window.Reveal && Reveal.getIndices) ? (Reveal.getIndices().h || 0) : 0;
+    if (i >= pages.length) i = pages.length - 1;
+    all('.vml-pg').forEach(function (b) {
+      b.classList.toggle('on', +b.getAttribute('data-pg') === i);
+    });
+  }
+  paintPages();
+  if (window.Reveal) Reveal.on('slidechanged', paintPages);
 })();
 </script>
-<script src="deck-core.js?v=20261008"></script>
-<script src="vml.js?v=20261008"></script>
-<script src="deck-tools.js?v=20261008"></script>
-<script src="fit.js?v=20261008"></script>
+<script src="deck-core.js?v=20261009"></script>
+<script src="vml.js?v=20261009"></script>
+<script src="deck-tools.js?v=20261009"></script>
+<script src="fit.js?v=20261009"></script>
 </body>
 </html>

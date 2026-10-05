@@ -1019,6 +1019,32 @@ html[data-theme="light"] .vml-tabs .iseg-b.on{ color:var(--brand); }
   width:12px; height:12px; border-width:1.5px; }
 .vml-wrap.collapsed > .ictls{ flex-basis:2.9em; }
 
+/* page switcher in the banner — text tabs, same idea as the widget's own */
+.vml-pages{ display:flex; gap:.05em; margin-left:.5em; }
+.vml-pg{
+  font:inherit; font-size:.53em; line-height:1; cursor:pointer; white-space:nowrap;
+  color:rgba(255,255,255,.72); background:none; border:0; border-radius:0;
+  border-bottom:2px solid transparent; padding:.32em .5em;
+}
+.vml-pg:hover{ color:#fff; }
+.vml-pg.on{ color:#fff; font-weight:700; border-bottom-color:#fff; }
+/* the phone hides .vml-banner-l with the logos, switcher and all: reveal is
+   in its scroll view there, so scrolling is already how you change page */
+
+/* the cyclist page: no sidebar, but the same lighter controls as the model
+   page so the two read as one app */
+.cyc-wrap .ictls{ font-size:.72em; }
+.cyc-wrap .ictls.g2{ gap:.12em 1.6em; }
+.cyc-wrap .ictls.g2 .ictl{ grid-template-columns:8.4em 1fr 4.4em; gap:.55em; }
+.cyc-wrap .ictl-l{ font-weight:450; }
+.cyc-wrap .ictl input[type=range]{ height:3px; border-radius:3px; }
+.cyc-wrap .ictl input[type=range]::-webkit-slider-thumb{
+  width:12px; height:12px; border-width:1.5px; box-shadow:0 1px 3px rgba(0,0,0,.28); }
+.cyc-wrap .ictl input[type=range]::-moz-range-thumb{ width:12px; height:12px; border-width:1.5px; }
+.cyc-wrap .istage canvas{ width:100%; }
+html[data-portrait] .cyc-wrap .ictls{ font-size:.86em; }
+html[data-portrait] .cyc-wrap .ictls.g2 .ictl{ grid-template-columns:6.6em 1fr 4.2em; }
+
 /* a phone has no room for a sidebar: stack it back up */
 html[data-portrait] .iwrap.vml-wrap{ flex-direction:column; }
 html[data-portrait] .vml-wrap > .ictls{
