@@ -208,6 +208,23 @@ window.EPHE341_LECTURES = [
            ['the measured wheelchair trace, in four units', 'w-wcdata'],
            ['a force–velocity profile fitted to that sprint', 'w-wcfv']] },
 
+  { n: '11', title: 'General kinematics',
+    path: 'lectures/11-general-kinematics',
+    blurb: 'What happens to angular kinematics once the joint you are rotating about ' +
+           'is itself on the move: V A/G = V A/B + V B/G, resolved into components, ' +
+           'applied to a bicycle wheel and a pitcher\u2019s arm, then chained down a ' +
+           'two-segment limb and checked against one measured walking stride.',
+    slides: 33, widgets: 8, updated: '2026-10-05',
+    handout: 'handout.pdf',
+    live: [['the same segment, seen from the joint and from the ground', 'w-frames'],
+           ['adding the two vectors, tip to tail', 'w-vsum'],
+           ['breaking each vector into x and y', 'w-comps'],
+           ['every point on a rolling wheel at once', 'w-wheel'],
+           ['why the angle is 90\u00b0 \u2212 \u03b8, not \u03b8', 'w-zpat'],
+           ['the pitcher\u2019s arm, the whole problem live', 'w-pitcher'],
+           ['two segments, one chain', 'w-chain'],
+           ['one real stride, built from the chain', 'w-gait']] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
@@ -216,7 +233,6 @@ window.EPHE341_LECTURES = [
      by one so the converted decks stay sequential \u2014 these numbers no longer
      match the numbers in the source .pptx filenames. Change them here if you
      would rather they did. */
-  { n: '11', title: 'General kinematics' },
   { n: '13', title: 'Virtual Muscle Lab' },
   { n: '14', title: 'Electromyography' },
   { n: '15', title: 'Angular kinetics 1' },

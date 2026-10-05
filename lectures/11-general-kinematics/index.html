@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fdfdfc">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — General Kinematics</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css?v=20261005">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'light';
+  try { t = localStorage.getItem('ephe341-theme') || 'light'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>General kinematics</h1>
+    <div class="rule"></div>
+    <p class="sub">McGinnis Chpt 7 · angular and linear motion together</p>
+  </div>
+</section>
+
+
+<!-- 2 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">By the end of this lecture you should be able to…</p>
+  <ul class="small two">
+    <li><strong>Explain</strong> why the velocity of a segment depends on the frame of reference you measure it from</li>
+    <li><strong>Write</strong> the general kinematics equation V<sub>A/G</sub> = V<sub>A/B</sub> + V<sub>B/G</sub></li>
+    <li><strong>Calculate</strong> the tangential velocity of a segment as V<sub>A/B</sub> = ωr</li>
+    <li><strong>Resolve</strong> each velocity into x and y components and add them component by component</li>
+    <li><strong>Solve</strong> for the magnitude and direction of the resultant velocity</li>
+    <li><strong>Extend</strong> the equation along a chain of joints, and use it on a real stride</li>
+  </ul>
+  <aside class="notes">General kinematics is where the last two lectures meet. Linear kinematics gave us velocities of points. Angular kinematics gave us ωr. This lecture does the one thing neither could do on its own: the velocity of a point on a segment that is rotating about a joint which is itself moving.
+
+That is every segment in the human body. The hand is rotating about a shoulder that is translating; the foot is rotating about a knee that is rotating about a hip that is translating. Nothing in a walking person rotates about a fixed axis.
+
+The whole lecture is one equation with more and more terms added to it.</aside>
+</section>
+
+
+<!-- 3 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">A combination of angular and linear motion</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>General kinematics is a <strong>combination of angular and linear motion</strong></li>
+        <li>It combines
+          <ul>
+            <li>angular and linear <strong>displacement</strong></li>
+            <li>angular and linear <strong>velocity</strong></li>
+            <li>angular and linear <strong>acceleration</strong></li>
+          </ul>
+        </li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">This lecture will help you determine the kinematics of a
+           <strong>segment rotating about a joint that is itself moving through space</strong>.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s02_javelin.png" alt="A javelin thrower at the moment of release">
+    </div>
+  </div>
+  <aside class="notes">Look at the thrower. The javelin leaves the hand at around 28 metres per second. His hand is not moving at 28 metres per second about his shoulder, and he is not running at 28 metres per second either. The release speed is the sum of several things happening at once, and that sum is what we are about to learn to write down.</aside>
+</section>
+
+
+<!-- 4 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Why the frame of reference matters</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>General kinematics demonstrates the importance of <strong>frame of reference</strong>
+            for segmental velocity</li>
+        <li>Angular kinematics taught us how to solve for the velocity of a segment rotating about a
+            joint — but <strong>if the joint is moving</strong>, the velocity of the joint will change
+            the velocity of the segment relative to a reference point</li>
+        <li>Since there is <strong>both translation and angular motion</strong> in a human system,
+            general kinematics is an important tool</li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/s03_javelin.png" alt="A javelin thrower running in to the throw">
+    </div>
+  </div>
+  <aside class="notes">"Relative to what?" is the question that has to be asked before any velocity means anything.
+
+Relative to his own shoulder, the thrower's hand is doing one thing. Relative to the ground — which is what the javelin cares about — it is doing something quite different, because the shoulder is travelling across the runway at the same time.
+
+Neither answer is wrong. They answer different questions. The equation we are about to write is how you convert between them.</aside>
+</section>
+
+
+<!-- 5 -->
+<section id="w-frames">
+  <h2>General Kinematics</h2>
+  <p class="subhead">The same segment, seen from two places</p>
+  <div class="iplot wide" data-widget="frames"></div>
+  <aside class="notes">Same arm, same rotation, two cameras. The left panel is bolted to the shoulder, so all it ever sees is a segment going round in a circle. The right panel is bolted to the ground, and sees the looping path the hand actually traces out.
+
+Turn the shoulder speed up and watch the right-hand path stretch out into a cycloid. At the top of each turn the hand is moving fastest, because the two velocities point the same way; at the bottom they oppose and it slows right down.
+
+The reading at the bottom is the whole lecture in two numbers: the hand's speed about the shoulder never changes, and its speed over the ground never stops changing.</aside>
+</section>
+
+
+<!-- 6 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">What we already know, and what is missing</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>From angular kinematics we learned how to determine the velocity of
+            <strong>A relative to B</strong> in both angular and linear terms</li>
+        <li>But what if the <strong>whole system was moving</strong>?</li>
+        <li>That is, if A is moving relative to B, and B were moving relative to
+            <strong>some other joint or the ground</strong></li>
+        <li>How would we determine the <strong>velocity of A relative to the ground</strong>?</li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/s04_fan.png" alt="Segment A rotating through an angle theta about joint B">
+    </div>
+  </div>
+  <aside class="notes">This is the figure from angular kinematics, and until now B has been nailed down. Everything we did with ωr assumed the axis stayed put.
+
+Ask the room where that assumption holds in a human being. Pretty much nowhere — the only joint that is genuinely fixed is the one you are standing on, and only while you are standing still.</aside>
+</section>
+
+
+<!-- 7 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">The general kinematics equation</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">The velocity of a segment relative to the ground (V<sub>A/G</sub>) is the
+         <strong>vector sum</strong> of the segment's velocity relative to the joint
+         (V<sub>A/B</sub>) and the velocity of that joint relative to the ground
+         (V<sub>B/G</sub>).</p>
+      <p class="small">Written in equation form:</p>
+      <div class="box accent workblock" style="max-width:26em">
+        <p class="eq big" style="margin-bottom:0">V<sub>A/G</sub> = V<sub>A/B</sub> + V<sub>B/G</sub></p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s05_fan.png" alt="Segment A rotating about joint B, with B itself translating">
+    </div>
+  </div>
+  <aside class="notes">Read the subscripts out loud: "A with respect to G equals A with respect to B, plus B with respect to G."
+
+The pattern is worth pointing at explicitly. On the right the inner subscripts — B and B — cancel, and the outer ones, A and G, are what you are left with. That cancellation rule is how you will check every equation you write for the rest of the lecture, and it is how you will know where to put the terms when the chain gets longer.</aside>
+</section>
+
+
+<!-- 8 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Where…</p>
+  <div class="textstrip three">
+    <div class="firstcol">
+      <p class="eq">V<sub>A/G</sub></p>
+      <p class="small">is the <strong>linear</strong> velocity of A with respect to the ground</p>
+    </div>
+    <div>
+      <p class="eq">V<sub>A/B</sub></p>
+      <p class="small">is the <strong>tangential</strong> velocity of A with respect to B</p>
+    </div>
+    <div>
+      <p class="eq">V<sub>B/G</sub></p>
+      <p class="small">is the <strong>linear</strong> velocity of B with respect to the ground</p>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">Only the middle one is <strong>tangential</strong> — it is the term
+       that comes from rotation, and it is always perpendicular to the segment.
+       The other two are ordinary linear velocities.</p>
+  </div>
+  <aside class="notes">The middle term is the one students lose marks on. It is tangential, which means two things: its size is ωr, and its direction is at right angles to the segment, not along it.
+
+If you ever find yourself drawing V A-on-B pointing down the length of the segment, you have made an error — a rigid segment cannot get longer, so there is nothing to move along it.</aside>
+</section>
+
+
+<!-- 9 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">The tangential term is the one we have to build</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">The equation requires the addition of <strong>linear velocity vectors</strong>:</p>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq" style="margin-bottom:0">V<sub>A/G</sub> = V<sub>A/B</sub> + V<sub>B/G</sub></p>
+      </div>
+      <p class="small">Assuming that we know V<sub>B/G</sub> and the angular velocity of A about B,
+         then we need to determine V<sub>A/B</sub>, which is the tangential velocity of A about B:</p>
+      <div class="box accent workblock" style="max-width:18em">
+        <p class="eq big" style="margin-bottom:0">V<sub>A/B</sub> = ωr</p>
+      </div>
+      <p class="small">where <strong>ω</strong> is the angular velocity of A about B and
+         <strong>r</strong> is the radial length from B to A.</p>
+    </div>
+    <div class="fig">
+      <img src="assets/s06_boxes.png" alt="Two diagrams: the tangential velocity of A about B, and the velocity of B relative to the ground">
+    </div>
+  </div>
+  <aside class="notes">ωr is the bridge back to last week. Nothing new in it at all — it is the same v equals r omega we used for the wheelchair wheel, and the same one we will use for the bicycle in a few slides.
+
+What is new is that it is now only one of two terms, and that it has a direction we have to respect when we add it to the other one.
+
+However, before we simply add the vectors, we need to break them apart into x and y components.</aside>
+</section>
+
+
+<!-- 10 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">One equation for each directional component</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">This means that we need an equation for <strong>each directional
+         component</strong>:</p>
+      <div class="box accent workblock" style="max-width:26em">
+        <p class="eq" style="margin-bottom:.15em">V<sub>A/Gx</sub> = V<sub>A/Bx</sub> + V<sub>B/Gx</sub></p>
+        <p class="eq" style="margin-bottom:0">V<sub>A/Gy</sub> = V<sub>A/By</sub> + V<sub>B/Gy</sub></p>
+      </div>
+      <p class="small">Then we need to use <strong>trigonometry</strong> to break up V<sub>A/B</sub>
+         and V<sub>B/G</sub> into x and y components, and solve for the resultant velocity
+         V<sub>A/G</sub>:</p>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq" style="margin-bottom:0">V<sub>A/G</sub><sup>2</sup> = V<sub>A/Gx</sub><sup>2</sup> + V<sub>A/Gy</sub><sup>2</sup></p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s07_boxes.png" alt="The same two diagrams with each velocity broken into blue x and y components">
+    </div>
+  </div>
+  <aside class="notes">This is the part that is not new either — it is vector addition from lecture 4, applied to velocities instead of forces.
+
+The rule is the same as it always was: you may only add components to components. You cannot add a 0.68 and a 10 unless they point the same way. In the bicycle problem coming up they happen to, which is why that problem is the easy one; in the pitcher problem they do not, and that is why it takes six slides.</aside>
+</section>
+
+
+<!-- 11 -->
+<section id="w-vsum">
+  <h2>General Kinematics</h2>
+  <p class="subhead">Adding the two vectors</p>
+  <div class="iplot wide" data-widget="vsum"></div>
+  <aside class="notes">Build the sum by hand. The blue arrow is the tangential term and it stays perpendicular to the segment no matter where you put the segment — drag θ around and watch it stay at right angles.
+
+The green arrow is the joint's own velocity and it does not care about the segment at all.
+
+Put them tip to tail and the red arrow closes the triangle. Two things are worth pausing on. Set θ so the two arrows line up and the resultant is simply the sum of the two numbers. Set them opposite and it is the difference — and if ωr equals V B-on-G the point is momentarily stationary over the ground, which is exactly what the bottom of a rolling wheel does.</aside>
+</section>
+
+
+<!-- 12 -->
+<section id="w-comps">
+  <h2>General Kinematics</h2>
+  <p class="subhead">Breaking each vector into x and y</p>
+  <div class="iplot wide" data-widget="comps"></div>
+  <aside class="notes">Same two vectors, now resolved. The left panel does the trigonometry; the right one stacks the components and adds them.
+
+The arithmetic to narrate: x components add to x components, y to y, and only then do you go back to Pythagoras for the resultant. Students who try to add the magnitudes directly get a number that is too big, every time, unless the vectors happen to be parallel.
+
+Note the angle readout at the bottom. The direction of the resultant is an answer in its own right — in the pitcher problem the marker is as interested in the 23 degrees as in the 3.99.</aside>
+</section>
+
+
+<!-- 13 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Example Problem</p>
+  <div class="cols a top">
+    <div>
+      <div class="box accent workblock">
+        <p class="small" style="margin-bottom:0">What is the linear velocity of a point on the
+           <strong>top of a bicycle wheel</strong> (radius = 34 cm) if the wheel has an angular
+           velocity of <strong>2 rad/s</strong> and the bicycle has a velocity of
+           <strong>10 m/s</strong>?</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s09_wheel.svg" alt="A bicycle wheel with its angular velocity marked and the bicycle's velocity as a green arrow">
+    </div>
+  </div>
+  <aside class="notes">Set it up before solving it. A is the point on the top of the tyre, B is the hub. The hub is the moving joint; the point on the rim is the thing rotating about it.
+
+Worth saying out loud that these two numbers are given independently — this wheel is not necessarily rolling without slipping. Treat ω and the bicycle's speed as two separate pieces of information, which is how the problem is written.</aside>
+</section>
+
+
+<!-- 14 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Solution</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">First make an equation for the velocity of A with respect to the ground:</p>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq" style="margin-bottom:0">V<sub>A/G</sub> = V<sub>A/B</sub> + V<sub>B/G</sub></p>
+      </div>
+      <p class="small">Then solve for V<sub>A/B</sub>:</p>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq" style="margin-bottom:.1em">V<sub>A/B</sub> = rω</p>
+        <p class="eq" style="margin-bottom:.1em">V<sub>A/B</sub> = (0.34 m)(2 rad/s)</p>
+        <p class="eq" style="margin-bottom:0">V<sub>A/B</sub> = <strong>0.68 m/s</strong></p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s10_wheel.svg" alt="The wheel with A at the top, B at the hub and the 0.34 m radius marked">
+    </div>
+  </div>
+  <aside class="notes">Radians are dimensionless, so rad/s times metres gives metres per second and the units come out right without any conversion.
+
+0.68 m/s is the speed of that point about the hub. Not over the ground — about the hub. That distinction is the whole reason the next slide exists.</aside>
+</section>
+
+
+<!-- 15 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Solution (continued)</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Then add the velocities to solve for V<sub>A/G</sub>:</p>
+      <div class="box accent workblock" style="max-width:26em">
+        <p class="eq" style="margin-bottom:.1em">V<sub>A/G</sub> = V<sub>A/B</sub> + V<sub>B/G</sub></p>
+        <p class="eq" style="margin-bottom:.1em">V<sub>A/G</sub> = 0.68 m/s + 10 m/s</p>
+        <p class="eq big" style="margin-bottom:0">V<sub>A/G</sub> = <strong>10.68 m/s</strong></p>
+      </div>
+      <div class="callout small">
+        <p style="margin-bottom:0">At the <strong>top</strong> of the wheel the tangential velocity
+           points <strong>forward</strong>, the same way the bicycle is going — so the two simply
+           add. No trigonometry is needed because both vectors lie along x.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s10_wheel.svg" alt="The wheel with A at the top, B at the hub and the 0.34 m radius marked">
+    </div>
+  </div>
+  <aside class="notes">This is the easy case and it is easy for one reason only: both vectors are horizontal, so the vector addition collapses into ordinary arithmetic.
+
+Ask the room what the answer would be for the point at the bottom of the wheel before moving on. 10 minus 0.68 is 9.32. Then ask about the point at the front, where the tangential velocity is straight down — now you genuinely do need Pythagoras, and the next slide lets you check it.</aside>
+</section>
+
+
+<!-- 16 -->
+<section id="w-wheel">
+  <h2>General Kinematics</h2>
+  <p class="subhead">Every point on the wheel at once</p>
+  <div class="iplot wide" data-widget="wheel"></div>
+  <aside class="notes">Drag the point round the rim. At the top you get his 10.68. At the bottom, 9.32. At the front and back the tangential velocity is vertical and the resultant is 10.02 at a small angle — the arithmetic he set up, now answered everywhere at once.
+
+Then press roll. Rolling without slipping ties ω to the speed: omega equals v over r, which for 10 m/s and a 0.34 m wheel is 29.4 rad/s, not 2. Now the bottom of the wheel is exactly stationary and the top is doing twice the bike's speed. That is why the spokes blur at the top of a moving wheel and look sharp at the bottom, and it is worth getting the class to look at a photograph of a cyclist to see it.
+
+Say clearly that his problem does not assume rolling — the two numbers are given separately and 2 rad/s is a slipping wheel. Both are legitimate; they are different questions.</aside>
+</section>
+
+
+<!-- 17 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Example Problem</p>
+  <div class="cols a top">
+    <div>
+      <div class="box accent workblock">
+        <p class="small" style="margin-bottom:0">A baseball pitcher's shoulder is translating forward
+           as his arm rotates about the shoulder. The objective of the motion is to deliver the
+           required velocity (magnitude and direction) to the ball before it leaves his hand.
+           Assume that the radial distance of the hand from the shoulder (r) is
+           <strong>0.58 m</strong>, θ is <strong>50 degrees</strong> and ω is
+           <strong>4.2 rad/s</strong>. Assume also that the shoulder has a velocity of
+           <strong>1.8 m/s</strong> acting horizontally with respect to the ground. What is the
+           velocity of the hand with respect to the ground (i.e. V<sub>H/G</sub>)?</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s12_photo.png" alt="A baseball pitcher at the point of release">
+    </div>
+  </div>
+  <aside class="notes">Same equation, harder geometry. Here the two vectors are not parallel, so this is the one that teaches the method.
+
+Note the letters change — H for hand, S for shoulder — but the structure does not. H with respect to G equals H with respect to S plus S with respect to G. Inner subscripts cancel.</aside>
+</section>
+
+
+<!-- 18 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Draw a diagram</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">For simplicity, let us draw another diagram with all of the variables labelled
+         on a <strong>rigid segment representing the arm</strong>.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">The arm becomes one straight segment from shoulder to hand. The
+           shoulder is the moving joint B; the hand is the rotating point A.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s12_diagram.png" alt="The pitcher drawn as a line diagram, with the hand, r, theta and the shoulder's velocity marked">
+    </div>
+  </div>
+  <aside class="notes">Drawing the free-body-style diagram is not an optional tidying-up step. Every piece of trigonometry later in this problem is read off this picture, and if θ is put in the wrong corner the answer is wrong in a way that no amount of careful arithmetic will catch.</aside>
+</section>
+
+
+<!-- 19 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Develop an equation to describe the motion of the arm</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">The velocity is measured relative to the ground and is the vector sum of the
+         ball's velocity relative to the shoulder and the shoulder relative to the ground.</p>
+      <p class="small">The velocity of the Hand with respect to the ground (V<sub>H/G</sub>) is equal
+         to the velocity of the Hand with respect to the Shoulder (V<sub>H/S</sub>) plus the velocity
+         of the Shoulder with respect to the Ground (V<sub>S/G</sub>).</p>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq big" style="margin-bottom:0">V<sub>H/G</sub> = V<sub>H/S</sub> + V<sub>S/G</sub></p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s13_arm.png" alt="The arm as a rigid segment: hand, omega 4.2 rad/s, r 0.58 m, theta 50 degrees, shoulder, V S/G 1.8 m/s">
+    </div>
+  </div>
+  <aside class="notes">Everything needed is now on one picture: r, θ, ω and the shoulder's velocity. Four numbers, and the rest is method.</aside>
+</section>
+
+
+<!-- 20 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Separate the equation into vertical (y) and horizontal (x) components</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">We also know that V<sub>H/G</sub> is equal to</p>
+      <div class="box accent workblock" style="max-width:22em">
+        <p class="eq" style="margin-bottom:0">V<sub>H/G</sub> = V<sub>H/S</sub> + V<sub>S/G</sub></p>
+      </div>
+      <p class="small">Therefore it follows that</p>
+      <div class="box accent workblock" style="max-width:26em">
+        <p class="eq" style="margin-bottom:.15em">V<sub>H/Gx</sub> = V<sub>H/Sx</sub> + V<sub>S/Gx</sub></p>
+        <p class="eq" style="margin-bottom:0">V<sub>H/Gy</sub> = V<sub>H/Sy</sub> + V<sub>S/Gy</sub></p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s13_arm.png" alt="The arm as a rigid segment with all variables labelled">
+    </div>
+  </div>
+  <aside class="notes">One vector equation becomes two scalar equations. That is always the move, and it is always legal, because the x and y directions are independent of each other.</aside>
+</section>
+
+
+<!-- 21 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Separate the equation into vertical (y) and horizontal (x) components</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>As you can see V<sub>S/G</sub> <strong>only has an x-component</strong></li>
+        <li>V<sub>H/S</sub> has <strong>both x and y components</strong></li>
+        <li>To determine the angle to use, draw a <strong>dotted horizontal line through the
+            hand</strong>. It should now be obvious that the angle of V<sub>H/S</sub> with respect
+            to the horizontal is <strong>40°</strong> because of the z-pattern (trig)</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">θ = 50° is the angle of the <em>segment</em>.
+           V<sub>H/S</sub> is perpendicular to the segment, so its angle to the horizontal is
+           90° − 50° = <strong>40°</strong>.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s16_zpat.png" alt="The z-pattern: a dotted horizontal through the hand showing V H/S at 40 degrees while the segment sits at 50 degrees">
+    </div>
+  </div>
+  <aside class="notes">This is the single most error-prone step in the lecture and it is worth slowing right down.
+
+The segment is at 50 degrees. The velocity is at right angles to the segment. So the velocity is at 40 degrees to the horizontal, not 50. Draw the dotted line, point at the two angles, and name the z-pattern — alternate angles between parallel lines.
+
+Every year a good number of people use 50 and get 2.34 and 2.87 instead of 3.67 and 1.57. The answer still looks plausible, which is what makes it dangerous.</aside>
+</section>
+
+
+<!-- 22 -->
+<section id="w-zpat">
+  <h2>General Kinematics</h2>
+  <p class="subhead">Why 40° and not 50°</p>
+  <div class="iplot wide" data-widget="zpat"></div>
+  <aside class="notes">Turn the segment and watch both angles move together, always ninety degrees apart. The tangential velocity is locked at right angles to the segment because the segment cannot stretch.
+
+The two answers are side by side so the cost of the mistake is visible: with 40 degrees the x-component is 3.67, with 50 it would be 3.28 and the resultant lands in the wrong place. Leave it on the slide for a moment.</aside>
+</section>
+
+
+<!-- 23 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Sub in known values and solve for component velocities</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Now use the equations for the x and y components of V<sub>H/G</sub>:</p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.1em"><strong>X component:</strong> V<sub>H/Gx</sub> = V<sub>H/Sx</sub> + V<sub>S/Gx</sub></p>
+        <p class="eq" style="margin-bottom:.1em">= rω cos 40° + 1.8</p>
+        <p class="eq" style="margin-bottom:.5em">= <strong>3.67 m/s</strong></p>
+        <p class="eq" style="margin-bottom:.1em"><strong>Y component:</strong> V<sub>H/Gy</sub> = V<sub>H/Sy</sub> + V<sub>S/Gy</sub></p>
+        <p class="eq" style="margin-bottom:.1em">= rω sin 40° + 0</p>
+        <p class="eq" style="margin-bottom:0">= <strong>1.566 m/s</strong></p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s13_arm.png" alt="The arm as a rigid segment with all variables labelled">
+    </div>
+  </div>
+  <aside class="notes">rω is 0.58 times 4.2, which is 2.436 metres per second. That is the whole tangential velocity before it is split up.
+
+Times cos 40 gives 1.866, plus the shoulder's 1.8, gives 3.67 in x. Times sin 40 gives 1.566, plus nothing, gives 1.566 in y.
+
+The zero in the y equation is worth pointing at. The shoulder is moving horizontally, so it contributes nothing vertical — but write the term down anyway, because in the next problem it will not be zero.</aside>
+</section>
+
+
+<!-- 24 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Solve for the resultant velocity</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Now we need to solve for the <strong>magnitude and direction</strong> of
+         V<sub>H/G</sub>.</p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.1em"><strong>Magnitude:</strong></p>
+        <p class="eq" style="margin-bottom:.1em">V<sub>H/G</sub><sup>2</sup> = V<sub>H/Gx</sub><sup>2</sup> + V<sub>H/Gy</sub><sup>2</sup></p>
+        <p class="eq big" style="margin-bottom:.5em">V<sub>H/G</sub> = <strong>3.99 m/s</strong></p>
+        <p class="eq" style="margin-bottom:.1em"><strong>Direction:</strong></p>
+        <p class="eq" style="margin-bottom:0">tan<sup>−1</sup>(1.566 / 3.67) = <strong>23.1°</strong></p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s13_arm.png" alt="The arm as a rigid segment with all variables labelled">
+    </div>
+  </div>
+  <aside class="notes">3.99 metres per second at 23 degrees above the horizontal.
+
+Two sanity checks worth doing out loud. First, the answer is bigger than either piece on its own — 2.44 and 1.8 — but smaller than their sum of 4.24, which is what has to happen when two vectors are neither parallel nor opposed. Second, the direction has come out shallower than the 40 degrees of the tangential velocity, pulled down by the shoulder's purely horizontal contribution. Both are the kind of check you can do in your head in an exam.</aside>
+</section>
+
+
+<!-- 25 -->
+<section id="w-pitcher">
+  <h2>General Kinematics</h2>
+  <p class="subhead">The whole problem, live</p>
+  <div class="iplot wide" data-widget="pitcher"></div>
+  <aside class="notes">His four numbers are the starting position, and the readout reproduces his 3.67, 1.566, 3.99 and 23.1 exactly.
+
+Now use it to ask the questions the static slide cannot. Take the shoulder's velocity to zero and you are back in angular kinematics — 2.44 at 40 degrees. Take ω to zero and the hand simply travels with the shoulder at 1.8 horizontally.
+
+Then the coaching question: with r and ω fixed, which θ gives the greatest release speed? Drag it and find out. The answer is zero degrees — arm horizontal, tangential velocity straight forward — and that is of course an unreachable position for a real shoulder, which is a good way into why pitching mechanics are a compromise.</aside>
+</section>
+
+
+<!-- 26 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">… but what if we found that B was connected to another joint?</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">If we found that B was rotating about <strong>another joint centre (C)</strong>
+         we would have to expand our equation to account for the tangential velocity of B about C,
+         and no longer require the velocity of B relative to the ground:</p>
+      <div class="box accent workblock" style="max-width:30em">
+        <p class="eq big" style="margin-bottom:0">V<sub>A/G</sub> = V<sub>A/B</sub> + V<sub>B/C</sub> + V<sub>C/G</sub></p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s19_chain.png" alt="A three-segment chain: A rotating about B, B rotating about C, and C moving over the ground">
+    </div>
+  </div>
+  <aside class="notes">The subscript rule does all the work. A-to-B, B-to-C, C-to-G. Inner subscripts cancel in pairs and you are left with A-to-G.
+
+That is the general form, and it is why this lecture is called general kinematics. You can chain as many segments as you have joints, and the pattern never changes.</aside>
+</section>
+
+
+<!-- 27 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Where…</p>
+  <div class="textstrip">
+    <div class="firstcol">
+      <p class="small"><strong>V<sub>C/G</sub></strong> is the linear velocity of C with respect to the ground</p>
+      <p class="small"><strong>V<sub>B/C</sub></strong> is the tangential velocity of B rotating about C</p>
+    </div>
+    <div>
+      <p class="small"><strong>V<sub>A/G</sub></strong> is the linear velocity of A with respect to the ground</p>
+      <p class="small"><strong>V<sub>A/B</sub></strong> is the tangential velocity of A rotating about B</p>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">Two of the four are <strong>tangential</strong> — one per rotating
+       segment — and each is ωr for <em>its own</em> segment, with its own ω and its own r.
+       Only the last term, the one touching the ground, is a plain linear velocity.</p>
+  </div>
+  <aside class="notes">Count the terms against the joints. Two rotating segments give two tangential terms; one translating base gives one linear term. A three-segment leg would give three tangential terms and the same single base.</aside>
+</section>
+
+
+<!-- 28 -->
+<section id="w-chain">
+  <h2>General Kinematics</h2>
+  <p class="subhead">Two segments, one chain</p>
+  <div class="iplot wide" data-widget="chain"></div>
+  <aside class="notes">Now the terms are stacked tip to tail: the base velocity first, then B about C, then A about B, and the red arrow from start to finish is the answer.
+
+The point to make is how quickly the end of the chain outruns the base. With both segments turning, the tip can easily be going three or four times the speed of the base — and that is before you add a third segment. This is the whole mechanical story of throwing and kicking, and it is why coaches talk about sequencing: each joint adds its ωr on top of whatever the one before it has already built up.
+
+Set the two angular velocities opposite in sign and watch the tip slow down instead. Timing is everything.</aside>
+</section>
+
+
+<!-- 29 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Why this matters</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Understanding general kinematics is important in many scenarios related to
+            <strong>human locomotion</strong></li>
+        <li>We are often wanting to track the movement of the <strong>whole body</strong> and the
+            <strong>segments' velocity and displacement</strong></li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Walking, running, wheeling, throwing — in every one of them the
+           joint you are rotating about is itself on the move.</p>
+      </div>
+    </div>
+    <div class="fig lawstack">
+      <img src="assets/s20_walk.png" alt="A person walking">
+      <img src="assets/s20_runners.png" alt="A group of runners">
+      <img src="assets/s20_handcycle.png" alt="A hand-cycle racer">
+    </div>
+  </div>
+  <aside class="notes">Nothing in this picture is rotating about a fixed axis. Every hip is travelling forward at something near the runner's speed while every thigh rotates about it.</aside>
+</section>
+
+
+<!-- 30 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">Feet, and what their velocity tells us</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Understanding the velocity and displacement of the <strong>feet during walking</strong>
+            in relation to the whole body can give us insight into differences in walking gait
+            related to
+            <ul>
+              <li>injury</li>
+              <li>aging</li>
+              <li>sex differences</li>
+            </ul></li>
+      </ul>
+      <div class="box accent workblock">
+        <p class="small" style="margin-bottom:0">We could use one IMU on each of the pelvis, thigh and
+           shank … <strong>how could we get foot velocity?</strong></p>
+      </div>
+      <img src="assets/s21_imu.png" alt="An inertial sensor and a walking figure"
+           style="display:block;max-width:100%;height:auto;margin-top:.5em">
+    </div>
+    <div class="fig">
+      <img src="assets/s21_plots.png" alt="Measured angular velocity of the pelvis, thigh and shank over several strides">
+    </div>
+  </div>
+  <aside class="notes">This is the exam question in disguise, and the answer is the equation we have just spent the lecture building.
+
+An IMU gives you angular velocity directly — that is what a gyroscope measures. So the thigh IMU gives you ω for the thigh and the shank IMU gives you ω for the shank. Multiply each by its own segment length and you have the two tangential terms. Add the pelvis velocity and you have the foot.
+
+V foot over ground equals V foot about knee, plus V knee about hip, plus V hip over ground. Three terms, three sensors.</aside>
+</section>
+
+
+<!-- 31 -->
+<section id="w-gait">
+  <h2>General Kinematics</h2>
+  <p class="subhead">One real stride, built from the chain</p>
+  <div class="iplot wide" data-widget="gait"></div>
+  <aside class="notes">This is a measured stride — motion capture at 90 Hz, one participant walking at 1.35 metres per second, 111 steps a minute.
+
+The three coloured arrows are the three terms. Scrub through the stride and watch them trade off. Through stance the thigh and shank terms very nearly cancel the hip's forward motion, and the foot sits almost still on the ground — that is what the dark blue trace flattening to near zero means, and it is the thing a foot has to do if it is not to drag.
+
+Then swing. Both segments swing forward together, the terms line up with the pelvis instead of opposing it, and the foot reaches just over four metres per second — three times the speed of the body it belongs to.
+
+The honest line at the bottom: adding the three terms reproduces the directly measured foot velocity to within about three per cent of the peak. The small residual is the rigid-segment assumption — the markers say the thigh changes length by about a centimetre over the stride, and a rigid segment cannot do that.</aside>
+</section>
+
+
+<!-- 32 -->
+<section>
+  <h2>General Kinematics</h2>
+  <p class="subhead">What to take away</p>
+  <ul class="small two">
+    <li><strong>Velocity is always relative to something.</strong> Name the frame before you give a number</li>
+    <li><strong>V<sub>A/G</sub> = V<sub>A/B</sub> + V<sub>B/G</sub></strong> — inner subscripts cancel, outer ones survive</li>
+    <li>The rotating term is <strong>tangential</strong>: size ωr, direction perpendicular to the segment</li>
+    <li><strong>Resolve, add, then recombine.</strong> Components add; magnitudes do not</li>
+    <li>The angle of V<sub>A/B</sub> to the horizontal is <strong>90° − θ</strong>, not θ</li>
+    <li><strong>Chain it</strong> for as many joints as you have — each rotating segment adds its own ωr</li>
+  </ul>
+  <aside class="notes">If one line survives the week, make it the second one. Writing the subscripts down and checking that the inner ones cancel catches most of the mistakes before any arithmetic happens.
+
+And the fifth line catches most of the rest.</aside>
+</section>
+
+
+<!-- 33 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>General kinematics</h1>
+    <div class="rule"></div>
+    <p class="sub">Next up: muscle mechanics · Further reading: McGinnis Chpt 7</p>
+  </div>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js?v=20261005"></script>
+<script src="mobile.js?v=20261005"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="deck-core.js?v=20261005"></script>
+<script src="general.js?v=20261005"></script>
+<script src="deck-tools.js?v=20261005"></script>
+<script src="fit.js?v=20261005"></script>
+</body>
+</html>
