@@ -225,6 +225,22 @@ window.EPHE341_LECTURES = [
            ['two segments, one chain', 'w-chain'],
            ['one real stride, built from the chain', 'w-gait']] },
 
+  { n: '14', title: 'Electromyography',
+    path: 'lectures/14-electromyography',
+    blurb: 'The electrical signal a contracting muscle leaves behind: motor units and ' +
+           'the Henneman size principle, why the recording is the difference between two ' +
+           'electrodes, what that difference cancels and what it cannot, where on the ' +
+           'fibre to put the pair, the band-pass \u2192 rectify \u2192 envelope chain run on a ' +
+           'real vastus lateralis burst, and what six measured sprints say about fatigue.',
+    slides: 50, widgets: 6, updated: '2026-10-05',
+    handout: 'handout.pdf',
+    live: [['120 motor units, one electrode, the EMG\u2013force curve', 'w-recruit'],
+           ['slide the pair along the fibre and watch it cancel', 'w-fibre'],
+           ['the difference of two electrodes, and its comb filter', 'w-bipolar'],
+           ['band-pass, rectify, RMS, envelope on a real burst', 'w-chain'],
+           ['why force arrives after the signal', 'w-emd'],
+           ['six real 30 s sprints, amplitude up and frequency down', 'w-fatigue']] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
@@ -234,7 +250,6 @@ window.EPHE341_LECTURES = [
      match the numbers in the source .pptx filenames. Change them here if you
      would rather they did. */
   { n: '13', title: 'Virtual Muscle Lab' },
-  { n: '14', title: 'Electromyography' },
   { n: '15', title: 'Angular kinetics 1' },
   { n: '16', title: 'Gait analysis' },
   { n: '17', title: 'Angular kinetics 2' },

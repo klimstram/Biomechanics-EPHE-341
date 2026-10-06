@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fdfdfc">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Electromyography</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css?v=20261005">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'light';
+  try { t = localStorage.getItem('ephe341-theme') || 'light'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Electromyography</h1>
+    <div class="rule"></div>
+    <p class="sub">The electrical signal a contracting muscle leaves behind, and what it will and will not tell you</p>
+  </div>
+  <aside class="notes">Everything so far in this course has been mechanics: forces, moments, velocities. This lecture is the one place we look at the signal the nervous system actually sends, and at how much of it survives the trip to an electrode on the skin.
+
+The honest summary of the whole lecture is this: EMG tells you about timing very well, about neural strategy quite well, and about force only with a great deal of care.</aside>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">By the end of this lecture you should be able to…</p>
+  <ul class="small two">
+    <li><strong>Describe</strong> the physiological basis of the EMG signal, from motor unit to electrode</li>
+    <li><strong>Explain</strong> why EMG is recorded as the <em>difference</em> between two electrodes</li>
+    <li><strong>Choose</strong> where to put electrodes, and say what goes wrong at the innervation zone and the tendon</li>
+    <li><strong>Process</strong> a raw signal: band-pass, rectify, RMS or linear envelope, and normalise</li>
+    <li><strong>Relate</strong> EMG to force, allowing for electromechanical delay and for the fact that the relationship is not proportional</li>
+    <li><strong>Interpret</strong> amplitude and frequency changes during fatigue, and know how reliable each one is</li>
+  </ul>
+  <aside class="notes">Six objectives, and the last two are the ones students most often get wrong in a lab report. EMG is not a force meter, and the median frequency does not always fall.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">What the word means</p>
+  <div class="cols a top">
+    <div>
+      <div class="textstrip three">
+        <div><strong>Electro</strong><br><span class="small">electrical</span></div>
+        <div><strong>Myo</strong><br><span class="small">muscle</span></div>
+        <div><strong>Graphy</strong><br><span class="small">representation, writing, description</span></div>
+      </div>
+      <p class="small">A visual or numeric representation of the electrical activity associated with muscle contraction.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">We record, analyse and interpret these signals to understand how the
+          nervous system controls muscle — in health and in disease.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s02_0.png" alt="An arm instrumented with surface EMG electrodes connected to an amplifier, with a raw EMG trace below">
+    </div>
+  </div>
+  <aside class="notes">Worth saying out loud at the start: EMG is a representation. It is not the muscle’s command, and it is not the muscle’s force. It is a voltage, measured at a distance, through tissue, by two electrodes that cannot tell which muscle a given potential came from.</aside>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">What we need to know</p>
+  <ol class="small">
+    <li>Whole muscle <strong>structural</strong>, <strong>physiological</strong> and <strong>neural</strong> organisation</li>
+    <li>The <strong>electrochemical mechanism</strong> of contraction</li>
+    <li>The resulting contraction and the concurrent <strong>electrical signal</strong> collected through EMG electrodes</li>
+  </ol>
+  <div class="callout small">
+    <p style="margin-bottom:0">Three steps, and the signal at the end of them is a long way from the
+      command at the start. Most of the care in using EMG is about remembering what happened in between.</p>
+  </div>
+  <aside class="notes">This is the roadmap for the first third of the lecture. We go down to the sarcomere and back up to the electrode, and then everything after that is about what the electrode can and cannot see.</aside>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Whole muscle structural organisation</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Whole muscle</li>
+        <li>Fascicle</li>
+        <li>Muscle fibre
+          <ul><li>myofibril</li><li>type I, type II</li></ul>
+        </li>
+        <li>Sarcomere
+          <ul><li>sliding filament</li></ul>
+        </li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/s05_0.png" alt="Whole muscle sectioned down to fascicle, fibre, myofibril and sarcomere">
+    </div>
+  </div>
+  <aside class="notes">The nesting matters for EMG because the electrode does not see any one level of it. It sees the summed extracellular field of every fibre close enough to contribute, which is a mixture of levels.</aside>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Muscle physiology — fibre type</p>
+  <div class="cols a top">
+    <div class="fig">
+      <img src="assets/s06_1.png" alt="A stained muscle cross-section showing type IIa and IIb fibres in different shades">
+    </div>
+    <div class="fig">
+      <img src="assets/s06_0.png" alt="Table of structural and functional characteristics of slow oxidative, fast oxidative and fast glycolytic fibres">
+    </div>
+  </div>
+  <aside class="notes">Two rows of this table do the work for us later: recruitment order — first, second, third — and rate of fatigue. Both come back when we look at what fatigue does to the signal.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Muscle physiology — fibre type varies by muscle, and with depth</p>
+  <div class="cols top">
+    <div class="fig"><img src="assets/s07_0.png" alt="First half of a table of mean percentage type I fibres by muscle"></div>
+    <div class="fig"><img src="assets/s07_1.png" alt="Second half of the table of mean percentage type I fibres by muscle"></div>
+  </div>
+  <p class="small" style="text-align:center;margin-top:.3em">Johnson et al., <em>Journal of the Neurological Sciences</em> <strong>18</strong> (1973) 111–129</p>
+  <aside class="notes">Look at soleus — 86 per cent type I at the surface, 89 per cent deep. Now look at biceps brachii: 42 per cent surface, 50 per cent deep. A surface electrode samples the superficial fibres preferentially, so for some muscles the signal is not representative of the whole muscle at all.</aside>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Neural organisation of muscle</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Each muscle is made up of many units of contraction called <strong>motor units</strong></li>
+        <li>A motor unit is a <strong>motor nerve and all the muscle fibres it innervates</strong></li>
+        <li>A descending command that excites the motor nerve contracts <strong>all</strong> the fibres in
+          that unit, together — an <strong>all-or-none</strong> response</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">The motor unit, not the fibre, is the smallest thing the nervous
+          system can switch on. It is therefore the smallest thing EMG can see.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s08_0.png" alt="Spinal cord with three motor neurons each innervating a separate group of muscle fibres">
+    </div>
+  </div>
+  <aside class="notes">All-or-none is the key idea. There is no such thing as half a motor unit firing. Force is graded by how many units are on and how fast each one repeats — not by any one of them contracting harder.</aside>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Motor units come in sizes</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Motor units can be <strong>small</strong> (few fibres) or <strong>large</strong> (many fibres)</li>
+        <li>Within any one motor unit, all fibres are of the <strong>same type</strong> (I, IIa, IIb)</li>
+        <li>Most small units are <strong>type I</strong>; most large units are <strong>type II</strong></li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/s09_0.png" alt="Three motor units drawn as groups of fibres: slow-oxidative, fast-oxidative and fast-glycolytic">
+    </div>
+  </div>
+  <aside class="notes">Size and type travel together. That is what makes the recruitment order useful rather than arbitrary — ordering by size also orders by fatigue resistance.</aside>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Recruitment, and the Henneman size principle</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>The nervous system grades contraction by altering <strong>how many</strong> units are
+          recruited and <strong>how often</strong> they fire</li>
+        <li>At low firing rates, <strong>small</strong> units are recruited first; at higher rates the
+          <strong>larger</strong> units join in</li>
+        <li>Force is increased by adding more active motor units</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Orderly recruitment from small to large is the
+          <strong>Henneman size principle</strong>. It gives smooth, non-jerky force production and
+          leans on the fatigue-resistant units first.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s10_1.png" alt="Whole-muscle tension building in three steps as motor units one, two and three are recruited">
+    </div>
+  </div>
+  <aside class="notes">Note the step heights in the lower panel. Unit one adds a little, unit three adds a lot. That asymmetry is the whole reason the EMG–force relationship is not a straight line, and the next slide lets you see it happen.</aside>
+</section>
+
+<!-- 11 -->
+<section id="w-recruit">
+  <h2>Electromyography</h2>
+  <p class="subhead">One electrode, many motor units</p>
+  <div class="iplot wide" data-widget="recruit"></div>
+  <aside class="notes">Drive the pool up from nothing. At low drive you can pick out individual motor unit action potentials — that is what an indwelling electrode sees. By about 30 per cent they have merged into an interference pattern and you can no longer count anything.
+
+Now the right-hand panel. The trains are statistically independent, so they add in power, not amplitude: equal units would give amplitude growing as the square root of their number. The two sliders are the assumptions that decide which way the curve bends — how much louder a big unit is than a small one, and how far up the range recruitment continues. Push them to the corners and you can produce a curve above the diagonal or below it.
+
+The lesson is not that EMG–force is concave or convex. It is that the shape is a consequence, not a law, which is why published relationships disagree.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">The electrochemical mechanism of contraction</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Neural signals travel along the motor axon and disperse through the fibres it innervates</li>
+        <li>The signal propagates by the opening of <strong>voltage-gated sodium channels</strong> in the
+          neurolemma and the sarcolemma</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">That propagating change in membrane potential is the thing EMG
+          measures. Everything downstream of it — calcium, crossbridges, force — is invisible to the
+          electrode.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s11_0.png" alt="An alpha motor neuron with its axon running to a motor end plate on a muscle fibre">
+    </div>
+  </div>
+  <aside class="notes">This is the point in the lecture to be very clear about what EMG is a measure of. It is the electrical event. It is not the calcium, it is not the crossbridge cycling, and it is not the force.</aside>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">The action potential</p>
+  <div class="fig">
+    <img src="assets/s12_0.png" alt="An action potential plotted against time with absolute and relative refractory periods marked, above a diagram of the ion movements">
+  </div>
+  <aside class="notes">Two features matter for us. First, the whole event lasts a few milliseconds — that sets the frequency content of EMG, which is why we band-pass between about 20 and 450 hertz. Second, the refractory period puts a ceiling on firing rate, which is why rate coding runs out and recruitment has to take over.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Excitation–contraction coupling</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Movement of the structural components of muscle is produced through the
+        propagation of the action potential within the muscle, by a process called
+        <strong>excitation–contraction coupling</strong>.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">This is where the delay comes from. The electrical event finishes
+          in a few milliseconds; the force takes tens of milliseconds to appear.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s13_0.png" alt="Sarcomere relaxed and contracted, showing the I band shortening while the A band stays constant">
+    </div>
+  </div>
+  <aside class="notes">Hold on to the fact that the A band stays constant. The filaments do not shorten; they slide. We will come back to this delay when we get to electromechanical delay — it is the physical reason force lags the signal.</aside>
+</section>
+
+<!-- 15 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">From the end plate to calcium release</p>
+  <div class="fig">
+    <img src="assets/s14_0.png" alt="Acetylcholine release at the neuromuscular junction, sodium entry, and the muscle action potential spreading into the T-tubule">
+  </div>
+  <p class="small" style="text-align:center">Silverthorn, <em>Human Physiology: An Integrated Approach</em>, 3rd edition</p>
+  <aside class="notes">Steps one and two. Acetylcholine crosses the cleft, sodium enters, and a muscle action potential is launched. That muscle action potential is the thing our electrodes will detect — not the nerve’s.</aside>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">…and from calcium to the power stroke</p>
+  <div class="fig">
+    <img src="assets/s15_0.png" alt="Calcium release from the sarcoplasmic reticulum, binding to troponin, and myosin heads executing the power stroke">
+  </div>
+  <p class="small" style="text-align:center">Silverthorn, <em>Human Physiology: An Integrated Approach</em>, 3rd edition</p>
+  <aside class="notes">Steps three to seven, and every one of them takes time. By the time the actin has slid, the electrical event the electrode recorded is long over.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Contraction, and a signal we can measure</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">We know the contraction of muscle is tied to an electrical event, so we can try
+        to find a way to measure that electrical event.</p>
+      <p class="small">Electromyography means placing electrodes <strong>on</strong> or <strong>in</strong>
+        the muscle and measuring the action potentials travelling along the muscle fibres.</p>
+      <div class="box accent workblock" style="max-width:26em">
+        <p class="eq" style="margin-bottom:0">muscle → electrodes → amplifier → A/D converter → computer</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s17_0.png" alt="A lower leg with a needle electrode inserted into the muscle">
+    </div>
+  </div>
+  <aside class="notes">Note the chain. Every stage in it can add something that is not muscle, and the amplifier stage in particular is where most of the damage is either done or prevented.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Two ways of recording EMG</p>
+  <div class="cols top">
+    <div>
+      <p class="small"><strong>1. In-dwelling electrodes</strong><br>
+        fine wires or needles placed <em>in</em> the muscle</p>
+      <div class="fig"><img src="assets/s18_1.png" alt="A fine-wire electrode on a plain background"></div>
+    </div>
+    <div>
+      <p class="small"><strong>2. Surface electrodes</strong><br>
+        pairs of contacts placed <em>on</em> the skin over the muscle</p>
+      <div class="fig"><img src="assets/s20_1.png" alt="Three disposable surface electrodes beside a ruler for scale"></div>
+    </div>
+  </div>
+  <aside class="notes">The choice is not about quality, it is about what question you are asking. If you want to know what one motor unit is doing, you need a wire in the muscle. If you want to know when a whole muscle turns on during a movement, you want surface electrodes.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">In-dwelling electrodes</p>
+  <div class="cols a top">
+    <div>
+      <table>
+        <thead><tr><th>Advantages</th><th>Disadvantages</th></tr></thead>
+        <tbody>
+          <tr><td>record activity from a <strong>single motor unit</strong></td>
+              <td>can be <strong>painful</strong> for participants</td></tr>
+          <tr><td>access to <strong>deep</strong> musculature</td>
+              <td>a single motor unit may not represent the whole muscle</td></tr>
+          <tr><td>little <strong>cross-talk</strong></td>
+              <td>limitations recording <strong>dynamic</strong> muscle activity</td></tr>
+        </tbody>
+      </table>
+      <p class="small" style="opacity:.75">cross-talk: the unintentional recording of EMG from another muscle</p>
+    </div>
+    <div class="fig">
+      <img src="assets/s18_2.png" alt="A hooked fine-wire electrode photographed close up">
+    </div>
+  </div>
+  <aside class="notes">The second disadvantage is the one people forget. A single motor unit is a wonderfully clean signal and it tells you almost nothing about what the muscle as a whole is doing.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Surface electrodes</p>
+  <div class="cols a top">
+    <div>
+      <table>
+        <thead><tr><th>Advantages</th><th>Disadvantages</th></tr></thead>
+        <tbody>
+          <tr><td><strong>easy</strong> to record</td>
+              <td>only for <strong>superficial</strong> muscles</td></tr>
+          <tr><td>minimal discomfort to participants</td>
+              <td>signal contaminated by <strong>cross-talk</strong></td></tr>
+          <tr><td>indicates <strong>global</strong> muscle activity</td>
+              <td>may affect the movement patterns of the subject</td></tr>
+        </tbody>
+      </table>
+      <div class="callout small">
+        <p style="margin-bottom:0">Surface EMG is the algebraic <strong>sum</strong> of all motor unit
+          firings near the electrode at that instant. It is a crowd, not a voice.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s20_0.png" alt="A pre-amplified surface electrode pair beside a ruler">
+    </div>
+  </div>
+  <aside class="notes">That phrase, algebraic sum, is doing a lot of work. Algebraic means the potentials can cancel as well as add — two units firing with opposite polarity at the same instant give you less signal, not more. This is called amplitude cancellation and it is one reason EMG amplitude under-reports what the muscle is doing at high force.</aside>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">The action potential travels past the electrodes</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>As action potentials travel along the muscle fibres, EMG electrodes — indwelling or
+          surface — measure the <strong>change in voltage</strong> that accompanies their travel</li>
+        <li>The potential is generated at the <strong>motor end plate</strong> and propagates towards
+          <strong>both</strong> tendons</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Because it travels, <em>where</em> you put the electrodes decides
+          what you record. That is the next figure.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s23_0.png" alt="A motoneuron branching to several muscle fibres, with action potentials propagating away from the neuromuscular junctions towards both tendon regions">
+    </div>
+  </div>
+  <aside class="notes">Notice in the figure that the action potentials leave the junction in both directions. That detail is what makes the innervation zone a bad place to record, and it is the single most common electrode-placement mistake.</aside>
+</section>
+
+<!-- 22 -->
+<section id="w-fibre">
+  <h2>Electromyography</h2>
+  <p class="subhead">Where you put the pair, and what it costs you</p>
+  <div class="iplot wide" data-widget="fibre"></div>
+  <aside class="notes">Slide the pair along the fibre and watch the right-hand panel. Over the belly there is a broad plateau — move the sensor a centimetre and nothing much changes, which is what you want from a measurement.
+
+Now slide it onto the end plate. The two electrodes see mirror images of each other and the difference collapses to nothing. Either side of that null the amplitude spikes, and that spike is a trap: a few millimetres of sensor movement there changes your amplitude by a factor of two, so any comparison between days or between people becomes meaningless.
+
+At the tendon the travelling wave has run out of fibre and the signal fades.
+
+One honesty note: this is modelled. Our cycling dataset has no electrode array, so no conduction velocity anywhere in this lecture is measured.</aside>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">One electrode is very sensitive to things that are not muscle</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">A problem with <strong>unipolar</strong> recording is that it will pick up
+        anything that changes the potential at that point, not just muscle:</p>
+      <ul class="small">
+        <li>movement of the electrode or the cable</li>
+        <li>electronics — computers, lighting, anything on the mains</li>
+        <li>other muscles nearby</li>
+      </ul>
+      <p class="small">These are referred to collectively as <strong>noise</strong>.</p>
+    </div>
+    <div class="fig lawstack">
+      <img src="assets/s25_0.png" alt="A desktop computer">
+      <img src="assets/s25_2.png" alt="A light bulb">
+      <img src="assets/s25_1.png" alt="An instrumented arm connected to an amplifier">
+    </div>
+  </div>
+  <aside class="notes">Mains hum is the classic one — 60 hertz here, 50 in most of the world. It is everywhere, it is large, and a single electrode has no way to tell it apart from muscle.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Two electrodes, and a differential amplifier</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Use a <strong>bipolar</strong> (two-pole) configuration and a
+          <strong>differential amplifier</strong></li>
+        <li>The signal and the noise are sampled at <strong>two</strong> points; subtract one from the
+          other and what is <em>common</em> to both cancels</li>
+      </ul>
+      <div class="box accent workblock" style="max-width:30em">
+        <p class="eq" style="margin-bottom:0">(m<sub>1</sub> + n) − (m<sub>2</sub> + n) = m<sub>1</sub> − m<sub>2</sub></p>
+      </div>
+      <p class="small">The result, m<sub>1</sub> − m<sub>2</sub>, is the <strong>motor unit action
+        potential</strong> (MUAP) as recorded: the electrical activity of all the fibres in one motor
+        unit, seen as a difference.</p>
+    </div>
+    <div class="fig">
+      <img src="assets/s26_2.png" alt="Two noisy EMG inputs entering a differential amplifier and emerging as their difference">
+    </div>
+  </div>
+  <p class="small" style="text-align:center;margin-top:.2em">after Enoka 2002, Fig. 1.30</p>
+  <aside class="notes">The algebra on this slide is the entire justification for bipolar recording, and it is worth noticing how strong the assumption is: n has to be identical at both electrodes. The next two slides test that assumption.</aside>
+</section>
+
+<!-- 25 -->
+<section id="w-bipolar">
+  <h2>Electromyography</h2>
+  <p class="subhead">What the difference actually looks like</p>
+  <div class="iplot wide" data-widget="bipolar"></div>
+  <aside class="notes">Electrode two sees the same potential as electrode one, delayed by the time the wave takes to cover the gap: tau equals d over v. Five milliseconds at the standard twenty-millimetre spacing and a typical four metres per second.
+
+Subtracting a delayed copy of a signal from itself is a comb filter — turn on the spectrum panel. It has zeros wherever a whole number of wavelengths fits into that delay, so at twenty millimetres and four metres per second the first zero lands at two hundred hertz, right in the middle of the EMG band. Narrow the spacing and the notch moves up and out of the way, which is one of the real reasons the SENIAM recommendation is twenty millimetres or less.
+
+Now turn up the mains hum. It is identical at both electrodes so it vanishes exactly, which is the whole point. Then turn up the crosstalk source.</aside>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">What differencing removes — and what it does not</p>
+  <div class="cols top">
+    <div>
+      <div class="callout small">
+        <p><strong>Removed.</strong> Anything genuinely <em>common</em> to both electrodes: mains hum,
+          and any distant source far enough away that it arrives at both contacts identically.
+          The cancellation is exact.</p>
+      </div>
+    </div>
+    <div>
+      <div class="callout small">
+        <p><strong>Not removed.</strong> <strong>Cross-talk</strong>. A neighbouring muscle is
+          <em>nearer one electrode than the other</em>, so it does not arrive identically and does not
+          cancel. In the figure opposite, a source sitting just a few millimetres off centre survives
+          the subtraction at about a <strong>quarter</strong> of the amplitude of the signal you wanted.</p>
+      </div>
+    </div>
+  </div>
+  <div class="callout small" style="margin-top:.2em">
+    <p style="margin-bottom:0">So a clean-looking trace is not evidence that you are recording the
+      muscle you think you are. Differential amplification solves the noise problem. It does not solve
+      the <strong>anatomy</strong> problem — that is what electrode placement is for.</p>
+  </div>
+  <aside class="notes">This slide exists because the algebra two slides ago is so persuasive that students conclude subtraction fixes everything. It fixes exactly one class of problem. Crosstalk is a different class and no amount of amplifier quality will touch it.
+
+If you want to know whether you have crosstalk, the test is anatomical and behavioural: get the participant to contract the neighbouring muscle in isolation and see whether your channel moves.</aside>
+</section>
+
+<!-- 27 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Every motor unit has its own signature, and they all add up</p>
+  <div class="cols top">
+    <div class="fig"><img src="assets/s29_0.png" alt="Five motor units within a muscle, each with its own characteristic action potential shape"></div>
+    <div class="fig"><img src="assets/s29_1.png" alt="The action potentials of two motor units summing into a combined signal"></div>
+  </div>
+  <ul class="small">
+    <li>Each motor unit has its own characteristic MUAP, set by the number, type and position of
+      its fibres relative to the electrode</li>
+    <li>Very rarely is one motor unit firing alone — the electrode records the <strong>sum</strong>
+      of many units firing at different times</li>
+  </ul>
+  <aside class="notes">The shape of a given unit’s MUAP is essentially an accident of geometry — how many fibres, how deep, how far along the fibre. Two units of identical size can look completely different at the electrode.</aside>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">The interference pattern</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">The surface EMG signal is therefore a <strong>summation of all the MUAPs</strong>
+        near the electrode, which gives a gross approximation of the activity of the whole muscle —
+        useful for <strong>timing</strong>, <strong>rate of force development</strong> and
+        <strong>fatigue</strong>.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Once the units overlap you cannot count them any more. That is why
+          surface EMG answers “when” and “roughly how much” rather than “which units”.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s30_0.png" alt="A raw EMG recording growing from isolated spikes at the left into a dense interference pattern at the right">
+    </div>
+  </div>
+  <aside class="notes">Look at the far left of that trace, circled. You can see individual potentials. By the right-hand end you cannot see anything but a band. Nothing has gone wrong — that is simply what summation looks like, and it is the normal state of a surface recording.</aside>
+</section>
+
+<!-- 29 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Henneman, seen on the electrode</p>
+  <div class="cols top">
+    <div class="fig"><img src="assets/s31_0.png" alt="A raw EMG trace with two motor units of different amplitude labelled"></div>
+    <div class="fig"><img src="assets/s31_1.png" alt="Whole-muscle tension building as motor units one, two and three are recruited in turn"></div>
+  </div>
+  <p class="small">During a contraction the small motor units are normally recruited first and the
+    larger ones after — orderly recruitment from small to large is the
+    <strong>Henneman size principle</strong>. It gives smooth force production and preferentially uses
+    the non-fatigable units, so the muscle resists fatigue.</p>
+  <aside class="notes">In the left-hand trace you can see it happening: a small unit fires alone for a while, then a visibly bigger one joins it. That is recruitment, caught on a surface electrode, which only happens at very low force.</aside>
+</section>
+
+<!-- 30 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Some other important considerations</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li><strong>Electrode placement</strong>
+          <ul><li>the neuromuscular junction — the motor end plate</li></ul></li>
+        <li><strong>EMG signal processing</strong></li>
+        <li><strong>Electromechanical delay</strong></li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">The rest of the lecture is these three, in that order.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s33_1.png" alt="A diagram of electromechanical delay: myoelectric activity begins, then tension rises after a delay">
+    </div>
+  </div>
+  <aside class="notes">Three things, and each of them can wreck a result on its own. Placement decides what you record, processing decides what you report, and electromechanical delay decides whether your timing conclusions are right.</aside>
+</section>
+
+<!-- 31 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Orienting the electrodes on the muscle</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Orient the electrodes so the MUAPs travel <strong>parallel</strong> to the line joining
+          them — along the fibres, not across them</li>
+        <li>Place them on the <strong>muscle belly</strong>, and <strong>not</strong> on the
+          innervation zone (the motor end plates)</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Across the fibres there is no delay between the two contacts, so
+          the difference has nothing to work with and the signal collapses — the same arithmetic as
+          sitting on the innervation zone.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s34_0.png" alt="A muscle belly with the innervation zone at one end, the electrode pair on the belly, and the tendinous insertion at the other end">
+    </div>
+  </div>
+  <aside class="notes">Both failures are the same failure. The bipolar amplifier works by exploiting a time difference between the two contacts, so anything that removes the time difference removes the signal — whether that is sitting on the end plate or lining the pair up across the fibres instead of along them.</aside>
+</section>
+
+<!-- 32 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">The evidence, measured along a real muscle</p>
+  <div class="cols top">
+    <div class="fig"><img src="assets/s36_0.png" alt="Eight electrode positions relative to the innervation zone and the resulting signals from different electrode pair combinations"></div>
+    <div class="fig"><img src="assets/s36_1.png" alt="A schematic electrode array over muscle fibres with the innervation zone marked in the middle"></div>
+  </div>
+  <p class="small" style="text-align:center">Payton and Bartlett, <em>Biomechanical Evaluation of Movement in Sport and Exercise</em>, 2008</p>
+  <aside class="notes">An eight-contact array laid along the muscle. Trace by trace you can watch the signal change character as the pair crosses the innervation zone, and the bottom trace, boxed, is the one recorded straight across it.</aside>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Electrode placement summary</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>On the <strong>muscle belly</strong></li>
+        <li>Avoid the <strong>tendon</strong> and the lateral edge of the muscle</li>
+        <li>Align the electrodes <strong>parallel with the muscle fibres</strong></li>
+        <li>Mind the <strong>motor point</strong> or innervation zone
+          <ul>
+            <li>place on the midline of the belly, midway between the tendon and the nearest
+              innervation zone</li>
+            <li>avoid placing directly over the motor point</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/s37_0.png" alt="The muscle belly with the innervation zone, the electrode position and the tendinous insertion marked">
+    </div>
+  </div>
+  <aside class="notes">If you remember one sentence from the placement section: belly, along the fibres, away from the end plate. The widget a few slides back is the reason all three are on the list.</aside>
+</section>
+
+<!-- 34 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Standard placements — SENIAM</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">You do not have to work the placement out from first principles every time.
+        <strong>SENIAM</strong> (Surface EMG for the Non-Invasive Assessment of Muscles) publishes an
+        agreed position and orientation for each muscle.</p>
+      <p class="small"><a href="http://www.seniam.org">www.seniam.org</a></p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Using a standard placement is what makes your numbers comparable
+          with anyone else’s — including your own, next week.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s38_0.png" alt="A numbered anatomical chart of standard surface EMG electrode sites over the whole body">
+    </div>
+  </div>
+  <aside class="notes">This is also the answer to “where exactly do I put it” in the lab. Look it up, follow it, and write down which placement you used.</aside>
+</section>
+
+<!-- 35 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Setting up — preparing the skin</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Make sure the site is properly <strong>cleaned and prepared</strong></li>
+        <li>Tissue — skin and subcutaneous fat — acts as a <strong>filter</strong></li>
+        <li>Clean the skin with <strong>alcohol</strong></li>
+        <li>Shave excess hair</li>
+        <li>Lightly abrade the skin</li>
+        <li>Use electrode gel, paste or cream</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Skin impedance is the one part of the signal chain you can improve
+          for free, before you record anything.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s39_0.png" alt="An instrumented arm connected to an EMG amplifier, with a raw signal trace below">
+    </div>
+  </div>
+  <aside class="notes">Tissue acting as a low-pass filter is why a deeper muscle looks smoother than a superficial one, and why body composition changes the amplitude you record from the same muscle in two different people. It is also another reason amplitude must be normalised before it is compared.</aside>
+</section>
+
+<!-- 36 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Why process the signal at all</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>EMG is an <strong>indirect</strong> measure of muscle force</li>
+        <li>It also carries neural information — <strong>which</strong> motor units fire and
+          <strong>when</strong></li>
+        <li>How we process it decides what we can read from it:
+          <ul><li><strong>timing</strong> of muscle activity</li><li><strong>force</strong></li>
+              <li><strong>fatigue</strong></li></ul></li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/s40_0.png" alt="A normalised EMG signal plotted against measured force over four contractions">
+    </div>
+  </div>
+  <aside class="notes">Notice in that figure how closely the processed EMG tracks the force, and then notice that it is not the same shape — it rises earlier and falls earlier. Both of those are coming up.</aside>
+</section>
+
+<!-- 37 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Timing: onset and offset</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>The raw EMG can be used <strong>without any processing</strong> to tell us about timing —
+          when the muscle turns on and off</li>
+        <li>Processing usually improves the result, but it is not required for timing</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0"><strong>Normalisation.</strong> Amplitude must be made
+          <em>relative</em> before it can be compared between people or conditions:<br>
+          normalised EMG = EMG ÷ (max EMG), usually from an <strong>MVC</strong> or MVIC.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s41_0.png" alt="A raw EMG trace with onset and offset marked by arrows and the duration bracketed below">
+    </div>
+  </div>
+  <aside class="notes">Onset detection is deceptively hard. The usual rule is some number of standard deviations above the resting baseline, held for some minimum duration, and both of those thresholds change the answer. Whatever you choose, say what it was.
+
+And normalisation: raw millivolts from my biceps and raw millivolts from yours are not comparable quantities. Skin, fat, electrode position and amplifier gain all differ.</aside>
+</section>
+
+<!-- 38 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Full-wave rectification</p>
+  <div class="cols top">
+    <div>
+      <p class="small">The most common way to process EMG is to produce an average value associated
+        with its magnitude. Two steps:</p>
+      <ol class="small">
+        <li>Take the <strong>absolute value</strong> of the signal — full-wave rectification (FWR)</li>
+        <li>Take an <strong>average</strong> over some time period</li>
+      </ol>
+      <div class="callout small">
+        <p style="margin-bottom:0">Step one is not optional. Raw EMG is <strong>zero-mean</strong> by
+          construction, so averaging it without rectifying gives you nothing but zero.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s42_1.png" alt="A sine wave above, and the same wave with its negative half flipped positive below, illustrating full-wave rectification">
+    </div>
+  </div>
+  <aside class="notes">Zero-mean is worth dwelling on. It is not an accident of the recording, it is forced by the amplifier: a differential, AC-coupled amplifier cannot pass a DC level. So the mean of the raw signal is zero no matter how hard the muscle is working.</aside>
+</section>
+
+<!-- 39 -->
+<section id="w-chain">
+  <h2>Electromyography</h2>
+  <p class="subhead">The processing chain, on a real recording</p>
+  <div class="iplot wide" data-widget="chain"></div>
+  <aside class="notes">This is two seconds of vastus lateralis recorded at 2222 hertz during steady cycling — three pedal strokes. Everything you see is applied to the measured trace live.
+
+Walk the chips left to right. The band-pass takes out the low-frequency movement artefact you can see wandering in the raw trace. Rectification flips the negative half up. Then either a moving RMS or a low-pass filter gives you the envelope.
+
+Two things to play with. Drag the RMS window and watch smoothness trade directly against timing — there is no setting that gives you both. Then switch the zero-phase chip off: filtering once, forwards only, pushes the envelope eighty milliseconds late. That is larger than the electromechanical delay we are about to discuss, so if you filter in one direction and then measure a delay, you are mostly measuring your own filter.</aside>
+</section>
+
+<!-- 40 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Root mean square</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Taking the <strong>root mean square</strong> is a way of taking an average
+        magnitude of the EMG signal. It can be used over different time windows.</p>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="eq big" style="margin-bottom:0">RMS = √( 1/T · ∫<sub>t</sub><sup>T</sup> EMG(t)² dt )</p>
+      </div>
+      <p class="small">Squaring removes the sign, so RMS does not need a separate rectification step —
+        and unlike the rectified mean it has a physical meaning: it is the signal’s
+        <strong>power</strong>.</p>
+    </div>
+    <div class="fig">
+      <img src="assets/s44_0.png" alt="A rectified EMG burst with a root-mean-square value drawn across it">
+    </div>
+  </div>
+  <aside class="notes">RMS is the better of the two averages precisely because independent motor unit trains add in power. That makes RMS the quantity that behaves predictably as more units join in — which is exactly what we saw in the recruitment widget.</aside>
+</section>
+
+<!-- 41 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">The linear envelope</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Another way to average is to <strong>low-pass filter</strong> the rectified
+        signal. The resulting tracing is called a <strong>linear envelope</strong>.</p>
+      <p class="small">The filter can be set to be more or less sensitive. A lower cut-off is smoother
+        and slower; a higher cut-off follows the bursts more closely and is noisier.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Filter <strong>forwards and backwards</strong> (zero-phase) or the
+          envelope comes out late — and you will read that lag as physiology.</p>
+      </div>
+    </div>
+    <div class="fig lawstack">
+      <img src="assets/s45_1.png" alt="A rectified EMG burst with a linear envelope at a 3 Hz cut-off">
+      <img src="assets/s45_0.png" alt="The same burst with a linear envelope at a 2 Hz cut-off">
+    </div>
+  </div>
+  <aside class="notes">Second-order Butterworth at two or three hertz is the usual choice for whole-body movement. Higher-order filters ring, and on a rectified signal — which cannot be negative — the ringing shows up as an envelope that dips below zero, which is a giveaway that the filter is wrong rather than the muscle.</aside>
+</section>
+
+<!-- 42 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Putting it to work: EMG through the gait cycle</p>
+  <div class="cols top">
+    <div class="fig"><img src="assets/s46_0.png" alt="Stick figures through the phases of the gait cycle with the active muscles shaded"></div>
+    <div class="fig"><img src="assets/s46_1.png" alt="Normalised activity of gluteus maximus, iliopsoas, hamstrings, quadriceps, triceps surae and tibialis anterior across the gait cycle"></div>
+  </div>
+  <p class="small">Processing the EMG this way lets us quantify and visualise muscle activity during a
+    task, with respect to both <strong>timing</strong> and <strong>amplitude</strong>.</p>
+  <aside class="notes">This is EMG doing what it is best at. Nobody here is claiming to know the force in the hamstrings. What the figure tells you is when each muscle is on relative to the others, and that is enough to understand the coordination of walking.</aside>
+</section>
+
+<!-- 43 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">EMG and force — the relationship is not a straight line</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>There is a <strong>non-linear</strong> relationship between EMG and muscle force, even
+          during <strong>isometric</strong> contractions</li>
+        <li>During <strong>fatigue</strong> the relationship changes</li>
+        <li>During <strong>dynamic</strong> contractions it becomes more complex still — length and
+          velocity are changing, and so is the tissue between muscle and electrode</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">We derived the reason earlier: independent trains add in
+          <strong>power</strong>, and the units are not all the same size. The shape of the curve
+          follows from recruitment, not from a law of nature.</p>
+      </div>
+    </div>
+    <div class="fig lawstack">
+      <img src="assets/s49_0.png" alt="EMG amplitude against load, with a curved relationship departing from a straight dotted line">
+      <img src="assets/s49_1.png" alt="Measured EMG amplitude against force across successive minutes of a fatiguing protocol">
+    </div>
+  </div>
+  <aside class="notes">The lower figure is the one to look at twice. Each loop is a different minute of a fatiguing protocol, and the relationship moves. So even if you calibrate EMG against force at the start of a session, that calibration is already wrong by the end of it.</aside>
+</section>
+
+<!-- 44 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Electromechanical delay</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>The delay between <strong>neural activation</strong> of a muscle and the development of
+          <strong>muscle tension</strong></li>
+        <li>Approximately <strong>30–50 ms</strong>, depending on the muscle and the joint</li>
+        <li>It comes from excitation–contraction coupling and from taking up slack in the
+          <strong>series elastic</strong> elements</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Relating EMG to force or to movement without allowing for this will
+          misplace both.</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="assets/s48_0.png" alt="Muscle force and EMG plotted together, with the electromechanical delay marked at onset and at offset">
+    </div>
+  </div>
+  <aside class="notes">Notice the figure marks a delay at the start and at the end, and that they are not the same size. Switching a muscle off takes longer than switching it on, which the next slide lets you see.</aside>
+</section>
+
+<!-- 45 -->
+<section id="w-emd">
+  <h2>Electromyography</h2>
+  <p class="subhead">Why force arrives after the signal</p>
+  <div class="iplot wide" data-widget="emd"></div>
+  <aside class="notes">The green trace is the measured envelope from the same cycling recording. The orange is modelled force, driven by that envelope through first-order activation dynamics.
+
+Two separate things add up. The electromechanical delay slider is the propagation and slack-taking part. On top of it, activation itself takes time: at thirty milliseconds of delay the measured onset-to-onset gap comes out at about thirty-nine, and that extra nine milliseconds is the activation climbing past the detection threshold.
+
+Now look at the trailing edges rather than the leading ones. Deactivation is the slower of the two time constants, so force outlasts the signal that caused it by considerably more than it lagged at the start. If you measure electromechanical delay at onset and assume the same number applies at offset, you will be wrong.</aside>
+</section>
+
+<!-- 46 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">Fatigue — what the textbook says</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>A single MUAP <strong>decreases</strong> in amplitude with fatigue, and produces less force</li>
+        <li>Surface EMG of a submaximal contraction <strong>increases</strong> in amplitude as fatigue
+          develops, because more motor units are recruited to hold the same force</li>
+        <li>The frequency content <strong>shifts down</strong>: conduction velocity falls, so each MUAP
+          is stretched out in time and the spectrum is compressed</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Two predictions: amplitude up, median frequency down. The next slide
+          tests both against measured data.</p>
+      </div>
+    </div>
+    <div class="fig lawstack">
+      <img src="assets/s50_0.png" alt="A motor unit action potential before and after fatigue, lower and broader afterwards">
+      <img src="assets/s50_1.png" alt="EMG and force recorded over ten minutes of a sustained contraction">
+    </div>
+  </div>
+  <aside class="notes">The mechanism for the frequency shift is worth stating because it is not arbitrary. Metabolite accumulation slows conduction velocity; a slower wave takes longer to pass the electrode; a longer waveform has lower frequency content. Median frequency is just a summary of where the power sits.</aside>
+</section>
+
+<!-- 47 -->
+<section id="w-fatigue">
+  <h2>Electromyography</h2>
+  <p class="subhead">…and what six real sprints show</p>
+  <div class="iplot wide" data-widget="fatigue"></div>
+  <aside class="notes">This is vastus lateralis through a thirty-second all-out effort, six participants, one point per pedal revolution. Per revolution rather than per second, because during cycling the muscle is only active for part of each turn and a one-second window is mostly silence.
+
+Click through the participants. Amplitude rises in every one of the six, strongly in several. Median frequency falls in only four, and in P04 and P05 it goes the other way.
+
+So the amplitude prediction holds up and the frequency prediction is a tendency. That is not a failure of the physiology — the mechanism is real — it is a statement about dynamic contractions, where the muscle is intermittently active, the detection volume moves under the skin as the limb changes shape, and thirty seconds is simply not very long. The classic result comes from sustained isometric holds, and that is the context where you should expect to see it.
+
+If you report a median-frequency slope in a lab, report the correlation too.</aside>
+</section>
+
+<!-- 48 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">What the signal can be analysed for</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li><strong>Coordination</strong>
+          <ul><li>sequencing and co-contraction</li></ul></li>
+        <li><strong>Force</strong>
+          <ul><li>linear and non-linear relations — with care</li></ul></li>
+        <li><strong>Fatigue</strong>
+          <ul><li>decrease in the single MUAP</li>
+              <li>increase in surface EMG during a fatiguing contraction</li>
+              <li>change in the frequency content</li></ul></li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="assets/s52_0.png" alt="A panel of EMG analyses: single motor unit potentials at 10 percent MVC, firing trains, interference at 40 percent, conduction velocity decline, and a bipolar electrode over muscle fibres">
+    </div>
+  </div>
+  <aside class="notes">Ordered by how much you can trust them. Coordination and timing are what surface EMG does well. Force needs the whole chain of caveats we have just been through. Fatigue sits in between: the amplitude change is dependable, the frequency change is conditional.</aside>
+</section>
+
+<!-- 49 -->
+<section>
+  <h2>Electromyography</h2>
+  <p class="subhead">What to take away</p>
+  <ul class="small two">
+    <li><strong>EMG is the electrical event, not the force.</strong> Everything between the action
+      potential and the crossbridge is invisible to the electrode.</li>
+    <li><strong>It is a sum, and an algebraic one.</strong> Potentials cancel as well as add, so
+      amplitude under-reports at high force.</li>
+    <li><strong>Bipolar recording removes what is common.</strong> Mains hum goes exactly; cross-talk
+      is not common to both electrodes and stays.</li>
+    <li><strong>Spacing is a filter.</strong> Differencing two contacts d apart has zeros at multiples
+      of v/d — 20 mm at 4 m/s notches 200 Hz, inside the band.</li>
+    <li><strong>Placement is arithmetic, not folklore.</strong> On the end plate the difference
+      cancels; at the tendon the wave runs out; the belly is the stable plateau.</li>
+    <li><strong>Process deliberately.</strong> Rectify because the raw mean is zero; filter forwards
+      and backwards or you will read your own lag as electromechanical delay.</li>
+    <li><strong>Normalise before comparing.</strong> Raw millivolts are not comparable between people,
+      days, or electrode placements.</li>
+    <li><strong>Amplitude rises with fatigue; frequency usually falls.</strong> “Usually” is the honest
+      word — 4 of our 6 sprinters, against 6 of 6 for amplitude.</li>
+  </ul>
+  <aside class="notes">If a student leaves with only one of these, make it the first. Almost every misuse of EMG in the literature is a version of treating it as a force meter.</aside>
+</section>
+
+<!-- 50 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Electromyography</h1>
+    <div class="rule"></div>
+    <p class="sub">Next up: angular kinetics · Measured data: Cartier et al., six participants, leg cycling</p>
+  </div>
+  <aside class="notes">The measured recordings used in the interactive figures come from a published cycling dataset with surface EMG from seven leg muscles. The processing you saw is the processing described in this lecture, applied live.</aside>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js?v=20261005"></script>
+<script src="mobile.js?v=20261005"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="emgdata.js?v=20261005"></script>
+<script src="deck-core.js?v=20261005"></script>
+<script src="emg.js?v=20261005"></script>
+<script src="deck-tools.js?v=20261005"></script>
+<script src="fit.js?v=20261005"></script>
+</body>
+</html>
