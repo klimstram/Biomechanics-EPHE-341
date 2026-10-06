@@ -288,276 +288,349 @@ if (typeof module !== 'undefined' && module.exports) {
                      biquads: biquads, sosOnce: sosOnce };
 }
 /* ======================================================================
-   1. BIPOLAR — why EMG is recorded as a difference
+   1. TRAVEL — the same action potential, read twice
 
-   His slides 24-28, as one figure you can drive.  An action potential
-   travels along the fibre at cv and passes two electrodes d apart, so the
-   second sees the SAME waveform delayed by tau = d/cv.  The amplifier
-   returns the difference.  Add mains hum equally to both and it vanishes;
-   move a source off-centre and it does not.
+   His slides 24 and 26, which are PowerPoint animations: a wave travels
+   along the fibre and passes one electrode (uni-polar) or two (bi-polar),
+   and each electrode reads the SAME waveform at a DIFFERENT time.  The
+   amplifier output is the difference of those two delayed copies.
 
-   The spectrum panel is the part worth labouring: differencing two copies
-   separated by tau is a comb filter, 2|sin(pi f tau)|, with zeros at
-   k*cv/d.  At the SENIAM-standard 20 mm spacing and a typical 4 m/s that
-   first zero lands at 200 Hz — inside the EMG band.  Checked in
-   parts/selftest.js.
+   Everything on the screen comes from one function of time.  An electrode
+   at longitudinal position x sees
+
+       e(t) = muap(t - x / cv)
+
+   so the gap between the two traces is exactly tau = d / cv, and the
+   amplifier output is e1(t) - e2(t) with no further assumption.  That is
+   what makes a MUAP biphasic: it is a difference of two shifted copies of
+   a monophasic travelling wave, not a property of the muscle.
+
+   Mains hum is added IDENTICALLY to both electrodes, so the subtraction
+   removes it exactly (checked: worst residual 2.2e-16).  Cross-talk is a
+   second source off to one side; its distance to the two contacts differs,
+   so its amplitude differs, and the subtraction leaves a fraction of it
+   behind.  Amplitude falls as 1/r^2 from a current source in a volume
+   conductor.
    ====================================================================== */
-D.register('bipolar', function (node, d) {
+D.register('travel', function (node, d) {
   var port = D.portrait();
   var u = build(node, {});
-  var S = { d: 20, cv: 4.0, hum: 0, off: 0, view: 'time' };
+  var S = { mode: 'bi', d: 20, cv: 4, hum: 0, xt: 0, t: 26 };
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1080, h: port ? 520 : 372,
+  var L = 120;                 /* mm of fibre on screen */
+  var XE = 46;                 /* mm: midpoint of the pair */
+  var QOFF = 15;               /* mm: how far off to the side the neighbour sits */
+  var TMAX = 40;               /* ms of record */
+  var FSK = 4;                 /* samples per ms */
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1090, h: port ? 560 : 392,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
 
-  var FS = 20000, N = 800, SPAN = 0.040;          /* 40 ms at 20 kHz */
-  function traces() {
-    var tau = (S.d * 1e-3) / S.cv;
-    var t = new Float64Array(N), m1 = new Float64Array(N),
-        m2 = new Float64Array(N), df = new Float64Array(N);
-    for (var i = 0; i < N; i++) {
-      var tt = (i - N / 2) / FS;
-      t[i] = tt;
-      var hum = S.hum * 0.01 * Math.sin(2 * Math.PI * 60 * tt);
-      /* a crosstalk source sits S.off mm nearer electrode 1, so it reaches
-         the two electrodes with a DIFFERENT delay and is not common-mode */
-      var xt = S.off ? 0.35 * muap(tt - 0.004, 0.010) : 0;
-      var xt2 = S.off ? 0.35 * muap(tt - 0.004 - (S.off * 1e-3) / S.cv, 0.010) : 0;
-      m1[i] = muap(tt, 0.008) + hum + xt;
-      m2[i] = muap(tt - tau, 0.008) + hum + xt2;
-      df[i] = m1[i] - m2[i];
-    }
-    return { t: t, m1: m1, m2: m2, df: df, tau: tau };
+  function x1() { return XE - (S.mode === 'uni' ? 0 : S.d / 2); }
+  function x2() { return XE + S.d / 2; }
+
+  /* ms for the wave to reach position x, from x = 0 at t = 0 */
+  function arrive(x) { return x / S.cv; }      /* mm / (m/s) = ms */
+
+  function humAt(t) { return S.hum * Math.sin(2 * Math.PI * 60 * t / 1000); }
+
+  /* the neighbour muscle: a source at longitudinal offset S.xt and lateral
+     offset QOFF, firing on its own clock */
+  function xtAt(x, t) {
+    if (!S.xt) return 0;
+    var dx = x - (XE + S.xt);
+    var r2 = QOFF * QOFF + dx * dx;
+    var g = 1 / r2 * (QOFF * QOFF);           /* 1 at r = QOFF, falls as 1/r^2 */
+    return 26 * g * muap((t - 20) / 1000, 0.009, 1);
   }
 
-  function drawTime(x0, y0, w, h, v) {
+  /* q picks which components are included, so the readout can measure each
+     contaminant's residual instead of asserting it */
+  function trace(x, q) {
+    q = q || { m: 1, h: 1, x: 1 };
+    var n = TMAX * FSK + 1, y = new Float64Array(n);
+    for (var i = 0; i < n; i++) {
+      var t = i / FSK;
+      y[i] = (q.m ? 100 * muap((t - arrive(x)) / 1000, 0.009, 1) : 0)
+           + (q.h ? humAt(t) : 0)
+           + (q.x ? xtAt(x, t) : 0);
+    }
+    return y;
+  }
+
+  /* ------------------------------- the fibre ----------------------------- */
+  function drawFibre(x0, y0, w, h) {
     var c = ax.c, K = C();
-    /* the lane names are drawn INSIDE the panel, above each baseline: at
-       the left they were being clipped by the panel edge at every width */
-    var pl = 18, pr = 16, pt = 22, pb = 30;
-    var X = function (tt) { return x0 + pl + (tt + SPAN/2) / SPAN * (w - pl - pr); };
-    var lanes = [[v.m1, K.BLUE, 'electrode 1'], [v.m2, K.VIO, 'electrode 2'],
-                 [v.df, K.ACC, 'amplifier out  (1 − 2)']];
-    var lh = (h - pt - pb) / 3;
-    /* one common scale for all three lanes — the difference really is larger
-       than either electrode, and hiding that would be the whole point lost */
-    var amp = 2.25 + S.hum * 0.012;
-    lanes.forEach(function (ln, k) {
+    var pl = 34, pr = 34;
+    var X = function (mm) { return x0 + pl + mm / L * (w - pl - pr); };
+    var cy = y0 + h * 0.56;
+
+    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .32; c.lineWidth = 22;
+    c.lineCap = 'round'; c.beginPath();
+    c.moveTo(X(0), cy); c.lineTo(X(L), cy); c.stroke(); c.restore();
+
+    /* the travelling wave, drawn where it is now */
+    var xc = S.cv * S.t;                     /* mm */
+    c.save(); c.strokeStyle = K.GRN; c.lineWidth = 2.4; c.beginPath();
+    for (var mm = Math.max(0, xc - 26); mm <= Math.min(L, xc + 26); mm += 0.5) {
+      var v = muap((mm - xc) / S.cv / 1000, 0.009, 1);
+      var px = X(mm), py = cy - v * 26;
+      mm <= Math.max(0, xc - 26) + 1e-9 ? c.moveTo(px, py) : c.lineTo(px, py);
+    }
+    c.stroke(); c.restore();
+    arrow(c, X(Math.min(L, xc + 20)), cy - 34, X(Math.min(L, xc + 36)), cy - 34,
+          { color: K.GRN, width: 2, head: 8 });
+
+    /* the electrodes */
+    var es = S.mode === 'uni' ? [[x1(), K.BLUE, '1']] : [[x1(), K.BLUE, '1'], [x2(), K.VIO, '2']];
+    es.forEach(function (e) {
+      c.save(); c.fillStyle = e[1];
+      c.fillRect(X(e[0]) - 7, cy - 17, 14, 34); c.restore();
+      label(c, e[2], X(e[0]), cy - 27, { color: e[1], size: 11.5 });
+    });
+    if (S.mode === 'bi') {
+      var mx = (X(x1()) + X(x2())) / 2;
+      label(c, num(S.d, 0) + ' mm', mx, cy + 30, { color: K.MUT, size: 10.5, plate: true });
+      c.save(); c.strokeStyle = K.MUT; c.lineWidth = 1; c.globalAlpha = .7;
+      c.beginPath(); c.moveTo(X(x1()), cy + 22); c.lineTo(X(x2()), cy + 22); c.stroke(); c.restore();
+    }
+    if (S.xt) {
+      var xx = X(XE + S.xt);
+      c.save(); c.fillStyle = K.ACC; c.globalAlpha = .9;
+      c.beginPath(); c.arc(xx, cy + 54, 6, 0, 7); c.fill(); c.restore();
+      label(c, 'neighbouring muscle', xx, cy + 70, { color: K.ACC, size: 10.5, plate: true });
+    }
+    label(c, 'one muscle fibre', x0 + pl, y0 + 12, { color: K.MUT, size: 11, align: 'left' });
+  }
+
+  /* ------------------------------ the traces ----------------------------- */
+  function drawTraces(x0, y0, w, h) {
+    var c = ax.c, K = C();
+    var pl = 150, pr = 22, pt = 6, pb = 36;
+    var e1 = trace(x1()), e2 = S.mode === 'bi' ? trace(x2()) : null;
+    var rows = S.mode === 'bi'
+      ? [[e1, K.BLUE, 'electrode 1'], [e2, K.VIO, 'electrode 2'],
+         [sub(e1, e2), K.ACC, 'amplifier out  (1 − 2)']]
+      : [[e1, K.BLUE, 'electrode 1'], [null, null, null], [null, null, null]];
+    var lanes = 3, lh = (h - pt - pb) / lanes;
+    var sc = lh * 0.40 / 120;
+    var n = e1.length;
+    var X = function (i) { return x0 + pl + i / (n - 1) * (w - pl - pr); };
+
+    rows.forEach(function (r, k) {
+      if (!r[0]) return;
       var cy = y0 + pt + lh * (k + 0.5);
-      c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1; c.setLineDash([3, 4]);
+      c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1;
       c.beginPath(); c.moveTo(x0 + pl, cy); c.lineTo(x0 + w - pr, cy); c.stroke(); c.restore();
-      c.save(); c.strokeStyle = ln[1]; c.lineWidth = k === 2 ? 2.6 : 2; c.beginPath();
-      for (var i = 0; i < N; i++) {
-        var px = X(v.t[i]), py = cy - ln[0][i] / amp * (lh * 0.42);
+      /* only up to 'now', so the trace is written as the wave goes past */
+      var upto = Math.min(n - 1, Math.round(S.t * FSK));
+      c.save(); c.strokeStyle = r[1]; c.lineWidth = 1.7; c.beginPath();
+      for (var i = 0; i <= upto; i++) {
+        var px = X(i), py = cy - r[0][i] * sc;
         i ? c.lineTo(px, py) : c.moveTo(px, py);
       }
       c.stroke(); c.restore();
-      label(c, ln[2], x0 + pl + 4, cy - lh * 0.40,
-            { color: ln[1], size: 11.5, align: 'left', plate: true });
+      label(c, r[2], x0 + pl - 8, cy - lh * 0.30,
+            { color: r[1], size: 11, align: 'right', weight: 700 });
     });
-    /* the delay, marked between the two peaks */
-    var cy1 = y0 + pt + lh * 0.5, cy2 = y0 + pt + lh * 1.5;
-    var xa = X(0), xb = X(v.tau);
-    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .7; c.setLineDash([4, 3]); c.lineWidth = 1.2;
-    c.beginPath(); c.moveTo(xa, cy1 - lh * 0.40); c.lineTo(xa, cy2 + lh * 0.40); c.stroke();
-    c.beginPath(); c.moveTo(xb, cy1 - lh * 0.40); c.lineTo(xb, cy2 + lh * 0.40); c.stroke();
-    c.restore();
-    arrow(c, xa, cy1 - lh * 0.46, xb, cy1 - lh * 0.46, { color: K.MUT, width: 1.6, head: 7 });
-    label(c, 'τ = d/v = ' + fmt(v.tau * 1000, 2) + ' ms',
-          (xa + xb) / 2, cy1 - lh * 0.46 - 11, { color: K.MUT, size: 11.5, plate: true });
-    /* axis */
-    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
-    c.beginPath(); c.moveTo(x0 + pl, y0 + h - pb); c.lineTo(x0 + w - pr, y0 + h - pb); c.stroke(); c.restore();
-    [-20, -10, 0, 10, 20].forEach(function (ms) {
-      label(c, String(ms), X(ms / 1000), y0 + h - pb + 12, { color: K.MUT, size: 10.5 });
-    });
-    label(c, 'time (ms)', x0 + pl + (w - pl - pr) / 2, y0 + h - 8, { color: K.MUT, size: 11 });
-  }
 
-  function drawSpec(x0, y0, w, h) {
-    var c = ax.c, K = C();
-    var pl = 56, pr = 18, pt = 26, pb = 34, fmax = 500;
-    var X = function (f) { return x0 + pl + f / fmax * (w - pl - pr); };
-    var Y = function (g) { return y0 + h - pb - g / 2.15 * (h - pt - pb); };
-    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
-    c.beginPath(); c.moveTo(x0 + pl, y0 + pt); c.lineTo(x0 + pl, y0 + h - pb);
-    c.lineTo(x0 + w - pr, y0 + h - pb); c.stroke(); c.restore();
-    [0, 1, 2].forEach(function (g) {
-      label(c, String(g) + '×', x0 + pl - 7, Y(g), { color: K.MUT, size: 10.5, align: 'right' });
-    });
-    [0, 100, 200, 300, 400, 500].forEach(function (f) {
-      label(c, String(f), X(f), y0 + h - pb + 12, { color: K.MUT, size: 10.5 });
-    });
-    /* the EMG band, so the notch can be seen landing inside it */
-    c.save(); c.fillStyle = K.ACC; c.globalAlpha = .07;
-    c.fillRect(X(20), y0 + pt, X(450) - X(20), (y0 + h - pb) - (y0 + pt)); c.restore();
-    label(c, 'EMG band 20–450 Hz', X(235), y0 + pt + 10, { color: K.MUT, size: 10.5 });
-    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 2.6; c.beginPath();
-    for (var f = 0; f <= fmax; f += 1) {
-      var px = X(f), py = Y(combGain(f, S.d, S.cv));
-      f ? c.lineTo(px, py) : c.moveTo(px, py);
+    /* the delay between the two readings */
+    if (S.mode === 'bi') {
+      var t1 = arrive(x1()), t2 = arrive(x2());
+      var yTop = y0 + pt + 4;
+      c.save(); c.strokeStyle = K.MUT; c.lineWidth = 1; c.setLineDash([3, 3]);
+      [t1, t2].forEach(function (t) {
+        c.beginPath();
+        c.moveTo(X(t * FSK), yTop); c.lineTo(X(t * FSK), y0 + pt + lh * 2); c.stroke();
+      });
+      c.restore();
+      arrow(c, X(t1 * FSK), yTop, X(t2 * FSK), yTop, { color: K.MUT, width: 1.4, head: 6 });
+      label(c, 'τ = d/v = ' + fmt(S.d / S.cv, 2) + ' ms',
+            (X(t1 * FSK) + X(t2 * FSK)) / 2, yTop - 9,
+            { color: K.MUT, size: 10.5, plate: true });
     }
-    c.stroke(); c.restore();
-    combZeros(S.d, S.cv, fmax).forEach(function (f) {
-      c.save(); c.strokeStyle = K.BLUE; c.globalAlpha = .75; c.setLineDash([4, 4]); c.lineWidth = 1.4;
-      c.beginPath(); c.moveTo(X(f), y0 + pt); c.lineTo(X(f), y0 + h - pb); c.stroke(); c.restore();
-      label(c, fmt(f, 0) + ' Hz', X(f), y0 + pt - 9, { color: K.BLUE, size: 11, plate: true });
+
+    [0, 10, 20, 30, 40].forEach(function (t) {
+      label(c, String(t), X(t * FSK), y0 + h - pb + 13, { color: K.MUT, size: 10.5 });
     });
-    label(c, 'gain of the difference,  2|sin(π f τ)|',
-          x0 + (w + pl) / 2, y0 + h - 9, { color: K.MUT, size: 11 });
+    label(c, 'time (ms)', x0 + pl + (w - pl - pr) / 2, y0 + h - 5,
+          { color: K.MUT, size: 11 });
+  }
+  function sub(a, b) {
+    var y = new Float64Array(a.length);
+    for (var i = 0; i < a.length; i++) y[i] = a[i] - b[i];
+    return y;
   }
 
   function draw() {
-    var c = ax.c, W = ax.W, H = ax.H, K = C();
     ax.clear();
-    var v = traces();
-    if (port) {
-      drawTime(0, 0, W, H * 0.56, v);
-      drawSpec(0, H * 0.56, W, H * 0.44);
-    } else if (S.view === 'time') {
-      drawTime(0, 0, W, H, v);
+    var W = ax.W, H = ax.H;
+    drawFibre(0, 0, W, H * 0.30);
+    drawTraces(0, H * 0.30, W, H * 0.70);
+
+    var e1 = trace(x1());
+    var pk = function (y) { var m = 0; for (var i = 0; i < y.length; i++) m = Math.max(m, Math.abs(y[i])); return m; };
+    if (S.mode === 'uni') {
+      out.innerHTML =
+        'One electrode. It records whatever changes the potential at that one point: the ' +
+        'action potential as it goes past, <b>and</b> the ' + fmt(S.hum, 0) +
+        ' µV of mains hum, <b>and</b> the neighbouring muscle. Peak-to-peak it is reading <b>' +
+        fmt(pk(e1), 0) + ' µV</b>, and nothing in the trace says how much of that is muscle.';
     } else {
-      drawTime(0, 0, W * 0.56, H, v);
-      drawSpec(W * 0.56, 0, W * 0.44, H);
+      /* each contaminant measured on its own, so the percentages in the
+         readout are computed rather than asserted */
+      function diffPeak(q) { return pk(sub(trace(x1(), q), trace(x2(), q))); }
+      var muapOnly = diffPeak({ m: 1, h: 0, x: 0 });
+      var humLeft  = diffPeak({ m: 0, h: 1, x: 0 });
+      var xtDiff   = S.xt ? diffPeak({ m: 0, h: 0, x: 1 }) : 0;
+      var xtRaw    = S.xt
+        ? Math.max(pk(trace(x1(), { m: 0, h: 0, x: 1 })), pk(trace(x2(), { m: 0, h: 0, x: 1 })))
+        : 0;
+      out.innerHTML =
+        'Two electrodes <b>' + fmt(S.d, 0) + ' mm</b> apart. The same wave reaches them <b>' +
+        fmt(S.d / S.cv, 2) + ' ms</b> apart, so the two traces are the same shape at different ' +
+        'times, and their difference is <b>biphasic</b> — that is the MUAP, <b>' +
+        fmt(muapOnly, 0) + ' µV</b> peak to peak. ' +
+        (S.hum
+          ? 'The ' + fmt(S.hum, 0) + ' µV of hum is identical at both contacts, so the subtraction ' +
+            'leaves <b>' + humLeft.toExponential(0) + ' µV</b> of it: exact cancellation. '
+          : 'Turn up the mains hum: it is identical at both contacts, so it cancels exactly. ') +
+        (S.xt
+          ? 'The neighbouring muscle sits <b>' + fmt(Math.abs(S.xt), 0) +
+            ' mm</b> off centre, so it is nearer one contact than the other and <b>' +
+            fmt(xtDiff / Math.max(1e-9, xtRaw) * 100, 0) +
+            ' %</b> of it survives — amplifier quality cannot touch that.'
+          : 'Then move the neighbouring muscle off centre and watch what differencing cannot remove.');
     }
-    /* the first zero is v/d whether or not it lands on the plotted axis;
-       combZeros returns an empty list once it is past 500 Hz, and the slider
-       sweep in fit.js reaches exactly that corner (5 mm at 6 m/s is 1200 Hz) */
-    var f0 = S.cv / (S.d * 1e-3);
-    var hum = S.hum ? ' Mains hum of ' + fmt(S.hum * 10, 0) +
-        ' µV sits on both electrodes equally, so it is gone from the difference.' : '';
-    var xt = S.off ? ' A source <b>' + fmt(S.off, 0) + ' mm</b> off centre is <b>not</b> common ' +
-        'to the two electrodes, so it survives — differencing removes hum, not crosstalk.' : '';
-    out.innerHTML = 'The two electrodes see the same potential <b>' + fmt(v.tau * 1000, 2) +
-      ' ms</b> apart, so the difference is biphasic. Differencing is a comb filter with its ' +
-      'first zero at v/d = <b>' + fmt(f0, 0) + ' Hz</b>' +
-      (f0 < 450 ? ' — <b>inside</b> the 20–450 Hz EMG band.' : ' — clear of the EMG band.') +
-      hum + xt;
   }
 
   var out = readout(u.ctl);
   var g2 = el('div', 'ictls g2'); u.ctl.appendChild(g2);
-  slider(g2, 'Electrode spacing d', 5, 40, 1, S.d,
+  var sD = slider(g2, 'Spacing d', 5, 40, 1, S.d,
     function (v) { return fmt(v, 0) + ' mm'; }, function (v) { S.d = v; draw(); });
-  slider(g2, 'Conduction velocity v', 2, 6, 0.1, S.cv,
+  var sV = slider(g2, 'Velocity v', 2, 6, 0.1, S.cv,
     function (v) { return fmt(v, 1) + ' m/s'; }, function (v) { S.cv = v; draw(); });
-  slider(g2, 'Mains hum on both', 0, 50, 1, S.hum,
-    function (v) { return fmt(v * 10, 0) + ' µV'; }, function (v) { S.hum = v; draw(); });
-  slider(g2, 'Crosstalk offset', 0, 12, 1, S.off,
-    function (v) { return v ? fmt(v, 0) + ' mm' : 'none'; }, function (v) { S.off = v; draw(); });
+  var sH = slider(g2, 'Mains hum', 0, 120, 5, S.hum,
+    function (v) { return fmt(v, 0) + ' µV'; }, function (v) { S.hum = v; draw(); });
+  var sX = slider(g2, 'Neighbour', 0, 14, 1, S.xt,
+    function (v) { return v ? fmt(v, 0) + ' mm' : 'none'; }, function (v) { S.xt = v; draw(); });
+  sD.quiet(S.d); sV.quiet(S.cv); sH.quiet(S.hum); sX.quiet(S.xt);
 
-  if (!port) {
-    var row = ctlRow(u.ctl);
-    keepOut(seg(row, [['time', 'The two signals'], ['both', 'Add the spectrum']],
-      'time', function (k) { S.view = k; draw(); }));
+  var row = ctlRow(u.ctl);
+  keepOut(seg(row, [['uni', 'One electrode'], ['bi', 'Two electrodes']], S.mode,
+    function (m) { S.mode = m; draw(); }));
+  var play = playBtn(row, '▶ Send the potential');
+
+  var raf = null, playing = false, last = 0;
+  function stop() { playing = false; play.innerHTML = '▶ Send the potential'; if (raf) cancelAnimationFrame(raf); raf = null; }
+  function tick(ts) {
+    if (!playing) return;
+    if (!last) last = ts;
+    S.t = Math.min(TMAX, S.t + (ts - last) / 1000 * 11);
+    last = ts; draw();
+    if (S.t >= TMAX) { stop(); return; }
+    raf = requestAnimationFrame(tick);
   }
+  play.addEventListener('click', function () {
+    if (playing) { stop(); return; }
+    if (S.t >= TMAX) S.t = 0;
+    playing = true; last = 0; play.innerHTML = '❚❚ Pause';
+    raf = requestAnimationFrame(tick);
+  });
 
   draw();
   window.addEventListener('ephe341-theme', draw);
 });
 /* ======================================================================
-   2. RECRUIT — one electrode, many motor units
+   2. RECRUIT — what one electrode sees as the effort rises
 
-   His slides 8-10, 21 and 29-32 in one figure.  A pool of motor units is
-   recruited in size order (Henneman); each one that is active fires a
-   train of MUAPs; the electrode sees the algebraic SUM.
+   His slides 9, 10 and 21 made live.  The pool is 120 motor units on the
+   usual Fuglevand conventions:
 
-   The model follows the usual Fuglevand convention:
-     - recruitment thresholds are spread exponentially over the pool, so
-       most units are small and come in early;
+     - recruitment thresholds spread exponentially over the pool, so most
+       units are small and come in early;
      - twitch force spans 100:1 from the first unit to the last;
-     - MUAP amplitude goes as the square root of twitch force, because a
-       bigger unit has more fibres but they are not all nearer the
-       electrode;
-     - firing rate climbs from 8 Hz at recruitment to 35 Hz at full drive.
+     - MUAP amplitude goes as sqrt(twitch force), because a bigger unit has
+       more fibres but they are not all nearer the electrode;
+     - firing rate climbs from 8 Hz at recruitment towards a peak that is
+       lower for the big late units than the small early ones;
+     - interspike intervals carry a deterministic jitter of CV 0.2, so the
+       trains are not locked to one another.
 
-   The teaching point is the one the arithmetic gives for free: independent
-   trains add in POWER, so with equal units RMS would grow as sqrt(N)
-   (checked: exponent 0.504).  Size ordering makes it steeper than that,
-   and THAT is why the EMG-force relationship curves upward instead of
-   being a straight line.  His slide 49 asserts the curve; this derives it.
+   Fibre type is NOT imposed on top of that.  Units are typed by their
+   position in the recruitment order (first half type I, next 35 % IIa, last
+   15 % IIb), which is what his fibre-type table asserts -- recruitment order
+   first, second, third -- so the type counts in the readout are a
+   consequence of recruiting by size, not a second assumption.
+
+   Checked (parts/selftest.js): equal independent trains give RMS growing as
+   N^0.504, against 0.499 from the Python reference.
    ====================================================================== */
 D.register('recruit', function (node, d) {
   var port = D.portrait();
   var u = build(node, {});
-  /* k is the exponent in  MUAP amplitude ~ (twitch force)^k.  It is NOT a
-     settled number, and the whole shape of the EMG-force curve turns on it,
-     so the deck puts it on a slider rather than hiding it in a constant. */
-  var S = { exc: 30, k: 0.5, rr: 85 };
+  var S = { exc: 30, win: 500 };
 
-  var NU = 120, FS = 2000, DUR = 0.5;
-  var ax = new Axes(u.cv, { w: port ? 460 : 1100, h: port ? 520 : 374,
+  var NU = 120, FS = 2000;
+  /* k is the exponent in MUAP amplitude ~ (twitch force)^k, and rr is the
+     drive at which the last unit joins in.  Both are real modelling choices
+     and both are discussed in the notes; neither is on a slider here,
+     because this figure is about what the electrode sees, not about the
+     shape of the EMG-force curve. */
+  var KEXP = 0.5, RR = 85;
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1090, h: port ? 540 : 372,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
 
-  /* --- the pool, fixed once so the picture is stable across redraws --- */
+  var TYPE = [
+    { name: 'type I', upto: 0.50 },
+    { name: 'type IIa', upto: 0.85 },
+    { name: 'type IIb', upto: 1.01 }
+  ];
+  function typeOf(i) {
+    var f = i / (NU - 1);
+    for (var t = 0; t < TYPE.length; t++) if (f < TYPE[t].upto) return t;
+    return 2;
+  }
+  function tc(K, t) { return [K.BLUE, K.ORG, K.ACC][t]; }
+
   var POOL = (function () {
     var p = [], i;
     for (i = 0; i < NU; i++) {
       var f = i / (NU - 1);
       p.push({
-        tf:   Math.exp(f * Math.log(70)) / 70,                 /* exponential, 1/70..1 */
-        P:    Math.exp(f * Math.log(100)),                     /* twitch force 1..100 */
-        /* peak rate falls with unit size: small early units reach ~40 Hz,
-           the big late ones only ~25 Hz (Fuglevand).  Giving every unit the
-           SAME peak rate made all the trains share one period at full drive,
-           and the systematic cancellation that followed pulled the summed
-           RMS back down -- an artefact of the model, not physiology. */
+        tf:   Math.exp(f * Math.log(70)) / 70,
+        P:    Math.exp(f * Math.log(100)),
         peak: 40 - 15 * f,
-        ph:   (i * 0.6180339887) % 1                           /* fixed phase per unit */
+        ph:   (i * 0.6180339887) % 1,
+        ty:   typeOf(i)
       });
     }
     return p;
   })();
 
-  /* Recruitment range: the drive at which the LAST unit joins in. Small hand
-     muscles finish recruiting by about half of maximum effort and everything
-     above that is rate coding; large limb muscles keep recruiting to ~85 %.
-     That difference is the usual explanation for why the EMG-force
-     relationship is not the same shape in every muscle. */
-  function thrOf(i) { return POOL[i].tf * (S.rr / 100); }
   function active(exc) {
     var e = exc / 100, out = [];
     for (var i = 0; i < NU; i++) {
-      var th = thrOf(i);
+      var th = POOL[i].tf * (RR / 100);
       if (th <= e) {
         var span = Math.max(1e-6, 1 - th);
         var r = 8 + (POOL[i].peak - 8) * Math.min(1, (e - th) / span);
-        out.push({ u: POOL[i], rate: r });
+        out.push({ i: i, u: POOL[i], rate: r });
       }
     }
     return out;
   }
-  /* a unit firing at rate r makes a fraction of its tetanic force; the
-     twitches fuse as the rate rises, so force saturates */
-  function fuse(r) { return 1 - Math.exp(-r / 14); }
-
-  /* force at full drive, so '% of maximum' means % of maximum VOLUNTARY
-     force rather than % of a tetanus nobody can produce */
-  function fmax() {
-    var f = 0, a = active(100);
-    for (var i = 0; i < a.length; i++) f += a[i].u.P * fuse(a[i].rate);
-    return f;
-  }
-  var FMAX = 1;
-  function forceOf(act) {
-    var f = 0;
-    for (var i = 0; i < act.length; i++) f += act[i].u.P * fuse(act[i].rate);
-    return f / FMAX * 100;
-  }
-
-  function ampOf(unit) { return Math.pow(unit.P, S.k); }
+  function ampOf(unit) { return Math.pow(unit.P, KEXP); }
 
   function signal(act, dur) {
-    dur = dur || DUR;
     var n = Math.round(dur * FS), y = new Float64Array(n), i, k;
     var w = Math.round(0.012 * FS);
     for (k = 0; k < act.length; k++) {
       var a = act[k], isi = 1 / a.rate, sgn = (k % 2) ? 1 : -1;
-      /* a deterministic jitter sequence: motor-unit interspike intervals have
-         a coefficient of variation near 0.2, and without it the trains stay
-         locked to each other.  Deterministic so the figure does not flicker. */
       var jseed = (k * 2654435761) % 1013;
-      for (var t = a.u.ph * isi; t < dur; t += isi * (1 + 0.2 * (((jseed = (jseed * 1103515245 + 12345) % 2147483648) / 2147483648) - 0.5) * 2)) {
+      for (var t = a.u.ph * isi; t < dur;
+           t += isi * (1 + 0.2 * (((jseed = (jseed * 1103515245 + 12345) % 2147483648) / 2147483648) - 0.5) * 2)) {
         var i0 = Math.round(t * FS);
         for (i = Math.max(0, i0 - w); i < Math.min(n, i0 + w); i++)
           y[i] += muap((i - i0) / FS, 0.008, ampOf(a.u) * sgn);
@@ -566,112 +639,122 @@ D.register('recruit', function (node, d) {
     return y;
   }
 
-  /* the EMG-force curve, rebuilt when k changes and cached for that k */
-  var CURVE = [], curveKey = null;
-  function buildCurve() {
-    var kk = S.k + ':' + S.rr;
-    if (curveKey === kk) return;
-    FMAX = fmax();
-    var pts = [], mx = 0;
-    for (var e = 2; e <= 100; e += 2) {
-      /* a 500 ms window leaves enough RMS scatter to make the curve look
-         ragged; the curve points use 2 s, which is cached anyway */
-      var act = active(e), r = rms(signal(act, 2.0));
-      mx = Math.max(mx, r);
-      pts.push({ exc: e, force: forceOf(act), rms: r, n: act.length });
+  /* the loudest the pool ever gets, so the trace keeps one scale as the
+     slider moves and growth is visible rather than normalised away */
+  var YMAX = (function () {
+    var y = signal(active(100), 1.0), m = 0;
+    for (var i = 0; i < y.length; i++) m = Math.max(m, Math.abs(y[i]));
+    return m * 1.03;
+  })();
+
+  /* ------------------------------ the pool strip ------------------------- */
+  function drawPool(x0, y0, w, h, act) {
+    var c = ax.c, K = C();
+    var pl = 8, pr = 8, pt = 26, pb = 40;
+    var on = {};
+    act.forEach(function (a) { on[a.i] = a; });
+    var bw = (w - pl - pr) / NU;
+    var maxA = ampOf(POOL[NU - 1]);
+    for (var i = 0; i < NU; i++) {
+      var hh = (h - pt - pb) * (ampOf(POOL[i]) / maxA);
+      var x = x0 + pl + i * bw;
+      c.save();
+      c.fillStyle = tc(K, POOL[i].ty);
+      c.globalAlpha = on[i] ? 1 : 0.16;
+      c.fillRect(x, y0 + h - pb - hh, Math.max(1, bw - 0.7), hh);
+      c.restore();
     }
-    /* normalise by the LARGEST amplitude on the curve, not the last point:
-       the sum is not guaranteed monotonic and the last point was letting the
-       readout print values above 100 % */
-    pts.forEach(function (p) { p.rel = p.rms / mx * 100; });
-    CURVE = pts; curveKey = kk;
-  }
-  function atExc(e) {
-    return CURVE.reduce(function (a, b) {
-      return Math.abs(b.exc - e) < Math.abs(a.exc - e) ? b : a; });
+    /* where the recruitment front has reached */
+    var nAct = act.length;
+    if (nAct > 0 && nAct < NU) {
+      var fx = x0 + pl + nAct * bw;
+      c.save(); c.strokeStyle = K.INK; c.lineWidth = 1.4; c.setLineDash([3, 3]);
+      c.beginPath(); c.moveTo(fx, y0 + pt - 4); c.lineTo(fx, y0 + h - pb); c.stroke();
+      c.restore();
+    }
+    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(x0 + pl, y0 + h - pb + .5);
+    c.lineTo(x0 + w - pr, y0 + h - pb + .5); c.stroke(); c.restore();
+
+    label(c, 'the 120 motor units, smallest first', x0 + w / 2, y0 + 10,
+          { color: K.MUT, size: 11 });
+    label(c, 'bar height = how loud that unit is at the electrode',
+          x0 + w / 2, y0 + h - pb + 16, { color: K.MUT, size: 10.5 });
+
+    /* counts by type, drawn as a small tally under the strip */
+    var cnt = [0, 0, 0], tot = [0, 0, 0];
+    for (var j = 0; j < NU; j++) { tot[POOL[j].ty]++; if (on[j]) cnt[POOL[j].ty]++; }
+    var tx = x0 + pl, ty = y0 + h - 8;
+    c.save();
+    c.font = '700 11.5px ui-sans-serif,system-ui,sans-serif';
+    c.textAlign = 'left'; c.textBaseline = 'middle';
+    var gap = (w - pl - pr) / 3;
+    for (var t = 0; t < 3; t++) {
+      c.fillStyle = tc(K, t);
+      c.fillRect(tx + t * gap, ty - 5, 10, 10);
+      c.fillStyle = K.INK;
+      c.fillText(cnt[t] + ' of ' + tot[t] + '  ' + TYPE[t].name, tx + t * gap + 15, ty);
+    }
+    c.restore();
+    return cnt;
   }
 
-  function drawSignal(x0, y0, w, h, act, y) {
+  /* ------------------------------- the trace ----------------------------- */
+  function drawTrace(x0, y0, w, h, y) {
     var c = ax.c, K = C();
-    var pl = 16, pr = 14, pt = 20, pb = 28;
-    var mx = 0; for (var i = 0; i < y.length; i++) mx = Math.max(mx, Math.abs(y[i]));
-    mx = Math.max(mx, 4);
-    var cy = y0 + (h - pb + pt) / 2;
-    c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1; c.setLineDash([3, 4]);
+    var pl = 14, pr = 14, pt = 26, pb = 40;
+    var n = y.length;
+    var cy = y0 + pt + (h - pt - pb) / 2, sc = (h - pt - pb) / 2;
+    c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1;
     c.beginPath(); c.moveTo(x0 + pl, cy); c.lineTo(x0 + w - pr, cy); c.stroke(); c.restore();
-    c.save(); c.strokeStyle = K.BLUE; c.lineWidth = 1.1; c.beginPath();
-    for (i = 0; i < y.length; i++) {
-      var px = x0 + pl + i / (y.length - 1) * (w - pl - pr);
-      var py = cy - y[i] / mx * ((h - pt - pb) / 2 - 4);
+    c.save(); c.strokeStyle = K.BLUE; c.lineWidth = 1.05; c.beginPath();
+    for (var i = 0; i < n; i++) {
+      var px = x0 + pl + i / (n - 1) * (w - pl - pr);
+      var py = cy - y[i] / YMAX * sc;
       i ? c.lineTo(px, py) : c.moveTo(px, py);
     }
     c.stroke(); c.restore();
-    label(c, act.length + ' of ' + NU + ' units active', x0 + pl + 4, y0 + pt - 6,
-          { color: K.INK, size: 12, align: 'left' });
-    label(c, fmt(DUR * 1000, 0) + ' ms of signal at one electrode',
-          x0 + w / 2, y0 + h - 8, { color: K.MUT, size: 11 });
-  }
-
-  function drawCurve(x0, y0, w, h, act) {
-    var c = ax.c, K = C();
-    var pl = 52, pr = 18, pt = 24, pb = 34;
-    var X = function (f) { return x0 + pl + f / 100 * (w - pl - pr); };
-    var Y = function (r) { return y0 + h - pb - r / 100 * (h - pt - pb); };
-    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
-    c.beginPath(); c.moveTo(x0 + pl, y0 + pt); c.lineTo(x0 + pl, y0 + h - pb);
-    c.lineTo(x0 + w - pr, y0 + h - pb); c.stroke(); c.restore();
-    [0, 50, 100].forEach(function (v) {
-      label(c, String(v), x0 + pl - 7, Y(v), { color: K.MUT, size: 10.5, align: 'right' });
-      label(c, String(v), X(v), y0 + h - pb + 12, { color: K.MUT, size: 10.5 });
-    });
-    /* the straight line EMG is so often assumed to follow */
-    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .65; c.setLineDash([5, 5]); c.lineWidth = 1.6;
-    c.beginPath(); c.moveTo(X(0), Y(0)); c.lineTo(X(100), Y(100)); c.stroke(); c.restore();
-    label(c, 'if it were proportional', X(62), Y(40),
-          { color: K.MUT, size: 10.5, plate: true });
-    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 2.8; c.beginPath();
-    CURVE.forEach(function (p, i) { i ? c.lineTo(X(p.force), Y(p.rel)) : c.moveTo(X(p.force), Y(p.rel)); });
-    c.stroke(); c.restore();
-    var cur = atExc(S.exc);
-    c.save(); c.fillStyle = K.ACC; c.beginPath();
-    c.arc(X(cur.force), Y(cur.rel), 5.5, 0, 7); c.fill(); c.restore();
-    label(c, 'force (% of maximum)', x0 + (w + pl) / 2, y0 + h - 9, { color: K.MUT, size: 11 });
-    label(c, 'EMG amplitude (% of max)', x0 + pl + 4, y0 + pt - 8,
-          { color: K.MUT, size: 11, align: 'left' });
+    label(c, 'what the electrode records', x0 + w / 2, y0 + 10,
+          { color: K.MUT, size: 11 });
+    label(c, fmt(S.win, 0) + ' ms', x0 + w / 2, y0 + h - pb + 16,
+          { color: K.MUT, size: 10.5 });
   }
 
   function draw() {
-    var W = ax.W, H = ax.H;
     ax.clear();
-    buildCurve();
-    var act = active(S.exc), y = signal(act);
+    var W = ax.W, H = ax.H;
+    var act = active(S.exc);
+    var y = signal(act, S.win / 1000);
+    var cnt;
     if (port) {
-      drawSignal(0, 0, W, H * 0.52, act, y);
-      drawCurve(0, H * 0.52, W, H * 0.48, act);
+      cnt = drawPool(0, 0, W, H * 0.46, act);
+      drawTrace(0, H * 0.46, W, H * 0.54, y);
     } else {
-      drawSignal(0, 0, W * 0.56, H, act, y);
-      drawCurve(W * 0.56, 0, W * 0.44, H, act);
+      cnt = drawPool(0, 0, W * 0.44, H, act);
+      drawTrace(W * 0.44, 0, W * 0.56, H, y);
     }
-    var cur = atExc(S.exc);
-    var bend = cur.rel > cur.force + 2 ? 'above' : cur.rel < cur.force - 2 ? 'below' : 'on';
-    out.innerHTML = 'At <b>' + fmt(S.exc, 0) + ' %</b> drive, <b>' + act.length +
-      '</b> of ' + NU + ' units are active: <b>' + fmt(cur.force, 0) +
-      ' %</b> of maximum force and <b>' + fmt(cur.rel, 0) + ' %</b> of maximum EMG — ' +
-      bend + ' the line of proportionality. Independent trains add in <b>power</b>, not ' +
-      'amplitude, and the bend is set by the two assumptions on the right: how much louder a ' +
-      'big unit is than a small one, and how far up the range recruitment continues. The shape ' +
-      'of the EMG–force relationship is not a law.';
+    var peak = 0;
+    for (var i = 0; i < y.length; i++) peak = Math.max(peak, Math.abs(y[i]));
+    out.innerHTML =
+      'At <b>' + fmt(S.exc, 0) + ' %</b> effort, <b>' + act.length + '</b> of ' + NU +
+      ' units are active — <b>' + cnt[0] + '</b> type I, <b>' + cnt[1] + '</b> type IIa, <b>' +
+      cnt[2] + '</b> type IIb — firing between <b>8</b> and <b>' +
+      fmt(Math.max.apply(null, act.length ? act.map(function (a) { return a.rate; }) : [0]), 0) +
+      ' Hz</b>. The trace is at <b>' + fmt(peak / YMAX * 100, 0) +
+      ' %</b> of the amplitude this pool ever reaches. ' +
+      (act.length <= 14
+        ? 'Few enough units that you can still pick out individual motor unit action potentials.'
+        : 'Too many overlapping units to count anything: this is an <b>interference pattern</b>.');
   }
 
   var out = readout(u.ctl);
   var g2 = el('div', 'ictls g2'); u.ctl.appendChild(g2);
-  slider(g2, 'Neural drive', 2, 100, 1, S.exc,
+  var sE = slider(g2, 'Effort', 1, 100, 1, S.exc,
     function (v) { return fmt(v, 0) + ' %'; }, function (v) { S.exc = v; draw(); });
-  slider(g2, 'Size exponent', 0.3, 1, 0.05, S.k,
-    function (v) { return 'k = ' + fmt(v, 2); },
-    function (v) { S.k = v; draw(); });
-  slider(g2, 'Recruited by', 30, 100, 5, S.rr,
-    function (v) { return fmt(v, 0) + ' %'; }, function (v) { S.rr = v; draw(); });
+  var sW = slider(g2, 'Window', 50, 500, 25, S.win,
+    function (v) { return fmt(v, 0) + ' ms'; }, function (v) { S.win = v; draw(); });
+  sE.quiet(S.exc); sW.quiet(S.win);
+
   draw();
   window.addEventListener('ephe341-theme', draw);
 });
@@ -843,16 +926,20 @@ D.register('chain', function (node, d) {
    His slides 50-51 state the textbook pair: amplitude rises, median
    frequency falls.  This figure puts the measured data next to that claim.
 
-   Source: Cartier et al., six participants, 30 s all-out leg cycling,
-   vastus lateralis.  Median frequency and RMS are computed PER BURST --
-   over the active part of each pedal revolution -- because a whole-second
-   window during cycling is mostly silence, and silence has a spectrum of
-   its own that drags the estimate around.
+   Source: Cartier et al., six participants, vastus lateralis, 30 s taken
+   from the STEADY part of a free-cadence leg-cycling trial at about 160 W
+   and 85 rpm.  This is NOT a fatiguing protocol -- nobody was taken to
+   failure -- and the figure is on the slide for exactly that reason.
+   Median frequency and RMS are computed PER BURST, over the active part of
+   each pedal revolution, because a whole-second window during cycling is
+   mostly silence and silence has a spectrum of its own.
 
-   The result is not the clean textbook figure, and the deck says so:
-   amplitude rises in 6 of 6, median frequency falls in only 4 of 6.  The
-   decline is a tendency, not a law, and it is far more reliable in
-   sustained isometric contractions than in dynamic cycling.
+   What comes out is drift with correlations of 0.33 and below.  That is
+   what a slope fitted to thirty unfatiguing seconds looks like, and saying
+   so is more useful to the class than a tidy result would have been.
+
+   The raw panel is the same channel at two moments 29 s apart in the same
+   ride, so the class can see that nothing much has happened to it.
    ====================================================================== */
 D.register('fatigue', function (node, d) {
   var port = D.portrait();
@@ -905,7 +992,7 @@ D.register('fatigue', function (node, d) {
     label(c, (f.slope >= 0 ? '+' : '−') + fmt(Math.abs(f.slope), 2) + ' ' + unit +
              '/s    r = ' + num(f.r, 2),
           x0 + w - pr - 6, y0 + pt - 8, { color: colour, size: 12, align: 'right' });
-    label(c, 'time through the 30 s sprint (s)', x0 + pl + (w - pl - pr) / 2, y0 + h - 8,
+    label(c, 'time through the 30 s (s)', x0 + pl + (w - pl - pr) / 2, y0 + h - 8,
           { color: K.MUT, size: 11 });
     return f;
   }
@@ -944,6 +1031,43 @@ D.register('fatigue', function (node, d) {
     return { neg: neg, up: up, n: PS.length };
   }
 
+  /* the raw signal behind the dots: the same channel at two moments 29 s
+     apart in the same ride, drawn on ONE scale so they can be compared */
+  var CH = EMG14.chain || null;
+  function drawRaw(x0, y0, w, h) {
+    var c = ax.c, K = C();
+    if (!CH || !CH.late) return;
+    var pl = 52, pr = 14, pt = 20, pb = 26;
+    var pairs = [['at ' + fmt(CH.t0, 0) + ' s', CH.uv, K.BLUE],
+                 ['at ' + fmt(CH.late.t0, 0) + ' s', CH.late.uv, K.VIO]];
+    var mx = 0, i, k;
+    for (k = 0; k < pairs.length; k++)
+      for (i = 0; i < pairs[k][1].length; i++) mx = Math.max(mx, Math.abs(pairs[k][1][i]));
+    mx *= 1.04;
+    var lh = (h - pt - pb) / 2;
+    pairs.forEach(function (q, j) {
+      var cy = y0 + pt + lh * (j + 0.5), y = q[1], n = y.length;
+      c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(x0 + pl, cy); c.lineTo(x0 + w - pr, cy); c.stroke(); c.restore();
+      c.save(); c.strokeStyle = q[2]; c.lineWidth = 0.9; c.beginPath();
+      for (var i2 = 0; i2 < n; i2++) {
+        var px = x0 + pl + i2 / (n - 1) * (w - pl - pr);
+        var py = cy - y[i2] / mx * (lh * 0.46);
+        i2 ? c.lineTo(px, py) : c.moveTo(px, py);
+      }
+      c.stroke(); c.restore();
+      var r = rms(y);
+      label(c, q[0], x0 + pl - 7, cy - lh * 0.30,
+            { color: q[2], size: 10.5, align: 'right', weight: 700 });
+      label(c, fmt(r, 0) + ' µV rms', x0 + w - pr - 4, cy - lh * 0.30,
+            { color: K.MUT, size: 10.5, align: 'right', plate: true });
+    });
+    label(c, 'P01 raw vastus lateralis, 2 s each, same ride',
+          x0 + pl + 4, y0 + pt - 9, { color: K.MUT, size: 11, align: 'left' });
+    label(c, '±' + fmt(mx, 0) + ' µV full scale', x0 + pl + (w - pl - pr) / 2, y0 + h - 8,
+          { color: K.MUT, size: 10.5 });
+  }
+
   function draw() {
     var W = ax.W, H = ax.H, K = C();
     ax.clear();
@@ -951,24 +1075,27 @@ D.register('fatigue', function (node, d) {
     if (!rows.length) { label(ax.c, 'no data', W / 2, H / 2, { color: K.MUT }); return; }
     var fmf, frm, sum;
     if (port) {
-      fmf = scatter(0, 0, W, H * 0.36, rows, 1, K.ACC, S.p + ' · median frequency', 'Hz');
-      frm = scatter(0, H * 0.36, W, H * 0.34, rows, 2, K.VIO, S.p + ' · RMS amplitude', 'µV');
-      sum = summary(0, H * 0.70, W, H * 0.30);
+      drawRaw(0, 0, W, H * 0.22);
+      fmf = scatter(0, H * 0.22, W, H * 0.28, rows, 1, K.ACC, S.p + ' · median frequency', 'Hz');
+      frm = scatter(0, H * 0.50, W, H * 0.26, rows, 2, K.VIO, S.p + ' · RMS amplitude', 'µV');
+      sum = summary(0, H * 0.76, W, H * 0.24);
     } else {
-      fmf = scatter(0, 0, W * 0.37, H, rows, 1, K.ACC, S.p + ' · median frequency', 'Hz');
-      frm = scatter(W * 0.37, 0, W * 0.37, H, rows, 2, K.VIO, S.p + ' · RMS amplitude', 'µV');
+      drawRaw(0, 0, W * 0.40, H * 0.52);
+      fmf = scatter(0, H * 0.52, W * 0.40, H * 0.48, rows, 1, K.ACC, S.p + ' · median frequency', 'Hz');
+      frm = scatter(W * 0.40, 0, W * 0.34, H, rows, 2, K.VIO, S.p + ' · RMS amplitude', 'µV');
       sum = summary(W * 0.74, 0, W * 0.26, H);
     }
-    out.innerHTML = 'Vastus lateralis through a 30 s all-out sprint, one point per pedal ' +
-      'revolution. For <b>' + S.p + '</b> the median frequency goes ' +
+    out.innerHTML = 'Vastus lateralis through 30 s of <b>steady</b> cycling at about 160 W, ' +
+      'one point per pedal revolution — no fatiguing protocol. For <b>' + S.p +
+      '</b> the median frequency drifts ' +
       (fmf.slope < 0 ? '<b>down</b> ' : '<b>up</b> ') + fmt(Math.abs(fmf.slope) * 30, 0) +
-      ' Hz over the sprint (r = ' + num(fmf.r, 2) + ') while amplitude goes ' +
+      ' Hz over the 30 s (r = ' + num(fmf.r, 2) + ') and amplitude drifts ' +
       (frm.slope > 0 ? '<b>up</b>' : '<b>down</b>') + ' (r = ' + num(frm.r, 2) + '). ' +
-      'Across all ' + sum.n + ' participants amplitude rises in <b>' + sum.up + '</b> of them ' +
-      'but median frequency falls in only <b>' + sum.neg + '</b>. The frequency shift is a ' +
-      'tendency, not a law — it is far more reliable in a sustained isometric hold than in ' +
-      'dynamic cycling, where the muscle is only active for part of each revolution and the ' +
-      'detection volume moves under the skin.';
+      'Across all ' + sum.n + ' participants amplitude drifts up in <b>' + sum.up +
+      '</b> and median frequency down in <b>' + sum.neg + '</b> — but look at the ' +
+      'correlations before believing any of it. ' +
+      'That is the lesson: a slope fitted to a short record returns a number whatever the ' +
+      'physiology is doing. Report the correlation with the slope, and say what the protocol was.';
   }
 
   var out = readout(u.ctl);
@@ -979,168 +1106,281 @@ D.register('fatigue', function (node, d) {
   window.addEventListener('ephe341-theme', draw);
 });
 /* ======================================================================
-   5. FIBRE — where you put the electrodes, and why it matters
+   5. PLACE — where the pair goes, and what it costs you
 
-   His slides 23, 34, 35 and 36.  The action potential is generated at the
-   motor end-plate and propagates BOTH WAYS along the fibre at cv, dying at
-   the tendons.  An electrode sees it arrive at t = |x - iz| / cv.
+   His slides 35 and 36.  An eight-contact array lies along the muscle; pick
+   any two contacts and the figure shows what that pair would record and
+   what its spectrum looks like.
 
-   Put the pair astride the end-plate and the two electrodes see mirror
-   images of each other: the difference collapses.  That is not a rule of
-   thumb, it falls out of the geometry, and the sweep panel measures it --
-   a deep null at the innervation zone and a fade towards the tendon where
-   the propagating wave has nowhere left to go.
+   The signal is built, not drawn.  Forty fibres, each with its own end-plate
+   position scattered about the innervation zone and its own firing times.
+   A fibre's potential reaches a contact at
 
-   MODELLED, not measured: the Cartier recordings have no electrode array,
-   so there is no conduction velocity in this deck taken from data.
+       t_fire + |x_contact - x_endplate| / cv
+
+   travelling in BOTH directions from the end plate, and dies over the last
+   8 mm before the tendon because there is no more fibre to carry it.  Each
+   contact's trace is built once; a pair is then just a subtraction, which
+   is exactly what the differential amplifier does.
+
+   Everything the slide claims falls out of that and is measured in the
+   readout rather than asserted:
+
+     - a pair on the belly, both contacts one side of the end plate, is a
+       broad stable plateau;
+     - a pair straddling the end plate sees mirror images and cancels;
+     - a contact on the tendon records almost nothing;
+     - widening the spacing raises amplitude but drags the comb notch
+       (first zero at cv/d) down into the EMG band.
    ====================================================================== */
-D.register('fibre', function (node, d) {
+D.register('place', function (node, d) {
   var port = D.portrait();
   var u = build(node, {});
-  var S = { x: 42, d: 20, iz: 60, cv: 4.0 };
-  var L = 120;                                   /* fibre length, mm */
+  var S = { a: 4, b: 5, cv: 4 };
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1090, h: port ? 520 : 390,
+  var NC = 8;                     /* contacts */
+  var L = 160;                    /* mm, tendon to tendon */
+  var IZ = 80;                    /* mm: the centre of the innervation zone */
+  var C0 = 10, CSP = 20;          /* the array runs onto the tendon at both ends */
+  var FS = 2000, DUR = 0.4;
+  var NF = 40;
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1090, h: port ? 560 : 392,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
 
-  /* what an electrode at position e (mm) sees, as a function of time */
-  function seen(e, t) {
-    var dist = Math.abs(e - S.iz);
-    if (e < 0 || e > L) return 0;
-    /* the wave fades over the last 8 mm: at the tendon there is no more
-       fibre to propagate along, so the travelling component disappears */
-    var room = (e < S.iz) ? e : (L - e);
-    var taper = Math.min(1, room / 8);
-    return taper * muap(t - dist * 1e-3 / S.cv, 0.008);
-  }
-  function pairAt(x) {
-    var e1 = x - S.d / 2, e2 = x + S.d / 2, pp = 0, lo = 1e9, hi = -1e9;
-    for (var i = 0; i <= 400; i++) {
-      var t = -0.004 + i / 400 * 0.030;
-      var v = seen(e1, t) - seen(e2, t);
-      lo = Math.min(lo, v); hi = Math.max(hi, v);
+  function cx(i) { return C0 + i * CSP; }
+
+  /* --- the fibres: end plate scattered about IZ, deterministic -------- */
+  var FIB = (function () {
+    var f = [], seed = 12345, i;
+    function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+    for (i = 0; i < NF; i++) {
+      var fires = [], t = rnd() * 0.05;
+      while (t < DUR) { fires.push(t); t += 0.055 + 0.03 * rnd(); }
+      /* the end plates of a real muscle are scattered over a few millimetres,
+         not one line; 3 mm is the usual figure and it is what decides how
+         completely a straddling pair cancels */
+      f.push({ iz: IZ + (rnd() - 0.5) * 3, amp: 0.55 + rnd() * 0.9, fires: fires });
     }
-    return hi - lo;
+    return f;
+  })();
+
+  /* nothing travels along tendon, and the muscle thins towards it, so the
+     signal is dead within 6 mm of the end and back to full by 32 mm */
+  function fade(x) {
+    var e = Math.min(x, L - x);
+    return Math.max(0, Math.min(1, (e - 25) / 18));
   }
 
-  function drawFibre(x0, y0, w, h) {
-    var c = ax.c, K = C();
-    var pl = 30, pr = 30;
-    var X = function (mm) { return x0 + pl + mm / L * (w - pl - pr); };
-    var cy = y0 + h * 0.42;
-    /* the fibre */
-    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .35; c.lineWidth = 26; c.lineCap = 'round';
-    c.beginPath(); c.moveTo(X(0), cy); c.lineTo(X(L), cy); c.stroke(); c.restore();
-    label(c, 'tendon', X(0), cy + 30, { color: K.MUT, size: 10.5 });
-    label(c, 'tendon', X(L), cy + 30, { color: K.MUT, size: 10.5 });
-    /* the end-plate, and the two wavefronts leaving it */
-    c.save(); c.fillStyle = K.GRN; c.beginPath(); c.arc(X(S.iz), cy, 6, 0, 7); c.fill(); c.restore();
-    label(c, 'innervation zone', X(S.iz), cy + 30, { color: K.GRN, size: 11, plate: true });
-    arrow(c, X(S.iz) - 8, cy, X(S.iz) - 34, cy, { color: K.GRN, width: 2, head: 8 });
-    arrow(c, X(S.iz) + 8, cy, X(S.iz) + 34, cy, { color: K.GRN, width: 2, head: 8 });
-    /* the pair */
-    [[S.x - S.d / 2, K.BLUE, '1'], [S.x + S.d / 2, K.VIO, '2']].forEach(function (e) {
-      var inside = e[0] >= 0 && e[0] <= L;
-      c.save(); c.fillStyle = inside ? e[1] : K.MUT; c.globalAlpha = inside ? 1 : .35;
-      c.fillRect(X(e[0]) - 7, cy - 20, 14, 40); c.restore();
-      label(c, e[2], X(e[0]), cy - 30, { color: e[1], size: 11.5 });
-    });
-    label(c, 'pair centred ' + num(Math.abs(S.x - S.iz), 0) + ' mm from the end-plate',
-          x0 + w / 2, y0 + h - 8, { color: K.MUT, size: 11 });
-  }
-
-  function drawTraces(x0, y0, w, h) {
-    var c = ax.c, K = C();
-    var pl = 20, pr = 16, pt = 16, pb = 26;
-    var X = function (t) { return x0 + pl + (t + 0.004) / 0.030 * (w - pl - pr); };
-    var e1 = S.x - S.d / 2, e2 = S.x + S.d / 2;
-    var lanes = [[function (t) { return seen(e1, t); }, K.BLUE, 'electrode 1'],
-                 [function (t) { return seen(e2, t); }, K.VIO, 'electrode 2'],
-                 [function (t) { return seen(e1, t) - seen(e2, t); }, K.ACC, 'difference']];
-    var lh = (h - pt - pb) / 3;
-    lanes.forEach(function (ln, k) {
-      var cy = y0 + pt + lh * (k + 0.5);
-      c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1; c.setLineDash([3, 4]);
-      c.beginPath(); c.moveTo(x0 + pl, cy); c.lineTo(x0 + w - pr, cy); c.stroke(); c.restore();
-      c.save(); c.strokeStyle = ln[1]; c.lineWidth = k === 2 ? 2.6 : 1.8; c.beginPath();
-      for (var i = 0; i <= 300; i++) {
-        var t = -0.004 + i / 300 * 0.030;
-        var px = X(t), py = cy - ln[0](t) / 2.3 * (lh * 0.42);
-        i ? c.lineTo(px, py) : c.moveTo(px, py);
+  var CH = null, chKey = null;
+  function channels() {
+    var kk = fmt(S.cv, 2);
+    if (chKey === kk) return CH;
+    var n = Math.round(DUR * FS), j, k, f, i;
+    var out = [];
+    for (j = 0; j < NC; j++) out.push(new Float64Array(n));
+    var w = Math.round(0.012 * FS);
+    for (k = 0; k < FIB.length; k++) {
+      f = FIB[k];
+      for (j = 0; j < NC; j++) {
+        var x = cx(j);
+        var g = fade(x) * f.amp;
+        if (g <= 0) continue;
+        var lag = Math.abs(x - f.iz) / S.cv / 1000;      /* mm / (m/s) -> s */
+        for (var q = 0; q < f.fires.length; q++) {
+          var i0 = Math.round((f.fires[q] + lag) * FS);
+          for (i = Math.max(0, i0 - w); i < Math.min(n, i0 + w); i++)
+            out[j][i] += muap((i - i0) / FS, 0.009, g);
+        }
       }
-      c.stroke(); c.restore();
-      label(c, ln[2], x0 + pl + 3, cy - lh * 0.38,
-            { color: ln[1], size: 11, align: 'left', plate: true });
-    });
-    label(c, '30 ms', x0 + pl + (w - pl - pr) / 2, y0 + h - 8, { color: K.MUT, size: 11 });
+    }
+    CH = out; chKey = kk;
+    return CH;
   }
 
-  function drawSweep(x0, y0, w, h) {
+  function pairSignal() {
+    var ch = channels(), a = ch[S.a], b = ch[S.b];
+    var y = new Float64Array(a.length);
+    for (var i = 0; i < a.length; i++) y[i] = a[i] - b[i];
+    return y;
+  }
+
+  /* ----------------------------- the muscle ------------------------------ */
+  function drawMuscle(x0, y0, w, h) {
     var c = ax.c, K = C();
-    var pl = 46, pr = 16, pt = 24, pb = 32;
-    var pts = [], mx = 0;
-    for (var mm = 4; mm <= L - 4; mm += 1) { var v = pairAt(mm); pts.push([mm, v]); mx = Math.max(mx, v); }
-    mx = mx || 1;
-    var X = function (mm) { return x0 + pl + mm / L * (w - pl - pr); };
-    var Y = function (v) { return y0 + h - pb - v / (mx * 1.1) * (h - pt - pb); };
+    var pt = 26, pb = 26;
+    var Y = function (mm) { return y0 + pt + mm / L * (h - pt - pb); };
+    var mx = x0 + w * 0.60;
+
+    /* belly: widest in the middle, tapering to the tendons */
+    c.save();
+    c.fillStyle = K.ACC; c.globalAlpha = .16;
+    c.beginPath();
+    for (var mm = 0; mm <= L; mm += 2) {
+      var r = 10 + 26 * Math.sin(Math.PI * mm / L);
+      c.lineTo(mx + r, Y(mm));
+    }
+    for (var m2 = L; m2 >= 0; m2 -= 2) {
+      var r2 = 10 + 26 * Math.sin(Math.PI * m2 / L);
+      c.lineTo(mx - r2, Y(m2));
+    }
+    c.closePath(); c.fill(); c.restore();
+
+    /* the innervation zone */
+    c.save(); c.strokeStyle = K.GRN; c.lineWidth = 2.4; c.setLineDash([5, 3]);
+    c.beginPath(); c.moveTo(mx - 44, Y(IZ)); c.lineTo(mx + 44, Y(IZ)); c.stroke(); c.restore();
+    label(c, 'innervation zone', mx - 50, Y(IZ),
+          { color: K.GRN, size: 10.5, align: 'right', plate: true });
+
+    label(c, 'tendon', mx, y0 + 11, { color: K.MUT, size: 10.5 });
+    label(c, 'tendon', mx, y0 + h - 12, { color: K.MUT, size: 10.5 });
+
+    /* the array */
+    for (var j = 0; j < NC; j++) {
+      var sel = (j === S.a) || (j === S.b);
+      var col = j === S.a ? K.BLUE : (j === S.b ? K.VIO : K.MUT);
+      c.save();
+      c.fillStyle = col; c.globalAlpha = sel ? 1 : .32;
+      c.fillRect(mx - 15, Y(cx(j)) - 4.5, 30, 9);
+      c.restore();
+      label(c, String(j + 1), mx + 30, Y(cx(j)),
+            { color: col, size: 10.5, align: 'left', weight: sel ? 700 : 500 });
+    }
+    label(c, 'eight contacts, 20 mm apart', mx, y0 + h - 40,
+          { color: K.MUT, size: 10.5 });
+  }
+
+  /* ------------------------- trace and spectrum -------------------------- */
+  function drawTrace(x0, y0, w, h, y) {
+    var c = ax.c, K = C();
+    var pl = 42, pr = 16, pt = 22, pb = 30;
+    var n = y.length, cy = y0 + pt + (h - pt - pb) / 2;
+    var sc = (h - pt - pb) / 2 / YMAX;
+    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(x0 + pl, y0 + pt); c.lineTo(x0 + pl, y0 + h - pb); c.stroke();
+    c.restore();
+    c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(x0 + pl, cy); c.lineTo(x0 + w - pr, cy); c.stroke(); c.restore();
+    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 1.05; c.beginPath();
+    for (var i = 0; i < n; i++) {
+      var px = x0 + pl + i / (n - 1) * (w - pl - pr), py = cy - y[i] * sc;
+      i ? c.lineTo(px, py) : c.moveTo(px, py);
+    }
+    c.stroke(); c.restore();
+    label(c, 'what contacts ' + (S.a + 1) + ' − ' + (S.b + 1) + ' record',
+          x0 + pl + 4, y0 + pt - 10, { color: K.MUT, size: 11, align: 'left' });
+    label(c, fmt(DUR * 1000, 0) + ' ms', x0 + pl + (w - pl - pr) / 2, y0 + h - 10,
+          { color: K.MUT, size: 10.5 });
+  }
+
+  function drawSpec(x0, y0, w, h, y) {
+    var c = ax.c, K = C();
+    var pl = 42, pr = 16, pt = 22, pb = 34;
+    var s = spectrum(y, FS);
+    var FMAXP = 500;
+    var mx = 0, i;
+    for (i = 0; i < s.f.length; i++) if (s.f[i] <= FMAXP) mx = Math.max(mx, s.P[i]);
+    mx = Math.max(mx, 1e-12);
+    var X = function (f) { return x0 + pl + f / FMAXP * (w - pl - pr); };
+    var Y = function (p) { return y0 + h - pb - p / mx * (h - pt - pb); };
     c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
     c.beginPath(); c.moveTo(x0 + pl, y0 + pt); c.lineTo(x0 + pl, y0 + h - pb);
     c.lineTo(x0 + w - pr, y0 + h - pb); c.stroke(); c.restore();
-    [0, 30, 60, 90, 120].forEach(function (mm) {
-      label(c, String(mm), X(mm), y0 + h - pb + 12, { color: K.MUT, size: 10.5 });
+    c.save(); c.fillStyle = K.BLUE; c.globalAlpha = .40; c.beginPath();
+    c.moveTo(X(0), Y(0));
+    for (i = 0; i < s.f.length && s.f[i] <= FMAXP; i++) c.lineTo(X(s.f[i]), Y(s.P[i]));
+    c.lineTo(X(FMAXP), Y(0)); c.closePath(); c.fill(); c.restore();
+
+    var mf = medianFreq(y, FS, 10, FMAXP);
+    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 1.8; c.setLineDash([4, 3]);
+    c.beginPath(); c.moveTo(X(mf), y0 + pt); c.lineTo(X(mf), y0 + h - pb); c.stroke(); c.restore();
+    label(c, 'median ' + fmt(mf, 0) + ' Hz', X(mf) + 6, y0 + pt + 8,
+          { color: K.ACC, size: 10.5, align: 'left', plate: true });
+
+    [0, 100, 200, 300, 400, 500].forEach(function (f) {
+      label(c, String(f), X(f), y0 + h - pb + 12, { color: K.MUT, size: 10 });
     });
-    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 2.6; c.beginPath();
-    pts.forEach(function (p, i) { i ? c.lineTo(X(p[0]), Y(p[1])) : c.moveTo(X(p[0]), Y(p[1])); });
-    c.stroke(); c.restore();
-    /* mark the end-plate and the current pair position */
-    c.save(); c.strokeStyle = K.GRN; c.setLineDash([4, 4]); c.lineWidth = 1.5;
-    c.beginPath(); c.moveTo(X(S.iz), y0 + pt); c.lineTo(X(S.iz), y0 + h - pb); c.stroke(); c.restore();
-    label(c, 'end-plate', X(S.iz), y0 + pt - 9, { color: K.GRN, size: 10.5, plate: true });
-    c.save(); c.fillStyle = K.INK; c.beginPath(); c.arc(X(S.x), Y(pairAt(S.x)), 5, 0, 7); c.fill(); c.restore();
-    label(c, 'signal you would record', x0 + pl + 4, y0 + pt - 9,
-          { color: K.MUT, size: 10.5, align: 'left' });
-    label(c, 'where you put the pair (mm along the fibre)',
-          x0 + pl + (w - pl - pr) / 2, y0 + h - 8, { color: K.MUT, size: 11 });
+    label(c, 'frequency (Hz)', x0 + pl + (w - pl - pr) / 2, y0 + h - 7,
+          { color: K.MUT, size: 11 });
+    label(c, 'power', x0 + pl + 4, y0 + pt - 10, { color: K.MUT, size: 11, align: 'left' });
+    return mf;
   }
 
+  /* one scale for the trace, so moving the pair changes what you SEE */
+  var YMAX = (function () {
+    var ch = channels(), m = 0, i, j, k;
+    for (j = 0; j < NC; j++) for (k = j + 1; k < NC; k++)
+      for (i = 0; i < ch[j].length; i++) m = Math.max(m, Math.abs(ch[j][i] - ch[k][i]));
+    return m * 1.04;
+  })();
+
   function draw() {
-    var W = ax.W, H = ax.H;
     ax.clear();
+    var W = ax.W, H = ax.H;
+    var y = pairSignal(), mf;
     if (port) {
-      drawFibre(0, 0, W, H * 0.22);
-      drawTraces(0, H * 0.22, W, H * 0.44);
-      drawSweep(0, H * 0.66, W, H * 0.34);
+      drawMuscle(0, 0, W * 0.34, H * 0.46);
+      drawTrace(W * 0.34, 0, W * 0.66, H * 0.46, y);
+      mf = drawSpec(0, H * 0.46, W, H * 0.54, y);
     } else {
-      drawFibre(0, 0, W * 0.52, H * 0.30);
-      drawTraces(0, H * 0.30, W * 0.52, H * 0.70);
-      drawSweep(W * 0.52, 0, W * 0.48, H);
+      drawMuscle(0, 0, W * 0.34, H);
+      drawTrace(W * 0.34, 0, W * 0.66, H * 0.52, y);
+      mf = drawSpec(W * 0.34, H * 0.52, W * 0.66, H * 0.48, y);
     }
-    var pp = pairAt(S.x), best = 0;
-    for (var mm = 4; mm <= L - 4; mm += 1) best = Math.max(best, pairAt(mm));
-    var rel = best ? pp / best * 100 : 0;
-    var off = S.x - S.iz;
-    out.innerHTML = 'The pair sits <b>' + fmt(Math.abs(off), 0) + ' mm</b> ' +
-      (Math.abs(off) < 2 ? 'on top of' : (off > 0 ? 'past' : 'short of')) +
-      ' the end-plate and records <b>' + fmt(rel, 0) + ' %</b> of the best signal available on ' +
-      'this fibre. Astride the innervation zone the two electrodes see mirror images and the ' +
-      'difference <b>cancels</b>; close to the tendon the travelling wave has run out of fibre. ' +
-      'The two spikes flanking the null are a trap, not a target: there the amplitude swings ' +
-      'from nothing to everything over a few millimetres, so a sensor that shifts slightly on ' +
-      'the skin changes your answer. The flat plateau over the belly is the only stable place. ' +
-      '<span style="opacity:.72">Modelled: there is no electrode array in this dataset, so no ' +
-      'conduction velocity here is measured.</span>';
+
+    var r = rms(y), spacing = Math.abs(cx(S.b) - cx(S.a));
+    var mid = (cx(S.a) + cx(S.b)) / 2;
+    var straddles = (cx(S.a) - IZ) * (cx(S.b) - IZ) < 0;
+    var onTendon = fade(cx(S.a)) < 0.35 || fade(cx(S.b)) < 0.35;
+    var best = 0;
+    (function () {
+      /* the best pair anywhere on this muscle, so 'per cent of best' means
+         something rather than being a free parameter */
+      var ch = channels(), i, j, k;
+      for (j = 0; j < NC; j++) for (k = 0; k < NC; k++) {
+        if (j === k) continue;
+        var t = new Float64Array(ch[j].length);
+        for (i = 0; i < t.length; i++) t[i] = ch[j][i] - ch[k][i];
+        best = Math.max(best, rms(t));
+      }
+    })();
+
+    var note;
+    if (straddles) {
+      note = 'This pair <b>straddles the innervation zone</b>. The two contacts see mirror ' +
+        'images of the same waves, so the difference collapses — and the amplitude here changes ' +
+        'enormously for a few millimetres of movement, which makes any comparison meaningless.';
+    } else if (onTendon) {
+      note = 'A contact is out on the <b>tendon</b>. The travelling wave has run out of fibre, ' +
+        'so there is very little to record and most of what is left is the other contact.';
+    } else if (spacing >= 30) {
+      note = 'Both contacts are on the belly, but <b>' + fmt(spacing, 0) + ' mm</b> apart the ' +
+        'first comb zero sits at cv/d = <b>' + fmt(S.cv / (spacing * 1e-3), 0) +
+        ' Hz</b>, inside the 20–450 Hz band. Wide spacing buys amplitude and pays in bandwidth.';
+    } else {
+      note = 'Both contacts on the belly, one side of the end plate, <b>' + fmt(spacing, 0) +
+        ' mm</b> apart: this is the stable plateau. Move the pair a few millimetres and ' +
+        'almost nothing changes, which is what you want from a measurement.';
+    }
+    out.innerHTML =
+      'Contacts <b>' + (S.a + 1) + '</b> and <b>' + (S.b + 1) + '</b>, centred <b>' +
+      fmt(Math.abs(mid - IZ), 0) + ' mm</b> from the end plate: <b>' + fmt(r / best * 100, 0) +
+      ' %</b> of the best signal available on this muscle, median frequency <b>' +
+      fmt(mf, 0) + ' Hz</b>. ' + note +
+      ' <span style="opacity:.62">Modelled: there is no electrode array in our dataset, so no ' +
+      'conduction velocity in this lecture is measured.</span>';
   }
 
   var out = readout(u.ctl);
   var g2 = el('div', 'ictls g2'); u.ctl.appendChild(g2);
-  slider(g2, 'Pair position', 6, L - 6, 1, S.x,
-    function (v) { return fmt(v, 0) + ' mm'; }, function (v) { S.x = v; draw(); });
-  slider(g2, 'Innervation zone at', 20, L - 20, 1, S.iz,
-    function (v) { return fmt(v, 0) + ' mm'; }, function (v) { S.iz = v; draw(); });
-  slider(g2, 'Electrode spacing', 5, 40, 1, S.d,
-    function (v) { return fmt(v, 0) + ' mm'; }, function (v) { S.d = v; draw(); });
-  slider(g2, 'Conduction velocity', 2, 6, 0.1, S.cv,
+  var sA = slider(g2, 'Contact 1', 1, NC, 1, S.a + 1,
+    function (v) { return '#' + fmt(v, 0); }, function (v) { S.a = v - 1; draw(); });
+  var sB = slider(g2, 'Contact 2', 1, NC, 1, S.b + 1,
+    function (v) { return '#' + fmt(v, 0); }, function (v) { S.b = v - 1; draw(); });
+  var sV = slider(g2, 'Velocity', 2, 6, 0.1, S.cv,
     function (v) { return fmt(v, 1) + ' m/s'; }, function (v) { S.cv = v; draw(); });
+  sA.quiet(S.a + 1); sB.quiet(S.b + 1); sV.quiet(S.cv);
+
   draw();
   window.addEventListener('ephe341-theme', draw);
 });
@@ -1263,6 +1503,747 @@ D.register('emd', function (node, d) {
     function (v) { return fmt(v, 0) + ' ms'; }, function (v) { S.ta = v; draw(); });
   slider(g2, 'Deactivation τ', 10, 120, 5, S.td,
     function (v) { return fmt(v, 0) + ' ms'; }, function (v) { S.td = v; draw(); });
+  draw();
+  window.addEventListener('ephe341-theme', draw);
+});
+/* ======================================================================
+   7. MU — the motor unit pool, and the order it comes in
+
+   His slides 9 and 10 made to run.  Panel (A) is his muscle cross-section:
+   every circle is a FIBRE, coloured by which motor unit owns it, and the
+   three named units are interleaved through the muscle rather than sitting
+   in blocks.  Panel (B) is his whole-muscle tension staircase.
+
+   Nothing here is drawn to look right.  Twitch force is computed as
+   (number of fibres) x (fibre cross-sectional area), so the step heights in
+   (B) fall out of the picture in (A) rather than being chosen:
+
+       unit 1   10 fibres  r 4.6   ->  n*r^2 =   212
+       unit 2   18 fibres  r 6.4   ->            737
+       unit 3   28 fibres  r 8.6   ->           2071
+
+   which is the ~1:3.5:10 spread the textbook figure shows, and it is the
+   asymmetry that makes the EMG-force relationship bend later in the deck.
+
+   Fibre DIAMETER follows physiology, not his drawing: type I smallest,
+   IIb largest.  His plate colours slow-oxidative red, which is the other
+   way round from the panel (B) banding on the same figure; one consistent
+   scheme is used here and the key says which is which.
+   ====================================================================== */
+D.register('mu', function (node, d) {
+  var port = D.portrait();
+  var u = build(node, {});
+  var S = { drive: 45 };
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1090, h: port ? 540 : 386,
+                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
+
+  /* --- the three named units: fibre count and fibre radius (drawing units,
+     proportional to real fibre diameter: type I ~50 um, IIa ~70, IIb ~95) --- */
+  var UNIT = [
+    { n: 10, r: 4.6, th: 10, name: 'unit 1', type: 'type I · slow oxidative' },
+    { n: 18, r: 6.4, th: 38, name: 'unit 2', type: 'type IIa · fast oxidative' },
+    { n: 28, r: 8.6, th: 72, name: 'unit 3', type: 'type IIb · fast glycolytic' }
+  ];
+  UNIT.forEach(function (q) { q.tw = q.n * q.r * q.r; });
+  var TOT = UNIT.reduce(function (s, q) { return s + q.tw; }, 0);
+
+  /* --- the cross-section, laid out once so the picture never jumps --------
+     A hex lattice clipped to an irregular blob, then fibres are DEALT to the
+     three units at random positions: a motor unit is a scatter, not a patch,
+     and that is the point of his figure. */
+  var FIB = (function () {
+    var pts = [], i, j;
+    var rows = 11, cols = 12, sp = 21;
+    for (j = 0; j < rows; j++) {
+      for (i = 0; i < cols; i++) {
+        var x = i * sp + (j % 2 ? sp / 2 : 0);
+        var y = j * sp * 0.87;
+        var cx = (cols - 1) * sp / 2 + sp / 4, cy = (rows - 1) * sp * 0.87 / 2;
+        /* an oval outline with a deterministic wobble, so it reads as muscle */
+        var ex = (x - cx) / (cols * sp * 0.48);
+        var ey = (y - cy) / (rows * sp * 0.87 * 0.52);
+        var wob = 0.92 + 0.1 * Math.sin(i * 2.1 + j * 1.7);
+        if (ex * ex + ey * ey > wob) continue;
+        pts.push({ x: x, y: y, u: -1 });
+      }
+    }
+    /* deal: a fixed shuffle (no Math.random, so the figure is reproducible) */
+    var order = pts.map(function (p, k) { return k; });
+    var seed = 7;
+    for (i = order.length - 1; i > 0; i--) {
+      seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+      j = seed % (i + 1);
+      var t = order[i]; order[i] = order[j]; order[j] = t;
+    }
+    var k = 0;
+    UNIT.forEach(function (q, ui) {
+      for (var m = 0; m < q.n && k < order.length; m++, k++) pts[order[k]].u = ui;
+    });
+    /* everything left over belongs to units we are not drawing */
+    for (; k < order.length; k++) pts[order[k]].u = -1;
+    return pts;
+  })();
+
+  function uc(K, i) { return [K.BLUE, K.ORG, K.ACC][i]; }
+  function active(i) { return S.drive >= UNIT[i].th; }
+  function tension() {
+    var t = 0;
+    UNIT.forEach(function (q, i) { if (active(i)) t += q.tw; });
+    return t;
+  }
+
+  /* ---------------------------- (A) the muscle --------------------------- */
+  function drawPool(x0, y0, w, h) {
+    var c = ax.c, K = C();
+    var bx = 0, by = 0, bw = 0, bh = 0, i;
+    var xs = FIB.map(function (p) { return p.x; }), ys = FIB.map(function (p) { return p.y; });
+    bx = Math.min.apply(null, xs); bw = Math.max.apply(null, xs) - bx;
+    by = Math.min.apply(null, ys); bh = Math.max.apply(null, ys) - by;
+    var pad = 26;
+    var k = Math.min((w - pad * 2) / (bw + 24), (h - pad * 2 - 18) / (bh + 24));
+    var ox = x0 + (w - bw * k) / 2 - bx * k;
+    var oy = y0 + (h - 18 - bh * k) / 2 - by * k + 10;
+
+    /* a faint perimysium so the scatter reads as a cross-section */
+    c.save();
+    c.strokeStyle = K.MUT; c.globalAlpha = .30; c.lineWidth = 2.4;
+    c.beginPath();
+    c.ellipse(ox + (bx + bw / 2) * k, oy + (by + bh / 2) * k,
+              (bw / 2 + 15) * k, (bh / 2 + 15) * k, 0, 0, 7);
+    c.stroke(); c.restore();
+
+    for (i = 0; i < FIB.length; i++) {
+      var p = FIB[i];
+      var r = p.u < 0 ? 6.0 : UNIT[p.u].r;
+      var on = p.u >= 0 && active(p.u);
+      c.save();
+      c.beginPath(); c.arc(ox + p.x * k, oy + p.y * k, r * k * 0.96, 0, 7);
+      if (p.u < 0) { c.fillStyle = K.GRID; c.globalAlpha = .55; }
+      else if (on) { c.fillStyle = uc(K, p.u); }
+      else { c.fillStyle = uc(K, p.u); c.globalAlpha = .17; }
+      c.fill();
+      if (on) { c.globalAlpha = 1; c.strokeStyle = K.PANEL; c.lineWidth = 1.2; c.stroke(); }
+      c.restore();
+    }
+    label(c, 'one cross-section of the muscle · each circle is a fibre',
+          x0 + w / 2, y0 + h - 4, { color: K.MUT, size: 11 });
+  }
+
+  /* ------------------------- (B) the tension staircase ------------------- */
+  function drawSteps(x0, y0, w, h) {
+    var c = ax.c, K = C();
+    var pl = 46, pr = 16, pt = 22, pb = 44;
+    var X = function (dr) { return x0 + pl + dr / 100 * (w - pl - pr); };
+    var Y = function (f) { return y0 + h - pb - f / TOT * (h - pt - pb); };
+
+    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(x0 + pl, y0 + pt); c.lineTo(x0 + pl, y0 + h - pb);
+    c.lineTo(x0 + w - pr, y0 + h - pb); c.stroke(); c.restore();
+
+    /* the stack: each unit's band starts at its own threshold */
+    var base = 0;
+    UNIT.forEach(function (q, i) {
+      var y1 = Y(base), y2 = Y(base + q.tw);
+      c.save();
+      c.fillStyle = uc(C(), i);
+      c.globalAlpha = active(i) ? .80 : .13;
+      c.fillRect(X(q.th), y2, X(100) - X(q.th), y1 - y2);
+      c.globalAlpha = 1; c.strokeStyle = uc(C(), i); c.lineWidth = active(i) ? 2 : 1;
+      c.globalAlpha = active(i) ? 1 : .35;
+      c.beginPath(); c.moveTo(X(q.th), y1); c.lineTo(X(q.th), y2); c.lineTo(X(100), y2); c.stroke();
+      c.restore();
+      label(c, q.name, (X(q.th) + X(100)) / 2, (y1 + y2) / 2,
+            { color: active(i) ? '#ffffff' : K.MUT, size: 11.5, weight: 700 });
+      base += q.tw;
+    });
+
+    /* where we are now */
+    c.save(); c.strokeStyle = K.INK; c.lineWidth = 1.6; c.setLineDash([4, 4]);
+    c.beginPath(); c.moveTo(X(S.drive), y0 + pt); c.lineTo(X(S.drive), y0 + h - pb); c.stroke();
+    c.restore();
+    var ty = Y(tension());
+    c.save(); c.fillStyle = K.INK; c.beginPath();
+    c.arc(X(S.drive), ty, 4.5, 0, 7); c.fill(); c.restore();
+
+    [0, 50, 100].forEach(function (v) {
+      label(c, String(v), X(v), y0 + h - pb + 13, { color: K.MUT, size: 10.5 });
+    });
+    label(c, 'neural drive (%)', x0 + pl + (w - pl - pr) / 2, y0 + h - 9,
+          { color: K.MUT, size: 11 });
+    label(c, 'whole-muscle tension', x0 + pl + 4, y0 + pt - 9,
+          { color: K.MUT, size: 11, align: 'left' });
+  }
+
+  function draw() {
+    var K = C();
+    ax.clear();
+    var W = ax.W, H = ax.H;
+    if (port) { drawPool(0, 0, W, H * 0.48); drawSteps(0, H * 0.48, W, H * 0.52); }
+    else { drawPool(0, 0, W * 0.40, H); drawSteps(W * 0.40, 0, W * 0.60, H); }
+
+    var rows = UNIT.map(function (q, i) {
+      return [active(i) ? uc(K, i) : K.MUT, q.name + ' — ' + q.type];
+    });
+    /* the key sits above the staircase, where nothing is ever drawn */
+    key(ax.c, port ? 10 : W * 0.40 + 52, 26, rows, { size: 10.5 });
+
+    var on = UNIT.filter(function (q, i) { return active(i); });
+    var nf = on.reduce(function (s, q) { return s + q.n; }, 0);
+    var pct = TOT ? tension() / TOT * 100 : 0;
+    var txt;
+    if (!on.length) {
+      txt = 'At <b>' + fmt(S.drive, 0) + ' %</b> drive nothing is recruited yet. ' +
+        'Raise it and watch unit 1 come in first — every one of its fibres at once, ' +
+        'because a motor unit is <b>all or none</b>: the nervous system cannot half-fire one.';
+    } else {
+      var nxt = UNIT[on.length];
+      txt = 'At <b>' + fmt(S.drive, 0) + ' %</b> drive, ' +
+        (on.length === 1 ? '<b>unit 1</b> is' : '<b>units 1–' + on.length + '</b> are') +
+        ' active: <b>' + nf + '</b> fibres and <b>' + fmt(pct, 0) +
+        ' %</b> of this muscle’s tension. ' +
+        (nxt
+          ? 'The next one in, ' + nxt.name + ', will add <b>' + fmt(nxt.tw / TOT * 100, 0) +
+            ' %</b> on its own — more than everything recruited so far.'
+          : 'Unit 3 alone is <b>' + fmt(UNIT[2].tw / TOT * 100, 0) +
+            ' %</b> of the total: the last unit in does most of the work, which is why ' +
+            'EMG and force do not rise together.');
+    }
+    out.innerHTML = txt;
+  }
+
+  var out = readout(u.ctl);
+  var g2 = el('div', 'ictls g2'); u.ctl.appendChild(g2);
+  var sDr = slider(g2, 'Neural drive', 0, 100, 1, S.drive,
+    function (v) { return fmt(v, 0) + ' %'; }, function (v) { S.drive = v; draw(); });
+  sDr.quiet(S.drive);
+
+  var row = ctlRow(u.ctl);
+  var play = playBtn(row, '▶ Raise the drive');
+  var raf = null, playing = false, last = 0;
+  function stop() { playing = false; play.innerHTML = '▶ Raise the drive'; if (raf) cancelAnimationFrame(raf); raf = null; }
+  function tick(ts) {
+    if (!playing) return;
+    if (!last) last = ts;
+    S.drive = Math.min(100, S.drive + (ts - last) / 1000 * 34);
+    last = ts;
+    sDr.quiet(S.drive); draw();
+    if (S.drive >= 100) { stop(); return; }
+    raf = requestAnimationFrame(tick);
+  }
+  play.addEventListener('click', function () {
+    if (playing) { stop(); return; }
+    if (S.drive >= 100) { S.drive = 0; sDr.quiet(0); }
+    playing = true; last = 0; play.innerHTML = '❚❚ Pause';
+    raf = requestAnimationFrame(tick);
+  });
+
+  draw();
+  window.addEventListener('ephe341-theme', draw);
+});
+/* ======================================================================
+   8. GAIT — one measured stride, with the muscles playing
+
+   His slide 46: the walking figures on the left and the gait-cycle activity
+   chart on the right, put on the same clock.
+
+   The STRIDE IS MEASURED.  It is the same recording the Forces deck uses --
+   SUSU-30, trial Walking1-2 from the UVic youth motion dataset, 119 markers
+   at 90 Hz, right heel strike to right heel strike, resampled to 61 frames
+   over 1.11 s.  gaitdata.js carries the sagittal joint centres in cm.
+
+   The ENVELOPES ARE NOT MEASURED.  That dataset has no EMG, so the six
+   muscle bands are the textbook gait-cycle pattern from his own figure,
+   written as sums of wrapped Gaussians.  They are labelled illustrative on
+   the figure and the readout says so; do not let anyone read a number off
+   them.
+   ====================================================================== */
+D.register('gait', function (node, d) {
+  var port = D.portrait();
+  var u = build(node, {});
+  var S = { p: 16 };                       /* per cent of the gait cycle */
+
+  var G = (typeof window !== 'undefined' && window.GAIT14) || null;
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1090, h: port ? 560 : 392,
+                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
+
+  var LINKS = [
+    ['head', 'neck'], ['neck', 'trunk'], ['trunk', 'pelvis'],
+    ['neck', 'shR'], ['shR', 'elR'], ['elR', 'wrR'],
+    ['neck', 'shL'], ['shL', 'elL'], ['elL', 'wrL'],
+    ['pelvis', 'hipR'], ['hipR', 'kneeR'], ['kneeR', 'ankR'],
+    ['ankR', 'heelR'], ['heelR', 'toeR'], ['ankR', 'toeR'],
+    ['pelvis', 'hipL'], ['hipL', 'kneeL'], ['kneeL', 'ankL'],
+    ['ankL', 'heelL'], ['heelL', 'toeL'], ['ankL', 'toeL']
+  ];
+  var RIGHT = { hipR: 1, kneeR: 1, ankR: 1, heelR: 1, toeR: 1, shR: 1, elR: 1, wrR: 1 };
+
+  /* ---- the six muscles, as his chart draws them (ILLUSTRATIVE) ---------- */
+  var MUS = [
+    { n: 'gluteus maximus', pk: [[4, 13, 1], [96, 10, 0.55]] },
+    { n: 'iliopsoas',       pk: [[52, 11, 1]] },
+    { n: 'hamstrings',      pk: [[94, 13, 1], [6, 9, 0.7]] },
+    { n: 'quadriceps',      pk: [[6, 11, 1], [96, 8, 0.62]] },
+    { n: 'triceps surae',   pk: [[42, 15, 1]] },
+    { n: 'tibialis ant.',   pk: [[2, 9, 1], [68, 17, 0.85]] }
+  ];
+  function envOf(m, p) {
+    var v = 0;
+    for (var k = 0; k < m.pk.length; k++) {
+      var dp = Math.abs(p - m.pk[k][0]);
+      if (dp > 50) dp = 100 - dp;                   /* the cycle wraps */
+      v += m.pk[k][2] * Math.exp(-0.5 * (dp / m.pk[k][1]) * (dp / m.pk[k][1]));
+    }
+    return Math.min(1, v);
+  }
+
+  /* ---- joint lookup -------------------------------------------------- */
+  var IX = {};
+  if (G) G.j.forEach(function (n, i) { IX[n] = i; });
+  function at(name, frame) {
+    var k = IX[name];
+    if (k == null) return null;
+    var b = (frame * G.j.length + k) * 2;
+    return [G.p[b], G.p[b + 1]];
+  }
+  function frameOf(p) {
+    return Math.max(0, Math.min(G.n - 1, Math.round(p / 100 * (G.n - 1))));
+  }
+
+  /* ------------------------------ the walker ----------------------------- */
+  function drawWalker(x0, y0, w, h) {
+    var c = ax.c, K = C();
+    if (!G) {
+      label(c, 'walking data not loaded', x0 + w / 2, y0 + h / 2, { color: K.MUT, size: 13 });
+      return;
+    }
+    var pad = 26, i, j;
+    /* the whole stride's extent, so the scale never changes */
+    var xmin = 1e9, xmax = -1e9, zmin = 1e9, zmax = -1e9;
+    for (i = 0; i < G.n; i++) for (j = 0; j < G.j.length; j++) {
+      var b = (i * G.j.length + j) * 2;
+      xmin = Math.min(xmin, G.p[b]); xmax = Math.max(xmax, G.p[b]);
+      zmin = Math.min(zmin, G.p[b + 1]); zmax = Math.max(zmax, G.p[b + 1]);
+    }
+    zmin = Math.min(zmin, 0);
+    var k = Math.min((w - pad * 2) / (xmax - xmin), (h - pad - 30) / (zmax - zmin));
+    var ox = x0 + pad - xmin * k, oz = y0 + h - 30 + zmin * k;
+    var X = function (v) { return ox + v * k; };
+    var Z = function (v) { return oz - v * k; };
+
+    /* the floor */
+    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .4; c.lineWidth = 1.4;
+    c.beginPath(); c.moveTo(x0 + 6, Z(0)); c.lineTo(x0 + w - 6, Z(0)); c.stroke(); c.restore();
+
+    function pose(fr, alpha, lw) {
+      c.save(); c.globalAlpha = alpha; c.lineCap = 'round';
+      LINKS.forEach(function (L) {
+        var a = at(L[0], fr), b2 = at(L[1], fr);
+        if (!a || !b2) return;
+        var isR = RIGHT[L[0]] || RIGHT[L[1]];
+        c.strokeStyle = isR ? K.ACC : K.MUT;
+        c.lineWidth = lw * (isR ? 1.15 : 1);
+        c.beginPath(); c.moveTo(X(a[0]), Z(a[1])); c.lineTo(X(b2[0]), Z(b2[1])); c.stroke();
+      });
+      var hd = at('head', fr);
+      if (hd) {
+        c.fillStyle = K.MUT;
+        c.beginPath(); c.arc(X(hd[0]), Z(hd[1]) - 6 * k * 0 - 7, 8, 0, 7); c.fill();
+      }
+      c.restore();
+    }
+
+    /* a short ghost trail, so the figure reads as walking rather than posing */
+    var f = frameOf(S.p);
+    [18, 12, 6].forEach(function (back, i2) {
+      var fr = f - back;
+      if (fr >= 0) pose(fr, 0.10 + i2 * 0.045, 2.4);
+    });
+    pose(f, 1, 3.2);
+
+    label(c, 'one measured stride · right leg in colour', x0 + w / 2, y0 + h - 10,
+          { color: K.MUT, size: 11 });
+  }
+
+  /* ---------------------------- the EMG bands ---------------------------- */
+  function drawBands(x0, y0, w, h) {
+    var c = ax.c, K = C();
+    var pl = 112, pr = 20, pt = 26, pb = 36;
+    var X = function (p) { return x0 + pl + p / 100 * (w - pl - pr); };
+    var lh = (h - pt - pb) / MUS.length;
+
+    /* stance / swing */
+    c.save(); c.fillStyle = K.GRID; c.globalAlpha = .55;
+    c.fillRect(X(0), y0 + pt, X(62) - X(0), h - pt - pb); c.restore();
+    label(c, 'stance', (X(0) + X(62)) / 2, y0 + pt - 9, { color: K.MUT, size: 10.5 });
+    label(c, 'swing', (X(62) + X(100)) / 2, y0 + pt - 9, { color: K.MUT, size: 10.5 });
+
+    MUS.forEach(function (m, i) {
+      var top = y0 + pt + lh * i, bot = top + lh - 4;
+      var on = envOf(m, S.p) > 0.33;
+      c.save();
+      c.fillStyle = on ? K.ACC : K.BLUE; c.globalAlpha = on ? .55 : .30;
+      c.beginPath(); c.moveTo(X(0), bot);
+      for (var p = 0; p <= 100; p += 1) c.lineTo(X(p), bot - envOf(m, p) * (lh - 6));
+      c.lineTo(X(100), bot); c.closePath(); c.fill();
+      c.restore();
+      c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(X(0), bot + .5); c.lineTo(X(100), bot + .5); c.stroke(); c.restore();
+      label(c, m.n, x0 + pl - 8, top + lh / 2 - 2,
+            { color: on ? K.ACC : K.MUT, size: 11, align: 'right', weight: on ? 700 : 600 });
+    });
+
+    c.save(); c.strokeStyle = K.INK; c.lineWidth = 1.8;
+    c.beginPath(); c.moveTo(X(S.p), y0 + pt - 3); c.lineTo(X(S.p), y0 + h - pb); c.stroke();
+    c.restore();
+
+    [0, 20, 40, 60, 80, 100].forEach(function (p) {
+      label(c, String(p), X(p), y0 + h - pb + 12, { color: K.MUT, size: 10 });
+    });
+    label(c, 'gait cycle (%) — illustrative envelopes, not measured',
+          x0 + pl + (w - pl - pr) / 2, y0 + h - 8, { color: K.MUT, size: 11 });
+  }
+
+  function draw() {
+    ax.clear();
+    var W = ax.W, H = ax.H;
+    if (port) { drawWalker(0, 0, W, H * 0.40); drawBands(0, H * 0.40, W, H * 0.60); }
+    else { drawWalker(0, 0, W * 0.38, H); drawBands(W * 0.38, 0, W * 0.62, H); }
+
+    var on = MUS.filter(function (m) { return envOf(m, S.p) > 0.33; })
+                .map(function (m) { return m.n; });
+    var phase = S.p < 2 ? 'initial contact'
+      : S.p < 12 ? 'loading response'
+      : S.p < 31 ? 'mid-stance'
+      : S.p < 50 ? 'terminal stance'
+      : S.p < 62 ? 'pre-swing'
+      : S.p < 75 ? 'initial swing'
+      : S.p < 87 ? 'mid-swing' : 'terminal swing';
+    out.innerHTML =
+      '<b>' + fmt(S.p, 0) + ' %</b> through the stride — <b>' + phase + '</b>. ' +
+      (on.length
+        ? 'Active now: <b>' + on.join('</b>, <b>') + '</b>. '
+        : 'Nothing much is active here. ') +
+      'Notice that the picture alone would not tell you any of this: timing is the thing ' +
+      'EMG gives you that kinematics cannot. ' +
+      '<span style="opacity:.62">Stride measured (SUSU-30, Walking1-2); envelopes drawn from ' +
+      'the textbook pattern, because that dataset carries no EMG.</span>';
+  }
+
+  var out = readout(u.ctl);
+  var g2 = el('div', 'ictls g2'); u.ctl.appendChild(g2);
+  var sP = slider(g2, 'Gait cycle', 0, 100, 1, S.p,
+    function (v) { return fmt(v, 0) + ' %'; }, function (v) { S.p = v; draw(); });
+  sP.quiet(S.p);
+
+  var row = ctlRow(u.ctl);
+  var play = playBtn(row, '▶ Walk');
+  var raf = null, playing = false, last = 0;
+  function stop() { playing = false; play.innerHTML = '▶ Walk'; if (raf) cancelAnimationFrame(raf); raf = null; }
+  function tick(ts) {
+    if (!playing) return;
+    if (!last) last = ts;
+    S.p = (S.p + (ts - last) / 1000 * 42) % 100;
+    last = ts; sP.quiet(S.p); draw();
+    raf = requestAnimationFrame(tick);
+  }
+  play.addEventListener('click', function () {
+    if (playing) { stop(); return; }
+    playing = true; last = 0; play.innerHTML = '❚❚ Pause';
+    raf = requestAnimationFrame(tick);
+  });
+
+  draw();
+  window.addEventListener('ephe341-theme', draw);
+});
+/* ======================================================================
+   9. MF — why slowing the wave lowers the frequency
+
+   His slide 51 built rather than asserted.  One lever: conduction velocity.
+   The MUAP duration is inversely proportional to it, because the waveform
+   you record is the travelling wave passing the electrode, so
+
+       duration = 9 ms * (4 m/s) / cv
+
+   Everything else is held fixed — same units, same firing rates, same
+   amplitude.  The spectrum and the median frequency are then computed from
+   the signal, not drawn, and the model's own prediction is that median
+   frequency is proportional to conduction velocity.  The readout prints
+   the ratio so the class can check it.
+
+   Verified in parts/selftest.js: a 27 % longer MUAP lowers median frequency
+   by 27 % (174.3 -> 126.5 Hz).
+
+   MODELLED.  The Cartier dataset has no electrode array, so nothing in this
+   lecture measures conduction velocity; this figure shows the mechanism, not
+   a recording.
+   ====================================================================== */
+D.register('mf', function (node, d) {
+  var port = D.portrait();
+  var u = build(node, {});
+  var CV0 = 4.0, CVMIN = 2.4;
+  var S = { cv: 3.1 };
+
+  var FS = 2000, DUR = 0.5, NU = 30;
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1090, h: port ? 560 : 390,
+                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
+
+  function durOf(cv) { return 0.009 * CV0 / cv; }
+
+  /* a fixed firing pattern: only the waveform width changes with cv */
+  var TRAIN = (function () {
+    var seed = 20261006, t, k, out = [];
+    function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+    for (k = 0; k < NU; k++) {
+      var isi = 1 / (14 + 10 * rnd()), amp = 0.5 + rnd(), list = [];
+      for (t = rnd() * isi; t < DUR; t += isi * (0.8 + 0.4 * rnd())) list.push(t);
+      out.push({ amp: amp * ((k % 2) ? 1 : -1), fires: list });
+    }
+    return out;
+  })();
+
+  function signal(cv) {
+    var n = Math.round(DUR * FS), y = new Float64Array(n), i, k, q;
+    var dur = durOf(cv), w = Math.round(dur * 1.6 * FS);
+    for (k = 0; k < TRAIN.length; k++) {
+      var tr = TRAIN[k];
+      for (q = 0; q < tr.fires.length; q++) {
+        var i0 = Math.round(tr.fires[q] * FS);
+        for (i = Math.max(0, i0 - w); i < Math.min(n, i0 + w); i++)
+          y[i] += muap((i - i0) / FS, dur, tr.amp);
+      }
+    }
+    return y;
+  }
+
+  /* the fatigue sweep: cv falls linearly through the contraction */
+  var SWEEP = (function () {
+    var pts = [];
+    for (var p = 0; p <= 100; p += 5) {
+      var cv = CV0 + (CVMIN - CV0) * p / 100;
+      pts.push({ p: p, cv: cv, mf: medianFreq(signal(cv), FS, 10, 500) });
+    }
+    return pts;
+  })();
+  var MF0 = SWEEP[0].mf;
+
+  /* -------------------------- one MUAP, at this cv ----------------------- */
+  function drawMuap(x0, y0, w, h) {
+    var c = ax.c, K = C();
+    var pl = 44, pr = 18, pt = 20, pb = 34;
+    var TMS = 30;
+    var X = function (ms) { return x0 + pl + ms / TMS * (w - pl - pr); };
+    var cy = y0 + pt + (h - pt - pb) / 2, sc = (h - pt - pb) * 0.40;
+    c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(x0 + pl, cy); c.lineTo(x0 + w - pr, cy); c.stroke(); c.restore();
+
+    var shapes = S.cv === CV0 ? [[S.cv, K.ACC, 2.2, null]]
+                              : [[CV0, K.MUT, 1.2, [4, 3]], [S.cv, K.ACC, 2.2, null]];
+    shapes.forEach(function (q) {
+      c.save(); c.strokeStyle = q[1]; c.lineWidth = q[2];
+      if (q[3]) c.setLineDash(q[3]);
+      c.beginPath();
+      for (var ms = 0; ms <= TMS; ms += 0.25) {
+        var v = muap((ms - 15) / 1000, durOf(q[0]), 1);
+        var px = X(ms), py = cy - v * sc;
+        ms ? c.lineTo(px, py) : c.moveTo(px, py);
+      }
+      c.stroke(); c.restore();
+    });
+
+    /* how wide it is now */
+    var halfMs = durOf(S.cv) * 1000 / 2;
+    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 1; c.globalAlpha = .55;
+    c.setLineDash([3, 3]);
+    [15 - halfMs, 15 + halfMs].forEach(function (ms) {
+      c.beginPath(); c.moveTo(X(ms), cy - sc); c.lineTo(X(ms), cy + sc * 0.6); c.stroke();
+    });
+    c.restore();
+    label(c, fmt(durOf(S.cv) * 1000, 1) + ' ms wide', X(15), cy + sc * 0.78,
+          { color: K.ACC, size: 10.5, plate: true });
+
+    label(c, 'one MUAP', x0 + pl + 2, y0 + pt - 9, { color: K.MUT, size: 11, align: 'left' });
+    [0, 10, 20, 30].forEach(function (t) {
+      label(c, String(t), X(t), y0 + h - pb + 12, { color: K.MUT, size: 10 });
+    });
+    label(c, 'time (ms)', x0 + pl + (w - pl - pr) / 2, y0 + h - 8, { color: K.MUT, size: 11 });
+    if (S.cv !== CV0) {
+      key(c, x0 + w - pr - 150, y0 + pt + 2,
+          [[K.MUT, 'at ' + fmt(CV0, 1) + ' m/s'], [K.ACC, 'at ' + fmt(S.cv, 2) + ' m/s']],
+          { size: 10 });
+    }
+  }
+
+  /* --------------------------- the interference -------------------------- */
+  function drawSig(x0, y0, w, h, y) {
+    var c = ax.c, K = C();
+    var pl = 44, pr = 18, pt = 18, pb = 30;
+    var n = y.length, cy = y0 + pt + (h - pt - pb) / 2;
+    var sc = (h - pt - pb) / 2 / YMAX;
+    c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(x0 + pl, cy); c.lineTo(x0 + w - pr, cy); c.stroke(); c.restore();
+    c.save(); c.strokeStyle = K.BLUE; c.lineWidth = 1; c.beginPath();
+    for (var i = 0; i < n; i++) {
+      var px = x0 + pl + i / (n - 1) * (w - pl - pr), py = cy - y[i] * sc;
+      i ? c.lineTo(px, py) : c.moveTo(px, py);
+    }
+    c.stroke(); c.restore();
+    label(c, 'the interference pattern it builds', x0 + pl + 2, y0 + pt - 7,
+          { color: K.MUT, size: 11, align: 'left' });
+    label(c, fmt(DUR * 1000, 0) + ' ms', x0 + pl + (w - pl - pr) / 2, y0 + h - 9,
+          { color: K.MUT, size: 10.5 });
+  }
+
+  /* ----------------------------- the spectrum ---------------------------- */
+  function drawSpec(x0, y0, w, h, y) {
+    var c = ax.c, K = C();
+    var pl = 46, pr = 18, pt = 20, pb = 34, FM = 400;
+    var s = spectrum(y, FS);
+    var X = function (f) { return x0 + pl + f / FM * (w - pl - pr); };
+    var Y = function (p) { return y0 + h - pb - p / PMAX * (h - pt - pb); };
+    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(x0 + pl, y0 + pt); c.lineTo(x0 + pl, y0 + h - pb);
+    c.lineTo(x0 + w - pr, y0 + h - pb); c.stroke(); c.restore();
+
+    /* the starting spectrum, kept as a ghost to compare against */
+    if (S.cv !== CV0) {
+      var s0 = spectrum(signal(CV0), FS);
+      c.save(); c.strokeStyle = K.MUT; c.lineWidth = 1.2; c.setLineDash([4, 3]);
+      c.beginPath();
+      for (var j = 0; j < s0.f.length && s0.f[j] <= FM; j++) {
+        var px0 = X(s0.f[j]), py0 = Y(s0.P[j]);
+        j ? c.lineTo(px0, py0) : c.moveTo(px0, py0);
+      }
+      c.stroke(); c.restore();
+    }
+
+    c.save(); c.fillStyle = K.BLUE; c.globalAlpha = .40; c.beginPath();
+    c.moveTo(X(0), Y(0));
+    for (var i = 0; i < s.f.length && s.f[i] <= FM; i++) c.lineTo(X(s.f[i]), Y(s.P[i]));
+    c.lineTo(X(FM), Y(0)); c.closePath(); c.fill(); c.restore();
+
+    var mf = medianFreq(y, FS, 10, FM);
+    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 2; c.beginPath();
+    c.moveTo(X(mf), y0 + pt); c.lineTo(X(mf), y0 + h - pb); c.stroke(); c.restore();
+    label(c, 'median ' + fmt(mf, 0) + ' Hz', X(mf) + 6, y0 + pt + 9,
+          { color: K.ACC, size: 11, align: 'left', plate: true });
+    if (S.cv !== CV0) {
+      c.save(); c.strokeStyle = K.MUT; c.lineWidth = 1.4; c.setLineDash([4, 3]);
+      c.beginPath(); c.moveTo(X(MF0), y0 + pt + 16); c.lineTo(X(MF0), y0 + h - pb); c.stroke();
+      c.restore();
+      arrow(c, X(MF0), y0 + pt + 22, X(mf), y0 + pt + 22, { color: K.ACC, width: 1.6, head: 7 });
+    }
+    [0, 100, 200, 300, 400].forEach(function (f) {
+      label(c, String(f), X(f), y0 + h - pb + 12, { color: K.MUT, size: 10 });
+    });
+    label(c, 'frequency (Hz)', x0 + pl + (w - pl - pr) / 2, y0 + h - 8, { color: K.MUT, size: 11 });
+    label(c, 'power', x0 + pl + 2, y0 + pt - 9, { color: K.MUT, size: 11, align: 'left' });
+    return mf;
+  }
+
+  /* ------------------------- his muscle fatigue index -------------------- */
+  function drawIndex(x0, y0, w, h) {
+    var c = ax.c, K = C();
+    var pl = 46, pr = 18, pt = 20, pb = 32;
+    var lo = SWEEP[SWEEP.length - 1].mf * 0.9, hi = SWEEP[0].mf * 1.06;
+    var X = function (p) { return x0 + pl + p / 100 * (w - pl - pr); };
+    var Y = function (f) { return y0 + h - pb - (f - lo) / (hi - lo) * (h - pt - pb); };
+    c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1.2;
+    c.beginPath(); c.moveTo(x0 + pl, y0 + pt); c.lineTo(x0 + pl, y0 + h - pb);
+    c.lineTo(x0 + w - pr, y0 + h - pb); c.stroke(); c.restore();
+    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 2; c.beginPath();
+    SWEEP.forEach(function (q, i) {
+      var px = X(q.p), py = Y(q.mf);
+      i ? c.lineTo(px, py) : c.moveTo(px, py);
+    });
+    c.stroke(); c.restore();
+    /* where the slider has us */
+    var p = (CV0 - S.cv) / (CV0 - CVMIN) * 100;
+    var mfNow = medianFreq(signal(S.cv), FS, 10, 400);
+    if (p >= 0 && p <= 100) {
+      c.save(); c.fillStyle = K.INK;
+      c.beginPath(); c.arc(X(p), Y(mfNow), 4.5, 0, 7); c.fill(); c.restore();
+    }
+    [0, 50, 100].forEach(function (q) {
+      label(c, String(q), X(q), y0 + h - pb + 12, { color: K.MUT, size: 10 });
+    });
+    [lo, hi].forEach(function (f) {
+      label(c, fmt(f, 0), x0 + pl - 7, Y(f), { color: K.MUT, size: 10, align: 'right' });
+    });
+    label(c, 'through the contraction (%)', x0 + pl + (w - pl - pr) / 2, y0 + h - 7,
+          { color: K.MUT, size: 11 });
+    label(c, 'median frequency (Hz)', x0 + pl + 2, y0 + pt - 9,
+          { color: K.MUT, size: 11, align: 'left' });
+  }
+
+  var YMAX = (function () {
+    var y = signal(CVMIN), m = 0;
+    for (var i = 0; i < y.length; i++) m = Math.max(m, Math.abs(y[i]));
+    return m * 1.04;
+  })();
+  var PMAX = (function () {
+    var s = spectrum(signal(CVMIN), FS), m = 0;
+    for (var i = 0; i < s.f.length && s.f[i] <= 400; i++) m = Math.max(m, s.P[i]);
+    var s2 = spectrum(signal(CV0), FS);
+    for (var j = 0; j < s2.f.length && s2.f[j] <= 400; j++) m = Math.max(m, s2.P[j]);
+    return m * 1.04;
+  })();
+
+  function draw() {
+    ax.clear();
+    var W = ax.W, H = ax.H, y = signal(S.cv), mf;
+    if (port) {
+      drawMuap(0, 0, W, H * 0.27);
+      drawSig(0, H * 0.27, W, H * 0.21, y);
+      mf = drawSpec(0, H * 0.48, W, H * 0.30, y);
+      drawIndex(0, H * 0.78, W, H * 0.22);
+    } else {
+      drawMuap(0, 0, W * 0.46, H * 0.56);
+      drawSig(0, H * 0.56, W * 0.46, H * 0.44, y);
+      mf = drawSpec(W * 0.46, 0, W * 0.54, H * 0.56, y);
+      drawIndex(W * 0.46, H * 0.56, W * 0.54, H * 0.44);
+    }
+    var cvR = S.cv / CV0, mfR = mf / MF0;
+    out.innerHTML =
+      'Conduction velocity <b>' + fmt(S.cv, 1) + ' m/s</b> — <b>' + fmt(cvR * 100, 0) +
+      ' %</b> of where we started. The MUAP is <b>' + fmt(durOf(S.cv) * 1000, 1) +
+      ' ms</b> wide and the median frequency is <b>' + fmt(mf, 0) + ' Hz</b>, <b>' +
+      fmt(mfR * 100, 0) + ' %</b> of its starting value. ' +
+      (Math.abs(cvR - mfR) < 0.06
+        ? 'Those two percentages track each other: <b>median frequency is proportional to ' +
+          'conduction velocity</b>, and that is the whole mechanism behind his fatigue index.'
+        : 'Nothing but the waveform width has changed — same units, same firing rates, ' +
+          'same amplitude.') +
+      ' <span style="opacity:.62">Modelled: no conduction velocity in this lecture is measured.</span>';
+  }
+
+  var out = readout(u.ctl);
+  var g2 = el('div', 'ictls g2'); u.ctl.appendChild(g2);
+  var sV = slider(g2, 'Velocity', CVMIN, CV0, 0.05, S.cv,
+    function (v) { return fmt(v, 2) + ' m/s'; }, function (v) { S.cv = v; draw(); });
+  sV.quiet(S.cv);
+
+  var row = ctlRow(u.ctl);
+  var play = playBtn(row, '▶ Fatigue it');
+  var raf = null, playing = false, last = 0;
+  function stop() { playing = false; play.innerHTML = '▶ Fatigue it'; if (raf) cancelAnimationFrame(raf); raf = null; }
+  function tick(ts) {
+    if (!playing) return;
+    if (!last) last = ts;
+    S.cv = Math.max(CVMIN, S.cv - (ts - last) / 1000 * 0.42);
+    last = ts; sV.quiet(S.cv); draw();
+    if (S.cv <= CVMIN) { stop(); return; }
+    raf = requestAnimationFrame(tick);
+  }
+  play.addEventListener('click', function () {
+    if (playing) { stop(); return; }
+    if (S.cv <= CVMIN) { S.cv = CV0; sV.quiet(S.cv); }
+    playing = true; last = 0; play.innerHTML = '❚❚ Pause';
+    raf = requestAnimationFrame(tick);
+  });
+
   draw();
   window.addEventListener('ephe341-theme', draw);
 });

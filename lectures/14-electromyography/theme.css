@@ -879,6 +879,17 @@ html[data-portrait] .ivid video{ max-width:100%; }
 .lawstack{ display:flex; flex-flow:row wrap; gap:.5em 1em;
             align-items:center; justify-content:center; }
 .lawstack img,.cols .lawstack img{ max-height:21vh; width:auto; max-width:46%; }
+/* two figures stacked down one column of a .cols, used where his slide pairs a
+   photograph with the trace it produced (lecture 14 only) */
+.figcol{ display:flex; flex-direction:column; align-items:center; gap:.45em; }
+.figcol img,.cols .figcol img{ width:auto; max-width:100%; max-height:23vh; }
+html[data-portrait] .figcol img,
+html[data-portrait] .cols .figcol img{ max-height:165px; }
+/* a figure that IS the slide: the structural plate, the placement montage */
+.fig.big img,.cols .fig.big img{ max-height:60vh; }
+html[data-portrait] .fig.big img,
+html[data-portrait] .cols .fig.big img{ max-height:400px; }
+
 /* the wide hand-cycle drawing takes a row of its own */
 .lawstack img:last-child,.cols .lawstack img:last-child{ max-width:92%; max-height:17vh; }
 html[data-portrait] .lawstack img,

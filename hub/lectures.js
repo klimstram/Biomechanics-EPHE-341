@@ -227,19 +227,23 @@ window.EPHE341_LECTURES = [
 
   { n: '14', title: 'Electromyography',
     path: 'lectures/14-electromyography',
-    blurb: 'The electrical signal a contracting muscle leaves behind: motor units and ' +
-           'the Henneman size principle, why the recording is the difference between two ' +
-           'electrodes, what that difference cancels and what it cannot, where on the ' +
-           'fibre to put the pair, the band-pass \u2192 rectify \u2192 envelope chain run on a ' +
-           'real vastus lateralis burst, and what six measured sprints say about fatigue.',
-    slides: 50, widgets: 6, updated: '2026-10-05',
+    blurb: 'The electrical signal a contracting muscle leaves behind: motor units and the ' +
+           'Henneman size principle, the same action potential read by two electrodes at ' +
+           'different times and subtracted, what that subtraction cancels and what it cannot, ' +
+           'where on the muscle to put the pair, the band-pass \u2192 rectify \u2192 envelope chain run ' +
+           'on a real vastus lateralis burst, EMG through a measured walking stride, and what ' +
+           'fatigue does \u2014 and does not do \u2014 to the signal.',
+    slides: 63, widgets: 9, updated: '2026-10-06',
     handout: 'handout.pdf',
-    live: [['120 motor units, one electrode, the EMG\u2013force curve', 'w-recruit'],
-           ['slide the pair along the fibre and watch it cancel', 'w-fibre'],
-           ['the difference of two electrodes, and its comb filter', 'w-bipolar'],
+    live: [['three motor units, recruited in size order', 'w-mu'],
+           ['120 units, one electrode, and the interference pattern', 'w-recruit'],
+           ['one action potential, read twice and subtracted', 'w-travel'],
+           ['move the pair along the muscle and watch it cancel', 'w-place'],
            ['band-pass, rectify, RMS, envelope on a real burst', 'w-chain'],
+           ['a measured stride with the muscles playing', 'w-gait'],
            ['why force arrives after the signal', 'w-emd'],
-           ['six real 30 s sprints, amplitude up and frequency down', 'w-fatigue']] },
+           ['why slowing the wave lowers the frequency', 'w-mf'],
+           ['six real recordings, and what they do not show', 'w-fatigue']] },
 
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
