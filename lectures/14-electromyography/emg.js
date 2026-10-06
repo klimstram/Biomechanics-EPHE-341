@@ -647,6 +647,89 @@ D.register('recruit', function (node, d) {
     return m * 1.03;
   })();
 
+  /* ------------------------------------------------------------------
+     The trace runs like a real recording: samples arrive at the right-hand
+     edge and the record scrolls left, exactly the way a chart recorder or
+     an oscilloscope in roll mode behaves.
+
+     It is generated forward in time rather than rebuilt each frame.  Each
+     unit carries its own next-spike time, so changing the effort slider
+     mid-run brings units in and out of a recording that is already
+     running, instead of restarting it.
+
+     The buffer is 2w longer than the window on purpose.  A MUAP reaches w
+     samples either side of its spike, so the generator runs a frontier w
+     samples ahead of the displayed right edge; every spike it schedules
+     can then write its whole waveform inside the buffer and nothing is
+     clipped as it scrolls into view.
+     ------------------------------------------------------------------ */
+  var WS = Math.round(0.012 * FS);          /* MUAP half-width, samples */
+  var BUF = null, NBUF = 0, NWIN = 0;
+  var tFront = 0;                            /* absolute time at the frontier */
+  var NXT = new Float64Array(NU);            /* next spike time per unit */
+  var SEED = new Int32Array(NU);
+  var LIVE = new Uint8Array(NU);
+
+  function unitRate(i) {
+    var e = S.exc / 100, th = POOL[i].tf * (RR / 100);
+    if (th > e) return 0;
+    var span = Math.max(1e-6, 1 - th);
+    return 8 + (POOL[i].peak - 8) * Math.min(1, (e - th) / span);
+  }
+  function jitter(i) {
+    SEED[i] = (SEED[i] * 1103515245 + 12345) % 2147483648;
+    return 1 + 0.2 * ((SEED[i] / 2147483648) - 0.5) * 2;
+  }
+
+  /* advance the recording by dt seconds.  Long jumps are chunked, because
+     one big shift would scroll whole spikes off the end before they were
+     ever written and the record would come back mostly empty. */
+  function step(dt) {
+    var CH = 0.02;
+    while (dt > CH) { stepOnce(CH); dt -= CH; }
+    stepOnce(dt);
+  }
+  function stepOnce(dt) {
+    var m = Math.round(dt * FS), i, k;
+    if (m <= 0) return;
+    if (m >= NBUF) { m = NBUF; BUF.fill(0); }
+    else { BUF.copyWithin(0, m); BUF.fill(0, NBUF - m); }
+    tFront += m / FS;
+    var frontier = NBUF - 1 - WS;
+    for (i = 0; i < NU; i++) {
+      var r = unitRate(i);
+      if (r <= 0) { LIVE[i] = 0; continue; }
+      if (!LIVE[i]) {                        /* a unit joining mid-recording */
+        LIVE[i] = 1;
+        NXT[i] = tFront - POOL[i].ph / r;
+      }
+      var amp = ampOf(POOL[i]) * ((i % 2) ? 1 : -1);
+      var guard = 0;
+      while (NXT[i] <= tFront && guard++ < 400) {
+        var c0 = frontier - Math.round((tFront - NXT[i]) * FS);
+        if (c0 > 0) {
+          var lo = Math.max(0, c0 - WS), hi = Math.min(NBUF, c0 + WS);
+          for (k = lo; k < hi; k++) BUF[k] += muap((k - c0) / FS, 0.008, amp);
+        }
+        NXT[i] += (1 / r) * jitter(i);
+      }
+    }
+  }
+
+  /* (re)allocate for the current window length and run the recording in
+     from cold, so a paused figure and the printed page both show a real
+     stretch of signal rather than an empty box */
+  function reset() {
+    NWIN = Math.round(S.win / 1000 * FS);
+    NBUF = NWIN + 2 * WS;
+    BUF = new Float64Array(NBUF);
+    tFront = 0;
+    for (var i = 0; i < NU; i++) { LIVE[i] = 0; SEED[i] = (i * 2654435761) % 1013 + 1; }
+    /* run the recording in from cold so a paused figure, and the printed
+       page, show a real stretch of signal rather than an empty box */
+    step(S.win / 1000 + 0.2);
+  }
+
   /* ------------------------------ the pool strip ------------------------- */
   function drawPool(x0, y0, w, h, act) {
     var c = ax.c, K = C();
@@ -724,7 +807,7 @@ D.register('recruit', function (node, d) {
     ax.clear();
     var W = ax.W, H = ax.H;
     var act = active(S.exc);
-    var y = signal(act, S.win / 1000);
+    var y = BUF.subarray(0, NWIN);
     var cnt;
     if (port) {
       cnt = drawPool(0, 0, W, H * 0.46, act);
@@ -750,11 +833,37 @@ D.register('recruit', function (node, d) {
   var out = readout(u.ctl);
   var g2 = el('div', 'ictls g2'); u.ctl.appendChild(g2);
   var sE = slider(g2, 'Effort', 1, 100, 1, S.exc,
-    function (v) { return fmt(v, 0) + ' %'; }, function (v) { S.exc = v; draw(); });
+    function (v) { return fmt(v, 0) + ' %'; },
+    function (v) { S.exc = v; if (!playing) { step(0.12); } draw(); });
   var sW = slider(g2, 'Window', 50, 500, 25, S.win,
-    function (v) { return fmt(v, 0) + ' ms'; }, function (v) { S.win = v; draw(); });
+    function (v) { return fmt(v, 0) + ' ms'; }, function (v) { S.win = v; reset(); draw(); });
   sE.quiet(S.exc); sW.quiet(S.win);
 
+  var row = ctlRow(u.ctl);
+  var play = playBtn(row, '▶ Record');
+  var raf = null, playing = false, last = 0;
+  function stop() {
+    playing = false; play.innerHTML = '▶ Record';
+    if (raf) cancelAnimationFrame(raf);
+    raf = null;
+  }
+  function tick(ts) {
+    if (!playing) return;
+    if (!last) last = ts;
+    /* real time, but capped so a backgrounded tab does not return and
+       generate several seconds of signal in one frame */
+    step(Math.min(0.08, (ts - last) / 1000));
+    last = ts;
+    draw();
+    raf = requestAnimationFrame(tick);
+  }
+  play.addEventListener('click', function () {
+    if (playing) { stop(); return; }
+    playing = true; last = 0; play.innerHTML = '❚❚ Pause';
+    raf = requestAnimationFrame(tick);
+  });
+
+  reset();
   draw();
   window.addEventListener('ephe341-theme', draw);
 });
