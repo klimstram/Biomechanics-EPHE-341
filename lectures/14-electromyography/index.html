@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20261006b">
+<link rel="stylesheet" href="theme.css?v=20261006d">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -1079,11 +1079,18 @@ Two things to play with. Drag the RMS window and watch smoothness trade directly
   <h2>Electromyography</h2>
   <p class="subhead">One measured stride, with the muscles playing</p>
   <div class="iplot wide" data-widget="gait"></div>
-  <aside class="notes">The figure on the left is a real stride — a walking trial from the UVic youth motion dataset, the same recording the Forces deck uses, so the joint positions are measured rather than drawn. The bands on the right are the gait-cycle activity pattern from the figure on the last slide, and those are illustrative: that dataset carries no EMG.
+  <aside class="notes">Everything on this slide is measured, and — the part that matters — the figure and the signal are the <strong>same person on the same stride</strong>. A level-walking trial from Lencioni and colleagues: markers at sixty hertz, surface EMG at nine hundred and sixty, right leg, heel strike to heel strike.
 
-Run it and watch which muscles are on when. Tibialis anterior fires at heel strike to stop the foot slapping down, and again through swing to clear the toes. Triceps surae builds through stance and peaks just before toe-off. Quadriceps come on around loading response and again at the very end of swing to get the knee out ready for contact.
+Press Walk. One line runs down all five channels at the instant the figure is at, so you can read the whole leg at one moment.
 
-The point worth making is that none of this is obvious from watching someone walk. You need the timing, and EMG is the only thing that gives it to you.</aside>
+Start in Raw. This is what came off the amplifier — bursts in both polarities, and a slow wander on the quiet channels that is the limb moving, not muscle. Then Rectified: high-passed at twenty hertz to drop that wander, then folded up, so there is something to average. Then Envelope, with the rectified signal still faintly behind it. Drag the cutoff: low is smooth but late to rise, high chases every burst. There is no correct value; it depends what you are going to do with it.
+
+Now read the timing off it. Tibialis anterior fires at heel strike to lower the foot under control, and again through swing. Triceps surae builds through stance and peaks before toe-off. Quadriceps come on at loading response. Hamstrings peak at the very end of swing, decelerating the leg. None of that is visible in the kinematics — it is the thing EMG gives you.
+
+Switch between the two subjects. Same pattern, different people: that is what lets anyone claim a muscle fires “at” a part of the cycle at all.
+
+Two honesty notes, and both are worth the time. The <strong>gluteus maximus channel barely modulates in either subject</strong>, and the widget greys it out and says so — that is a poor recording, not a quiet muscle. Glute max sits under a thick layer of fat, a long way from the electrode. If you only ever saw the processed envelope you would report it as a flat muscle. And his chart lists <strong>iliopsoas</strong>, which is not here at all: it is deep under the abdomen and no surface electrode reaches it. A textbook figure can show you a muscle that no surface recording will ever give you.
+</aside>
 </section>
 
 <!-- 53 -->
@@ -1324,8 +1331,8 @@ If you want to <em>see</em> fatigue, you need a protocol that causes it — a su
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20261006b"></script>
-<script src="mobile.js?v=20261006b"></script>
+<script src="annotate.js?v=20261006d"></script>
+<script src="mobile.js?v=20261006d"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -1347,11 +1354,11 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="emgdata.js?v=20261006b"></script>
-<script src="gaitdata.js?v=20261006b"></script>
-<script src="deck-core.js?v=20261006b"></script>
-<script src="emg.js?v=20261006b"></script>
-<script src="deck-tools.js?v=20261006b"></script>
-<script src="fit.js?v=20261006b"></script>
+<script src="emgdata.js?v=20261006d"></script>
+<script src="gaitdata.js?v=20261006d"></script>
+<script src="deck-core.js?v=20261006d"></script>
+<script src="emg.js?v=20261006d"></script>
+<script src="deck-tools.js?v=20261006d"></script>
+<script src="fit.js?v=20261006d"></script>
 </body>
 </html>

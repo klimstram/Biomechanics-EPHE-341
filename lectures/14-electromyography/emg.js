@@ -1851,28 +1851,39 @@ D.register('mu', function (node, d) {
   window.addEventListener('ephe341-theme', draw);
 });
 /* ======================================================================
-   8. GAIT — one measured stride, with the muscles playing
+   8. GAIT — one measured stride, with the EMG that was recorded during it
 
-   His slide 46: the walking figures on the left and the gait-cycle activity
-   chart on the right, put on the same clock.
+   His slide 46: the walking figures on the left and the gait-cycle muscle
+   chart on the right, put on the same clock, with the whole processing
+   chain from the middle of the lecture available on the signal.
 
-   The STRIDE IS MEASURED.  It is the same recording the Forces deck uses --
-   SUSU-30, trial Walking1-2 from the UVic youth motion dataset, 119 markers
-   at 90 Hz, right heel strike to right heel strike, resampled to 61 frames
-   over 1.11 s.  gaitdata.js carries the sagittal joint centres in cm.
+   ALL OF IT IS MEASURED, and the figure and the signal are the SAME
+   PERSON ON THE SAME STRIDE:
 
-   The ENVELOPES ARE NOT MEASURED.  That dataset has no EMG, so the six
-   muscle bands are the textbook gait-cycle pattern from his own figure,
-   written as sums of wrapped Gaussians.  They are labelled illustrative on
-   the figure and the readout says so; do not let anyone read a number off
-   them.
+     Lencioni T, Carpinella I, Rabuffetti M, Marzegan A, Ferrarin M (2019)
+     "Human kinematic, kinetic and EMG data during different walking and
+     stair ascending and descending tasks", Scientific Data 6:309.
+     doi:10.6084/m9.figshare.c.4494755, CC BY 4.0.
+
+   Markers at 60 Hz, surface EMG at 960 Hz, one level-walking trial per
+   subject, heel strike to heel strike.  The EMG is RAW: the authors
+   band-passed 10-400 Hz in the amplifier before sampling, gaitdata.js
+   removes the constant offset, and nothing else has been done to it.
+   That is what makes the rectify step real here rather than decorative.
+
+   Two subjects are carried so the class can see the same pattern on two
+   different people, which is the only honest way to claim a muscle fires
+   "at" a particular part of the cycle.
+
+   Note which muscles are here.  His textbook figure includes iliopsoas,
+   and surface EMG cannot record it -- it is deep under the abdomen.  That
+   absence is on the slide on purpose.
    ====================================================================== */
 D.register('gait', function (node, d) {
   var port = D.portrait();
   var u = build(node, {});
-  var S = { p: 16 };                       /* per cent of the gait cycle */
-
   var G = (typeof window !== 'undefined' && window.GAIT14) || null;
+  var S = { p: 16, mode: 'raw', fc: 6, sub: 0 };
 
   var ax = new Axes(u.cv, { w: port ? 460 : 1090, h: port ? 560 : 392,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: false });
@@ -1888,52 +1899,85 @@ D.register('gait', function (node, d) {
   ];
   var RIGHT = { hipR: 1, kneeR: 1, ankR: 1, heelR: 1, toeR: 1, shR: 1, elR: 1, wrR: 1 };
 
-  /* ---- the six muscles, as his chart draws them (ILLUSTRATIVE) ---------- */
-  var MUS = [
-    { n: 'gluteus maximus', pk: [[4, 13, 1], [96, 10, 0.55]] },
-    { n: 'iliopsoas',       pk: [[52, 11, 1]] },
-    { n: 'hamstrings',      pk: [[94, 13, 1], [6, 9, 0.7]] },
-    { n: 'quadriceps',      pk: [[6, 11, 1], [96, 8, 0.62]] },
-    { n: 'triceps surae',   pk: [[42, 15, 1]] },
-    { n: 'tibialis ant.',   pk: [[2, 9, 1], [68, 17, 0.85]] }
-  ];
-  function envOf(m, p) {
-    var v = 0;
-    for (var k = 0; k < m.pk.length; k++) {
-      var dp = Math.abs(p - m.pk[k][0]);
-      if (dp > 50) dp = 100 - dp;                   /* the cycle wraps */
-      v += m.pk[k][2] * Math.exp(-0.5 * (dp / m.pk[k][1]) * (dp / m.pk[k][1]));
-    }
-    return Math.min(1, v);
-  }
-
-  /* ---- joint lookup -------------------------------------------------- */
+  function sub() { return G.subs[S.sub]; }
   var IX = {};
   if (G) G.j.forEach(function (n, i) { IX[n] = i; });
+
+  /* ---- processing, cached per (subject, mode, cutoff) ------------------ */
+  /* The amplifier's 10 Hz corner leaves movement artefact in, and on a
+     quiet channel that wander is larger than the EMG -- the gluteus maximus
+     trace is the one to watch.  So everything downstream of the raw view
+     runs on a 20-400 Hz band-pass first, which is what you would do in a
+     lab and what the processing-chain widget earlier in the deck does. */
+  var BP = G ? G.subs.map(function (s) {
+    return s.ch.map(function (c) { return bandpass(c.uv, s.fs, 20, 400); });
+  }) : [];
+  var PROC = null, procKey = null;
+  function processed() {
+    var s = sub(), kk = S.sub + ':' + S.mode + ':' + fmt(S.fc, 1);
+    if (procKey === kk) return PROC;
+    PROC = s.ch.map(function (c, i) {
+      if (S.mode === 'raw') return c.uv;
+      var r = rectify(BP[S.sub][i]);
+      if (S.mode === 'rect') return r;
+      return lowpass(r, s.fs, S.fc, true, 2);
+    });
+    procKey = kk;
+    return PROC;
+  }
+  /* the 6 Hz envelope of every channel, per subject: it is what the readout
+     and the per-channel numbers quote, whatever the display is showing */
+  var ENV = G ? G.subs.map(function (s, k) {
+    return s.ch.map(function (c, i) { return lowpass(rectify(BP[k][i]), s.fs, 6, true, 2); });
+  }) : [];
+  /* one scale per channel from the raw peak, so switching mode shows the
+     processing doing something rather than renormalising it away */
+  function peak(y) {
+    var m = 0;
+    for (var j = 0; j < y.length; j++) m = Math.max(m, Math.abs(y[j]));
+    return m * 1.05;
+  }
+  /* two scale sets: the raw view has the drift in it and needs the room,
+     everything downstream is scaled on the band-passed peak so the quiet
+     channels are not squashed by artefact they no longer contain */
+  var CHMAX  = G ? G.subs.map(function (s, k) { return s.ch.map(function (c, i) { return peak(BP[k][i]); }); }) : [];
+  /* How far each envelope actually swings, peak over median.  A channel that
+     barely modulates is not a quiet muscle, it is a poor recording -- and in
+     both of these subjects the gluteus maximus channel is exactly that, which
+     is worth showing rather than hiding.  Such a channel is kept out of the
+     "closest to its own peak" comparison, where it would otherwise win on
+     noise. */
+  var MOD = G ? G.subs.map(function (s, k) {
+    return s.ch.map(function (c, i) {
+      var e = ENV[k][i], srt = Array.prototype.slice.call(e).sort(function (a2, b2) { return a2 - b2; });
+      var med = srt[srt.length >> 1] || 1e-9, mx = srt[srt.length - 1];
+      return mx / med;
+    });
+  }) : [];
+  var FLATMOD = 2.5;
+  var RAWMAX = G ? G.subs.map(function (s)    { return s.ch.map(function (c)    { return peak(c.uv); }); }) : [];
+
   function at(name, frame) {
-    var k = IX[name];
+    var s = sub(), k = IX[name];
     if (k == null) return null;
     var b = (frame * G.j.length + k) * 2;
-    return [G.p[b], G.p[b + 1]];
+    return [s.p[b], s.p[b + 1]];
   }
   function frameOf(p) {
-    return Math.max(0, Math.min(G.n - 1, Math.round(p / 100 * (G.n - 1))));
+    var s = sub();
+    return Math.max(0, Math.min(s.nf - 1, Math.round(p / 100 * (s.nf - 1))));
   }
 
   /* ------------------------------ the walker ----------------------------- */
   function drawWalker(x0, y0, w, h) {
     var c = ax.c, K = C();
-    if (!G) {
-      label(c, 'walking data not loaded', x0 + w / 2, y0 + h / 2, { color: K.MUT, size: 13 });
-      return;
-    }
-    var pad = 26, i, j;
-    /* the whole stride's extent, so the scale never changes */
+    if (!G) { label(c, 'walking data not loaded', x0 + w / 2, y0 + h / 2, { color: K.MUT, size: 13 }); return; }
+    var s = sub(), pad = 22, i, j;
     var xmin = 1e9, xmax = -1e9, zmin = 1e9, zmax = -1e9;
-    for (i = 0; i < G.n; i++) for (j = 0; j < G.j.length; j++) {
+    for (i = 0; i < s.nf; i++) for (j = 0; j < G.j.length; j++) {
       var b = (i * G.j.length + j) * 2;
-      xmin = Math.min(xmin, G.p[b]); xmax = Math.max(xmax, G.p[b]);
-      zmin = Math.min(zmin, G.p[b + 1]); zmax = Math.max(zmax, G.p[b + 1]);
+      xmin = Math.min(xmin, s.p[b]); xmax = Math.max(xmax, s.p[b]);
+      zmin = Math.min(zmin, s.p[b + 1]); zmax = Math.max(zmax, s.p[b + 1]);
     }
     zmin = Math.min(zmin, 0);
     var k = Math.min((w - pad * 2) / (xmax - xmin), (h - pad - 30) / (zmax - zmin));
@@ -1941,7 +1985,6 @@ D.register('gait', function (node, d) {
     var X = function (v) { return ox + v * k; };
     var Z = function (v) { return oz - v * k; };
 
-    /* the floor */
     c.save(); c.strokeStyle = K.MUT; c.globalAlpha = .4; c.lineWidth = 1.4;
     c.beginPath(); c.moveTo(x0 + 6, Z(0)); c.lineTo(x0 + w - 6, Z(0)); c.stroke(); c.restore();
 
@@ -1956,72 +1999,104 @@ D.register('gait', function (node, d) {
         c.beginPath(); c.moveTo(X(a[0]), Z(a[1])); c.lineTo(X(b2[0]), Z(b2[1])); c.stroke();
       });
       var hd = at('head', fr);
-      if (hd) {
-        c.fillStyle = K.MUT;
-        c.beginPath(); c.arc(X(hd[0]), Z(hd[1]) - 6 * k * 0 - 7, 8, 0, 7); c.fill();
-      }
+      if (hd) { c.fillStyle = K.MUT; c.beginPath(); c.arc(X(hd[0]), Z(hd[1]) - 9, 9, 0, 7); c.fill(); }
       c.restore();
     }
-
-    /* a short ghost trail, so the figure reads as walking rather than posing */
     var f = frameOf(S.p);
-    [18, 12, 6].forEach(function (back, i2) {
-      var fr = f - back;
-      if (fr >= 0) pose(fr, 0.10 + i2 * 0.045, 2.4);
+    [10, 7, 4].forEach(function (back, i2) {
+      if (f - back >= 0) pose(f - back, 0.10 + i2 * 0.045, 2.4);
     });
     pose(f, 1, 3.2);
-
-    label(c, 'one measured stride · right leg in colour', x0 + w / 2, y0 + h - 10,
-          { color: K.MUT, size: 11 });
+    label(c, s.subject + ' · ' + s.age + ' y · ' + fmt(s.speed, 2) + ' m/s · right leg in colour',
+          x0 + w / 2, y0 + h - 10, { color: K.MUT, size: 10.5 });
   }
 
-  /* ---------------------------- the EMG bands ---------------------------- */
-  function drawBands(x0, y0, w, h) {
+  /* ---------------------------- the EMG channels ------------------------- */
+  function drawChannels(x0, y0, w, h) {
     var c = ax.c, K = C();
-    var pl = 112, pr = 20, pt = 26, pb = 36;
+    var pl = 108, pr = 58, pt = 24, pb = 34;
+    var s = sub(), P = processed(), cyc = s.cycle;
     var X = function (p) { return x0 + pl + p / 100 * (w - pl - pr); };
-    var lh = (h - pt - pb) / MUS.length;
+    var lh = (h - pt - pb) / P.length;
 
-    /* stance / swing */
-    c.save(); c.fillStyle = K.GRID; c.globalAlpha = .55;
+    c.save(); c.fillStyle = K.GRID; c.globalAlpha = .5;
     c.fillRect(X(0), y0 + pt, X(62) - X(0), h - pt - pb); c.restore();
     label(c, 'stance', (X(0) + X(62)) / 2, y0 + pt - 9, { color: K.MUT, size: 10.5 });
     label(c, 'swing', (X(62) + X(100)) / 2, y0 + pt - 9, { color: K.MUT, size: 10.5 });
 
-    MUS.forEach(function (m, i) {
-      var top = y0 + pt + lh * i, bot = top + lh - 4;
-      var on = envOf(m, S.p) > 0.33;
+    P.forEach(function (y, mi) {
+      var top = y0 + pt + lh * mi, bot = top + lh - 5;
+      var symm = (S.mode === 'raw');
+      var base = symm ? (top + bot) / 2 : bot;
+      var span = symm ? (lh - 7) / 2 : (lh - 7);
+      var sc = span / (symm ? RAWMAX[S.sub][mi] : CHMAX[S.sub][mi]);
+      c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(X(0), base); c.lineTo(X(100), base); c.stroke(); c.restore();
+
+      /* in envelope mode the rectified signal stays behind it, on the same
+         scale, so the envelope is visibly an average OF something */
+      if (S.mode === 'env') {
+        var r = rectify(BP[S.sub][mi]);
+        c.save(); c.strokeStyle = K.BLUE; c.globalAlpha = .32; c.lineWidth = 0.8;
+        c.beginPath();
+        for (var q = 0; q < cyc; q++) {
+          var qx = X(q / cyc * 100), qy = base - r[q] * sc;
+          q ? c.lineTo(qx, qy) : c.moveTo(qx, qy);
+        }
+        c.stroke(); c.restore();
+      }
+
       c.save();
-      c.fillStyle = on ? K.ACC : K.BLUE; c.globalAlpha = on ? .55 : .30;
-      c.beginPath(); c.moveTo(X(0), bot);
-      for (var p = 0; p <= 100; p += 1) c.lineTo(X(p), bot - envOf(m, p) * (lh - 6));
-      c.lineTo(X(100), bot); c.closePath(); c.fill();
-      c.restore();
-      c.save(); c.strokeStyle = K.PANEL; c.lineWidth = 1;
-      c.beginPath(); c.moveTo(X(0), bot + .5); c.lineTo(X(100), bot + .5); c.stroke(); c.restore();
-      label(c, m.n, x0 + pl - 8, top + lh / 2 - 2,
-            { color: on ? K.ACC : K.MUT, size: 11, align: 'right', weight: on ? 700 : 600 });
+      c.strokeStyle = S.mode === 'env' ? K.ACC : K.BLUE;
+      c.lineWidth = S.mode === 'env' ? 2 : 0.9;
+      c.beginPath();
+      if (S.mode === 'env') c.moveTo(X(0), base);
+      for (var i = 0; i < cyc; i++) {
+        var px = X(i / cyc * 100), py = base - y[i] * sc;
+        (i || S.mode === 'env') ? c.lineTo(px, py) : c.moveTo(px, py);
+      }
+      c.stroke(); c.restore();
+
+      label(c, s.ch[mi].n, x0 + pl - 8, top + lh / 2 - 2,
+            { color: MOD[S.sub][mi] < FLATMOD ? K.MUT : K.INK, size: 11,
+              align: 'right', weight: 600 });
+      var vi = Math.min(cyc - 1, Math.round(S.p / 100 * cyc));
+      label(c, fmt(ENV[S.sub][mi][vi], 0) + ' µV', x0 + w - pr + 6, top + lh / 2 - 2,
+            { color: K.MUT, size: 10, align: 'left' });
     });
 
-    c.save(); c.strokeStyle = K.INK; c.lineWidth = 1.8;
-    c.beginPath(); c.moveTo(X(S.p), y0 + pt - 3); c.lineTo(X(S.p), y0 + h - pb); c.stroke();
+    /* the one moving line, straight down every channel */
+    c.save(); c.strokeStyle = K.INK; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(X(S.p), y0 + pt - 4); c.lineTo(X(S.p), y0 + h - pb); c.stroke();
+    c.fillStyle = K.INK;
+    c.beginPath(); c.arc(X(S.p), y0 + pt - 7, 3.5, 0, 7); c.fill();
     c.restore();
 
     [0, 20, 40, 60, 80, 100].forEach(function (p) {
       label(c, String(p), X(p), y0 + h - pb + 12, { color: K.MUT, size: 10 });
     });
-    label(c, 'gait cycle (%) — illustrative envelopes, not measured',
+    label(c, 'gait cycle (%)  ·  measured surface EMG, ' + fmt(s.fs, 0) + ' Hz, right leg',
           x0 + pl + (w - pl - pr) / 2, y0 + h - 8, { color: K.MUT, size: 11 });
   }
 
   function draw() {
     ax.clear();
-    var W = ax.W, H = ax.H;
-    if (port) { drawWalker(0, 0, W, H * 0.40); drawBands(0, H * 0.40, W, H * 0.60); }
-    else { drawWalker(0, 0, W * 0.38, H); drawBands(W * 0.38, 0, W * 0.62, H); }
+    if (!G || !G.subs) { label(ax.c, 'no data', ax.W / 2, ax.H / 2, { color: C().MUT }); return; }
+    var W = ax.W, H = ax.H, s = sub();
+    if (port) { drawWalker(0, 0, W, H * 0.34); drawChannels(0, H * 0.34, W, H * 0.66); }
+    else { drawWalker(0, 0, W * 0.32, H); drawChannels(W * 0.32, 0, W * 0.68, H); }
 
-    var on = MUS.filter(function (m) { return envOf(m, S.p) > 0.33; })
-                .map(function (m) { return m.n; });
+    var vi = Math.min(s.cycle - 1, Math.round(S.p / 100 * s.cycle));
+    /* compared with each muscle's OWN range, because amplitudes at different
+       electrode sites are not comparable with one another */
+    var lvl = ENV[S.sub].map(function (e, mi) {
+      var pk = 0, mn = 1e18;
+      for (var q = 0; q < e.length; q++) { pk = Math.max(pk, e[q]); mn = Math.min(mn, e[q]); }
+      return MOD[S.sub][mi] < FLATMOD ? -1 : (e[vi] - mn) / (pk - mn || 1);
+    });
+    var top = lvl.indexOf(Math.max.apply(null, lvl));
+    var flat = s.ch.filter(function (c, mi) { return MOD[S.sub][mi] < FLATMOD; })
+                   .map(function (c) { return c.n; });
     var phase = S.p < 2 ? 'initial contact'
       : S.p < 12 ? 'loading response'
       : S.p < 31 ? 'mid-stance'
@@ -2029,31 +2104,57 @@ D.register('gait', function (node, d) {
       : S.p < 62 ? 'pre-swing'
       : S.p < 75 ? 'initial swing'
       : S.p < 87 ? 'mid-swing' : 'terminal swing';
+    var modeTxt = S.mode === 'raw'
+      ? 'This is the <b>raw</b> recording — nothing done to it but the amplifier\'s ' +
+        '10–400 Hz band-pass. The slow wander is the limb moving, not muscle.'
+      : S.mode === 'rect'
+        ? 'High-passed at <b>20 Hz</b> to drop the movement artefact, then full-wave ' +
+          '<b>rectified</b>: every sample is now |EMG|, so there is something left to average.'
+        : 'The <b>linear envelope</b>: rectified, then low-passed at <b>' + fmt(S.fc, 1) +
+          ' Hz</b>, forwards and backwards so it does not lag.';
     out.innerHTML =
-      '<b>' + fmt(S.p, 0) + ' %</b> through the stride — <b>' + phase + '</b>. ' +
-      (on.length
-        ? 'Active now: <b>' + on.join('</b>, <b>') + '</b>. '
-        : 'Nothing much is active here. ') +
-      'Notice that the picture alone would not tell you any of this: timing is the thing ' +
-      'EMG gives you that kinematics cannot. ' +
-      '<span style="opacity:.62">Stride measured (SUSU-30, Walking1-2); envelopes drawn from ' +
-      'the textbook pattern, because that dataset carries no EMG.</span>';
+      '<b>' + fmt(S.p, 0) + ' %</b> through the stride — <b>' + phase + '</b>, and the line ' +
+      'runs down every channel at that instant. Closest to its own peak right now: <b>' +
+      s.ch[top].n + '</b> at <b>' + fmt(lvl[top] * 100, 0) + ' %</b>. ' + modeTxt +
+      (flat.length
+        ? ' <b>' + flat.join('</b> and <b>') + '</b> barely ' +
+          (flat.length > 1 ? 'modulate' : 'modulates') + ' — a <b>poor recording</b>, not a ' +
+          'quiet muscle, greyed out above. Gluteus maximus is a hard site: deep under fat.'
+        : '') +
+      ' <span style="opacity:.62">Figure and signal are the same person on the same stride — ' +
+      s.subject + ', ' + s.age + ' y, walking at ' + fmt(s.speed, 2) +
+      ' m/s (Lencioni et al. 2019, CC BY). Iliopsoas is in his chart and not here: it is deep ' +
+      'under the abdomen and no surface electrode reaches it.</span>';
   }
 
   var out = readout(u.ctl);
   var g2 = el('div', 'ictls g2'); u.ctl.appendChild(g2);
   var sP = slider(g2, 'Gait cycle', 0, 100, 1, S.p,
     function (v) { return fmt(v, 0) + ' %'; }, function (v) { S.p = v; draw(); });
-  sP.quiet(S.p);
+  var sF = slider(g2, 'Envelope cutoff', 1, 20, 0.5, S.fc,
+    function (v) { return fmt(v, 1) + ' Hz'; },
+    function (v) { S.fc = v; if (S.mode !== 'env') { S.mode = 'env'; syncSeg(); } draw(); });
+  sP.quiet(S.p); sF.quiet(S.fc);
 
   var row = ctlRow(u.ctl);
+  var segRow = keepOut(seg(row, [['raw', 'Raw'], ['rect', 'Rectified'], ['env', 'Envelope']],
+    S.mode, function (m) { S.mode = m; draw(); }));
+  function syncSeg() {
+    Array.prototype.forEach.call(segRow.children, function (b, i) {
+      b.classList.toggle('on', ['raw', 'rect', 'env'][i] === S.mode);
+    });
+  }
+  if (G && G.subs && G.subs.length > 1) {
+    keepOut(chips(row, G.subs.map(function (s, i) { return [i, s.subject]; }), 0,
+      function (i) { S.sub = +i; procKey = null; draw(); }));
+  }
   var play = playBtn(row, '▶ Walk');
   var raf = null, playing = false, last = 0;
   function stop() { playing = false; play.innerHTML = '▶ Walk'; if (raf) cancelAnimationFrame(raf); raf = null; }
   function tick(ts) {
     if (!playing) return;
     if (!last) last = ts;
-    S.p = (S.p + (ts - last) / 1000 * 42) % 100;
+    S.p = (S.p + (ts - last) / 1000 * 36) % 100;
     last = ts; sP.quiet(S.p); draw();
     raf = requestAnimationFrame(tick);
   }
