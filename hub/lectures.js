@@ -267,6 +267,29 @@ window.EPHE341_LECTURES = [
            ['what a lateral lean is worth at the hip', 'w-trend'],
            ['moving the line of action', 'w-lean']] },
 
+  { n: '16', title: 'Gait analysis',
+    path: 'lectures/16-gait-analysis',
+    blurb: 'Walking, measured end to end. The cycle and its phases from a recorded stride; ' +
+           'the temporal and spatial variables and what each definition quietly decides; ' +
+           'motion capture and the link-segment model; all three components of the ground ' +
+           'reaction force, the butterfly of vectors and the path of the centre of pressure; ' +
+           'angle, moment and EMG read together, one joint at a time, and the support moment ' +
+           'two people make in visibly different ways; the inverted pendulum and what it does ' +
+           'not recover; and the one or two centimetres of toe clearance the four common ' +
+           'compensations exist to defend.',
+    slides: 56, widgets: 11, updated: '2026-10-07',
+    handout: 'handout.pdf',
+    live: [['the gait cycle, from a recorded walk', 'w-cycle'],
+           ['the footprint diagram, measured', 'w-spatial'],
+           ['how symmetric is a normal walk', 'w-asym'],
+           ['angle, moment and muscle at one joint', 'w-joint'],
+           ['all three force components, measured', 'w-grf'],
+           ['the butterfly of force vectors', 'w-fan'],
+           ['the path under the foot', 'w-cop'],
+           ['three joints, one support moment', 'w-support'],
+           ['is a person actually a pendulum', 'w-pendulum'],
+           ['buying clearance at midswing', 'w-clear']] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
@@ -276,7 +299,6 @@ window.EPHE341_LECTURES = [
      match the numbers in the source .pptx filenames. Change them here if you
      would rather they did. */
   { n: '13', title: 'Virtual Muscle Lab' },
-  { n: '16', title: 'Gait analysis' },
   { n: '17', title: 'Angular kinetics 2' },
   { n: '18', title: 'Angular kinetics 3' },
   { n: '19', title: 'Static analysis' },

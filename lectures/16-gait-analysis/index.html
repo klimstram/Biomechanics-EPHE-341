@@ -1,0 +1,1499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fdfdfc">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Gait Analysis</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css?v=20261007b">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'light';
+  try { t = localStorage.getItem('ephe341-theme') || 'light'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Gait Analysis</h1>
+    <div class="rule"></div>
+    <p class="sub">Everything the course has built, pointed at one ordinary thing: walking</p>
+  </div>
+  <aside class="notes">This is the lecture where the pieces come together. Kinematics gave us positions and angles; linear and angular kinetics gave us forces and moments; electromyography gave us the muscle activity. Walking uses all of it at once, and it is the single most measured human movement there is.
+
+The through-line for the whole lecture: every figure that quotes a number in this deck computes it from one recorded stride of one real person, and there are two people in the data so you can see where they agree and where they do not.</aside>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">By the end of this lecture you should be able to…</p>
+  <ul class="small two">
+    <li><strong>Divide</strong> a stride into stance and swing and name the events that separate them</li>
+    <li><strong>Define</strong> the temporal and spatial variables, and say which ones change with speed, age and pathology</li>
+    <li><strong>Describe</strong> how a motion capture system turns reflective markers into joint angles</li>
+    <li><strong>Read</strong> the three components of the ground reaction force and the path of the centre of pressure</li>
+    <li><strong>Link</strong> a joint moment to the muscle group producing it and to the movement happening at the time</li>
+    <li><strong>Explain</strong> the support moment and why the body can trade one joint against another</li>
+    <li><strong>Account</strong> for the inverted pendulum and for where the energy in walking actually goes</li>
+    <li><strong>Recognise</strong> the common gait abnormalities and the problem each one is solving</li>
+  </ul>
+  <aside class="notes">Eight objectives, which is a lot, but this is a long lecture and most of it is vocabulary you will need in the lab. The two that are hardest are the fifth and the sixth: linking a moment to a muscle needs you to hold the external and internal frames apart, and the support moment is the idea that makes the whole leg one system rather than three joints.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">What walking actually has to do</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Gait repeats a basic sequence of limb motions that moves the body along a
+        desired path while maintaining:</p>
+      <ol class="small">
+        <li>Support of the head, arms and trunk</li>
+        <li>Upright posture and balance of the body</li>
+        <li>Control of foot trajectory, for safe ground clearance and a controlled landing</li>
+        <li>Generation of mechanical energy to maintain or increase forward velocity</li>
+        <li>Absorption of mechanical energy, for shock absorption and stability, or to slow down</li>
+      </ol>
+      <div class="callout small">
+        <p style="margin-bottom:0">Five jobs at once, every step, with a body that is falling
+          forwards most of the time. Understanding how it is normally done is what lets you say
+          what has gone wrong when it is not.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/walkers.png" alt="A strip of walking silhouettes at successive instants of a stride"></div>
+    </div>
+  </div>
+  <aside class="notes">Read the five out loud and point out that items 4 and 5 are opposites happening in the same step — energy is absorbed in early stance and generated in late stance, by different muscle groups. That is why a single number like "walking is efficient" hides most of what is going on.
+
+The clinical motivation sits in the last line of the callout. Almost everything in the second half of this lecture is a compensation: a person whose body cannot do one of these five jobs the usual way, doing it another way.</aside>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The gait cycle</p>
+  <div class="fig big cap"><img src="assets/cycle-full.png" alt="The gait cycle from right initial contact to the next right initial contact, with the limb positions above and a bar chart below dividing the cycle into right stance and right swing, left stance and left swing, and two periods of double support"></div>
+  <ul class="small two">
+    <li>One <strong>cycle</strong>, or <strong>stride</strong>, runs from one event to the same event
+      on the same foot — conventionally heel strike to heel strike.</li>
+    <li><strong>Stance</strong> is about 60% of it, <strong>swing</strong> the other 40%.</li>
+    <li>The two limbs are half a cycle out of phase, so the left is in swing while the right is in
+      stance.</li>
+    <li>Both feet are down twice per cycle — <strong>double support</strong>, about 10% each time.
+      It is the presence of double support that makes this walking rather than running.</li>
+  </ul>
+  <aside class="notes">Spend time on this figure; everything else in the lecture is indexed against it. Make sure they can read a percentage off the bottom axis and say what both limbs are doing at that instant.
+
+The last bullet is the formal definition of walking and it is worth stating as such: walking has double support, running has a flight phase where neither foot is down. Everything between — race walking at speed, for instance — is defined by exactly this.
+
+The percentages on his figure are the textbook ones. The next slide is the same diagram built from a recorded walk, where they come out slightly different, and that difference is the point.</aside>
+</section>
+
+<!-- 5 -->
+<section id="w-cycle">
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The same diagram, from a recorded walk</p>
+  <div class="iplot wide" data-widget="cycle"></div>
+  <aside class="notes">Here is his bar chart built from measurement rather than drawn. The figure walks, the timeline fills, and the four events are marked where they actually happened.
+
+How the events were found is worth a minute, because it is a measurement with an error like any other. A foot counts as down when its heel or its forefoot is both low and not travelling forward. That is the only method available for the left foot, because there is one force plate and the right foot stood on it. For the right foot we can check: the markers put toe-off at fifty-nine per cent of the cycle and the plate puts it at sixty-one. Two per cent apart, consistently, with the marker method a shade early — which tells you the size of the error on the left foot too.
+
+Then read the timings off it. Stance is about sixty per cent, swing forty. Double support appears twice. Left heel strike lands at fifty-two per cent rather than fifty: this person is very slightly asymmetric, and so is almost everybody.
+
+Switch subjects. The faster walker has shorter double support — eight per cent against nine, and five against seven at the second one. That is the textbook relationship between speed and double support, visible in two people.</aside>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Stance, in four parts</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/stance-strip.png" alt="The stance phase divided into weight acceptance, midstance and push off, with the limb positions and the percentage of the gait cycle for each event"></div>
+    </div>
+    <div>
+      <ol class="small">
+        <li><strong>Weight acceptance</strong> begins at initial contact and ends at foot flat,
+          about 10% of the cycle. The limb takes the load and absorbs the impact.</li>
+        <li><strong>Midstance</strong> begins at foot flat around 7–10% and ends at heel-off at
+          about 40%. The body passes over the foot.</li>
+        <li><strong>Push-off</strong> begins with heel-off at 40% and ends at toe-off at about 60%.
+          This is where the leg does most of its positive work.</li>
+      </ol>
+      <div class="callout small">
+        <p style="margin-bottom:0">The names vary between textbooks — Perry's terminology splits
+          stance into loading response, mid-stance, terminal stance and pre-swing. The events are
+          the same; only the labels move. Read which scheme a paper is using before comparing
+          numbers to it.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The callout is a real nuisance in the literature and it is worth warning them now. His figure uses one scheme; the joint moment figures later in this lecture are labelled with Perry's — IC, OT, HR, OI, TO, FA, TV. They are compatible, but a student reading two papers will meet both.
+
+Translation, roughly: weight acceptance is loading response; midstance covers mid-stance and the start of terminal stance; push-off is the rest of terminal stance plus pre-swing.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Swing, in three parts</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/swing-strip.png" alt="The swing phase divided into early swing, midswing and late swing, with the percentage of the gait cycle for each"></div>
+    </div>
+    <div>
+      <ol class="small">
+        <li><strong>Early swing</strong>, 60–75%, begins when the toe leaves the ground and
+          continues until midswing. Also called initial swing, or the acceleration phase.</li>
+        <li><strong>Midswing</strong>, 75–85%, is where the swinging leg passes directly beneath
+          the body — the moment of least ground clearance.</li>
+        <li><strong>Late swing</strong>, 85–100%, is the deceleration phase: the limb is being
+          slowed in preparation for heel strike.</li>
+      </ol>
+      <div class="callout small">
+        <p style="margin-bottom:0">Midswing is the critical instant. The foot clears the floor by
+          one or two centimetres and the knee is still partly flexed. Four of the five
+          abnormalities at the end of this lecture exist to buy a little more clearance at exactly
+          this moment.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Make the clearance point concrete: a centimetre or two, on every step, for a whole lifetime. It is remarkable that anyone ever gets across a room. And it explains why a foot drop — an ankle that cannot dorsiflex — is so disabling: it removes the margin entirely.
+
+Late swing is where the hamstrings do their work, decelerating a limb that is swinging fast. That is also why hamstring strains happen at the end of swing in sprinting, which is the same mechanics with much larger numbers.</aside>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The variables we actually measure</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Temporal variables</strong> (time): stance time, single-limb and
+        double-support time, swing time, stride and step time, cadence, and speed.</p>
+      <p class="small"><strong>Spatial variables</strong> (distance): stride length, step length and
+        width, and the degree of toe-out.</p>
+      <p class="small">Each may be modified by age, sex, height, the distribution of mass in the
+        body segments, joint mobility, muscle strength, clothing and footwear, habit, and
+        psychological state.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">That last list is why a single person's numbers mean little on
+          their own, and why the useful comparisons are either <strong>left against right</strong>
+          in the same person, or <strong>before against after</strong> an intervention.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/footprints.png" alt="Footprints from above showing stride length, right and left step lengths, step width and the foot angles"></div>
+    </div>
+  </div>
+  <aside class="notes">This footprint diagram comes back three more times in his slides because almost every spatial variable is on it. It is worth making them read it once, properly: stride is heel to the same heel, step is heel to the other heel, width is the lateral gap, and the foot angle is the splay of each foot off the line of travel.
+
+The callout is the single most useful piece of clinical advice in the first half of the lecture. Normative gait data has wide bands precisely because of that list of modifiers. A patient who is outside the band may just be tall, or wearing boots.</aside>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Temporal variables — the times</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Stance time</strong> — the time spent in stance by one limb during a
+        gait cycle.</p>
+      <p class="small"><strong>Single-support time</strong> — the time during which only that one
+        limb is on the ground.</p>
+      <p class="small"><strong>Double-support time</strong> — the time with both feet on the ground
+        during one gait cycle, counting both occurrences.</p>
+      <ul class="small">
+        <li>Double support is <strong>increased</strong> in elderly people and in those with balance
+          disorders — it is the safest part of the cycle and a cautious walker spends longer in it.</li>
+        <li>Double support <strong>decreases as walking speed increases</strong>, and reaches zero
+          at the walk–run transition.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/footprints.png" alt="The same footprint diagram, showing stride length, step lengths, step width and foot angles"></div>
+      <p class="small center">Double support is the overlap between the two limbs' stance times —
+        it does not appear on a footprint diagram at all, which is why both kinds of variable
+        are needed.</p>
+    </div>
+  </div>
+  <aside class="notes">The two bullets together make double support the most useful single temporal variable in a clinic. It goes up when someone is frightened of falling and down when they speed up, so it reads as a measure of confidence as much as of speed.
+
+Worth noting that double support is where almost all falls in the elderly do <em>not</em> happen; the risky part is single support, which is exactly the part a cautious walker shortens.</aside>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Temporal variables — duration, cadence, velocity</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Stride duration</strong> — the time to complete one stride. About one
+        second in a normal adult.</p>
+      <p class="small"><strong>Step duration</strong> — the time spent on a single step. With
+        weakness or pain in one limb, step duration decreases on the affected side and increases on
+        the unaffected one.</p>
+      <p class="small"><strong>Cadence</strong> — steps per unit time.</p>
+      <ul class="small">
+        <li>A shorter step length gives a higher cadence at any given velocity.</li>
+        <li>As cadence rises, double support shortens; approaching 180 steps per minute it
+          disappears and running begins.</li>
+        <li>Typical cadence is about <strong>110 steps/min for men and 116 for women</strong>.</li>
+      </ul>
+      <p class="small"><strong>Walking velocity</strong> — the rate of forward motion of the body.</p>
+      <div class="box accent workblock" style="max-width:25em">
+        <p class="eq" style="margin-bottom:0">velocity = step length × cadence</p>
+      </div>
+    </div>
+    <div class="iplot still" data-widget="speed"></div>
+  </div>
+  <aside class="notes">The equation at the bottom is the one relationship to hold on to, and the figure beside it is the reason: there are two ways to walk faster, and people use both at once. Up to about 1.2 metres per second most of the increase comes from a longer step; above that, cadence takes over.
+
+Check the arithmetic with the measured subjects. One hundred and six steps a minute at sixty-five centimetres a step is 106 ÷ 60 × 0.65 = 1.15 metres per second, and the recorded speed is 1.14. The other subject: 109 ÷ 60 × 0.72 = 1.31 against a recorded 1.30. The relationship is exact, not approximate — it is just a definition.
+
+The men-versus-women cadence figures are worth a caveat: that difference is almost entirely leg length. Normalise for height and it very nearly disappears.</aside>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Spatial variables</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Stride length</strong> — the linear distance between two successive
+        events accomplished by the <em>same</em> lower extremity.</p>
+      <ul class="small">
+        <li>Affected by leg length, height, age, sex and more.</li>
+        <li>Normalise by leg length or by height so that people of different sizes can be compared.</li>
+        <li>Decreases in elderly people and increases with gait speed.</li>
+      </ul>
+      <p class="small"><strong>Step length</strong> — the linear distance between successive contacts
+        of <em>opposite</em> extremities.</p>
+      <ul class="small">
+        <li>Comparing right and left step lengths gives an indication of gait symmetry.</li>
+        <li>Two step lengths make one stride, so they must sum to the stride length — a useful
+          check on anyone's numbers, including your own.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/footprints.png" alt="Footprint diagram showing stride length as heel to the same heel and step length as heel to the opposite heel"></div>
+    </div>
+  </div>
+  <aside class="notes">The last bullet is a genuinely useful arithmetic check and it catches real mistakes. In the measured data: right step 66.1 cm plus left step 64.4 cm is 130.5 cm, which is the stride length to the millimetre. If a student's two step lengths do not add to their stride, one of the contacts has been mis-identified.
+
+Normalising is worth insisting on. A stride length of 1.3 metres means nothing until you know the person is 161 cm tall; divide by height and it becomes 0.81, which is comparable with anyone.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Step width and toe-out</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Step width</strong> — the width of the walking base, measured between
+        the midpoint of one heel and the same point on the other.</p>
+      <ul class="small">
+        <li>Increases when side-to-side stability is in demand: children, elderly people, anyone
+          unsteady.</li>
+        <li>In a normal adult population, mean step width is about <strong>3.5 inches</strong>,
+          roughly 9 cm.</li>
+      </ul>
+      <p class="small"><strong>Degree of toe-out</strong> — the angle between the foot's line of
+        progression and the line of travel.</p>
+      <ul class="small">
+        <li>Normally about <strong>7°</strong> from the line of progression for each foot.</li>
+        <li>Decreases as walking speed increases.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Note the care in the definition: the <em>midpoint of the heel</em>,
+          not the back of it. A marker stuck on the back of a shoe is not that point, and the
+          difference shows up in the numbers.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/footprints.png" alt="Footprint diagram with the left and right foot angles marked against the line of progression"></div>
+    </div>
+  </div>
+  <aside class="notes">The callout matters for the next slide and for their own lab work. Step width computed from heel markers comes out about a centimetre narrower than the authors' own value on both subjects, consistently, because the marker sits behind and slightly lateral to the anatomical midpoint of the heel. It is not an error in either number; it is two different definitions, and a paper that does not say which one it used cannot be compared with.
+
+This is the general lesson about marker-based measurement: the marker is a proxy for an anatomical landmark, and the gap between them is a systematic error that no amount of filtering removes.</aside>
+</section>
+
+<!-- 13 -->
+<section id="w-spatial">
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The footprint diagram, measured</p>
+  <div class="iplot wide" data-widget="spatial"></div>
+  <aside class="notes">His footprint figure, drawn from the marker data of two real walks. Every quantity on it is computed from the recording.
+
+Three things to draw out. First, the stride length computed here from the heel markers — 130.5 centimetres — matches the authors' own published value of 130.3 to within two millimetres. That is the check that the method works.
+
+Second, step width does <em>not</em> match: 9.1 centimetres against their 10.2, and 4.6 against 5.7 on the other subject. The same one-centimetre gap both times, which is a definition difference rather than an error — the heel marker is not the midpoint of the heel. The widget prints both numbers side by side rather than hiding the disagreement.
+
+Third, toe-out. The foot's long axis runs from the heel to the midpoint of the first and fifth metatarsal heads, and taking it that way gives four to ten degrees across the two subjects and the two feet, averaging six — against the textbook's "about seven". Take it to the first metatarsal marker alone, which is the obvious thing to do, and you get five degrees of toe-<em>in</em> that is not there. The widget will show you both if you press the toggle.
+
+And note the asymmetry in the second subject: ten degrees of toe-out on the right against three on the left. In a clinic that asymmetry is the finding, not the average.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Asymmetry</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/asym-chart.png" alt="Stance and swing durations for both limbs in a normal man, a patient with avascular necrosis of the left hip, and a patient with osteoarthritis of the left hip, drawn as horizontal bars against time"></div>
+    </div>
+    <div>
+      <p class="small">The clearest way to show a limp is to draw both limbs' stance and swing
+        against the same clock.</p>
+      <ul class="small">
+        <li><strong>Normal</strong> — 62% stance and 38% swing, the same on both sides.</li>
+        <li><strong>Avascular necrosis of the left hip</strong> — the painful limb spends less time
+          in stance (58%) and the sound limb more (69%).</li>
+        <li><strong>Osteoarthritis of the left hip</strong> — the same pattern, further exaggerated:
+          60% against 80%.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">The pattern is general: a painful or weak limb is <strong>unloaded
+          sooner</strong>, so its stance time falls and the other limb's rises. This is the
+          antalgic gait, and the stance-time ratio is a usable measure of it.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Make sure they read the chart correctly: each pair of bars is one limb, and the total length is the stride. The painful limb's stance bar is shorter and the sound limb's longer, and the two still have to add up to a whole cycle, so the double-support periods move as well.
+
+The word to give them is <strong>antalgic</strong> — "against pain". It is the commonest abnormal gait pattern there is and it is defined by exactly this: shortened stance on the painful side.</aside>
+</section>
+
+<!-- 15 -->
+<section id="w-asym">
+  <h2>Gait Analysis</h2>
+  <p class="subhead">How symmetric is a normal walk?</p>
+  <div class="iplot wide" data-widget="asym"></div>
+  <aside class="notes">His chart, with the top row replaced by measurement and the lower rows kept as the comparison.
+
+The useful surprise is how close to symmetric a healthy walk is, and how not-quite. Right stance and left stance differ by a per cent or two in both subjects — real, repeatable, and nothing to do with pathology. That is the noise floor you are measuring a limp against, and it is why a two per cent asymmetry is not a finding.
+
+Then drag the slider, which shortens stance on one side the way pain does. Watch what has to move with it: the other limb's stance lengthens, both double-support periods shift, and the step lengths go unequal. You cannot change one of these numbers on its own — the cycle has to stay a cycle, which is why gait variables are so correlated with one another and why reporting a dozen of them is usually reporting two or three.
+
+Ask where the patient data in the lower rows would put the slider. Avascular necrosis is about a four per cent shortening; the osteoarthritis row is twice that and obvious across a room.</aside>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Gait through childhood</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/age-scaled.png" alt="Dimensionless step length, cadence, single limb stance and step width plotted against age in months from 20 to 160, each flattening out by about 80 months"></div>
+    </div>
+    <div>
+      <p class="small">Scaled by leg length, the fundamental gait parameters change through the
+        first six years of life and then stay very similar.</p>
+      <ul class="small">
+        <li><strong>Step length</strong> and <strong>single-limb stance</strong> rise — a child
+          grows into longer, more confident steps.</li>
+        <li><strong>Step width</strong> falls steeply — the wide-based toddler gait narrows as
+          balance improves.</li>
+        <li><strong>Cadence</strong> falls, because the legs are getting longer.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">All four curves flatten by about 80 months — roughly seven years
+          old. After that, a child's gait is an adult's gait at a smaller scale, which is why these
+          plots are drawn <strong>dimensionless</strong>.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The word to stress is <em>scaled</em>. Plotted in centimetres, a child's step length rises all the way to adulthood and tells you nothing but that they are growing. Divided by leg length it plateaus at seven, and that plateau is the real finding: the control strategy is mature long before the body is.
+
+This is also the practical justification for the normalisation on the earlier slide. Dimensionless numbers are what let you compare a seven-year-old with a seventy-year-old at all.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Age and sex in adults</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/age-sex.png" alt="Six panels plotting speed, step length and cadence against age from 20 to 90 years, raw on the left and normalised to leg length on the right, with separate curves for men and women"></div>
+    </div>
+    <div>
+      <p class="small">Normalised to leg length, across adulthood:</p>
+      <ul class="small">
+        <li><strong>Speed</strong> declines at the same rate in both sexes.</li>
+        <li><strong>Step length</strong> decreases more in men.</li>
+        <li><strong>Cadence</strong> decreases more in women.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Two different routes to the same loss of speed. It is the kind of
+          result that only shows up once the raw numbers have been normalised — the left-hand
+          column of panels mostly shows how tall people are.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Point at the scatter before the fitted lines. The clouds overlap almost completely; the age trend is real but it is small against the spread between individuals at any one age. That is the honest reading of this figure and it is worth saying, because a plot with a confident curve through it invites over-reading.
+
+Walking speed in older adults is one of the better-validated predictors of general health and of mortality, which is a striking thing for something so simple to measure. Below about 0.8 metres per second is the usual flag.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Beyond the basic parameters</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">The basic parameters are valuable, but they describe the <em>outcome</em> of
+        walking. To ask what produced it we need the kinetics and kinematics of each joint.</p>
+      <p class="small">A <strong>link-segment model</strong> treats the body as a chain of rigid
+        segments and uses inverse dynamics to find the forces and moments that must have acted at
+        each joint. Start at the segment touching the ground and work upwards.</p>
+      <p class="small">To do it, three things must be known for every instant:</p>
+      <ul class="small">
+        <li>the <strong>positions</strong> of the segments through the cycle, from motion analysis;</li>
+        <li>the <strong>ground reaction force</strong>, from a force plate;</li>
+        <li>the <strong>mass, centre of mass and moment of inertia</strong> of each segment, from
+          anthropometric tables.</li>
+      </ul>
+    </div>
+    <div class="stack">
+      <div class="fig cap tight"><img src="assets/linkseg-body.png" alt="A walking figure divided into head-arms-trunk, thigh, lower leg and foot segments, each labelled with its mass, moment of inertia and centre of mass location"></div>
+      <div class="fig cap tight"><img src="assets/linkseg-foot.png" alt="Free body diagram of the foot showing the horizontal and vertical components of the force on the tibia at the ankle, the ankle moment, the segment accelerations and the ground reaction force"></div>
+    </div>
+  </div>
+  <aside class="notes">The third requirement is the one students forget and it is the weakest link. Segment masses and inertias are not measured on the person in front of you; they come from regression equations fitted to cadaver studies, mostly on elderly male bodies. For a typical adult that is fine. For a child, an amputee or someone with a very unusual build it is a real source of error, and it propagates up the chain — which is the same reason the hip moment was the least trustworthy number in the angular kinetics lecture.
+
+The foot diagram on the right is exactly the free body diagram from that lecture, one segment at a time. This is where it comes from and why it has to start at the ground.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Motion capture</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/mocaplab.png" alt="A motion capture volume with six cameras on tripods around a walkway, their fields of view converging on a person in the middle, with computer screens alongside"></div>
+    </div>
+    <div>
+      <p class="small">Reflective markers are placed on anatomical landmarks. Infrared cameras ring
+        the volume, each flashing a ring of infrared light and recording what comes back.</p>
+      <p class="small">Each camera sees a marker as a bright blob at a 2D image position. Given
+        <strong>at least two</strong> cameras that can see the same marker, and a calibration that
+        tells you where each camera is, the marker's position in space can be triangulated.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">"At least two" is the theoretical minimum and never the practical
+          one. Markers are hidden by the swinging arms, by the other leg, and by the body itself,
+          so a system has eight to sixteen cameras to make sure two of them can always see every
+          marker.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Worth saying that the cameras do not record a picture at all in normal operation — they threshold on board and send back a list of blob centroids, which is how they manage hundreds of frames a second.
+
+The measured data in this lecture was captured exactly this way, at sixty hertz, with the force plate sampling sixteen times faster at nine hundred and sixty.
+
+Marker placement is the dominant error source in the whole pipeline. Two experienced people palpating the same lateral malleolus will put the marker a few millimetres apart, and that difference goes straight into the joint angle. Inter-tester repeatability is far worse than the system's own precision, which is sub-millimetre.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Twelve views, one point in space</p>
+  <div class="cols a top">
+    <div>
+      <div class="fig cap"><img src="assets/dlt.png" alt="Four camera views each showing scattered bright markers, combined through the direct linear transformation into a 3D image and then an identified marker set drawn as a stick figure"></div>
+    </div>
+    <div>
+      <p class="small">Each camera contributes a 2D view. The <strong>direct linear
+        transformation</strong> (DLT) relates image coordinates to real-world coordinates through
+        a set of calibration constants, found by waving a known object through the volume.</p>
+      <p class="small">With every camera's view of a marker and every camera's DLT constants, the
+        marker's 3D position follows by least squares — more cameras means a better-conditioned
+        solution, not just redundancy.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">What comes out is an anonymous cloud of points. Turning that into
+          "right lateral malleolus" is a separate step — <strong>labelling</strong> — and it is
+          still the part of the process most likely to need a human.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The calibration step is worth describing: someone walks through the volume waving a wand with markers a known distance apart, for perhaps thirty seconds, and the software solves for where every camera is and how its lens distorts. Residuals of well under a millimetre are normal. If the calibration drifts — a camera knocked, a tripod moved — everything downstream is wrong in a way that looks like biology.
+
+The labelling point is the practical one for anyone who does this in the lab. A marker that drops out behind the swing leg and comes back has to be re-identified, and a mislabelled marker produces a joint angle that is confidently, smoothly wrong.</aside>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">From markers to joint angles</p>
+  <div class="fig big cap"><img src="assets/digitised.png" alt="A marker cloud joined into a stick figure, the same frame rendered as a skeleton, and the derived hip, knee and ankle angle curves plotted over the gait cycle"></div>
+  <ul class="small two">
+    <li>Markers define each segment's <strong>position and orientation</strong>.</li>
+    <li>A joint angle is the relative orientation of the two segments meeting at it — which means
+      a joint angle is a <em>derived</em> quantity, two steps removed from what was measured.</li>
+    <li>Differentiating position gives velocity and acceleration, which inverse dynamics needs —
+      and differentiation amplifies noise, so the data must be filtered first.</li>
+    <li>The output is normalised to 0–100% of the gait cycle so that strides of different durations
+      can be averaged and compared.</li>
+  </ul>
+  <aside class="notes">The third bullet connects back to the signals lecture and it is worth the callback. Marker noise of half a millimetre is invisible in a position trace and catastrophic in a second derivative, because differentiating multiplies each frequency component by its own frequency. Filter first, differentiate second, and never the other way round.
+
+The fourth bullet is why every figure in the rest of this lecture has "% gait cycle" on its x axis rather than seconds. It also quietly throws away the stride duration, which is why cadence has to be reported separately.</aside>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The sagittal joint angles</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/angle-plot.png" alt="Hip, knee and ankle sagittal angles plotted against percentage of the gait cycle, with the gait events marked along the top"></div>
+    </div>
+    <div>
+      <p class="small"><strong>Hip</strong> — maximum flexion at initial contact; extends through
+        stance to a maximum near heel-off at about 50%; flexes again through swing.</p>
+      <p class="small"><strong>Knee</strong> — near 0° at initial contact and again just before
+        heel-off, with a small flexion wave in loading response; maximum flexion of about
+        <strong>60°</strong> at roughly 70% of the cycle, then extends ready for contact.</p>
+      <p class="small"><strong>Ankle</strong> — maximum dorsiflexion at heel-off; maximum
+        plantarflexion at toe-off, around 60%; then back to neutral for landing.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Each curve has <strong>two</strong> phases of motion per cycle,
+          not one. The knee flexes twice — a small wave under load and a large one in swing — and
+          mistaking one for the other is the commonest misreading of this graph.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Get them to trace the knee curve with a finger while you say it: small flexion under load, extension through midstance, large flexion for clearance, extension to land. The two flexion waves have completely different purposes — shock absorption and foot clearance — and only the second is large.
+
+The ankle's maximum plantarflexion at toe-off is the end of push-off, not the cause of it. The plantarflexors have already done their work by then; what you are seeing is the foot being left behind as the body moves on.</aside>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The frontal plane</p>
+  <div class="cols a top">
+    <div>
+      <div class="fig cap"><img src="assets/hip-frontal.png" alt="Hip adduction and abduction angle plotted against percentage of the gait cycle, rising to about 7 degrees of adduction during the first part of stance"></div>
+    </div>
+    <div>
+      <div class="fig cap tight"><img src="assets/pelvis-drop.png" alt="Rear view of a walker with the contralateral hemi-pelvis dropping during single limb support"></div>
+      <p class="small">During the first 20% of stance the pelvis on the <strong>contralateral</strong>
+        side drops about 5°, which appears at the stance hip as <strong>adduction</strong>.</p>
+      <p class="small">It is a controlled drop, not a collapse: the stance-side abductors are paying
+        for it the whole time. Remove them and you have the Trendelenburg sign from the last
+        lecture.</p>
+    </div>
+  </div>
+  <aside class="notes">Connect this straight back to angular kinetics one. That five degrees is exactly the drop the abductors are resisting, and it is what the Trendelenburg patient cannot control. The hip adduction curve on the left is the frontal-plane equivalent of the sagittal curves on the previous slide, and it is where you look for abductor problems.
+
+Say the magnitudes out loud: five to seven degrees, against sixty degrees of knee flexion in the sagittal plane. Frontal-plane gait kinematics are small, which is why they need good calibration to see at all — and why the frontal plane is where marker placement error does the most damage.</aside>
+</section>
+
+<!-- 24 -->
+<section id="w-joint">
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Angle, moment and muscle, one joint at a time</p>
+  <div class="iplot wide" data-widget="joint"></div>
+  <aside class="notes">This is the figure his slides 38 to 40 are built from, made from one measured stride: for each joint, what the angle did, what the net internal moment was, and which muscles were on.
+
+Read the knee first, because it is the clearest. Put the playhead at six per cent: the knee is flexing, the moment is extensor and the vastus is active — the quadriceps are lengthening while resisting, lowering the body under control. Move to fourteen per cent and the same muscles are shortening, because maximum loading-response flexion in this stride is at ten.
+
+Then the ankle. Through midstance the moment is plantarflexor and the ankle is dorsiflexing: the calf is lengthening under load. Dorsiflexion peaks at about forty-one per cent of the cycle, and from there the ankle plantarflexes with the moment still plantarflexor — the same muscles, now shortening. One burst, eccentric then concentric, with the turn at the top of the dorsiflexion curve.
+
+The hip is the one to be careful with. The moment goes flexor through late stance and there is no muscle on the figure to explain it, because that muscle is iliopsoas and no surface electrode will ever reach it. The widget says so rather than leaving a silent gap.
+
+Two honest notes the figure also carries. The gluteus maximus channel barely modulates in either subject — a poor recording, not a quiet muscle. And biceps femoris here stands in for "the hamstrings", which is three muscles doing slightly different things.
+
+Switch subjects to see how much of the shape is the person and how much is walking. The angles repeat almost exactly; the moments vary a good deal more.</aside>
+</section>
+
+<!-- 25 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">What a force plate gives you</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">A force plate measures the resultant of everything the foot is doing to the
+        ground, and by Newton's third law what the ground is doing to the foot. Three quantities
+        come out of it:</p>
+      <ul class="small">
+        <li>the <strong>ground reaction force</strong>, as three orthogonal components — vertical,
+          anteroposterior and mediolateral;</li>
+        <li>the <strong>centre of pressure</strong>, the single point at which that resultant can be
+          considered to act;</li>
+        <li>the <strong>free moment</strong> about the vertical axis — the twist the foot applies to
+          the floor.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">It gives you <strong>one resultant for the whole foot</strong>.
+          It cannot tell you that the heel is loaded and the forefoot is not; that is what a
+          pressure mat is for, and the two are often confused.</p>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="fig cap tight"><img src="assets/plate-skel.png" alt="A skeleton leg standing on a force plate with the resultant ground reaction force drawn as a red arrow from the centre of pressure"></div>
+      <p class="small center">Two plates set into the walkway, one per foot, sampled here at
+        960 Hz against the cameras' 60.</p>
+    </div>
+  </div>
+  <aside class="notes">The callout is a distinction worth being firm about. A force plate reports the resultant and its point of application; a pressure mat reports the distribution. The centre of pressure is a weighted average over the whole contact area, so the same CoP position can come from a very even load or from two separate pressure peaks either side of it.
+
+Mention the sampling rates: the plate runs sixteen times faster than the cameras because force changes much faster than position does — the heel strike transient lasts a few milliseconds and is invisible at sixty hertz.</aside>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The vertical force</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/vgrf.png" alt="Vertical ground reaction force in body weights against percentage of stance, rising above body weight in early stance, dipping below it at midstance and rising again in late stance"></div>
+    </div>
+    <div>
+      <p class="small">The vertical force has a characteristic shape: <strong>two humps above body
+        weight with a valley between them</strong>.</p>
+      <ul class="small">
+        <li>The <strong>first hump</strong> is weight acceptance — the body's downward velocity is
+          being arrested, which takes more than body weight.</li>
+        <li>The <strong>valley</strong> at midstance is the body's centre of mass being accelerated
+          <em>upward</em> less than gravity, as it passes over the foot. The knee unloads slightly.</li>
+        <li>The <strong>second hump</strong> is push-off: the centre of mass is being accelerated
+          upwards again, which once more takes more than body weight.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">It is not a measure of effort. The humps are above body weight
+          because the centre of mass is accelerating, and the valley is below it for the same
+          reason with the sign reversed. F = ma, applied to the whole body.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The callout is the correction students most need here. "The force is bigger so it is working harder" is wrong; the force is bigger because the centre of mass is accelerating upwards. Integrate the whole trace over a stride and it comes to exactly body weight times the stride duration, because over one cycle the body's vertical velocity is unchanged. That is a useful check on anyone's force plate data.
+
+The valley is also the moment with the least load on the joints, and a person protecting a painful knee will exaggerate it — a flattened or very deep trace is a real clinical sign.</aside>
+</section>
+
+<!-- 27 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Contact to midstance</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/walkfig5.png" alt="Five walking figures labelled initial contact, loading response, mid stance, terminal stance and preswing"></div>
+      <div class="fig cap tight"><img src="assets/events-bar.png" alt="The vertical ground reaction force through stance with the gait events IC, OT, HR, OI and TO marked, and the sub-phases labelled"></div>
+    </div>
+    <div>
+      <p class="small"><strong>Initial contact (0%)</strong> — the instant the leading foot touches
+        the ground. Preparation for loading response; heel strike or heel contact.</p>
+      <p class="small"><strong>Loading response (0–10%)</strong> — body weight transferred onto the
+        stance limb, foot comes into full contact, the vertical force rises to its first peak. This
+        is the first period of double support.</p>
+      <p class="small"><strong>Midstance (10–30%)</strong> — the opposite foot leaves the ground and
+        body weight travels along the foot until it is aligned over the forefoot. The vertical force
+        is on its descending limb. First half of single support.</p>
+    </div>
+  </div>
+  <aside class="notes">The event abbreviations on that bar come up throughout the rest of the lecture, so introduce them now: IC initial contact, OT opposite toe-off, HR heel rise, OI opposite initial contact, TO toe-off, FA feet adjacent, TV tibia vertical.
+
+Note that two of the seven are events on the <em>other</em> limb. That is deliberate and it is how the two limbs get tied to one clock — opposite toe-off ends the first double support, opposite initial contact starts the second.</aside>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Terminal stance to toe-off</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/walkfig5.png" alt="The same five walking figures through stance"></div>
+      <div class="fig cap tight"><img src="assets/events-bar.png" alt="The vertical ground reaction force through stance with the events marked"></div>
+    </div>
+    <div>
+      <p class="small"><strong>Terminal stance (30–50%)</strong> — begins with heel rise and ends
+        when the opposite foot contacts the ground. Body weight moves ahead of the forefoot; the
+        vertical force climbs to its second peak. Second half of single support.</p>
+      <p class="small"><strong>Pre-swing (50–60%)</strong> — begins at opposite foot contact, ends
+        at toe-off. The stance limb is unloaded and body weight transfers to the other limb. The
+        descending limb of the second peak. Second period of double support.</p>
+      <p class="small"><strong>Toe-off (about 60%)</strong> — the instant the foot leaves the ground.
+        End of stance, beginning of swing.</p>
+    </div>
+  </div>
+  <aside class="notes">Pre-swing is the phase most often misunderstood. It looks like push-off and it is not: by the time the opposite foot has landed, this limb is being unloaded and the plantarflexors are already past their peak. The propulsive work happens in terminal stance, before the other foot arrives.
+
+That matters clinically, because a patient who "has no push-off" usually has a terminal stance problem, not a pre-swing one.</aside>
+</section>
+
+<!-- 29 -->
+<section id="w-grf">
+  <h2>Gait Analysis</h2>
+  <p class="subhead">All three components, measured</p>
+  <div class="iplot wide" data-widget="grf"></div>
+  <aside class="notes">The three force components from one recorded stance phase, with the events marked and the figure walking alongside so you can see what the body is doing at each instant.
+
+Start with the vertical. The two humps are there, and the numbers are the textbook ones: a first peak of about 1.05 body weights, a valley of 0.8 to 0.9, a second peak of 1.2 to 1.26. Note that the <em>second</em> peak is the larger one in both of these subjects, which is the normal pattern at comfortable speed.
+
+Then the anteroposterior trace, and this is the one worth dwelling on. It is negative — braking — for the first half of stance and positive for the second, and it crosses zero at fifty to fifty-four per cent of stance, which is midstance almost exactly. The peaks are sixteen to nineteen per cent of body weight braking and twenty-two to twenty-six per cent propelling, against the textbook's "about twenty per cent".
+
+Now the honest part, and it is worth the minute. At a constant speed the braking and propulsive impulses have to cancel. The widget reports them, and for one of these two subjects they do — within four per cent — while for the other the propulsive impulse is half again the braking one. That is not a measurement error. These are overground trials on a walkway: the subject is still gathering speed, or losing it, and a single stride is not a steady state. It is the reason treadmill studies exist, and the reason you should never read a single overground stride as if it were one.
+
+Then the mediolateral, which the textbook describes as "small and variable across individuals" — and here are two individuals being variable. One stays almost entirely negative and peaks at eight per cent of body weight; the other swings both ways and peaks at eight per cent the other direction. That is not noise, it is two different ways of balancing side to side, and it is why mediolateral force is rarely used as a clinical measure.</aside>
+</section>
+
+<!-- 30 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The force through the whole of stance</p>
+  <div class="cols a top">
+    <div>
+      <div class="fig cap"><img src="assets/fan.png" alt="A fan of red ground reaction force vectors drawn at about 50 millisecond intervals through stance, from the heel at the left to the toe at the right, with a horizontal line marking body weight"></div>
+    </div>
+    <div>
+      <p class="small">Draw the resultant force vector at intervals of about 50 ms through stance,
+        each one from its own centre of pressure, and the whole of stance is on one picture.</p>
+      <ul class="small">
+        <li>The leftmost line is the vector at the moment the foot touches the ground; each
+          subsequent line is 50 ms later; the rightmost is at toe-off.</li>
+        <li>The <strong>length</strong> of each line is the magnitude; the <strong>lean</strong> is
+          the fore–aft component; the <strong>foot</strong> of each line is the centre of pressure.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Three variables on one figure, and the shape is so consistent
+          between healthy people that it is sometimes called the <strong>butterfly diagram</strong>
+          and read at a glance.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Teach them to read it in three directions at once. Left to right is time and also the centre of pressure walking forward under the foot. Up is magnitude. The tilt is the braking-to-propulsion story from the previous figure, drawn geometrically: the early vectors lean backwards, the middle ones are vertical, the late ones lean forwards.
+
+The dense cluster in the middle is midstance, where the centre of pressure moves slowly and the force is nearly vertical. The spread at either end is where it is moving fastest.</aside>
+</section>
+
+<!-- 31 -->
+<section id="w-fan">
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The butterfly, from measurement</p>
+  <div class="iplot wide" data-widget="fan"></div>
+  <aside class="notes">His figure, built from the recorded force plate data: every vector is one sample, drawn at its own measured centre of pressure with its own measured magnitude and direction.
+
+Set the interval to fifty milliseconds to reproduce his picture exactly, then drop it to five and watch the fan fill in continuously. The shape is the same; the fifty-millisecond version is a sampling of it.
+
+Then press play and watch a single vector move instead. That is the same information as the three traces on the previous slide, drawn in space rather than against time, and most people find one of the two representations much easier than the other.
+
+The backwards lean at the start and the forwards lean at the end is the braking and propulsion. The near-vertical bundle in the middle is midstance. And the horizontal line is body weight — it is worth counting how few of the vectors fall below it.
+
+Switch subjects. The butterfly has the same shape and a different width, because the second subject walks faster and brakes harder.</aside>
+</section>
+
+<!-- 32 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Braking, then propulsion</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">At initial contact the ground reaction force acts <strong>diagonally backwards
+        and upwards</strong>, from the heel:</p>
+      <ul class="small">
+        <li>the horizontal component acts <em>backwards</em>, braking the body;</li>
+        <li>the vertical component is greater than body weight, arresting the controlled downward
+          fall.</li>
+      </ul>
+      <p class="small">Through the middle of stance the point of action moves forward from the heel
+        and the line of action becomes nearly vertical, so the braking effect disappears.</p>
+      <p class="small">At the end of stance the force increases again, now acting <strong>forwards
+        and upwards</strong>: the propulsion that keeps the body moving and stops it falling.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Over a stride at constant speed the braking and propulsive
+          impulses must be <strong>equal and opposite</strong>. If they were not, you would be
+          speeding up or slowing down &mdash; which, on a short overground walkway, is exactly
+          what people are still doing.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/fan.png" alt="The fan of ground reaction force vectors through stance, leaning backwards at the heel and forwards at the toe"></div>
+    </div>
+  </div>
+  <aside class="notes">The callout gives them a check they can run on any force plate trace, and it is also the reason walking at a steady pace costs anything at all: you brake on every step and have to put the energy back. That is the argument Kuo's figure makes at the end of this lecture.
+
+Worth noting that the braking impulse arrives whether you like it or not — it is the price of having a leg out in front of you to land on. Reducing it means landing with the foot closer to under the body, which is exactly what people do when they run on hard ground.</aside>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The anteroposterior force</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/ap-grf.png" alt="Anteroposterior ground reaction force in body weights against percentage of stance, positive in the first half and negative in the second"></div>
+    </div>
+    <div>
+      <p class="small">The anteroposterior force is directed <strong>posteriorly</strong> against the
+        foot at initial contact, which is what stops the foot sliding forward. It reaches a maximum
+        of about <strong>20% of body weight</strong>.</p>
+      <p class="small">At midstance it passes through zero. Through the second half of stance it is
+        directed <strong>anteriorly</strong>, enabling push-off.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Twenty per cent of body weight, horizontally, is also the
+          friction the floor has to supply. A coefficient of friction below about 0.2 and the foot
+          slips — which is why ice, polished floors and wet tiles are dangerous at exactly the two
+          moments this trace is largest.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The friction point lands well and connects back to the forces lecture. Required coefficient of friction is a real measurement in footwear and flooring research, and it is simply the ratio of this trace to the vertical one — largest, awkwardly, right at heel strike when the vertical force is still small.
+
+A sign-convention warning: his figure plots braking as positive, and the measured figures in this deck plot it as negative, which is the more common modern convention. Read the axis before reading the curve.</aside>
+</section>
+
+<!-- 34 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The mediolateral force</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/ml-grf.png" alt="Mediolateral ground reaction force against percentage of stance, small in magnitude with a sharp peak at contact and a shallow trough through midstance"></div>
+    </div>
+    <div>
+      <p class="small">The mediolateral forces are <strong>small in magnitude and variable across
+        individuals</strong>. Typical peaks are under 10% of body weight — an order of magnitude
+        below the vertical force.</p>
+      <ul class="small">
+        <li>A brief spike at contact as the foot lands and the body is caught laterally.</li>
+        <li>A sustained, smaller component through single support, directed medially, keeping the
+          body over the stance foot.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">"Variable across individuals" is not a hedge. The two subjects in
+          this lecture's data have mediolateral traces of <em>opposite</em> sign through much of
+          stance, and both are perfectly normal walkers.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">This is the component to be humble about. It is small, it is the one most affected by how the foot happens to land on the plate, and healthy people genuinely differ. Showing two normal subjects disagreeing is more honest than showing one idealised curve, and it inoculates students against over-reading a single trace.
+
+It is still worth measuring: in people with balance problems the mediolateral force and the step width go up together, and that pair is a better signal than either on its own.</aside>
+</section>
+
+<!-- 35 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The centre of pressure</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">The single point on the foot at which the resultant surface pressure may be
+        considered to act is the <strong>centre of pressure</strong>. It is the starting point of
+        the ground reaction force vector, and therefore it is what sets every moment arm in the leg.</p>
+      <ul class="small">
+        <li>It starts at the <strong>heel</strong> at initial contact.</li>
+        <li>It moves <strong>forward along the foot</strong> through stance, quickly at first, then
+          slowly through midstance.</li>
+        <li>It ends under the <strong>forefoot and toes</strong> at toe-off.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">It is a weighted average, so it can sit somewhere that is
+          carrying no load at all — between two pressure peaks, or between the two feet during
+          double support if the plate sees both.</p>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="fig cap tight"><img src="assets/cop-foot.png" alt="Four foot outlines showing the position of the centre of pressure at initial contact, foot flat, just before heel-off and just before toe-off"></div>
+      <div class="fig cap tight"><img src="assets/cop-outline.png" alt="A foot outline with the pressure distribution drawn as a line along the length of the foot"></div>
+    </div>
+  </div>
+  <aside class="notes">The callout is the same caution as on the force plate slide and it is worth repeating because it is counter-intuitive. The centre of pressure is a mathematical construct, not a place where something is happening.
+
+Then connect it forward: the centre of pressure's journey from heel to toe is what grows the ankle's moment arm from nothing to about fourteen centimetres, which is the whole of the plantarflexor moment. That was the measured result in angular kinetics one and the next figure is where it comes from.</aside>
+</section>
+
+<!-- 36 -->
+<section id="w-cop">
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The path under the foot</p>
+  <div class="iplot wide" data-widget="cop"></div>
+  <aside class="notes">The measured centre of pressure path, drawn on the measured foot — the heel and toe markers are from the same stride, so the path is in the foot's own frame rather than on a generic outline.
+
+The shape is the textbook one: it lands at the heel, runs forward about twenty-two centimetres over stance, and finishes ahead of the metatarsal markers under the toes. The lateral excursion is one to three centimetres, which is small and is where most of the between-subject difference lives.
+
+Watch the <em>speed</em> as well as the path. The dots are evenly spaced in time, so where they bunch together the centre of pressure is moving slowly — that is midstance, the foot flat, the body rolling over. Where they spread out, at the two ends, it is moving fast.
+
+Turn on the moment arm display and the connection to the last lecture is explicit: the distance from the centre of pressure to the ankle is the plantarflexors' moment arm, and it is drawn growing as the path advances.
+
+One honest note the figure carries: the path is held still once the vertical load drops below five per cent of body weight. A centre of pressure computed from a few newtons is a ratio of two small numbers and it flies off the front of the foot.</aside>
+</section>
+
+<!-- 37 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">External and internal moments</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>External moments</strong> are produced about the joints by forces
+        from outside the body — gravity and the ground reaction force.</p>
+      <p class="small"><strong>Internal moments</strong> are produced by muscles, joint capsules and
+        ligaments, and counteract them.</p>
+      <p class="small">At initial contact, for instance, the ground reaction force passes behind the
+        ankle, which tends to <em>plantarflex</em> it. The anterior tibial muscles answer with an
+        internal <em>dorsiflexor</em> moment, and the foot is lowered under control instead of
+        slapping down.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">This is the angular kinetics material, and the convention is the
+          one that catches people out: a gait graph labelled "dorsiflexor moment" means the
+          <strong>ground</strong> was trying to plantarflex. The curve names the muscle group, not
+          the direction of the external force.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/grfv-three.png" alt="Three stages of stance — initial contact, foot flat and midstance — each showing the centre of pressure, the ground reaction force vector and the internal net moments at hip, knee and ankle"></div>
+    </div>
+  </div>
+  <aside class="notes">If angular kinetics one was recent, move through this quickly — it is the same figure and the same idea. If it was not, this is the slide to slow down on, because everything in the rest of this lecture is read in the internal frame.
+
+The one-line version to give them: find where the vector passes, and the muscle group is on the other side.</aside>
+</section>
+
+<!-- 38 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Which side of the joint, through stance</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/grfv-late.png" alt="Midstance, heel-off and toe-off, each showing the centre of pressure, the ground reaction force vector and the internal net moments at hip, knee and ankle"></div>
+    </div>
+    <div>
+      <ul class="small">
+        <li>At <strong>initial contact</strong> the vector passes behind the ankle — tending to
+          plantarflex it — but in front of the knee and hip, tending to extend them.</li>
+        <li>In <strong>early stance</strong> it swings behind the knee, tending to flex it, and the
+          quadriceps answer. It moves ahead of the knee again by late stance.</li>
+        <li>From about <strong>midstance</strong> it passes behind the hip and stays there until
+          swing begins.</li>
+        <li>At the ankle it moves steadily further in front of the joint as the centre of pressure
+          runs forward, which is what builds the plantarflexor moment to its peak.</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">Four statements, each of which was measured in the previous lecture and each of which holds in the data here. The ankle one is the easiest to see: the centre of pressure travels twenty-two centimetres forward while the ankle stays put, so the moment arm grows from nothing to about fourteen centimetres.
+
+The knee is the interesting one, because the vector crosses the joint twice in a single stance phase. That is why the knee moment trace changes sign twice and why the quadriceps and the hamstrings take turns.</aside>
+</section>
+
+<!-- 39 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Muscle activity in stance</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/muscle-stance.png" alt="Limb figures at heel strike, foot flat, midstance and heel-off with active muscles shaded black, inactive white and intermediate grey"></div>
+    </div>
+    <div>
+      <p class="small">The timing of peak muscle activity tells you what each muscle is for.</p>
+      <ul class="small">
+        <li><strong>Glutes</strong> — hip extension during loading response.</li>
+        <li><strong>Quadriceps</strong> — knee extension during loading response.</li>
+        <li><strong>Calves</strong> — ankle plantarflexion during heel rise in terminal stance.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Read "extension" here as the <em>moment</em>, not the movement.
+          The quadriceps are producing an extensor moment while the knee is <strong>flexing</strong>
+          — they are lengthening under load, lowering the body rather than lifting it.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The callout is the point this slide exists for. His bullet says "knee extension during loading response", and the knee is flexing at the time. Both are true and they are describing different things: the moment is extensor, the movement is flexion, and the contraction is therefore eccentric.
+
+It is the single most common misreading of a muscle-timing chart, and the figure two slides from now lets them check it for themselves.</aside>
+</section>
+
+<!-- 40 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Muscle activity in swing</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/muscle-swing.png" alt="Limb figures at toe-off, acceleration, midswing and deceleration with active muscles shaded"></div>
+    </div>
+    <div>
+      <ul class="small">
+        <li><strong>Iliopsoas</strong> — hip flexion through pre-swing and initial swing, which is
+          what starts the limb forward.</li>
+        <li><strong>Hamstrings</strong> — hip extension to <em>decelerate</em> the limb through
+          terminal swing.</li>
+        <li><strong>Tibialis anterior</strong> — ankle dorsiflexion through swing to allow foot
+          clearance, and again at loading response to lower the foot under control.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Tibialis anterior is the only one of the three that works twice
+          per cycle, and it is doing a different job each time: <strong>clearance</strong> in swing,
+          <strong>controlled lowering</strong> at contact.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The hamstring's job in terminal swing is worth naming as braking. The limb has been accelerated forward and something has to stop it before heel strike; that something is the hamstrings working eccentrically at length, which is exactly the condition in which muscle tears.
+
+Tibialis anterior's double duty is the reason foot drop is so disabling — losing it costs you both the clearance and the controlled landing, which is why those patients both trip and slap.</aside>
+</section>
+
+<!-- 41 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The whole timing chart</p>
+  <div class="cols a top">
+    <div>
+      <div class="fig cap"><img src="assets/muscle-timing.png" alt="Activity traces for twelve lower limb muscles across the gait cycle, with stance and swing phases marked"></div>
+    </div>
+    <div>
+      <p class="small">Twelve muscles, one cycle. Three things are worth reading off it:</p>
+      <ul class="small">
+        <li>Most muscles are <strong>off</strong> most of the time. Walking is cheap because the
+          muscles work in short bursts.</li>
+        <li>Activity clusters at the <strong>transitions</strong> — loading response and the
+          stance-to-swing handover — not in the middle of stance.</li>
+        <li>Muscles crossing two joints (rectus femoris, gastrocnemius, the hamstrings) have more
+          complicated patterns than one-joint muscles, because they are answering to two joints
+          at once.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">What a chart like this cannot show is the <strong>deep</strong>
+          muscles. Iliopsoas appears on his figure and no surface electrode will ever record it.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The first bullet is the one that surprises people. If you add up the shaded area on that chart it is a small fraction of the whole, and that is the inverted pendulum doing its job — most of stance needs almost no muscular work because the body is vaulting over a stiff limb.
+
+The callout matters for the next figure, where the hip flexor moment in pre-swing has no muscle beside it to explain it. That gap is real and it is a limit of surface EMG, not a gap in the physiology.</aside>
+</section>
+
+<!-- 42 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Linking the moment to the muscle — the hip</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/joint-hip.png" alt="Hip sagittal angle and internal joint moment through the gait cycle, with gluteus maximus, medial hamstring and iliopsoas activity traces linked to the parts of the moment curve they produce"></div>
+    </div>
+    <div>
+      <p class="small">Internal joint moments can be linked to the muscles producing them.</p>
+      <ul class="small">
+        <li><strong>Gluteus maximus and the hamstrings</strong> support the extensor moment during
+          weight acceptance.</li>
+        <li><strong>Iliopsoas</strong> supports the flexor moment through pre-swing and initial
+          swing.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Three panels — angle, moment, muscle — are the minimum needed to
+          say anything useful about a joint. The moment alone is ambiguous; with the angle it tells
+          you concentric or eccentric; with the EMG it tells you which muscle.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">This figure and the next two are the payoff of the whole lecture, and the callout is the sentence to leave them with.
+
+Note that the hip extensor moment arrives <em>before</em> heel strike, not after. The hamstrings are already on at the end of swing, braking the limb, and the same contraction is in place to take the load. One burst doing two jobs.</aside>
+</section>
+
+<!-- 43 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">…the knee, and the ankle</p>
+  <div class="cols a top">
+    <div class="stack">
+      <div class="fig cap tight"><img src="assets/joint-knee.png" alt="Knee angle and internal moment with vastus lateralis, lateral hamstring and medial gastrocnemius activity"></div>
+      <div class="fig cap tight"><img src="assets/joint-ankle.png" alt="Ankle angle and internal moment with medial gastrocnemius, soleus and tibialis anterior activity"></div>
+    </div>
+    <div>
+      <p class="small"><strong>Knee.</strong> Vastus lateralis supports the extensor moment during
+        mid stance; medial gastrocnemius supports the flexor moment during terminal stance — it
+        crosses the knee as well as the ankle.</p>
+      <p class="small"><strong>Ankle.</strong> Tibialis anterior supports the dorsiflexor moment
+        during weight acceptance; soleus and medial gastrocnemius support the plantarflexor moment
+        through terminal stance.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Gastrocnemius appears on both figures, producing a plantarflexor
+          moment at the ankle and a flexor moment at the knee from the <em>same</em> contraction.
+          A two-joint muscle cannot choose.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The callout is the best argument in the lecture for why joints cannot be studied one at a time, and it leads straight into the support moment.
+
+Worth noting what a tidy division of labour this is: the ankle does the large work late, the knee does the control early, and the hip bookends the cycle. Three joints, three jobs, no overlap in time.</aside>
+</section>
+
+<!-- 44 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The support moment</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/support.png" alt="The sum of the hip, knee and ankle moments plotted above the three individual moments, showing a net extensor support moment through stance"></div>
+    </div>
+    <div>
+      <p class="small">The <strong>support moment</strong> is the sum of the hip, knee and ankle
+        moments, with extension positive at all three. It stays <strong>extensor</strong> through
+        stance, and that is what keeps the leg from collapsing.</p>
+      <ul class="small">
+        <li>Hip extension provides all of the early positive moment, joined by a knee extensor
+          moment.</li>
+        <li>As stance proceeds the ankle plantarflexors take over, until they are
+          <em>the only support</em> through most of late stance.</li>
+      </ul>
+      <div class="box accent workblock" style="max-width:21em">
+        <p class="eq" style="margin-bottom:0">M<sub>s</sub> = M<sub>hip</sub> + M<sub>knee</sub> + M<sub>ankle</sub></p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Winter's support moment is one of the genuinely important ideas in gait analysis and it has an unusual property: the sum is far more repeatable, between strides and between people, than any of its three terms. The body controls the total and is relaxed about how it gets there.
+
+The late-stance claim is strong and the measured data backs it: at the support moment's peak in the first subject, the ankle contributes 1.51 newton-metres per kilogram while the hip contributes minus 0.21 and the knee essentially nothing. The ankle is supplying more than the total.</aside>
+</section>
+
+<!-- 45 -->
+<section id="w-support">
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Three joints, one total</p>
+  <div class="iplot wide" data-widget="support"></div>
+  <aside class="notes">Winter's figure, measured. The thick line is the support moment and the three thin ones are what make it up, with a playhead so you can read a single instant.
+
+Two things to bring out, and the second is the better one.
+
+First, the handover. Early in stance the hip and knee carry it; by forty per cent the ankle has taken over almost entirely, and at the peak the ankle is contributing <em>more</em> than the total because the hip has gone flexor underneath it. That is his "the only support in most of late stance", and it is on screen.
+
+Second — switch subjects. These two make their support moment in visibly different ways. The first is ankle-dominated with a peak of 1.28 newton-metres per kilogram at forty-six per cent; the second spreads it across all three joints, peaks at 0.63 at fifteen per cent, and never lets any one joint dominate. Both walk perfectly well. That is exactly his next slide's claim — as long as the moments add up to extensors, the body can vary how it accomplishes its support — and here are two people varying it.
+
+That is also why the support moment is the quantity to look at in a patient. A weak plantarflexor shows up not as a missing ankle moment but as a hip and knee moment that have grown to cover for it.</aside>
+</section>
+
+<!-- 46 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Trading one joint against another</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/support.png" alt="The support moment and its three contributing joint moments through the stride"></div>
+    </div>
+    <div>
+      <p class="small">The support moment changes from a net extensor to a net flexor moment in late
+        stance, which is what initiates swing. A small net extensor moment reappears in late swing,
+        positioning the limb for contact.</p>
+      <p class="small"><strong>As long as the moments add up to be extensors, the body can vary how
+        it accomplishes its support.</strong> For example:</p>
+      <ul class="small">
+        <li>if the ankle plantarflexors are weak, the hip extensors and the knee extensors can
+          compensate;</li>
+        <li>if contraction of the knee extensors causes pain, the hip extensors and the
+          plantarflexors can contract harder.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">This is why a single joint's moment is a poor clinical measure
+          and the sum is a good one. The compensation is the finding.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Tie this back to the two subjects on the previous slide. Neither of them has anything wrong, and they already differ as much as some of these compensations would predict. That is the measurement noise floor against which a patient's compensation has to be judged.
+
+Clinically, the sequence to look for is: total support moment normal, distribution abnormal. That says the leg is still doing its job and something inside it has been redistributed, which is usually more informative than any single peak value.</aside>
+</section>
+
+<!-- 47 -->
+<section>
+  <div class="section-slide">
+    <h2>Models, and what walking costs</h2>
+    <p class="sub">Why a stiff leg and a falling body turn out to be a good idea</p>
+  </div>
+  <aside class="notes">Everything so far has been description. The last part of the lecture asks why walking looks like this and not like something else, and the answer is one of the few genuinely elegant results in biomechanics.</aside>
+</section>
+
+<!-- 48 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">The inverted pendulum</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/pendulum.png" alt="A sequence of inverted pendulum positions with the body mass vaulting over a stiff supporting limb, alternating between double and single support"></div>
+    </div>
+    <div>
+      <p class="small">The mechanical analogy for walking is an <strong>inverted pendulum</strong>:
+        during single-limb support the body vaults over a nearly straight limb.</p>
+      <ul class="small">
+        <li>The centre of mass is <strong>highest at midstance</strong> and lowest at each double
+          support — the opposite of what intuition suggests.</li>
+        <li>Rising costs potential energy and slows the body; falling returns it and speeds the
+          body back up.</li>
+        <li>Potential and kinetic energy are therefore <strong>out of phase</strong>, and the
+          exchange between them is nearly free.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">A pendulum exchanges energy without any muscle doing work. That
+          exchange is why walking at a comfortable speed is so cheap, and why it has an optimal
+          speed at all.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The first bullet is worth asking them to predict before you show it. Most people guess the body is lowest at midstance because the knee is bent; in fact the knee is nearly straight and the body is at the top of its arc.
+
+The second and third bullets are a pendulum run upside down. In a grandfather clock the bob is fastest at the bottom and slowest at the top; so is a walker, for exactly the same reason.</aside>
+</section>
+
+<!-- 49 -->
+<section id="w-pendulum">
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Is a person actually a pendulum?</p>
+  <div class="iplot wide" data-widget="pendulum"></div>
+  <aside class="notes">The measured centre of mass, and its energy books, from the same stride as everything else in this lecture.
+
+Start with the height trace. It rises and falls twice per stride, peaking at twenty-eight and seventy-eight per cent — the two midstances — and bottoming at one and fifty-one per cent, the two double supports. That is the pendulum's signature and it is in both subjects to within one per cent of the cycle. The total excursion is three and a half to four centimetres, a little over two per cent of body height.
+
+Then turn on the energy curves. Potential energy follows the height by definition. Kinetic energy is its mirror image: the body is slowest at the top of the arc and fastest at the bottom. The two are close to a hundred and eighty degrees out of phase, which is what a pendulum does.
+
+Then the number at the bottom, which is the one worth remembering. Cavagna's <strong>recovery</strong> is the fraction of the energy that is exchanged between the two forms rather than having to be supplied by muscle: fifty-four per cent for the slower subject and sixty-five for the faster. The textbook figure for walking near its optimal speed is sixty to seventy per cent, and the faster of these two subjects — at 1.3 metres per second, which is close to that optimum — is the one that does better. An ideal pendulum would recover a hundred per cent.
+
+So: a person is a good pendulum, not a perfect one. The next slide is about where the missing third goes.</aside>
+</section>
+
+<!-- 50 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Where the energy actually goes</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/kuo.png" alt="A flying ball analogy showing free flight and redirection phases above a human walking diagram showing push-off, the inverted pendulum phase, and the step-to-step collision"></div>
+      <p class="small center">A. D. Kuo, <em>Human Movement Science</em> 26 (2007) 617–656</p>
+    </div>
+    <div>
+      <p class="small">During double support the whole body's centre of gravity has to be
+        <strong>redirected</strong> from the arc over one limb to the arc over the next.</p>
+      <p class="small">The pendulum continues on the other side afterwards — so the major energy
+        expenditure in walking is not the vaulting at all. It is the
+        <strong>redirection</strong>.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">The leading leg <em>collides</em> with the ground and takes
+          energy out; the trailing leg pushes off and puts it back. Both cost, and the cost grows
+          steeply with step length — which is what sets the preferred step length.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Kuo's flying-ball analogy at the top of the figure is the clearest way in. A ball thrown along a series of arcs costs nothing while it is in the air; all the work is in the catch and the throw at each bounce. Walking is the same, with the leg as both catcher and thrower.
+
+The prediction this model makes is testable and it holds: the cost of the transition goes roughly as the fourth power of step length, so there is a sharp optimum, and people walk very close to it. Ask them to walk across the room with deliberately long steps and feel which part is expensive — it is the landing, not the middle.
+
+This also explains the missing third of the recovery on the last slide. It is not friction or inefficiency in any vague sense; it is two specific, identifiable events, twice per stride.</aside>
+</section>
+
+<!-- 51 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Leg length discrepancy</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap tight"><img src="assets/leglength.png" alt="A pair of legs from behind, one standing on a block to level the pelvis, illustrating a leg length discrepancy"></div>
+    </div>
+    <div>
+      <p class="small">Four of the common abnormalities — circumduction, hip hiking, steppage and
+        vaulting — are closely related: they are all compensations for the same problem, a
+        difference in <strong>effective</strong> leg length between swing and stance.</p>
+      <p class="small"><strong>Structural</strong> discrepancies are an actual anatomical shortening
+        of one or more bones of the lower limb.</p>
+      <p class="small"><strong>Functional</strong> leg length differences arise instead from muscular
+        weakness or inflexibility at the pelvis, or at the foot and ankle complex.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">A stiff knee or a dropped foot makes the swinging limb
+          <em>functionally</em> too long even though the bones are the same length. The gait looks
+          the same either way, which is why the examination has to come before the interpretation.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The callout is the clinically useful distinction and it is worth spelling out with the numbers from earlier: the foot clears the ground by a centimetre or two at midswing. A knee that will not flex the last ten degrees, or an ankle that will not dorsiflex, removes that margin entirely. The limb has not changed length; the clearance has gone.
+
+That is why all four compensations that follow are solving the same geometric problem, and why a patient often uses two of them at once.</aside>
+</section>
+
+<!-- 52 -->
+<section id="w-clear">
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Buying clearance at midswing</p>
+  <div class="iplot wide" data-widget="clear"></div>
+  <aside class="notes">The measured swing limb in two views, with a bar chart of what each compensation buys. Everything on this figure is forward kinematics from the recorded pose: the segment lengths and the starting orientations are this subject's, and each deficit and each compensation is a rotation applied to that chain.
+
+Start with both deficit sliders at zero. This is the recorded stride, and the toe clears the floor by one and a half centimetres — two and a half for the other subject. That is the whole margin, and it is worth pausing on. The foot passes within the width of a finger of the floor on every step, twice a second, all day, and almost nobody trips.
+
+Now take it away. One slider removes knee flexion, the way a stiff knee does; the other plantarflexes the ankle, the way a foot drop does. Twenty degrees of either and the toe goes a good three centimetres through the floor. The floor line turns red when that happens, which in a real person is a trip.
+
+Two things about the figure are worth saying out loud. There are two views because two of the four compensations are invisible from the side: circumduction and hip hiking happen in the frontal plane, and if this slide had only a sagittal view you would see nothing happening for half the lecture's content. And the instant shown is not fixed — the whole of midswing is swept and the worst moment is drawn, so the critical instant moves as you drag the sliders. A stiff knee bites early, a foot drop later.
+
+Then try each compensation and watch how much clearance it buys and what it costs. Circumduction swings the leg out in an arc — it works, and it adds mediolateral excursion that was not there before. Hip hiking lifts the whole pelvis — it works, and it costs the trunk muscles on every step. Steppage flexes the hip and knee more — it works, and it is the most energetically expensive. Vaulting goes up on the toes of the <em>stance</em> leg instead, which is the only one of the four that modifies stance rather than swing, and it raises the centre of mass of the whole body on every step.
+
+The point to land: each of these is a sensible mechanical solution. None of them is free, and the cost is always paid somewhere other than where the problem is. That is the pattern the whole second half of this course has been showing.</aside>
+</section>
+
+<!-- 53 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Circumduction and hip hiking</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Circumduction</strong> — a swing phase modification.</p>
+      <ul class="small">
+        <li>Ground contact by the swinging leg is avoided by swinging it <em>outward</em>, in an arc
+          rather than straight forward.</li>
+        <li>Also used to advance the limb when the hip flexors are weak, by letting the adductors
+          act as hip flexors while the hip is extended.</li>
+      </ul>
+      <p class="small"><strong>Hip hiking</strong> — also a swing phase modification.</p>
+      <ul class="small">
+        <li>The pelvis is lifted on the side of the swinging leg, raising the whole limb.</li>
+        <li>Paid for by the quadratus lumborum and the trunk, on every step.</li>
+      </ul>
+    </div>
+    <div class="stack">
+      <div class="fig cap tight"><img src="assets/circum.png" alt="Rear view showing the swing foot travelling in an outward arc from behind the stance foot"></div>
+      <div class="fig cap tight"><img src="assets/hiphike.png" alt="Pelvis and spine seen from behind with the swing-side pelvis lifted"></div>
+    </div>
+  </div>
+  <aside class="notes">The second circumduction bullet is the one worth repeating, because it is a different mechanism entirely from the first. Swinging outward is not only a way of avoiding the floor; with the hip extended, the adductors have a flexor moment arm and can advance a limb that the iliopsoas cannot. One movement, two quite different reasons, and telling them apart needs the examination rather than the video.
+
+Hip hiking is the easiest of the four to spot from behind and the one most often seen with a stiff knee.</aside>
+</section>
+
+<!-- 54 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">Steppage and vaulting</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Steppage</strong> — a swing phase modification.</p>
+      <ul class="small">
+        <li>Exaggerated knee and hip flexion, to lift the foot higher than usual.</li>
+        <li>Used particularly to compensate for a plantarflexed ankle — <strong>foot drop</strong>,
+          from inadequate dorsiflexion control.</li>
+      </ul>
+      <p class="small"><strong>Vaulting</strong> — a <em>stance</em> phase modification.</p>
+      <ul class="small">
+        <li>The subject goes up on the toes of the stance leg, raising the body and so increasing
+          the clearance for the swinging leg.</li>
+        <li>Causes an exaggerated vertical movement of the trunk, which is wasteful of energy.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Vaulting is the odd one out, and its cost is the one the pendulum
+          model predicts: it adds vertical excursion to the centre of mass, which is energy that has
+          to be put in and taken out on every single step.</p>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="fig cap tight"><img src="assets/steppage.png" alt="Side view of a limb with exaggerated hip and knee flexion lifting a plantarflexed foot clear of the ground"></div>
+      <div class="fig cap tight"><img src="assets/vault.png" alt="Side view of a stance limb rising onto the toes to lift the body and clear the opposite swinging leg"></div>
+    </div>
+  </div>
+  <aside class="notes">The callout closes the loop with the inverted pendulum, and it is worth making explicit. Earlier we measured three and a half centimetres of vertical excursion and a recovery of about sixty per cent. Vaulting adds several centimetres to that excursion, on every step, and the added energy cannot be recovered because the timing is wrong — it goes in and comes straight back out as a collision.
+
+That is why vaulting is the one patients abandon first when the underlying problem is treated. It is the most expensive of the four.
+
+Steppage has a characteristic sound as well as a look — the foot slaps down at contact because tibialis anterior cannot lower it. If you can hear the gait from the next room, that is usually what it is.</aside>
+</section>
+
+<!-- 55 -->
+<section>
+  <h2>Gait Analysis</h2>
+  <p class="subhead">What to take away</p>
+  <ul class="small">
+    <li><strong>The cycle is the unit.</strong> Heel strike to the same heel strike; about 60%
+      stance, 40% swing, with two periods of double support that vanish at the walk–run transition.</li>
+    <li><strong>Normalise before comparing.</strong> Stride length divided by leg length is
+      comparable between people; stride length in centimetres is mostly a measure of height.</li>
+    <li><strong>Every measurement has a definition inside it.</strong> Step width from a heel marker
+      is not step width from the midpoint of the heel, and the two differ by about a centimetre
+      whatever you do to the data.</li>
+    <li><strong>The vertical force has two humps because the centre of mass accelerates</strong> —
+      not because the effort varies. The fore–aft force brakes, then propels, and over a stride
+      <em>at a steady speed</em> the two cancel &mdash; which a single overground stride often is not.</li>
+    <li><strong>Read a joint with three panels.</strong> Angle, moment and EMG together say
+      concentric or eccentric and name the muscle; the moment alone says neither.</li>
+    <li><strong>The support moment is the thing the body controls</strong>, not the individual joint
+      moments. Two healthy people make the same total in visibly different ways.</li>
+    <li><strong>Walking is an inverted pendulum with a cost at each transition.</strong> About
+      sixty per cent of the energy is exchanged for free; the rest goes into redirecting the centre
+      of mass twice a stride.</li>
+    <li><strong>Every compensation buys something and charges for it elsewhere.</strong></li>
+  </ul>
+  <aside class="notes">If they take one, make it the fifth: three panels, or say nothing. If they take two, add the sixth, because it is the idea that turns three joints into one leg.</aside>
+</section>
+
+<!-- 56 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Gait Analysis</h1>
+    <div class="rule"></div>
+    <p class="sub">Next up: angular kinetics 2 — moment of inertia, angular momentum and joint power
+      · Measured data: Lencioni et al., two subjects, level walking</p>
+  </div>
+  <aside class="notes">Every measured figure in this lecture came from one walking trial per subject out of an open dataset: markers at sixty hertz, a force plate at nine hundred and sixty, eight channels of surface EMG, and the authors' own inverse-dynamics results. Nothing was averaged across people and nothing was idealised, which is why the two subjects disagree in the places real people disagree.
+
+Next lecture takes the one quantity this one kept pointing at and did not define: joint power, the product of moment and angular velocity, and what it says about where the energy in a stride is generated and absorbed.</aside>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js?v=20261007b"></script>
+<script src="mobile.js?v=20261007b"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="gaitdata.js?v=20261007b"></script>
+<script src="deck-core.js?v=20261007b"></script>
+<script src="gait.js?v=20261007b"></script>
+<script src="deck-tools.js?v=20261007b"></script>
+<script src="fit.js?v=20261007b"></script>
+</body>
+</html>
