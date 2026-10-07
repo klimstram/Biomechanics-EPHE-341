@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fdfdfc">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Angular Kinetics 1</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css?v=20261007">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'light';
+  try { t = localStorage.getItem('ephe341-theme') || 'light'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Angular Kinetics 1</h1>
+    <div class="rule"></div>
+    <p class="sub">Torque and moment of force — how a push becomes a turn</p>
+  </div>
+  <aside class="notes">McGinnis chapter 5, pages 117 to 144.
+
+Up to now a force has been something that makes a body speed up or slow down in a straight line. That was never the whole story. A force applied anywhere except straight through the centre of mass also turns the body, and in the human body a force almost never acts through the centre of mass — muscles pull on bones a couple of centimetres from a joint, and the ground pushes on a foot a long way from a hip.
+
+This lecture is the bridge. By the end of it you should be able to look at a force on a limb and say which way the limb will tend to rotate, how hard, and which muscle has to do something about it.</aside>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">By the end of this lecture you should be able to…</p>
+  <ul class="small two">
+    <li><strong>Define</strong> torque as force times the perpendicular distance from its line of action to an axis</li>
+    <li><strong>Find</strong> a moment arm by either route — resolve the distance or resolve the force — and get the same answer</li>
+    <li><strong>Assign</strong> a sign with the right-hand rule, and add torques that act about the same axis</li>
+    <li><strong>Explain</strong> why the same muscle force produces a different joint torque at a different joint angle</li>
+    <li><strong>Distinguish</strong> an external moment from the internal moment that opposes it</li>
+    <li><strong>Read</strong> a joint moment graph through the gait cycle and name the muscle group responsible</li>
+    <li><strong>Account</strong> for lateral, anterior and posterior trunk bending as ways of moving a line of action</li>
+  </ul>
+  <aside class="notes">The fifth objective is the one that separates a good answer from a muddled one on the exam. Almost every confusion in this material comes from mixing up the moment the ground applies to you with the moment your muscles apply back.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">A force does not only push things along</p>
+  <div class="cols a top">
+    <div>
+      <p>We have been treating a force as something that causes <strong>translation</strong>. But a
+        force can be applied almost anywhere on a rigid object, and when it is, it also tends to
+        cause <strong>rotation</strong>.</p>
+      <p><strong>Torque</strong> is the tendency of a force to rotate an object about an axis.</p>
+      <ul class="small">
+        <li>Also called the <strong>moment of force</strong>, or simply the <strong>moment</strong>.</li>
+        <li>Think of it as a rotary force — the turning effect of a push.</li>
+        <li>A torque can be present <em>even when nothing moves</em>. Standing still on one leg,
+          the ground is applying a large torque about your hip, and your abductors are applying
+          an equal and opposite one.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/ankle-lever.png" alt="Two views of a foot on the ground. The ground reaction force F acts at a distance H from the ankle and the Achilles tendon force f acts at a distance h, with the relation H times F equals h times f"></div>
+      <p class="small center">The foot is a lever. The ground pushes up with <strong>F</strong> at a
+        distance <strong>H</strong> from the ankle; the Achilles pulls with <strong>f</strong> at a much
+        shorter distance <strong>h</strong>. Nothing is rotating, and yet H·F = h·f.</p>
+    </div>
+  </div>
+  <aside class="notes">Start with the standing figure, because it kills the intuition that torque means spinning. Nothing in that foot is moving. The ground is pushing up under the forefoot, well in front of the ankle, which would plantarflex the ankle — or rather, would rotate the shank forward over the foot. The calf holds it. Two torques, equal and opposite, no rotation.
+
+Point at the two distances and ask which force must be larger. The Achilles acts on a short moment arm, so it must pull harder than the ground pushes — often several times body weight. That is the price of a compact joint, and it is why tendons rupture.</aside>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">The definition</p>
+  <div class="cols a top">
+    <div>
+      <div class="box accent workblock" style="max-width:20em">
+        <p class="eq big" style="margin-bottom:.2em">T = F · d<sub>⊥</sub></p>
+        <p class="eq" style="margin-bottom:0">M = F · d<sub>⊥</sub></p>
+      </div>
+      <p class="small">Torque is the result of a force <strong>F</strong> applied a certain
+        perpendicular distance <strong>d<sub>⊥</sub></strong> from an axis of rotation.
+        T and M are the same quantity; both letters are in common use.</p>
+      <p class="small"><strong>Units.</strong> Newtons times metres: <strong>N·m</strong>. Not joules
+        — a joule is also a newton-metre, but it is a force moved <em>along</em> its own line, which
+        is a completely different thing. Keep torque in N·m and never call it a joule.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Torque is influenced by three things, and only three:
+          the <strong>magnitude</strong> of the force, its <strong>line of action</strong>, and its
+          <strong>point of application</strong>. The last two together fix d<sub>⊥</sub>.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/grfv-leg.png" alt="A leg in stance with the ground reaction force vector running up through it, and an inset of the foot showing the ground reaction force and the force of gravity acting about the ankle"></div>
+      <p class="small center">The ground reaction force vector has a magnitude, a line of action and a
+        point of application — the centre of pressure. Change any one and the moment at the
+        ankle changes.</p>
+    </div>
+  </div>
+  <aside class="notes">The unit warning is worth thirty seconds. Students write joules for torque every single year, and the marker cannot tell whether they have confused the quantities or just been careless. N·m, always.
+
+The three influences are the whole lecture in miniature. Everything that follows — moving the trunk, flexing the elbow, a limp — is one of those three changing.</aside>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">The moment arm</p>
+  <div class="cols a top">
+    <div>
+      <p>The <strong>moment arm</strong> is the perpendicular distance from the
+        <strong>line of action</strong> of the force to the <strong>axis of rotation</strong>.</p>
+      <ul class="small">
+        <li>It is measured to the <em>line</em>, extended as far as you like in both directions —
+          not to the point where the force happens to be applied.</li>
+        <li>A force whose line passes <em>through</em> the axis has a moment arm of zero and
+          produces no torque, however large it is.</li>
+      </ul>
+      <p class="small"><strong>The axis need not be a hinge.</strong> It may be fixed, like the pin of
+        a seesaw or the axle of a door. Or it may be free — a diver in the air rotates about her own
+        centre of gravity, with nothing holding her there at all.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Naming the axis first is not a formality. The same force has a
+          different moment arm, and often a different sign, about two different axes. Half of all
+          wrong answers in this topic are answers to a different question.</p>
+      </div>
+    </div>
+    <div class="iplot still" data-widget="torque" data-still="1"></div>
+  </div>
+  <aside class="notes">Make the point about the line, not the point of application, with a hand. Hold a pen out and push on the end of it — then slide your pushing hand along the pen without changing the direction of the push. The moment about your wrist does not change at all, because the line of action has not moved.
+
+Then push in a different direction from the same point. Now it changes. Direction matters; where along the line you push does not.</aside>
+</section>
+
+<!-- 6 -->
+<section id="w-torque">
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Two routes to the same number</p>
+  <div class="iplot wide" data-widget="torque"></div>
+  <aside class="notes">This is the single most useful figure in the first half of the lecture, because it settles a question students keep asking: do I resolve the distance or resolve the force? The answer is either, and the widget computes both every frame so you can watch them stay equal.
+
+Drag the angle. The red force arrow swings. Two constructions appear. The first drops a perpendicular from the axis onto the dashed line of action — that length is d perpendicular, and torque is the whole force times that. The second splits the force into a component along the bar, which does nothing, and a component across it, and multiplies only the across component by the full distance to the point of application. The two products are printed side by side and they are always the same.
+
+Push the angle to zero. The line of action now runs straight through the axis, the perpendicular distance collapses to nothing, and the torque is zero — a large force doing nothing at all. Push it to ninety degrees and the moment arm equals the whole length, which is as much as that force can ever achieve.
+
+Then use the force-magnitude slider to make the point that a smaller force at a better angle beats a larger force at a bad one. That is the entire argument for why joint position matters, and it arrives two slides before the anatomy does.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Torque is a vector</p>
+  <div class="cols a top">
+    <div>
+      <p>A torque has a magnitude and a direction, so it is a vector. Its direction is along the
+        <strong>axis of rotation</strong>, not along the force.</p>
+      <p class="small"><strong>The right-hand rule.</strong> Curl the fingers of your right hand in the
+        direction the force tends to turn the object. Your thumb points along the torque vector.</p>
+      <div class="box accent workblock" style="max-width:24em">
+        <p class="small" style="margin-bottom:.3em"><strong>Counter-clockwise</strong> — thumb out of
+          the page — is <strong>positive</strong>.</p>
+        <p class="small" style="margin-bottom:0"><strong>Clockwise</strong> — thumb into the page — is
+          <strong>negative</strong>.</p>
+      </div>
+      <p class="small">This is a convention, not a law. It is the usual one, and this course will
+        hold to it, but a paper may choose the other and will say so. Always read the axis labels on
+        someone else's graph before you interpret the sign.</p>
+    </div>
+    <div class="iplot still" data-widget="rhr"></div>
+  </div>
+  <aside class="notes">Get them to actually do it with their hands — it takes ten seconds and it sticks. Curl, thumb, out of the page, positive.
+
+The caveat about convention matters later in this lecture. The textbook figures plot internal joint moments with extension positive at the hip and knee but plantarflexion positive at the ankle, which are opposite senses in the sagittal plane. Nobody is being inconsistent; they are each choosing the sign that makes the clinically interesting direction point up.</aside>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Adding torques</p>
+  <div class="cols a top">
+    <div>
+      <p>Torques about the <strong>same axis</strong> add, with their signs.</p>
+      <div class="box accent workblock" style="max-width:20em">
+        <p class="eq" style="margin-bottom:0">ΣM = M<sub>1</sub> + M<sub>2</sub> + …</p>
+      </div>
+      <ul class="small">
+        <li>Two torques in the same direction reinforce.</li>
+        <li>Equal and opposite torques sum to zero and the object does not start to rotate —
+          though both forces are still there, and both are still being resisted by the structure.</li>
+        <li>A small force on a long moment arm balances a large force on a short one. That is a
+          lever, and it is the whole of the seesaw.</li>
+      </ul>
+      <p class="small">Only torques about the same axis may be added. Two torques about different
+        axes are two different quantities and adding them is meaningless.</p>
+    </div>
+    <div class="iplot still" data-widget="lever" data-still="1"></div>
+  </div>
+  <aside class="notes">The second bullet is the one to dwell on. Zero net torque does not mean zero load. The seesaw plank is being bent, and the pin is carrying the sum of both forces. In the body, a balanced joint can still be a heavily loaded joint — which is exactly what the Trendelenburg numbers at the end of this lecture show.</aside>
+</section>
+
+<!-- 9 -->
+<section id="w-lever">
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Balancing a lever</p>
+  <div class="iplot wide" data-widget="lever"></div>
+  <aside class="notes">Drag either weight along the plank and watch the two torques and their sum. Balance it by eye first, then read off what the arithmetic says.
+
+Two things to draw out. First, the balance condition is F₁d₁ = F₂d₂ — a product, not a difference — so halving a distance exactly doubles the force needed. Second, watch the pin force at the bottom of the readout: it is the sum of the two weights no matter where they sit. Balancing the torques does nothing to relieve the joint. Hold that thought for the hip at the end of the lecture.
+
+If there is time, set the two weights very unequal and find the balance point. That ratio is the mechanical advantage of the lever, and it is the same number that will reappear as effective mechanical advantage in a limb.</aside>
+</section>
+
+<!-- 10 -->
+<section id="w-moment-o">
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Worked example — the moment about O</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">A force of <strong>75 N</strong> acts at the end of a bar <strong>3 m</strong>
+        long, at <strong>30°</strong> to the perpendicular. Find the moment about the axis at O.</p>
+      <p class="small"><strong>Solution A — resolve the distance.</strong> Find the perpendicular
+        distance from O to the line of action, then multiply by the whole force.</p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.35em">d<sub>⊥</sub> = (3 m)(cos 30°) = 2.6 m</p>
+        <p class="eq" style="margin-bottom:0">M<sub>O</sub> = (75 N)(2.6 m) = <strong>195 N·m</strong></p>
+      </div>
+      <p class="small">Note which quantity the cosine is applied to. Here the force is used whole and
+        the <em>distance</em> is cut down to the part of it that is perpendicular to the force.</p>
+    </div>
+    <div class="iplot still" data-widget="ex" data-step="1a"></div>
+  </div>
+  <aside class="notes">Work it on the board even though it is on the slide. The arithmetic is trivial; the point is the picture. Draw the line of action extended well past the point of application, in a dashed line, then drop the perpendicular from O onto it. Students who draw that one dashed line correctly never get these wrong again.
+
+3 cos 30 is 2.598, which rounds to 2.6. Carrying 2.6 forward gives 195 N·m, and so does carrying the unrounded value — 194.86 — so the rounding is harmless here. It is not always.</aside>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Worked example — the same answer the other way</p>
+  <div class="cols b top">
+    <div>
+      <p class="small"><strong>Solution B — resolve the force.</strong> Split the force into a
+        component along the bar and one across it. Only the perpendicular part turns anything;
+        multiply it by the whole distance.</p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.35em">F<sub>⊥</sub> = (75 N)(cos 30°) = 65 N</p>
+        <p class="eq" style="margin-bottom:0">M<sub>O</sub> = (65 N)(3 m) = <strong>195 N·m</strong></p>
+      </div>
+      <div class="callout small">
+        <p style="margin-bottom:0">Both routes give 195 N·m — use whichever is easier to draw,
+          never both at once. The other component, 37.5 N, runs along the bar through O: no
+          moment arm, no moment, but it is still compressing the bar.</p>
+      </div>
+    </div>
+    <div class="iplot still" data-widget="ex" data-step="1b"></div>
+  </div>
+  <aside class="notes">The callout is the exam warning. Every year a handful of students compute F cos θ and d cos θ and multiply them together, getting 169 N·m, and are quite certain they have been more careful than everyone else.
+
+The sentence about the along-the-bar component is worth saying slowly. It does no turning, but it is not imaginary — it is compressing the bar, and in a limb it is compressing the joint. A muscle pulling at a shallow angle spends most of its force squeezing the joint surfaces together and only a little of it turning the bone.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Worked example — and the direction</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">A magnitude is only half an answer. Apply the right-hand rule: curl your
+        fingers the way the force tends to turn the bar about O.</p>
+      <div class="box accent workblock">
+        <p class="small" style="margin-bottom:.35em">The force turns the bar <strong>clockwise</strong>.
+          Thumb points <strong>into the page</strong>.</p>
+        <p class="eq" style="margin-bottom:0">M<sub>O</sub> = <strong>−195 N·m</strong></p>
+      </div>
+      <p class="small">Written as a vector, the moment points along the axis of rotation — into the
+        page — which is at right angles to both the force and the moment arm. Torque vectors never
+        point the way the force points.</p>
+    </div>
+    <div class="iplot still" data-widget="ex" data-step="1c"></div>
+  </div>
+  <aside class="notes">It is worth being explicit that the minus sign carries real information here, because the next thing we do is add torques, and a sign error in an addition is a sign error in the answer.
+
+Ask the class where the torque vector points. The common guess is "the way the force points" or "along the bar". It is neither: it is perpendicular to the plane the turning happens in. For everything in this course that plane is the page, so the torque is always in or out of it.</aside>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Torque and muscular force</p>
+  <div class="cols a top">
+    <div>
+      <p>The turning of our limbs is caused by muscular contraction. A muscle attaches a certain
+        distance away from a joint — the axis of rotation — and pulls.</p>
+      <ul class="small">
+        <li>The <strong>tendon</strong> tells you the line of action. A muscle can only pull along
+          its own line, and the tendon is where you can see that line.</li>
+        <li>The <strong>insertion</strong> gives the point of application.</li>
+        <li>The moment arm is then the perpendicular from the joint centre to the tendon's line —
+          a few centimetres, usually, and always much shorter than the limb it moves.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Short moment arms are the body's bargain: a muscle that shortens
+          a little moves a hand a long way, and pays for it by having to pull very hard.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/elbow-line.png" alt="A forearm with the biceps line of action drawn as a red arrow from its insertion near the elbow, and a blue load arrow at the hand, with the elbow axis marked"></div>
+      <p class="small center">The red arrow is the muscle's line of action. The blue arrow is the
+        load. Both make a moment about the same elbow axis, in opposite senses.</p>
+    </div>
+  </div>
+  <aside class="notes">Point out that the muscle's moment arm here is about three centimetres and the load's is about thirty. A ten-to-one disadvantage, which means holding a five-kilogram weight takes something near fifty kilograms of muscle force. Say that number out loud; it surprises people, and it is the reason joint reaction forces are so large.
+
+This is also the moment to connect back to muscle mechanics: the force a muscle can make depends on its length and its shortening velocity, and both of those change as the joint moves. So two things vary with joint angle at once — how much force the muscle can produce, and how much of that force turns into torque. The next slide is about the second.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Moving the limb changes the moment arm</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Moving a limb changes the <strong>orientation of the muscle's line of
+        action relative to the bone</strong>, and so changes the moment arm.</p>
+      <p class="small">The same muscle force therefore produces a <strong>different joint
+        torque</strong> at a different joint position. This is why you are strong at some angles and
+        weak at others — and it is a purely geometric effect, before any physiology.</p>
+      <div class="box accent workblock" style="max-width:21em">
+        <p class="eq" style="margin-bottom:0">d<sub>⊥</sub> = r · sin θ</p>
+      </div>
+      <p class="small">where <strong>r</strong> is the distance from the joint centre to the
+        insertion and <strong>θ</strong> is the angle between the tendon and the bone. At
+        θ = 90° the moment arm is the whole of r; at 0° or 180° it is nothing.</p>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/arm-positions.png" alt="Five elbow positions. The top row shows the skeleton with the muscle line; the bottom row abstracts each to a stick figure with the moment arm d marked"></div>
+      <p class="small center">Five positions, one muscle force. The bottom row is the same picture
+        with everything but the geometry taken away.</p>
+    </div>
+  </div>
+  <aside class="notes">The bottom row of that figure is the useful one — it is exactly what a free body diagram should look like. Encourage them to redraw any anatomical picture that way before computing anything.
+
+Be careful with the word strong. Two separate things make you weak near full extension: the moment arm is small, and the muscle is near the end of its length-tension curve. The equation on this slide is only the first of those. A full answer to "why am I weak here" needs both, and that is next term's material.</aside>
+</section>
+
+<!-- 15 -->
+<section id="w-elbow">
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">The biceps through the range</p>
+  <div class="iplot wide" data-widget="elbow"></div>
+  <aside class="notes">Here is the five-panel figure made continuous. Drag the elbow through its range and watch three things move together: the tendon's angle to the forearm, the perpendicular dropped from the joint centre onto the tendon's line, and the torque curve on the right.
+
+The torque curve is the point. It is not flat. The same 780 N of muscle force produces its largest joint torque near the middle of the range and very little near full extension, purely because of where the tendon runs. Ask the class where on that curve a biceps curl feels hardest and whether the curve explains it — it does, partly, and the rest is the weight's own moment arm changing, which the widget also draws if you turn the load on.
+
+The load option is worth the extra thirty seconds. With a weight in the hand, two moment arms are changing at once, in opposite directions, and the net demand on the muscle is their ratio. That ratio is the effective mechanical advantage that comes up in two slides' time.
+
+Finally, a note on the numbers. Three centimetres is the textbook's round figure for the biceps insertion. Measured biceps moment arms in adults peak nearer four to five centimetres, at around ninety to a hundred degrees of flexion. The shape of the curve is right; treat the height of it as an illustration.</aside>
+</section>
+
+<!-- 16 -->
+<section id="w-biceps">
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Example problem — the biceps at the elbow</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">The biceps brachii develops a force of <strong>780 N</strong>. It inserts
+        <strong>0.03 m</strong> from the elbow joint axis, and the tendon lies at
+        <strong>55°</strong> to the forearm.</p>
+      <p class="small"><strong>Find the torque about the elbow.</strong></p>
+      <div class="callout small">
+        <p style="margin-bottom:0"><strong>Start by drawing a free body diagram.</strong> Mark the
+          axis, the point of application, the force with its direction, and the angle. Extend the
+          line of action as a dashed line well past the insertion — you will need it to find the
+          perpendicular.</p>
+      </div>
+      <p class="small">Do not reach for a formula until the diagram is drawn. Nearly every error in
+        this kind of problem is a geometry error that a careful sketch would have caught.</p>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/elbow-55.png" alt="Free body diagram of the forearm: a 780 newton muscle force at 55 degrees, inserting 0.03 metres from the elbow axis, with the perpendicular distance d marked"></div>
+    </div>
+  </div>
+  <aside class="notes">Give them a minute to try it before showing the next two slides. The two common wrong answers are 780 times 0.03 — forgetting the angle entirely, giving 23.4 N·m — and using cos instead of sin, giving 13.4 N·m.
+
+Which trigonometric function you need depends entirely on which angle the diagram gives you. Here the 55° is between the tendon and the forearm, so the perpendicular distance is r sin θ. Had the angle been measured from the perpendicular instead, it would have been a cosine. There is no rule to memorise; there is only the triangle in front of you.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Step 1 — the moment arm</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">The moment arm is the perpendicular distance from the elbow axis to the
+        line of action of the muscle force.</p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.35em">d<sub>⊥</sub> = r · sin θ</p>
+        <p class="eq" style="margin-bottom:.35em">d<sub>⊥</sub> = (0.03 m)(sin 55°)</p>
+        <p class="eq" style="margin-bottom:0">d<sub>⊥</sub> = <strong>0.0246 m</strong></p>
+      </div>
+      <p class="small">Just under two and a half centimetres — noticeably less than the three
+        centimetres the tendon actually inserts at, because the tendon is pulling at an angle
+        rather than squarely across the bone.</p>
+    </div>
+    <div class="iplot still" data-widget="ex" data-step="2a"></div>
+  </div>
+  <aside class="notes">Sanity-check the answer against the picture before moving on, every time. sin 55° is about 0.82, so the moment arm must come out a bit smaller than 3 cm. It does. If a student's moment arm were larger than the insertion distance, the geometry would be impossible and they should spot that without being told.
+
+The other component — 780 cos 55°, about 447 N — runs along the forearm towards the joint. It does no turning. It compresses the elbow.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Step 2 — the torque</p>
+  <div class="cols b top">
+    <div>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.35em">M = F · d<sub>⊥</sub></p>
+        <p class="eq" style="margin-bottom:.35em">M = (780 N)(0.0246 m)</p>
+        <p class="eq" style="margin-bottom:0">M = <strong>+19.17 N·m</strong></p>
+      </div>
+      <p class="small">The biceps flexes the elbow, turning the forearm counter-clockwise as drawn,
+        so by the right-hand rule the torque vector points out of the page and the sign is
+        <strong>positive</strong>.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0"><strong>Check it the other way.</strong>
+          F<sub>⊥</sub> = 780 sin 55° = 639 N, and 639 N × 0.03 m = 19.17 N·m. Same answer,
+          as it must be.</p>
+      </div>
+    </div>
+    <div class="iplot still" data-widget="ex" data-step="2b"></div>
+  </div>
+  <aside class="notes">Doing the cross-check out loud costs twenty seconds and is the habit that saves them in an exam. If the two routes disagree, the geometry is wrong and there is still time to find out why.
+
+Worth a closing remark: nineteen newton-metres is the torque from one muscle at one instant. Measured maximal isometric elbow flexion torque in an adult is more like forty to eighty newton-metres, from several flexors together at a more favourable angle. The number here is the right size for what it describes.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Why we go to this trouble</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">In biomechanics we quantify forces and torques in order to answer questions
+        we cannot answer by looking:</p>
+      <ul class="small">
+        <li><strong>How will the joint move?</strong> The net moment at a joint, not any single
+          muscle, determines the angular acceleration.</li>
+        <li><strong>How will the body translate and rotate?</strong> Linear kinetics gave the first
+          half of that; this is the other half.</li>
+        <li><strong>What is happening to the tissues?</strong> Bones, cartilage, tendons and
+          ligaments all fail at loads we can estimate but cannot see.</li>
+        <li><strong>How hard is a muscle working?</strong> We cannot measure muscle force in a
+          living person without surgery. We can estimate it, and a moment arm is how.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="fig cap tight"><img src="assets/ema-limb.png" alt="Two limb postures with the muscle force and its moment arm in red and the external force and its moment arm in black, defining effective mechanical advantage as the ratio of the two"></div>
+      <p class="small center">Moment about the joint: F<sub>m</sub>L<sub>m</sub> = F<sub>ext</sub>L<sub>bend</sub>.
+        The ratio of the two moment arms is the <strong>effective mechanical advantage</strong>.</p>
+    </div>
+  </div>
+  <aside class="notes">Effective mechanical advantage is worth naming properly because it explains a whole family of findings. EMA is L_m over L_bend. A crouched posture puts the external force further from the joint, L_bend grows, EMA falls, and the muscle must pull harder for the same ground force. That is why a deep squat is hard, why running in a crouch is expensive, and why small animals, which run crouched, have much lower effective mechanical advantage than large ones.
+
+Those figures come from Daley, Felix and Biewener's work on guinea fowl — the next slide has the bird — where the same geometry is measured directly on a running animal.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Inverse dynamics</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">We cannot measure the force in a muscle, or the moment at a joint, directly.
+        We can measure the things at the outside of the system — where the segments are, and what
+        the ground is doing — and work inwards.</p>
+      <p class="small">That is <strong>inverse dynamics</strong>: from the measured motion and the
+        measured external forces, compute the net moment that must have been acting at each joint.</p>
+      <ul class="small">
+        <li>Start at the ground with the force plate, and the foot.</li>
+        <li>Solve the foot, and pass the result up to the ankle.</li>
+        <li>Solve the shank, and pass it up to the knee. Then the thigh, and the hip.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">It gives the <strong>net</strong> moment — one number per joint,
+          the sum of every muscle, ligament and contact force there. It cannot tell you which muscle
+          made it, or whether an antagonist was active at the same time.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap tight"><img src="assets/ema-bird.png" alt="A guinea fowl in stance with hip, knee, ankle and tarsometatarsophalangeal joints marked and the ground reaction force vector drawn from the centre of pressure"></div>
+      <p class="small center">The measurement, on an animal: joint centres from markers, the force
+        vector from a plate, and everything else computed. Daley, Felix &amp; Biewener.</p>
+    </div>
+  </div>
+  <aside class="notes">The callout is the limitation that matters most, and it comes up again in the next lecture. A net ankle moment of 1.5 N·m/kg plantarflexor is consistent with a hard-working soleus and a silent tibialis anterior, and equally consistent with both of them working hard and the soleus winning. Inverse dynamics cannot separate those. EMG can, which is exactly why the two are read side by side — that was last lecture's point and it is this lecture's too.
+
+The resulting graphs are interpreted in light of three things: the ground reaction force, the muscle activity, and the ongoing movement. Never one alone.</aside>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">External moments and internal moments</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Two moments at every joint, and they are not the same thing.</p>
+      <div class="box accent workblock">
+        <p class="small" style="margin-bottom:.4em"><strong>External moment</strong> — made from
+          outside: gravity and the ground reaction force. What the world is doing to the joint.</p>
+        <p class="small" style="margin-bottom:0"><strong>Internal moment</strong> — made from
+          inside: muscles, and at the end of range ligaments and capsule. The body's answer.</p>
+      </div>
+      <p class="small">When the joint is not accelerating, these are <strong>equal and
+        opposite</strong>. An external flexor moment is met by an internal extensor moment.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Gait graphs almost always plot the <strong>internal</strong>
+          moment, because that is the one that names a muscle group. A curve labelled "extensor"
+          means the extensors were working — so the external moment was trying to flex.</p>
+      </div>
+    </div>
+    <div class="iplot still" data-widget="extint"></div>
+  </div>
+  <aside class="notes">This slide is the hinge of the lecture and it is worth going slowly.
+
+Say it as a sequence. The ground pushes up. Its line passes behind the knee. That tends to flex the knee — an external flexor moment. Something must stop the knee collapsing, and that is the quadriceps — an internal extensor moment. So when you read "knee extensor moment" on a graph, picture the ground trying to fold the knee and the quads refusing.
+
+The sign confusion students fall into is almost always this: they see the vector passing behind the knee, say "flexion", and then look at a graph showing extensor and conclude the graph is wrong. Both are right; they are describing opposite ends of the same equilibrium.
+
+One honest caveat: equal and opposite holds when the segment is not angularly accelerating. In fast movement the net moment is what is left over after the acceleration is paid for, so the two are not quite equal. In walking stance they are very close.</aside>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Which side of the joint does the line pass?</p>
+  <div class="fig big cap"><img src="assets/grfv-three.png" alt="Three stages of stance — initial contact, foot flat and midstance — each showing the ground reaction force vector from the centre of pressure and the internal net moment at hip, knee and ankle"></div>
+  <ul class="small two">
+    <li>At <strong>initial contact</strong> the vector passes <em>behind</em> the ankle, so the
+      external moment tends to plantarflex it and the dorsiflexors answer.</li>
+    <li>At the same instant it passes <em>in front of</em> the knee and hip, tending to extend them.</li>
+    <li>In <strong>early stance</strong> it swings <em>behind</em> the knee — tending to flex it — and
+      the quadriceps answer. It moves ahead of the knee again by late stance.</li>
+    <li>From about <strong>midstance</strong> it passes <em>behind</em> the hip and stays there until
+      swing begins.</li>
+  </ul>
+  <aside class="notes">The labels on that figure are internal moments — the caption says so. So read each one backwards to find out where the vector is. "Extensor moment" at the hip at initial contact means the vector is in front of the hip, trying to flex it.
+
+That is the only trick in this material, and it is worth asking the class to translate one of the panels out loud before moving on.
+
+Be a little careful with the first bullet. The textbook draws initial contact as a clean heel strike with the centre of pressure well behind the ankle. At slower speeds, and in the measured trial on the next slide, the foot lands flatter and the vector starts much closer to the ankle. The principle holds; the exact geometry is a person walking, not a diagram.</aside>
+</section>
+
+<!-- 23 -->
+<section id="w-grfv">
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">The measured vector, and the moment it makes</p>
+  <div class="iplot wide" data-widget="grfv"></div>
+  <aside class="notes">Everything on this slide is measured, from one stride of one person: markers at sixty hertz, a force plate at nine hundred and sixty. The stick figure, the vector and every number are the same step.
+
+Scrub through stance. The red arrow is the ground reaction force, drawn from the measured centre of pressure, its length proportional to the measured magnitude. The dashed line is its line of action extended. For whichever joint is selected, the widget drops the perpendicular from the joint centre onto that line and prints its length — the moment arm — and the moment the force makes about that joint.
+
+Watch the ankle first. At contact the line is almost through the joint and the moment is nothing. Then the centre of pressure walks forward under the foot — that is the whole of it — and by forty-five per cent of the cycle the moment arm is fourteen centimetres with six hundred and eighty newtons on the end of it. That is the plantarflexor peak.
+
+Then the knee. At the instant of contact the line is nearly ten centimetres in front of the knee. Five per cent later it is five centimetres behind it. The vector has crossed the joint, the external moment has reversed, and the quadriceps have had to take over. Nothing about the leg's position changed much; the force moved.
+
+Then the hip, which is in front at contact and behind from ten per cent onwards, exactly as the textbook figure says.
+
+The last control turns on the measured inverse-dynamics moment for comparison, and that is the next slide's argument.</aside>
+</section>
+
+<!-- 24 -->
+<section id="w-chain">
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">How much is the ground, and how much is the limb?</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">If you know the ground reaction force and where each joint is, you can compute
+        the moment the ground alone makes about that joint. Is that the joint moment?</p>
+      <p class="small">Compare the ground-alone estimate with the full inverse-dynamics result,
+        on the same measured stride:</p>
+      <ul class="small">
+        <li><strong>Ankle</strong> — nearly the whole story. The two agree to within about ten
+          per cent through stance. The foot is light and barely accelerates, so there is almost
+          nothing else to account for.</li>
+        <li><strong>Knee</strong> — the right shape, the wrong size. The ground alone overestimates
+          the peak by roughly half, because the shank and foot have weight of their own and are
+          being swung.</li>
+        <li><strong>Hip</strong> — wrong. Not merely too large: for much of stance it has the wrong
+          <em>sign</em>. Everything below the hip has to be carried and accelerated, and that
+          dominates.</li>
+      </ul>
+    </div>
+    <div class="iplot still" data-widget="chain"></div>
+  </div>
+  <aside class="notes">This slide exists because the previous one makes inverse dynamics look unnecessary — if the line of action tells you the moment, why bother with the segments? Here is the answer, measured rather than asserted.
+
+The pattern is the point. The further up the chain you go, the more of the moment comes from the limb itself rather than from the ground, because each step up adds another segment's weight and another segment's acceleration to the account. At the ankle that correction is small. At the hip it is most of the answer.
+
+So: the line of action is an excellent way to reason about the <em>sign</em> of a moment anywhere, and an excellent way to estimate the <em>size</em> at the ankle. It is not a substitute for inverse dynamics at the hip, and anyone who eyeballs a hip moment off a vector drawing is guessing.
+
+Both subjects in the data show the same thing, which is worth flipping to.</aside>
+</section>
+
+<!-- 25 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Reading a moment–time graph</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">A moment–time graph is read in two steps: <strong>which side of zero</strong>,
+        and <strong>how far from it</strong>.</p>
+      <p class="small">The sign names a direction of rotation, and at a joint that means a muscle
+        group — which one depends on the joint and the axis:</p>
+      <ul class="small">
+        <li><strong>Flexion / extension</strong> — the sagittal plane, and nearly everything in
+          this lecture.</li>
+        <li><strong>Inversion / eversion</strong> — the frontal plane at the foot.</li>
+        <li><strong>Internal / external rotation</strong> — the transverse plane.</li>
+      </ul>
+      <p class="small">Every joint has a moment about all three axes at once. We plot the
+        sagittal one because in walking it is much the largest, not because the others are zero.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Before reading any moment graph, find out three things:
+          internal or external, which way is positive, and whether it is per kilogram. All three
+          change the number on the axis.</p>
+      </div>
+    </div>
+    <div class="iplot still" data-widget="signs"></div>
+  </div>
+  <aside class="notes">The callout is the practical skill. Normalised joint moments are usually in newton-metres per kilogram, which is how a fifty-five kilogram subject and an ninety kilogram subject can be plotted on the same axis. An unnormalised hip moment peaks around thirty to sixty newton-metres; a normalised one peaks under one. If a graph shows a peak of 1.5 and you were expecting 60, nothing is wrong — look at the units.
+
+The last sentence of the body text deserves a beat. Frontal-plane moments at the hip in walking are not small at all — the abductors work hard every step, which is precisely the Trendelenburg story coming up. We just do not usually plot it.</aside>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Gait kinetics — contact to midstance</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/stance-4.png" alt="Four stick-figure panels of early stance — initial heel contact, heel contact, foot flat and midstance — each with the ground reaction force vector and its line of action extended through the limb"></div>
+    </div>
+    <div>
+      <p class="small">To account for a joint moment you need <strong>both</strong> the external
+        force and what the muscles are doing about it.</p>
+      <ul class="small">
+        <li><strong>Initial heel contact</strong> — the "heel transient", a very brief spike as the
+          heel decelerates. It is largely passive, over in a few milliseconds, and the limb has no
+          time to respond to it.</li>
+        <li><strong>Heel contact</strong> — the vector is steeply inclined and passes well in front
+          of the hip. The hip extensors are already working.</li>
+        <li><strong>Foot flat</strong> — the vector has swung behind the knee. Quadriceps.</li>
+        <li><strong>Midstance</strong> — the vector is nearly vertical and passes close to the
+          knee, so there is little to do there; meanwhile the centre of pressure has moved forward
+          of the ankle and the plantarflexors begin to build.</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">The heel transient is worth naming because students see it as a spike on the force trace and wonder whether their data is broken. It is real, it is brief — a few milliseconds — and it is a function of footwear and surface as much as of the person. It does not appear in the joint moments in any useful way because nothing can react that fast.
+
+The flex-extension moment caused by the ground reaction force is determined by whether the line of action passes in front of or behind each joint. That one sentence is the whole of this half of the lecture, and the interactive figure two slides ago is the proof of it.</aside>
+</section>
+
+<!-- 27 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Gait kinetics — heel-off to toe-off</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap tight"><img src="assets/stance-off.png" alt="Two stick-figure panels of late stance — heel-off and toe-off — with the ground reaction force vector and its line of action"></div>
+    </div>
+    <div>
+      <ul class="small">
+        <li><strong>Heel-off</strong> — the centre of pressure is now well forward under the
+          forefoot while the ankle is still behind it. The moment arm at the ankle is at its largest
+          and the vertical force is near its second peak at the same time. This is where the
+          plantarflexor moment peaks, and it is by far the largest moment anywhere in the leg.</li>
+        <li><strong>Toe-off</strong> — the limb is unloading. The force falls away to nothing over
+          the last few per cent of stance, and with it every moment the ground was making.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Two things multiply to make the ankle peak: a <strong>large
+          force</strong> and a <strong>long moment arm</strong>, arriving together. Either one
+          alone would be unremarkable.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Make the coincidence explicit, because it is a nice illustration of M = F d. In the measured trial, the ankle moment arm grows from nothing at contact to fourteen centimetres at forty-five per cent of the cycle, and the vertical force reaches its second peak of about six hundred and eighty newtons at almost exactly the same moment. Multiply those and you get the plantarflexor peak. Neither the force nor the geometry alone would explain it.
+
+That peak is around one and a half newton-metres per kilogram, three times the largest knee moment and three times the largest hip moment in the same stride. The ankle does the heavy work in walking.</aside>
+</section>
+
+<!-- 28 -->
+<section id="w-moments">
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Angles, moments and muscles, one stride</p>
+  <div class="iplot wide" data-widget="moments"></div>
+  <aside class="notes">This is the classic three-panel figure, built from measurement rather than redrawn: the sagittal joint angles, the internal joint moments and the muscle activity, from one stride of one person, with a playhead that runs down all three so you can read a single instant across them.
+
+Work through it in the order you would read a patient. Loading response: the knee flexes about fifteen degrees, the internal knee moment is extensor, and the quadriceps are on. Three panels, one story — the knee is being folded by the ground and the quadriceps are controlling the fold. That is an eccentric contraction, and nothing but the three panels together would tell you so.
+
+Midstance to terminal stance: the ankle dorsiflexes as the body passes over the foot, the plantarflexor moment grows to its peak, and triceps surae is active throughout. Again eccentric, then concentric at the very end.
+
+Pre-swing: the hip moment is flexor and large, and the ankle moment collapses as the foot leaves.
+
+Then the two honest caveats. The gluteus maximus channel barely modulates in either subject — it is a poor recording, not a quiet muscle, and the widget greys it and says so. And the textbook panel includes iliopsoas, which is not here and cannot be: it is deep under the abdomen and no surface electrode will ever reach it. The moment graph shows a clear hip flexor moment in pre-swing with no muscle visible to explain it. That gap is the honest state of the measurement.
+
+Switch subjects. The shapes repeat, the amplitudes do not. That is what normative gait data looks like.</aside>
+</section>
+
+<!-- 29 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">What the three panels are for</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">A joint moment on its own is ambiguous. Read with the angle and with the
+        muscle activity, it is not.</p>
+      <div class="box accent workblock">
+        <p class="small" style="margin-bottom:.4em"><strong>Moment and movement in the same
+          direction</strong> — shortening. Concentric, doing positive work on the body.</p>
+        <p class="small" style="margin-bottom:0"><strong>Moment and movement in opposite
+          directions</strong> — lengthening under load. Eccentric, absorbing energy.</p>
+      </div>
+      <p class="small">Most of what the leg does in stance is the second kind: the quadriceps at
+        loading response and the plantarflexors through midstance both lengthen while resisting,
+        and only the plantarflexors turn concentric at the end.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">The product of moment and angular velocity is <strong>joint
+          power</strong> — positive for generation, negative for absorption. That is the next
+          lecture.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/stance-4.png" alt="The four early-stance panels again, showing how the line of action moves relative to each joint"></div>
+      <p class="small center">The same four instants. Which side of the joint the line falls on gives
+        the sign; the angle panel tells you which way the joint was going at the time.</p>
+    </div>
+  </div>
+  <aside class="notes">This slide is the payoff for reading three panels instead of one, and it is also the bridge to angular kinetics two.
+
+Give them the clinical version: a knee extensor moment with the knee flexing means the quadriceps are lowering you. A knee extensor moment with the knee extending means the quadriceps are lifting you. The graph is identical in sign. Only the angle panel separates them, and the difference is the whole of whether a movement is costing energy or returning it.</aside>
+</section>
+
+<!-- 30 -->
+<section>
+  <div class="section-slide">
+    <h2>Common gait abnormalities</h2>
+    <p class="sub">Three ways of moving a line of action, and what each one buys</p>
+  </div>
+  <aside class="notes">The rest of the lecture is one idea applied three times. If a muscle group cannot make the moment the ground is demanding, the alternative is to stop the ground demanding it — by moving the line of action so that it passes closer to the joint, or on the other side of it.
+
+Every one of these patterns is a sensible mechanical solution to a real problem. They look like faults, and clinically they are signs, but mechanically they are good answers.</aside>
+</section>
+
+<!-- 31 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Lateral trunk bending</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/lurch-pair.png" alt="Two rear-view line drawings of a person in single-limb stance. In A, Trendelenburg gait, the trunk lurches toward the affected side and the opposite hemi-pelvis drops. In B, coxalgic gait, the trunk lurches but the pelvis stays level"></div>
+    </div>
+    <div>
+      <p class="small">Bending the trunk <strong>towards the side of the supporting limb</strong>
+        during stance is lateral trunk bending, or ipsilateral lean.</p>
+      <p class="small">Most commonly seen in:</p>
+      <ul class="small">
+        <li><strong>Trendelenburg gait</strong> — the abductors on the stance side cannot hold the
+          pelvis, so the opposite hemi-pelvis drops <em>and</em> the trunk lurches to compensate.</li>
+        <li><strong>Coxalgic gait</strong> — "painful hip". The pelvis stays level; the lean is
+          there to reduce the load, not because the pelvis cannot be held.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">The lean is the same in both. What distinguishes them is whether
+          the pelvis drops with it — which is why you watch the pelvis, not the shoulders.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The distinction in the callout is the clinically useful bit and it is easy to say and easy to examine. Both patients lean. Only the Trendelenburg patient's pelvis drops on the swing side, because only in that patient have the stance-side abductors actually failed.
+
+A patient with a painful hip leans voluntarily, and the next three slides show exactly how much that lean is worth in newtons.</aside>
+</section>
+
+<!-- 32 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Shifting the centre of gravity</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/cog-shift.png" alt="Two front-view line drawings. In the normal figure the centre of gravity sits medial to the stance hip with a long moment arm. In the Trendelenburg figure the trunk has leaned so that the centre of gravity lies almost over the stance hip"></div>
+    </div>
+    <div>
+      <p class="small">Shifting the body's centre of gravity more <strong>vertically over the hip
+        joint</strong> reduces the torque that the ground reaction force makes about that hip.</p>
+      <p class="small">Nothing about the force has changed. The person still weighs the same, and
+        the ground still pushes up with the same magnitude. What has changed is the
+        <strong>moment arm</strong>: the perpendicular distance from that line to the hip.</p>
+      <div class="box accent workblock" style="max-width:19em">
+        <p class="eq" style="margin-bottom:0">M = F · d<sub>⊥</sub> &nbsp;→&nbsp; halve d<sub>⊥</sub>,
+          halve M</p>
+      </div>
+      <p class="small">And because the abductors must match that moment on a very short lever of
+        their own, a small change in d<sub>⊥</sub> makes a large change in muscle force.</p>
+    </div>
+  </div>
+  <aside class="notes">This is the single clearest clinical example of the lecture's central equation, and it is worth labelling it as such. Of the three things that determine a torque — magnitude, line of action, point of application — the patient can only really change the line of action. So that is what they change.
+
+Ask the class to predict, before the next slide, roughly how much hip force a lean of a few degrees saves. The answers are usually far too small.</aside>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">The arithmetic of the lurch</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/pelvis-pair.png" alt="Two pelvis diagrams in single-limb stance. In A the abductor force acts on a 5 unit moment arm and body weight on a 15 unit arm, giving 1500 newtons of abductor force and a 2000 newton joint reaction force. In B the lurch shortens the body weight arm to 10 units, giving 1000 newtons and 1500 newtons"></div>
+    </div>
+    <div>
+      <p class="small"><strong>Single-limb stance.</strong> Body weight above the hip acts 15 units
+        from the joint; the abductors act 5 units the other side.</p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.3em">F<sub>ab</sub> × 5 = 500 N × 15</p>
+        <p class="eq" style="margin-bottom:.3em">F<sub>ab</sub> = 1500 N</p>
+        <p class="eq" style="margin-bottom:0">JRF = 1500 + 500 = <strong>2000 N</strong></p>
+      </div>
+      <p class="small"><strong>With the lurch</strong>, the body weight arm falls to 10 units.</p>
+      <div class="box accent workblock">
+        <p class="eq" style="margin-bottom:.3em">F<sub>ab</sub> × 5 = 500 N × 10 → 1000 N</p>
+        <p class="eq" style="margin-bottom:0">JRF = 1000 + 500 = <strong>1500 N</strong></p>
+      </div>
+      <p class="small"><strong>Common causes:</strong> painful hip (osteoarthritis, rheumatoid
+        arthritis), hip abductor weakness, leg-length discrepancy, abnormal hip joint.</p>
+    </div>
+  </div>
+  <aside class="notes">Draw out the leverage. The body weight arm shortened by a third, and the abductor force fell by a third — but the abductors were working on a lever three times shorter than the weight, so the force they had to make was three times the weight to begin with. Shortening the weight's arm by five units saved five hundred newtons of muscle force, which is about a body weight.
+
+Then the joint reaction force, which is the number the patient actually cares about. Two thousand newtons down to fifteen hundred — a quarter less load on a painful hip, for a lean of a few degrees. That is why they do it without being taught.
+
+Note what the joint reaction force is: the muscle force plus the weight, both pressing the femoral head into the socket. Balancing the moments did nothing to relieve the joint — the same point the seesaw made earlier in the lecture. The abductors are by far the larger part of it, which is why hip load is dominated by muscle, not by body weight.</aside>
+</section>
+
+<!-- 34 -->
+<section id="w-trend">
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">What a lean is worth</p>
+  <div class="iplot wide" data-widget="trend"></div>
+  <aside class="notes">Lean the trunk and watch three numbers move together: the moment arm of body weight about the stance hip, the abductor force needed to balance it, and the joint reaction force the femoral head has to carry.
+
+Three things to bring out. First, the lean needed is small. Eight or nine degrees is enough to take a third off the hip load, and eight degrees is barely visible across a room — which is why these patterns are missed.
+
+Second, the abductor moment arm slider. Shorten it and watch the required force climb steeply, because the force is the weight's moment divided by that arm. This is why coxa valga, or a hip replacement that fails to restore the offset, increases joint loading even when nothing else has changed. Restoring that lever is one of the things a surgeon is trying to achieve.
+
+Third, press the cane option. A stick in the <em>opposite</em> hand, taking only fifteen per cent of body weight, applies its own moment about the stance hip on a very long lever — the width of the body — and the saving is larger than the lurch achieves. That is the mechanical reason a cane goes in the hand opposite the painful hip. Put it in the same hand and the readout goes the wrong way.
+
+The model here is a static frontal-plane balance about the hip, which is the standard textbook treatment. It ignores the trunk's own acceleration and treats the abductor line as fixed. The magnitudes are right to within the usual twenty per cent and the trends are robust.</aside>
+</section>
+
+<!-- 35 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Anterior trunk bending</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/ant-lean.png" alt="Two side-view drawings of a leg in early stance. In the normal figure the ground reaction force vector passes behind the knee axis. In the anterior trunk bending figure the trunk is flexed forward and the vector passes in front of the knee"></div>
+    </div>
+    <div>
+      <p class="small">The subject flexes the trunk forwards early in stance.</p>
+      <p class="small"><strong>Normal.</strong> In early stance the line of action of the ground
+        reaction force passes <em>behind</em> the knee axis. The external moment tends to flex the
+        knee, and the quadriceps oppose it with an internal extensor moment.</p>
+      <p class="small"><strong>If the quadriceps are weak or paralysed</strong>, that external
+        flexor moment would collapse the knee. Leaning the trunk forward moves the body's centre of
+        gravity ahead of the knee, carrying the line of action with it.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Now the ground is <em>extending</em> the knee rather than flexing
+          it. The joint is held by its own posterior structures, and the quadriceps are not needed
+          at all.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Be precise with the frames here, because the textbook sentence "producing an extension moment" is about the external moment and a student reading it as internal will get the muscle backwards.
+
+Say it as a chain. Normally: vector behind the knee, external flexor moment, internal extensor moment, quadriceps working. After the lean: vector in front of the knee, external extensor moment, and the knee is held by the posterior capsule and ligaments rather than by muscle.
+
+The cost is worth mentioning. The knee is now being held at the very end of its range by passive structures on every step, which over years is not kind to it. And the hip extensors now have more to do, because the trunk is flexed in front of the hip. The compensation moves the problem; it does not remove it.</aside>
+</section>
+
+<!-- 36 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Posterior trunk bending</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/post-lean.png" alt="Two side-view drawings of a leg in early stance. In the normal figure the ground reaction force vector passes in front of the hip axis. In the posterior trunk bending figure the trunk is extended backwards and the vector passes behind the hip"></div>
+    </div>
+    <div>
+      <p class="small">The subject extends the trunk backwards early in stance.</p>
+      <p class="small"><strong>Normal.</strong> In early stance the line of action passes
+        <em>in front of</em> the hip axis, so the external moment tends to flex the hip and the hip
+        extensors — gluteus maximus and the hamstrings — oppose it.</p>
+      <p class="small"><strong>If gluteus maximus is weak or paralysed</strong>, leaning the trunk
+        backwards brings the line of action <em>behind</em> the hip axis.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">The external moment is now an extensor moment, and the hip
+          extensors have nothing to do. Sometimes called a gluteus maximus lurch.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Same chain, one joint up, and the same warning about frames.
+
+Note the symmetry across the last two slides: anterior lean unloads the quadriceps, posterior lean unloads the gluteus maximus, and lateral lean unloads the abductors. All three are the same manoeuvre — move the line of action — applied about three different axes.
+
+A good exam question is to give the muscle and ask for the lean, or the lean and ask for the muscle. If they can reconstruct it from the line of action rather than remembering a list, they have understood the lecture.</aside>
+</section>
+
+<!-- 37 -->
+<section id="w-lean">
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">Moving the line of action</p>
+  <div class="iplot wide" data-widget="lean"></div>
+  <aside class="notes">Both compensations in one figure. Lean the trunk forward and backward and watch the line of action swing with the centre of gravity, while the perpendicular distances to hip and knee are drawn and measured.
+
+Work the knee first. Upright, the line sits behind the knee and the panel reports an external flexor moment, so the quadriceps are loaded. Lean forward and watch the moment arm shrink to nothing, then reverse. The quadriceps load goes to zero at the crossing point — that is the posture a patient with a weak quadriceps will find, and they will find it without any instruction.
+
+Then the hip. Leaning back does the same thing one joint up, and the panel shows that the two cannot both be satisfied at once: the lean that unloads the quadriceps loads the hip extensors, and the lean that unloads the hip extensors loads the quadriceps. A patient has to choose which muscle to protect.
+
+The model is a static one — the line runs from the measured centre of pressure through the whole-body centre of gravity, which is exactly true only when nothing is accelerating. In early stance it is close enough to make the point, and the figure says so on its face.</aside>
+</section>
+
+<!-- 38 -->
+<section>
+  <h2>Angular Kinetics 1</h2>
+  <p class="subhead">What to take away</p>
+  <ul class="small">
+    <li><strong>Torque is force times perpendicular distance.</strong> Both words matter —
+      perpendicular, and to the <em>line of action</em>, not to the point of application.</li>
+    <li><strong>Either route gives the same answer.</strong> Resolve the distance or resolve the
+      force. Never both at once.</li>
+    <li><strong>Name the axis first.</strong> The same force has a different moment, and often a
+      different sign, about a different axis.</li>
+    <li><strong>Joint angle changes the moment arm.</strong> The same muscle force makes a
+      different joint torque at a different position, before any physiology is involved.</li>
+    <li><strong>External and internal moments are opposite sides of one balance.</strong> Gait
+      graphs plot the internal one, so a curve labelled extensor means the ground was trying to flex.</li>
+    <li><strong>Which side of the joint the line passes decides the sign</strong> — everywhere. It
+      decides the <em>size</em> reliably only at the ankle; at the hip, the limb's own weight and
+      acceleration dominate, which is why inverse dynamics exists.</li>
+    <li><strong>Compensations move a line of action.</strong> Lateral, anterior and posterior trunk
+      bending are one manoeuvre about three different axes, and each unloads a particular muscle at
+      a price paid somewhere else.</li>
+  </ul>
+  <aside class="notes">If a student leaves with only one of these, make it the fifth. Nearly every muddled answer in this material is a confusion between what the world is doing to the joint and what the muscles are doing back.
+
+And if they leave with two, add the sixth, because it is the one that stops them over-trusting a vector drawing.</aside>
+</section>
+
+<!-- 39 -->
+<section>
+  <div class="title-slide">
+    <div class="course">Biomechanics (EPHE 341)</div>
+    <h1>Angular Kinetics 1</h1>
+    <div class="rule"></div>
+    <p class="sub">Next up: angular kinetics 2 — moment of inertia, angular momentum and joint power
+      · Measured data: Lencioni et al., level walking</p>
+  </div>
+  <aside class="notes">The measured stride used in the interactive figures throughout this lecture comes from an open dataset of normal walking: markers, force plate and surface EMG recorded together on the same trials. The joint moments are the authors' own inverse-dynamics results; everything drawn on top of them was computed live from the same data.
+
+Next lecture closes the loop: given a moment, what does it actually do to a segment, and how much energy changes hands.</aside>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js?v=20261007"></script>
+<script src="mobile.js?v=20261007"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="kindata.js?v=20261007"></script>
+<script src="deck-core.js?v=20261007"></script>
+<script src="torque.js?v=20261007"></script>
+<script src="deck-tools.js?v=20261007"></script>
+<script src="fit.js?v=20261007"></script>
+</body>
+</html>

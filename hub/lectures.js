@@ -245,6 +245,28 @@ window.EPHE341_LECTURES = [
            ['why slowing the wave lowers the frequency', 'w-mf'],
            ['six real recordings, and what they do not show', 'w-fatigue']] },
 
+  { n: '15', title: 'Angular kinetics 1',
+    path: 'lectures/15-angular-kinetics-1',
+    blurb: 'Torque and moment of force: the moment arm is the perpendicular distance to ' +
+           'the line of action, either route \u2014 resolve the distance or resolve the force ' +
+           '\u2014 gives the same answer, and joint angle changes what a muscle can do before ' +
+           'any physiology is involved. Then the ground reaction force vector through a ' +
+           'measured stride: which side of each joint it passes, the moments it does and ' +
+           'does not account for, and the three trunk-bending compensations as one ' +
+           'manoeuvre about three different axes.',
+    slides: 39, widgets: 18, updated: '2026-10-07',
+    handout: 'handout.pdf',
+    live: [['two routes to the same moment', 'w-torque'],
+           ['balancing a lever', 'w-lever'],
+           ['worked example: the moment about O', 'w-moment-o'],
+           ['the biceps through the range', 'w-elbow'],
+           ['worked example: the biceps at the elbow', 'w-biceps'],
+           ['the measured force vector, and its moment', 'w-grfv'],
+           ['the ground alone, against inverse dynamics', 'w-chain'],
+           ['angles, moments and muscles, one stride', 'w-moments'],
+           ['what a lateral lean is worth at the hip', 'w-trend'],
+           ['moving the line of action', 'w-lean']] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
@@ -254,7 +276,6 @@ window.EPHE341_LECTURES = [
      match the numbers in the source .pptx filenames. Change them here if you
      would rather they did. */
   { n: '13', title: 'Virtual Muscle Lab' },
-  { n: '15', title: 'Angular kinetics 1' },
   { n: '16', title: 'Gait analysis' },
   { n: '17', title: 'Angular kinetics 2' },
   { n: '18', title: 'Angular kinetics 3' },
