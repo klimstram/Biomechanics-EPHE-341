@@ -313,6 +313,31 @@ window.EPHE341_LECTURES = [
            ['why the centre of pressure overshoots', 'w-balance'],
            ['through the centre, and off it', 'w-freeaxis']] },
 
+  { n: '18', title: 'Angular kinetics 3: moment of inertia and angular momentum',
+    path: 'lectures/18-angular-kinetics-3',
+    blurb: 'Newton\u2019s three laws rewritten for things that turn, and the one quantity a ' +
+           'person can change at will. I = \u03a3mr\u00b2 with the masses draggable, so the ' +
+           'squaring on r is something you watch rather than something you are told; the ' +
+           'radius of gyration as the same number written differently; the parallel-axis ' +
+           'theorem swept across every axis of a real body, which is why a free object turns ' +
+           'about its centre of gravity; his slide 21\u2019s five positions recomputed on one ' +
+           'measured person; a real runner\u2019s knee folding to make the swing leg 26% ' +
+           'cheaper to turn; a measured flight phase where the centre of mass falls at 9.71 ' +
+           'm/s\u00b2 and the angular momentum is therefore frozen; the skater, the diver, ' +
+           'and the angular impulse that bought the whole thing on the board.',
+    slides: 32, widgets: 10, updated: '2026-10-08',
+    handout: 'handout.pdf',
+    live: [['I = \u03a3mr\u00b2, with the masses draggable', 'w-sumr'],
+           ['the radius of gyration', 'w-gyration'],
+           ['why a free body turns about its CofG', 'w-minaxis'],
+           ['his slide 21, on a real body', 'w-posable3'],
+           ['the sprinter\u2019s folded knee, measured', 'w-swingleg'],
+           ['a measured flight phase', 'w-airborne'],
+           ['the skater, and a sanity check', 'w-skater'],
+           ['how many somersaults fit in the air', 'w-divespin'],
+           ['the whole-body sum, segment by segment', 'w-gymtable'],
+           ['angular impulse on the board', 'w-angimp']] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
@@ -322,7 +347,6 @@ window.EPHE341_LECTURES = [
      match the numbers in the source .pptx filenames. Change them here if you
      would rather they did. */
   { n: '13', title: 'Virtual Muscle Lab' },
-  { n: '18', title: 'Angular kinetics 3' },
   { n: '19', title: 'Static analysis' },
   { n: '20', title: 'Dynamic analysis' },
   { n: '22', title: 'Projectile motion' },

@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fdfdfc">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Angular Kinetics 3</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css?v=20261008a">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'light';
+  try { t = localStorage.getItem('ephe341-theme') || 'light'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <p class="course">Biomechanics (EPHE 341)</p>
+    <h1>Angular Kinetics 3</h1>
+    <div class="rule"></div>
+    <p class="sub">Newton&rsquo;s three laws, rewritten for things that turn &mdash; and the
+      one quantity a person can change at will.</p>
+  </div>
+  <aside class="notes">Three lectures ago a force made a moment about a joint. Two lectures ago we found the point a free body turns about. This lecture asks the next question: once it is turning, how hard is it to stop, and what can the person do about it?
+
+The answer is one quantity, the moment of inertia, and the thing worth getting across today is that it is the only term in all of rotational mechanics that a human being can change on purpose, in the middle of a movement, in a fraction of a second. Mass you cannot change. Limb length you cannot change. Where you hold your limbs, you can — and that is the whole of diving, gymnastics, figure skating and the swing phase of running.
+
+Readings: McGinnis Chapter 7.</aside>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">The same three laws, said again for rotation</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Every law from linear kinetics has an angular twin. The sentences are
+        the same sentences with the nouns swapped.</p>
+      <table>
+        <thead><tr><th></th><th>Linear</th><th>Angular</th></tr></thead>
+        <tbody>
+        <tr><td>what resists</td><td>mass <em>m</em></td><td>moment of inertia <em>I</em></td></tr>
+        <tr><td>what acts</td><td>force <em>F</em></td><td>torque <em>M</em></td></tr>
+        <tr><td>1st law</td><td>constant <em>v</em> unless a force acts</td>
+            <td>constant <em>&omega;</em> unless a torque acts</td></tr>
+        <tr><td>2nd law</td><td><em>F</em> = <em>ma</em></td>
+            <td><em>M</em> = <em>I&alpha;</em></td></tr>
+        <tr><td>momentum</td><td><em>p</em> = <em>mv</em></td>
+            <td><em>L</em> = <em>I&omega;</em></td></tr>
+        <tr><td>impulse</td><td><em>Ft</em> = &Delta;<em>p</em></td>
+            <td><em>Mt</em> = &Delta;<em>L</em></td></tr>
+        </tbody>
+      </table>
+      <div class="callout small">
+        <p style="margin-bottom:0">One row is not a swap. <strong>Mass is a number;
+          moment of inertia is a number <em>per axis</em></strong>, and it changes when you
+          move. That one difference is what the rest of this lecture is about.</p>
+      </div>
+    </div>
+    <div>
+      <div class="imgrow">
+        <img src="assets/athlete-3.png" alt="A long jumper in flight with arms and legs extended forward">
+        <img src="assets/athlete-2.png" alt="A figure skater in a spin">
+        <img src="assets/diver-sydney.png" alt="An Olympic poster showing a diver in flight">
+      </div>
+      <div class="fig cap tight"><img src="assets/silhouettes.png" alt="Silhouettes of a gymnast and a diver in several airborne positions"></div>
+    </div>
+  </div>
+  <aside class="notes">Put the table up and read down the first column, then the second. The point of showing them side by side is that there is nothing new to learn here conceptually — if you understood F = ma you already understand M = Iα, provided you understand I.
+
+Then stop on the callout, because it is the honest warning. Mass is a property of an object. Moment of inertia is a property of an object AND an axis AND a configuration. The same skater has five different moments of inertia depending on which way she is turning and what she is doing with her arms. That is not a complication to be tidied away; it is the mechanism by which every one of these athletes does what they do.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Newton&rsquo;s first law, for turning</p>
+  <div class="cols a top">
+    <div>
+      <p><strong>Linear.</strong> A body maintains a constant state of rest or constant
+        velocity unless acted upon by an external <em>force</em>.</p>
+      <p><strong>Angular.</strong> A body maintains a constant state of angular motion unless
+        acted upon by an external <em>torque</em>.</p>
+      <p class="small">Both halves matter, and the second half is the one people forget.
+        &ldquo;At rest&rdquo; is a constant state of angular motion. So is spinning at eleven
+        revolutions a second. Neither changes by itself.</p>
+    </div>
+    <div>
+      <p class="small">In linear kinetics, <em>inertia</em> is quantified by mass &mdash; the
+        resistance to a change in the state of motion.</p>
+      <p class="small"><strong>Angular inertia</strong> is the property of an object to resist
+        changes in its <em>angular</em> motion. It depends on two things:</p>
+      <ul class="small">
+        <li>the mass of the object</li>
+        <li><strong>the distribution of that mass relative to the axis of rotation</strong></li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">The second one is new. Nothing in linear kinetics cared
+          <em>where</em> the mass was. Everything in angular kinetics does.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Spend the time on "at rest and in motion". The law is usually taught as a statement about things that are still, and then the interesting half gets lost. A diver leaving the board spinning at four radians a second will still be spinning at four radians a second a full second later unless something touches her. Nothing does. That is the first law and it is also the entire reason a dive has to be set up before the feet leave the board.
+
+The two-item list at the end is the hinge of the lecture. Write it on the board if you write nothing else.</aside>
+</section>
+
+<!-- 4 -->
+<section id="w-sumr">
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Moment of inertia: <em>I</em> = &Sigma; <em>m r</em><sup>2</sup></p>
+  <div class="iplot wide" data-widget="sumr"></div>
+  <aside class="notes">Here is the definition and here is what it does.
+
+Imagine the object as a crowd of particles. Each one resists being moved, and each one is being asked to travel on a circle whose radius is its own distance from the axis. A particle twice as far out has to be moved twice as fast for the same angular speed, and the work of getting it there goes as the square. So each particle contributes m times r squared, and the object's total resistance is the sum.
+
+Drag the masses and watch the two terms. His slide 7 is the first preset: ten kilograms at a quarter metre and ten at three quarters gives six and a quarter kilogram metres squared. His slide 8 asks what happens if you move one further out, so move it: at one metre the answer is ten point six two five. The mass did not change. Nothing changed but a distance, and the resistance to turning went up by seventy per cent.
+
+Then press the third preset, which doubles a mass instead of moving it. Doubling the far mass adds five point six. Moving it from point seven five to one metre adds four point four. You can feel the squaring in that comparison.</aside>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">What the squaring means</p>
+  <div class="cols a top">
+    <div>
+      <div class="box accent">
+        <p class="eq big" style="margin:0"><em>I</em> = &Sigma; <em>m r</em><sup>2</sup></p>
+        <p class="eq" style="margin:.3em 0 0 0">= <em>m</em><sub>1</sub><em>r</em><sub>1</sub><sup>2</sup>
+           + <em>m</em><sub>2</sub><em>r</em><sub>2</sub><sup>2</sup>
+           + <em>m</em><sub>3</sub><em>r</em><sub>3</sub><sup>2</sup> + &hellip;</p>
+      </div>
+      <p class="small">Mass appears once. Distance appears twice. So:</p>
+      <ul class="small">
+        <li>double a mass and its contribution <strong>doubles</strong></li>
+        <li>double its distance and its contribution <strong>quadruples</strong></li>
+      </ul>
+      <p class="small">Which is why his slide says, in one line, that <em>the distribution of
+        mass has a greater influence on angular inertia than mass.</em></p>
+    </div>
+    <div>
+      <p class="small">The units follow from the definition and are worth saying out loud
+        once: kilograms times metres squared, <strong>kg&middot;m<sup>2</sup></strong>. Not
+        kilograms. Not newtons. A moment of inertia is not a force and not a mass.</p>
+      <div class="callout small">
+        <p>A useful habit: whenever you meet a new rotational quantity, check its units against
+          the linear one it replaces.</p>
+        <p style="margin-bottom:0"><em>m</em> &rarr; kg becomes <em>I</em> &rarr;
+          kg&middot;m<sup>2</sup>; <em>p</em> &rarr; kg&middot;m/s becomes <em>L</em> &rarr;
+          kg&middot;m<sup>2</sup>/s; <em>Ft</em> &rarr; N&middot;s becomes <em>Mt</em> &rarr;
+          N&middot;m&middot;s. The extra metre is the moment arm, every time.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">This slide exists so that nobody writes kilograms after a moment of inertia on the midterm.
+
+The habit in the callout is worth teaching properly. Every angular quantity is its linear twin with one extra factor of length — because every angular quantity is a linear quantity multiplied by a moment arm. If a student can reconstruct the units they can reconstruct the equation.</aside>
+</section>
+
+<!-- 6 -->
+<section id="w-gyration">
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">The radius of gyration</p>
+  <div class="iplot wide" data-widget="gyration"></div>
+  <aside class="notes">Keeping track of every particle is not practical, so here is the shorthand.
+
+Ask a different question: if I took the whole mass of this object and squeezed it into a single lump, how far from the axis would the lump have to sit to be exactly as hard to turn? That distance is the radius of gyration, k, and by definition I equals m k squared.
+
+For his two masses about the end: six point two five divided by twenty is point three one two five, and the square root is zero point five five nine metres. That is his slide 11. Notice it is not the average of a quarter and three quarters, which would be a half. It is pulled toward the far mass, because the far mass contributes more — the squaring again.
+
+Switch the axis to the centre of gravity and the whole thing shrinks: k becomes exactly a quarter metre, and I becomes one point two five. The object did not change. We moved the axis, and the next slide is about why that always helps.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Two ways to write the same number</p>
+  <div class="cols a top">
+    <div>
+      <div class="box accent">
+        <p class="eq big" style="margin:0"><em>I</em> = &Sigma; <em>m r</em><sup>2</sup></p>
+        <p class="small" style="margin:.2em 0 0 0">every particle, counted separately</p>
+      </div>
+      <div class="box accent" style="margin-top:.6em">
+        <p class="eq big" style="margin:0"><em>I</em> = <em>m k</em><sup>2</sup></p>
+        <p class="small" style="margin:.2em 0 0 0">all the mass at one distance <em>k</em></p>
+      </div>
+      <p class="small">Both give the same <em>I</em>. The second is how anthropometric tables
+        report segment data: a mass fraction and a <strong>radius of gyration expressed as a
+        fraction of segment length</strong>, so one table serves every body.</p>
+    </div>
+    <div>
+      <p class="small">Winter&rsquo;s table gives three radii of gyration for each segment &mdash;
+        about its own centre of gravity, about its proximal end, and about its distal end &mdash;
+        because which one you need depends on where the axis is.</p>
+      <table>
+        <thead><tr><th>segment</th><th>mass</th><th><em>k</em><sub>CofG</sub></th>
+                   <th><em>k</em><sub>prox</sub></th><th><em>k</em><sub>dist</sub></th></tr></thead>
+        <tbody>
+        <tr><td>Thigh</td><td>0.100 <em>M</em></td><td>0.323 <em>L</em></td>
+            <td>0.540 <em>L</em></td><td>0.653 <em>L</em></td></tr>
+        <tr><td>Leg</td><td>0.0465 <em>M</em></td><td>0.302 <em>L</em></td>
+            <td>0.528 <em>L</em></td><td>0.643 <em>L</em></td></tr>
+        <tr><td>Foot</td><td>0.0145 <em>M</em></td><td>0.475 <em>L</em></td>
+            <td>0.690 <em>L</em></td><td>0.690 <em>L</em></td></tr>
+        </tbody>
+      </table>
+      <p class="small">The three are not independent: <em>k</em><sub>prox</sub><sup>2</sup> =
+        <em>k</em><sub>CofG</sub><sup>2</sup> + <em>d</em><sup>2</sup>, which is the next slide.</p>
+    </div>
+  </div>
+  <aside class="notes">This is the bridge back to the last lecture. The same table that gave us centre-of-gravity fractions also gives radii of gyration, in the same form, for the same reason: expressed as fractions, one table covers everybody.
+
+Point at the three k columns and then at the identity underneath. A student who notices that the three columns are related by the parallel-axis theorem has just discovered that they only ever needed one of them. That is worth the thirty seconds.</aside>
+</section>
+
+<!-- 8 -->
+<section>
+  <div class="section-slide">
+    <h2>Why the centre of gravity</h2>
+    <p class="sub">Of all the axes an object could turn about, one of them is special
+      &mdash; and it is special for a reason you can compute.</p>
+  </div>
+  <aside class="notes">A one-line divider. The previous lecture established that a free body rotates about its centre of gravity. This one explains why, and the explanation is a sentence about moments of inertia rather than a rule to remember.</aside>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Anything thrown turns about its own centre of gravity</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">We established last lecture that an object in the air and free to
+        rotate turns about its centre of gravity. Now we can add the second half:</p>
+      <ul class="small">
+        <li>its resistance to turning is its <strong>moment of inertia</strong></li>
+        <li>which depends on its <strong>mass</strong> and on the
+          <strong>distribution</strong> of that mass</li>
+      </ul>
+      <p class="small">A bat and a racquet are nearly the same length and nothing like the
+        same object to swing, because one has most of its mass near the far end and the other
+        has a strung hoop and a light shaft.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Thrown, both of them tumble about the marked point and
+          nothing else &mdash; whatever shape they are, and however you throw them.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig big cap"><img src="assets/bat-racquet.png" alt="A baseball bat and a golf club, each with its centre of gravity marked by a red dot"></div>
+    </div>
+  </div>
+  <aside class="notes">A short bridge slide. The marked dot is the centre of gravity of each implement, and it is nowhere near the middle of either.
+
+Worth asking: which is harder to swing, and about what? About the hands, the bat, comfortably — its mass is out at the end. About its own centre of gravity, much less so. Same object, two axes, two very different answers, which is the slide after next.</aside>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Example problem &mdash; about the centre of gravity</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Same object: a 10 kg mass 0.25 m from point A, and a 10 kg mass
+        0.75 m from A. This time, find <em>I</em> about its <strong>centre of
+        gravity</strong>.</p>
+      <p class="small"><strong>First, locate the centre of gravity</strong> &mdash;
+        last lecture&rsquo;s sum:</p>
+      <div class="workblock">
+        <p class="eq">CofG = &Sigma;(<em>m</em> &middot; <em>r</em>) / &Sigma;<em>m</em></p>
+        <p class="eq">= [ (10)(0.25) + (10)(0.75) ] / (10 + 10)</p>
+        <p class="eq">= 10.0 / 20 = <strong>0.50 m</strong> from A</p>
+      </div>
+      <p class="small"><strong>Then the moment of inertia about that point</strong>, with both
+        masses now 0.25 m away:</p>
+      <div class="workblock">
+        <p class="eq"><em>I</em> = (10)(0.25)<sup>2</sup> + (10)(0.25)<sup>2</sup></p>
+        <p class="eq">= 0.625 + 0.625 = <strong>1.25 kg&middot;m<sup>2</sup></strong></p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/two-mass-figure.svg" alt="A bar with a 10 kg mass 0.25 m from point A and a second 10 kg mass 0.75 m from A, with the centre of gravity marked midway at 0.50 m"></div>
+      <p class="small">And the radius of gyration about the centre of gravity:</p>
+      <div class="workblock">
+        <p class="eq"><em>k</em> = &radic;(<em>I</em>/<em>m</em>)
+           = &radic;(1.25 / 20) = <strong>0.25 m</strong></p>
+      </div>
+      <div class="callout small">
+        <p style="margin-bottom:0">About A it was <strong>6.25</strong>. About the centre of
+          gravity it is <strong>1.25</strong> &mdash; a fifth of the resistance, from the same
+          object. Nothing moved but the axis.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Work it on the board at the pace of the slide. Two steps, and the first is last lecture's sum, which is the point: this lecture is built on top of that one, not beside it.
+
+The number to dwell on is the comparison in the callout. A fivefold difference, from choosing a different line to turn about. That is a large effect for something students often treat as bookkeeping, and it is the reason the next slide matters.</aside>
+</section>
+
+<!-- 11 -->
+<section id="w-minaxis">
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">So why does a free object turn about its centre of gravity?</p>
+  <div class="iplot wide" data-widget="minaxis"></div>
+  <aside class="notes">His slide says: calculating the moment of inertia about different points shows us that the smallest moment of inertia occurs at the centre of gravity. So let us calculate it about every point and look.
+
+Slide the axis along the bar. The moment of inertia traces a parabola, and the bottom of the parabola is at the centre of gravity. That is not a feature of these two masses — switch to the measured body and sweep the axis from the floor to the top of the head, and the same parabola appears with its minimum at this person's centre of gravity.
+
+The dashed green line is the reason. Move the axis a distance d away from the centre of gravity and the moment of inertia becomes I at the centre of gravity, plus m d squared. That is the parallel-axis theorem, and it is exact — the two lines sit on top of each other, not near each other. Because m and d squared are both positive, you can never do better than d equals zero. The centre of gravity is the cheapest axis there is, for any object, always.
+
+Which is why, with nothing to hold it anywhere else, that is where a free body turns.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">The parallel-axis theorem</p>
+  <div class="cols b top">
+    <div>
+      <div class="box accent">
+        <p class="eq big" style="margin:0"><em>I</em><sub>axis</sub> =
+          <em>I</em><sub>CofG</sub> + <em>m d</em><sup>2</sup></p>
+      </div>
+      <p class="small" style="margin-top:.7em">where <em>d</em> is the perpendicular distance
+        from the centre of gravity to the axis.</p>
+      <p class="small">It does three jobs at once:</p>
+      <ul class="small">
+        <li>it explains the parabola on the last slide</li>
+        <li>it says the minimum is always at <em>d</em> = 0</li>
+        <li>it is how a table of segment data covers every axis you might need</li>
+      </ul>
+      <p class="small">Check it on the worked example: 1.25 + (20)(0.50)<sup>2</sup>
+        = 1.25 + 5.00 = <strong>6.25</strong>, which is <em>I</em> about A.</p>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/anthro-fig.png" alt="A whole-body diagram marking the centre of gravity of each segment as a percentage of segment length, after Dempster"></div>
+      <p class="small">Winter&rsquo;s table gives <em>k</em> about the segment&rsquo;s own centre
+        of gravity. Everything else &mdash; about the hip, about the whole body &mdash; is that
+        number plus <em>m d</em><sup>2</sup>.</p>
+    </div>
+  </div>
+  <aside class="notes">This is the most useful single equation in the lecture, and students usually meet it as a formula to memorise. Give them the picture instead: moving the axis away from the centre of gravity is like adding a point mass m at the distance you moved it. The object's own internal arrangement contributes I at the centre of gravity; the offset contributes m d squared; they add.
+
+Do the check out loud. One point two five plus five is six point two five, which is exactly what we got the long way on the first example. Two routes, one answer — and the short route is the one that works when the object is a person with sixteen segments.</aside>
+</section>
+
+<!-- 13 -->
+<section>
+  <div class="section-slide">
+    <h2>A body that can change its own inertia</h2>
+    <p class="sub">Mass you are stuck with. Where you hold it, you are not.</p>
+  </div>
+  <aside class="notes">The turn in the lecture. Everything so far has been about rigid objects. A person is not one, and that is the interesting part.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Moment of inertia about different axes</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">An object can turn about many axes, so it has a moment of inertia
+        <strong>for each one</strong> &mdash; because the mass is spread out differently with
+        respect to each.</p>
+      <p class="small">For a standing person the three that matter are:</p>
+      <ul class="small">
+        <li><strong>mediolateral</strong> &mdash; through the hips, side to side.
+          A somersault turns about this one.</li>
+        <li><strong>anteroposterior</strong> &mdash; front to back. A cartwheel.</li>
+        <li><strong>longitudinal</strong> &mdash; head to toe. A twist.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">They are not close to each other. For a standing adult the
+          twist axis is roughly <strong>ten times easier</strong> to turn about than the other
+          two &mdash; which is why a twist is the cheapest rotation in the air and a somersault
+          the most expensive.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig big cap"><img src="assets/axes-body.png" alt="A standing skeleton with three axes drawn through it: up and down, front and back, left and right"></div>
+    </div>
+  </div>
+  <aside class="notes">Name the three axes with the three movements, because the names on their own do not stick and the movements do. Somersault, cartwheel, twist.
+
+The ratio in the callout is worth stating before the next slide proves it, so that they have a prediction to check. Ten to one is a big number and students will not believe it until they see the computation.</aside>
+</section>
+
+<!-- 15 -->
+<section id="w-posable3">
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">His slide 21, computed on a real body</p>
+  <div class="iplot wide" data-widget="posable3"></div>
+  <aside class="notes">This is the centre of the lecture, so take your time.
+
+The textbook figure on the next slide gives five positions and a published moment of inertia for each. Those numbers come from somewhere, but the figure does not say where, and a student has no way to check them.
+
+So: one real person. Sixty point seven kilograms, a hundred and seventy-nine centimetres, standing in a motion-capture lab. Take his measured joint positions, bend him at real joints with real rotations, put Winter's table over the result, and add up — the same sum we have been doing all lecture, done sixteen times and totalled.
+
+Press the presets in order. Standing: eleven point one about the somersault axis, and the grey band behind the bar is his published ten point five to thirteen. Arms out: the twist value goes from nought point eight nine to two point one four, which is his two point oh to two point five. Tuck: the somersault value falls from eleven to four, and his range is four to five.
+
+Four of the six comparisons land inside his published ranges. The two that fall low are low by about ten per cent, and they fall low in the direction they should: his ranges are for an adult male and this is a sixty-kilogram youth. Moment of inertia scales with mass.
+
+The violet spokes are each segment's own distance from the axis, and the dot size is its mass. Watch the tuck: the trunk dot never moves, because it is already on the axis and it is half the body. All the change comes from four limbs coming in.</aside>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">The published figure</p>
+  <div class="fig big cap"><img src="assets/positions.png" alt="Five drawn figures showing a standing person about an anteroposterior axis, a standing person about a mediolateral axis, a tucked person about a mediolateral axis, a standing person about a longitudinal axis, and a person with arms out about a longitudinal axis, each with a published range of moments of inertia"></div>
+  <p class="small">Five positions, three axes, and the point of the whole lecture in one row of
+    numbers: <strong>the same person, from 1.0 to 15.0 kg&middot;m<sup>2</sup></strong>,
+    with nothing changed but posture and the choice of axis.</p>
+  <aside class="notes">Now show them the source. Read the five captions left to right and then read the five numbers.
+
+Twelve to fifteen. Ten and a half to thirteen. Four to five. One to one point two. Two to two and a half.
+
+The spread is a factor of fifteen across one human being. Not fifteen people, not fifteen different objects — one person, who can move between these configurations in under a second.
+
+Then link back: the previous slide reproduced four of these five from first principles on a measured body, which means these numbers are not a table to be trusted, they are a calculation anyone can redo. That is worth saying explicitly, because most of what students meet in this course is presented as something to look up.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Manipulating the moment of inertia of the human body</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Humans and animals change the orientation of their limbs constantly, and
+        every change redistributes mass about every axis. The moment of inertia changes with
+        it &mdash; not as a side effect, but as the thing being controlled.</p>
+      <p class="small">Three examples, all on the next few slides:</p>
+      <ul class="small">
+        <li>a sprinter folds the knee so the leg is cheaper to swing forward</li>
+        <li>a diver tucks so the same angular momentum buys three somersaults
+          instead of one</li>
+        <li>a cat, with no angular momentum at all, still turns itself over</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Only one quantity in <em>M</em> = <em>I&alpha;</em> is under
+          voluntary control, and it is <em>I</em>. That is why so much technique is really
+          about limb position.</p>
+      </div>
+    </div>
+    <div>
+      <div class="imgrow">
+        <img src="assets/sprinter-photo.png" alt="A sprinter in mid-stride with the swing leg folded tightly at the knee">
+        <img src="assets/cat-righting.png" alt="A sequence of four photographs of a falling cat turning itself the right way up">
+      </div>
+      <p class="small">The cat starts with zero angular momentum and lands feet-down with zero
+        angular momentum. It never breaks the first law &mdash; it changes its moment of
+        inertia about one axis while turning about another, twice, in opposite senses.</p>
+    </div>
+  </div>
+  <aside class="notes">The cat is worth ninety seconds because it is the case students think must break the rule.
+
+It does not. Angular momentum is zero before the drop and zero at landing. What the cat does is bend in the middle, tuck the front legs in and extend the back ones, rotate the front half one way through a large angle while the back half rotates the other way through a small one — because the back half, with its legs out, has the larger moment of inertia. Then it swaps: front legs out, back legs in, and rotates the back half round. Net rotation of the whole animal, net angular momentum still zero.
+
+Divers do the same thing to add a twist to a somersault without having twisted on the board.</aside>
+</section>
+
+<!-- 18 -->
+<section id="w-swingleg">
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">A sprinter reduces the moment of inertia about the hip by flexing the knee</p>
+  <div class="iplot wide" data-widget="swingleg"></div>
+  <aside class="notes">His slide makes this claim and gives no number, so here is the number.
+
+A real running trial. At every frame the figure computes the moment of inertia of the whole swinging leg about that leg's own hip, two ways: as he actually ran, and with the knee straightened — the shank and foot swung out to lie along the thigh, with the hip and thigh left exactly where they are. That second one is the comparison the slide is really making, and it is drawn as the dashed ghost.
+
+Press run. The knee works between a hundred and one and a hundred and fifty-nine degrees across the stride, and at the tightest point of swing the real leg is twenty-six per cent easier to swing than the straight-leg version of itself. The thigh has not moved. The mass has not changed. The foot is simply closer to the hip, and r is squared.
+
+The second half of the point: this costs nothing. During swing the foot has nowhere to be. The leg only has to be long again at the instant it lands, and it is.
+
+Ask them where else this shows up. Answer: everywhere. A sprinter's heel comes almost to the buttock; a distance runner's barely leaves the ground, because they are not trying to turn the leg over nearly as fast and the extra knee flexion costs muscle work.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <div class="section-slide">
+    <h2>Newton&rsquo;s first law, angular</h2>
+    <p class="sub">Angular momentum, and the fact that nothing in the air can change it.</p>
+  </div>
+  <aside class="notes">Divider into the second half.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Angular momentum</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">In linear kinetics, an object in motion has <strong>momentum</strong>
+        &mdash; inertia in motion:</p>
+      <div class="workblock">
+        <p class="eq"><em>p</em> = <em>m v</em></p>
+        <p class="eq"><em>p</em> = <em>m</em>&thinsp;(inertia) &middot;
+          <em>v</em>&thinsp;(in motion)</p>
+      </div>
+      <p class="small"><strong>Angular momentum</strong> is the tendency of an object to remain
+        in angular motion. It is determined by the moment of inertia and the angular
+        velocity:</p>
+      <div class="workblock">
+        <p class="eq"><em>L</em> = <em>I &omega;</em></p>
+        <p class="eq"><em>L</em> = <em>I</em>&thinsp;(angular inertia) &middot;
+          <em>&omega;</em>&thinsp;(in angular motion)</p>
+      </div>
+      <p class="small">Units: kg&middot;m<sup>2</sup>/s.</p>
+    </div>
+    <div>
+      <div class="box accent">
+        <p class="small" style="margin:0"><strong>The first law, angular.</strong> A body
+          maintains a constant state of angular motion unless acted on by an external torque.</p>
+      </div>
+      <p class="small" style="margin-top:.7em">So in the air, with gravity the only force
+        acting, and gravity acting <em>at</em> the centre of gravity:</p>
+      <div class="box">
+        <p class="eq big" style="margin:0"><em>L</em><sub>initial</sub> =
+          <em>L</em><sub>final</sub></p>
+        <p class="eq" style="margin:.35em 0 0 0"><em>I</em><sub>i</sub><em>&omega;</em><sub>i</sub>
+          = <em>I</em><sub>f</sub><em>&omega;</em><sub>f</sub></p>
+      </div>
+      <p class="small">&mdash; the <strong>conservation of angular momentum</strong>, and the
+        reason a diver can decide in the air how many somersaults to do, but not whether to
+        do any.</p>
+      <div class="fig cap tight"><img src="assets/gym-sequence.png" alt="A sequence of photographs of a skier completing a backflip off a jump"></div>
+    </div>
+  </div>
+  <aside class="notes">The step that matters is the one in the middle of the right column, and it is usually skipped: WHY is there no torque in the air?
+
+Because the only force is gravity, and gravity acts at the centre of gravity. A force through the axis has no moment arm about that axis. d perpendicular is zero, so M is zero, so L cannot change. That is the whole argument, it is two lines, and students who have it can derive the conservation law instead of memorising it.
+
+The last sentence of the right column is the one to leave them with. In the air you control I. You do not control L. Everything a diver does between the board and the water is spending a budget that was fixed before her feet left.</aside>
+</section>
+
+<!-- 21 -->
+<section id="w-airborne">
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Is that actually true? A measured flight phase</p>
+  <div class="iplot wide" data-widget="airborne"></div>
+  <aside class="notes">The claim on the last slide rests on a premise — in the air, nothing but gravity — and that premise is measurable, so let us measure it rather than assert it again.
+
+This is the same vertical jump we used in Linear Kinetics II and in Work, Energy and Power. The body is built from markers alone: fourteen segments, Winter's table, no force plate. Differentiate the centre of mass twice and look at the shaded band, which is where the plate reads zero.
+
+Minus nine point seven one, plus or minus nought point four three metres per second squared, against gravity's minus nine point eight one. One per cent. The plate was not used to compute that curve — this is the markers independently confirming that for four hundred and fifty-one milliseconds nothing is touching him but the earth.
+
+So there is no torque about his centre of mass, so his angular momentum is frozen.
+
+Now press the second tab, and here is the part the textbook diagrams never show. His angular momentum in flight is nought point six kilogram metres squared per second, against four point four during the push. He jumped straight up. He bought almost no angular momentum, and conservation is a two-edged rule: it means he cannot lose it, and it also means he cannot get any. However hard he tucks, nought point six will not make a somersault. At the moment of inertia of a tight tuck, nought point six kilogram metres squared per second is two hundredths of a revolution a second — over the four hundred and fifty milliseconds he is in the air, that is about four degrees. Not a somersault. Four degrees.
+
+That is the honest version of conservation, and it is a better answer to "why can't I do a flip" than any amount of talk about core strength.</aside>
+</section>
+
+<!-- 22 -->
+<section id="w-skater">
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Conservation of angular momentum</p>
+  <div class="iplot wide" data-widget="skater"></div>
+  <aside class="notes">His example, and I have kept his numbers.
+
+A skater with her arms out has I of nought point three six and spins at twelve radians per second. She brings her arms in to nought point oh four. Angular momentum cannot change, so nought point three six times twelve equals nought point oh four times omega, and omega is a hundred and eight radians per second. That arithmetic is correct and it is on his slide.
+
+Now look at the figure, which converts it: a hundred and eight radians per second is seventeen revolutions a second. The fastest scratch spins ever filmed are around five. So something in the question is wrong, and it is not the algebra — it is the inputs. A nine-to-one change in moment of inertia is more than a human can produce. Real skaters manage about three and a half to one, which is the second preset, and that gives you the five revolutions a second a camera actually sees.
+
+I have left this in rather than quietly fixing it because noticing it is the skill. A student who converts the answer to revolutions per second and says "that cannot be right" has learned more than one who writes 108 and circles it.
+
+The third preset runs the same sum on this lecture's measured body, using the arms-out and arms-in twist values from the figure three slides back — which is the ratio a real person actually has.</aside>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Example problem &mdash; the figure skater</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">If a figure skater has an angular velocity of <strong>12 rad/s</strong>
+        with her arms extended (<em>I</em> = 0.36 kg&middot;m<sup>2</sup>), what does her angular
+        velocity change to when she brings her arms in
+        (<em>I</em> = 0.04 kg&middot;m<sup>2</sup>)?</p>
+      <p class="small"><strong>Write down the proper equation</strong></p>
+      <div class="workblock">
+        <p class="eq"><em>L</em><sub>initial</sub> = <em>L</em><sub>final</sub></p>
+        <p class="eq"><em>I</em><sub>i</sub><em>&omega;</em><sub>i</sub> =
+          <em>I</em><sub>f</sub><em>&omega;</em><sub>f</sub></p>
+      </div>
+      <p class="small"><strong>Write down given and unknown values</strong></p>
+      <div class="workblock">
+        <p class="eq"><em>I</em><sub>i</sub> = 0.36 kg&middot;m<sup>2</sup>&emsp;
+           <em>&omega;</em><sub>i</sub> = 12 rad/s</p>
+        <p class="eq"><em>I</em><sub>f</sub> = 0.04 kg&middot;m<sup>2</sup>&emsp;
+           <em>&omega;</em><sub>f</sub> = ?</p>
+      </div>
+      <p class="small"><strong>Substitute and solve</strong></p>
+      <div class="workblock">
+        <p class="eq">(0.36)(12) = (0.04)<em>&omega;</em><sub>f</sub></p>
+        <p class="eq"><em>&omega;</em><sub>f</sub> = <strong>108 rad/s</strong></p>
+      </div>
+    </div>
+    <div>
+      <div class="callout small">
+        <p><strong>Check the answer against the world.</strong> 108 rad/s is
+          <strong>17.2 revolutions a second</strong>. The fastest scratch spins on film are
+          about <strong>5</strong>.</p>
+        <p style="margin-bottom:0">The algebra is right. The inputs are not: 0.36 &rarr; 0.04
+          is a <strong>9&thinsp;:&thinsp;1</strong> change in moment of inertia, and a person
+          cannot do that. Measured skaters manage roughly 3.5&thinsp;:&thinsp;1 &mdash; which,
+          from a realistic 9 rad/s start, lands near the 5 rev/s you can see.</p>
+      </div>
+      <p class="small">Converting an answer into something you can picture is not an optional
+        last step. It is how you find out whether you believe it.</p>
+      <div class="box">
+        <p class="small" style="margin:0"><strong>rad/s &rarr; rev/s</strong>: divide by
+          2&pi; &asymp; 6.28. Worth doing every single time an angular velocity comes out of
+          a problem.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Work the example straight, then stop at the callout and do the conversion on the board. Divide by two pi. Seventeen revolutions a second.
+
+Ask them whether they have ever seen that. Nobody has. Then ask where the error is, and let them find that it is not in any line of the algebra — every line is correct — it is in the two numbers the question starts with.
+
+This is the most transferable thing in the lecture. Dimensional sanity is cheap and it catches a large fraction of real mistakes. Tell them it is worth marks on the exam to write "which is 17 rev/s, so one of the given values must be unrealistic" under a correct calculation.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Example problem &mdash; the diver, with the radius of gyration</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">A <strong>60 kg</strong> diver leaves the board with a radius of gyration
+        of <strong>0.5 m</strong> and an angular velocity of <strong>4 rad/s</strong>. What is
+        his angular velocity in a tuck, with a radius of gyration of
+        <strong>0.25 m</strong>?</p>
+      <p class="small"><strong>Equations</strong></p>
+      <div class="workblock">
+        <p class="eq"><em>I</em><sub>i</sub><em>&omega;</em><sub>i</sub> =
+          <em>I</em><sub>f</sub><em>&omega;</em><sub>f</sub>
+          &emsp;&emsp; <em>I</em> = <em>m k</em><sup>2</sup></p>
+      </div>
+      <p class="small"><strong>Moments of inertia in the two positions</strong></p>
+      <div class="workblock">
+        <p class="eq"><em>I</em><sub>1</sub> = <em>m k</em><sub>1</sub><sup>2</sup>
+          = (60)(0.5)<sup>2</sup> = <strong>15 kg&middot;m<sup>2</sup></strong></p>
+        <p class="eq"><em>I</em><sub>2</sub> = <em>m k</em><sub>2</sub><sup>2</sup>
+          = (60)(0.25)<sup>2</sup> = <strong>3.75 kg&middot;m<sup>2</sup></strong></p>
+      </div>
+      <p class="small"><strong>Then conservation</strong></p>
+      <div class="workblock">
+        <p class="eq">(15)(4) = (3.75)<em>&omega;</em><sub>f</sub></p>
+        <p class="eq"><em>&omega;</em><sub>f</sub> = <strong>16 rad/s</strong></p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/diver-positions.png" alt="Two drawings of a diver, extended in position one and tucked in position two"></div>
+      <div class="callout small">
+        <p><strong>Halve <em>k</em> and you quarter <em>I</em></strong>, because <em>k</em> is
+          squared &mdash; so the angular velocity goes up by four, not two.</p>
+        <p style="margin-bottom:0">16 rad/s is 2.5 rev/s, which is what a tucked diver
+          actually does. This one survives the sanity check.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Note how this problem is built: it does not hand you the moments of inertia, it hands you radii of gyration and makes you build them. That is the realistic version, because a radius of gyration is what a table gives you and a moment of inertia is not.
+
+The callout is the arithmetic point: halving k quarters I, so omega quadruples. Students very often expect doubling.
+
+And do the sanity conversion again, because the answer passes this time. Sixteen radians a second is two and a half revolutions a second, which over a one-and-a-half-second dive is nearly four somersaults — about right for a tucked three-and-a-half. Two problems, same check, one passes and one fails. That contrast is the lesson.</aside>
+</section>
+
+<!-- 25 -->
+<section id="w-divespin">
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">How many somersaults fit in the time you have</p>
+  <div class="iplot wide" data-widget="divespin"></div>
+  <aside class="notes">This figure puts the two fixed quantities and the one free quantity side by side, which is what the exam questions are really testing.
+
+Fixed at take-off: how much angular momentum she has, and how long she will be in the air. Both decided on the board, neither changeable afterwards.
+
+Free in the air: how tightly she holds.
+
+The Tutor's numbers are the two chips. Thirty-nine kilogram metres squared per second, one point two seconds of flight. In the layout, moment of inertia seven point four five, and she turns through exactly one revolution. In a tuck, two point four seven five, and she turns through three point oh one. Same push, same hang time, three times the rotation.
+
+Slide between them and watch the ladder underneath fill up — a half, a single, a one and a half, a double. That ladder is the actual dive list, and the slider is the actual decision. A diver who misjudges her tuck by a little lands short of the entry, which is the thing judges score.
+
+Then move the time slider and notice how weak a lever it is compared with the tuck. Getting ten per cent more height is extremely hard; tightening a tuck by ten per cent is a matter of attention.</aside>
+</section>
+
+<!-- 26 -->
+<section id="w-gymtable">
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">The whole-body sum, segment by segment</p>
+  <div class="iplot wide" data-widget="gymtable"></div>
+  <aside class="notes">This is the Tutor's Moment of Inertia question eleven and twelve, which several of you will meet as homework, done in front of you.
+
+A fifty-kilogram gymnast as eight segments. Each row is the parallel-axis theorem: the segment's own moment of inertia about its own centre of gravity, plus its mass times its distance from the body's centre of gravity, squared. Blue is the first part, orange is the second.
+
+Look at how little blue there is. The segments' own moments of inertia total one point two of the eight point seven. Eighty-six per cent of a whole body's resistance to somersaulting is the transfer term — it is not about how the segments are shaped, it is about how far out they are.
+
+Switch to the tuck and watch which rows change: head, hands, thighs, legs, feet. The trunk row does not move at all, because the trunk is already at the centre of gravity, and the trunk is half the body's mass. That is why a tuck can only ever take you so far — half of you cannot be tucked.
+
+Eight point six eight to three point seven, a factor of two point three five. Compare with the measured body from earlier: eleven point one to four point two, a factor of two point six. Two different people, two different methods, the same mechanism and nearly the same answer.</aside>
+</section>
+
+<!-- 27 -->
+<section>
+  <div class="section-slide">
+    <h2>Newton&rsquo;s second law, angular</h2>
+    <p class="sub">What it takes to change any of this &mdash; and where in a movement
+      you have to spend it.</p>
+  </div>
+  <aside class="notes">Last section. Conservation told us what cannot change; this tells us how to change it, and when.</aside>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Newton&rsquo;s second law: the law of acceleration</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Linear.</strong> A force applied to a body causes an acceleration
+        of that body, of a magnitude proportional to the force, in the direction of the force,
+        and inversely proportional to the body&rsquo;s mass.</p>
+      <div class="box accent">
+        <p class="eq big" style="margin:0"><em>F</em> = <em>m a</em></p>
+      </div>
+      <p class="small" style="margin-top:.8em"><strong>Angular.</strong> A torque applied to a
+        body causes an angular acceleration of that body, of a magnitude proportional to the
+        torque, in the direction of the torque, and inversely proportional to the body&rsquo;s
+        <em>moment of inertia</em>.</p>
+      <div class="box accent">
+        <p class="eq big" style="margin:0"><em>&tau;</em> = <em>F d</em><sub>&perp;</sub>
+          &emsp;&emsp; <em>M</em> = <em>I &alpha;</em></p>
+      </div>
+      <p class="small" style="margin-top:.7em">The greater the inertia of an object, the more
+        force &mdash; or torque &mdash; is needed to make it accelerate.</p>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/torque-plate.png" alt="A rectangular plate with a force applied at a perpendicular distance from its centre, producing an angular acceleration"></div>
+      <p class="small">If a net external torque acts at a distance from the axis of rotation,
+        the object accelerates angularly <strong>in the direction of that torque</strong>, in
+        proportion to it, and in inverse proportion to its moment of inertia.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Two ways to get more angular acceleration out of the same
+          muscle: push <strong>harder</strong>, or push <strong>further from the axis</strong>.
+          The second is usually cheaper, and it is most of what equipment design is for.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Read the two sentences in parallel. They are the same sentence. If a student can state the linear one they can produce the angular one by substituting three nouns, and that is worth demonstrating out loud rather than asserting.
+
+The callout is the practical consequence and it links back to the torque lecture. A longer wrench, a longer oar, a longer club: all of them are buying d perpendicular rather than F.</aside>
+</section>
+
+<!-- 29 -->
+<section id="w-angimp">
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Angular impulse: a torque applied for a certain amount of time</p>
+  <div class="iplot wide" data-widget="angimp"></div>
+  <aside class="notes">Multiply both sides of M equals I alpha by time, and alpha times t is the change in omega, so M t is the change in I omega — the change in angular momentum. That is the angular impulse–momentum relationship, and it is the same sentence as force, time and momentum from two lectures ago.
+
+His example is loaded on the chip: a diver exerting twenty newton metres for one point four seconds with a moment of inertia of nine. Twenty times one point four is twenty-eight newton metre seconds of angular impulse, divided by nine is three point one one radians per second, which is his slide 35.
+
+Move the sliders and watch the rectangle. Its area is the angular impulse, and you can buy the same area with a big torque briefly or a small one for a long time — which is exactly the trade-off a diver makes on a springboard, or a gymnast makes on a vault.
+
+Then say the quiet part. Three point one one radians per second is half a revolution a second. Twenty newton metres is not a small torque and one point four seconds is a long time on a board, and that is all it buys. Everything she does in the air is spending that, and the tuck is how she spends it well.</aside>
+</section>
+
+<!-- 30 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">The angular impulse&ndash;momentum relationship</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">A change in the angular momentum of a system depends on:</p>
+      <ol class="small">
+        <li>the <strong>magnitude</strong> of the external torques, and</li>
+        <li>the <strong>time</strong> over which those torques act.</li>
+      </ol>
+      <p class="small">Therefore an angular impulse causes a change in angular momentum:</p>
+      <div class="box accent">
+        <p class="eq big" style="margin:0"><em>M t</em> = (<em>I&omega;</em>)<sub>f</sub>
+          &minus; (<em>I&omega;</em>)<sub>i</sub></p>
+        <p class="eq" style="margin:.3em 0 0 0"><em>M t</em> = &Delta;<em>L</em></p>
+      </div>
+      <p class="small" style="margin-top:.7em">SI units: <strong>N&middot;m&middot;s</strong>.
+        Angular impulse is a vector &mdash; it has a sense, and torques in opposite senses
+        subtract.</p>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/impulse-boxes.png" alt="A chain of equations showing angular impulse equals M times t, equals I alpha times t, equals I omega, equals the change in angular momentum"></div>
+      <div class="imgrow"><img src="assets/gym-silhouettes.png" alt="Silhouettes of a gymnast in a handstand, a handspring and a balance">
+        <img src="assets/diver-pool.png" alt="A diver standing with arms out at the end of a springboard"></div>
+      <p class="small">Each line is one substitution. Read it downward and it is a derivation,
+        not a list to memorise.</p>
+    </div>
+  </div>
+  <aside class="notes">Walk the chain on the right line by line, because it is genuinely a derivation and students usually treat it as four unrelated formulas.
+
+J equals M t, by definition. M is I alpha, so J is I alpha t. Alpha t is the change in omega, so J is I omega. And I omega is L. Four lines, one idea.
+
+The vector note matters for the next slide and for the final: in a real movement several torques act at once and they can cancel. A gymnast on a beam is applying torques constantly and her angular momentum is roughly zero, because they cancel.</aside>
+</section>
+
+<!-- 31 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">Example problem &mdash; the Olympic diver</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">An Olympic diver exerts a torque of <strong>20 N&middot;m</strong> with
+        his body in full extension (<em>I</em> = 9 kg&middot;m<sup>2</sup>) for
+        <strong>1.4 s</strong> before leaving the platform. What is his angular velocity at the
+        moment he leaves?</p>
+      <p class="small"><strong>Given</strong></p>
+      <div class="workblock">
+        <p class="eq"><em>M</em> = 20 N&middot;m&emsp;<em>t</em> = 1.4 s&emsp;
+          <em>I</em> = 9 kg&middot;m<sup>2</sup></p>
+      </div>
+      <p class="small"><strong>Solution</strong></p>
+      <div class="workblock">
+        <p class="eq"><em>M t</em> = (<em>I&omega;</em>)<sub>f</sub> &minus;
+          (<em>I&omega;</em>)<sub>i</sub></p>
+        <p class="eq">(20)(1.4) = (9)<em>&omega;</em> &minus; (9)(0)</p>
+        <p class="eq">28 = 9<em>&omega;</em></p>
+        <p class="eq"><em>&omega;</em> = <strong>3.11 rad/s</strong>, in the direction the
+          torque was applied</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/dive-figure.png" alt="A sequence of drawings of a diver through a somersault, above a plot of angular momentum staying constant while moment of inertia falls and angular velocity rises"></div>
+      <p class="small">The published figure, and the whole lecture in one picture: through the
+        dive <strong><em>L</em> is a flat line</strong> while <em>I</em> and <em>&omega;</em>
+        cross over each other.</p>
+    </div>
+  </div>
+  <aside class="notes">Work the problem, then spend the remaining time on the figure, because it is the best summary of the lecture that exists and it is worth reading properly.
+
+Three curves against frame number. The flat one is angular momentum — it was set on the platform and it does not move. The one that falls and comes back is the moment of inertia, as he tucks and opens. The one that rises and falls is the angular velocity. They are mirror images because their product has to stay constant.
+
+Point at the crossing. That is the tuck. Everything a diver is trained to do happens in that window, and all of it is managing I so that omega integrates to the right number of somersaults by the time he reaches the water.
+
+And note that the figure ends where he enters: at the moment the water touches him, an external torque exists again, and L stops being conserved.</aside>
+</section>
+
+<!-- 32 -->
+<section>
+  <h2>Angular Kinetics 3</h2>
+  <p class="subhead">What to take away</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li><strong><em>I</em> = &Sigma; <em>m r</em><sup>2</sup></strong> &mdash; mass counts
+          once, distance counts twice. Distribution beats mass.</li>
+        <li><strong><em>I</em> = <em>m k</em><sup>2</sup></strong> &mdash; the radius of
+          gyration is the distance at which all the mass would give the same <em>I</em>, and
+          it is how segment tables are written.</li>
+        <li><strong><em>I</em><sub>axis</sub> = <em>I</em><sub>CofG</sub> +
+          <em>m d</em><sup>2</sup></strong> &mdash; which is why the centre of gravity is
+          always the cheapest axis, and why a free body turns about it.</li>
+        <li><strong>One <em>I</em> per axis per posture.</strong> For one person, 1.0 to
+          15.0 kg&middot;m<sup>2</sup>.</li>
+      </ul>
+    </div>
+    <div>
+      <ul class="small">
+        <li><strong><em>L</em> = <em>I&omega;</em></strong>, and in the air <em>L</em> is
+          frozen &mdash; gravity acts at the centre of gravity, so it has no moment arm about
+          it. Measured: &minus;9.71 m/s<sup>2</sup> and no torque.</li>
+        <li><strong><em>M</em> = <em>I&alpha;</em></strong>, and
+          <strong><em>Mt</em> = &Delta;<em>L</em></strong> &mdash; angular momentum is bought
+          on the ground and spent in the air.</li>
+        <li><strong>Check your answers against the world.</strong> 108 rad/s is 17 rev/s, and
+          nobody spins that fast.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">The through-line: of everything in <em>M</em> =
+          <em>I&alpha;</em> and <em>L</em> = <em>I&omega;</em>, the only term a person can
+          change mid-movement is <strong><em>I</em></strong>. That is why technique looks the
+          way it does.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Close on the callout. If they remember one sentence from this lecture, it should be that one — because it converts a page of equations into a way of looking at any sporting movement.
+
+Flag the next lecture: with moments of inertia in hand we can finally do static analysis, where the sum of torques is zero, and then dynamic analysis, where it is not.</aside>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js?v=20261008a"></script>
+<script src="mobile.js?v=20261008a"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="ak18data.js?v=20261008a"></script>
+<script src="deck-core.js?v=20261008a"></script>
+<script src="ak18.js?v=20261008a"></script>
+<script src="deck-tools.js?v=20261008a"></script>
+<script src="fit.js?v=20261008a"></script>
+</body>
+</html>
