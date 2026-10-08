@@ -360,6 +360,35 @@ window.EPHE341_LECTURES = [
            ['three problems from the Tutor', 'w-tutorq'],
            ['the same method on a measured stance', 'w-achilles']] },
 
+  { n: '20', title: 'Dynamic analysis',
+    path: 'lectures/20-dynamic-analysis',
+    blurb: 'Last week every equation had zero on the right-hand side; this week the zeros ' +
+           'become ma and I\u03b1 and nothing else changes \u2014 not the free ' +
+           'body diagram, not the force table, not the sign conventions. Forward dynamics ' +
+           'against inverse, and why only the inverse one can be done to a living person; ' +
+           'why three equations and three unknowns force you to start at the segment ' +
+           'touching the ground and work upward; his own worked example from slides 30 to ' +
+           '41, every line of it reproducing to the digit, with his stance Example 2 beside ' +
+           'it; the one moment arm on those slides that his own foot inertia contradicts by ' +
+           'a factor of four; and then the whole method run on a measured stride and marked ' +
+           'against the joint moments the people who recorded it published \u2014 same shape, ' +
+           'same timing, 15% high at the ankle. And the answer to last week\u2019s open ' +
+           'question: turning every ma and I\u03b1 term off moves the ' +
+           'ankle\u2019s push-off peak by 0.06%, so the gap static analysis left behind was ' +
+           'never the missing dynamics.',
+    slides: 31, widgets: 10, updated: '2026-10-08',
+    handout: 'handout.pdf',
+    live: [['the right-hand side', 'w-newton'],
+           ['his four forward-dynamics examples', 'w-fwd'],
+           ['why you have to start at the foot', 'w-chain'],
+           ['the foot, cut free, on a real stride', 'w-fbd20'],
+           ['the handover at the ankle', 'w-uphill'],
+           ['his worked example, every line', 'w-swing'],
+           ['the moment arm that cannot be right', 'w-shortarm'],
+           ['the method, against a published answer', 'w-walk20'],
+           ['so how much of this is dynamics?', 'w-dynstat'],
+           ['twelve problems from the Tutor', 'w-tutorq20']] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
@@ -369,7 +398,6 @@ window.EPHE341_LECTURES = [
      match the numbers in the source .pptx filenames. Change them here if you
      would rather they did. */
   { n: '13', title: 'Virtual Muscle Lab' },
-  { n: '20', title: 'Dynamic analysis' },
   { n: '22', title: 'Projectile motion' },
   { n: '23', title: 'Signals and LabVIEW' }
 ];
