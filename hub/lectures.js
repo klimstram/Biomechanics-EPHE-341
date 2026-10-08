@@ -23,6 +23,26 @@
    ============================================================ */
 window.EPHE341_LECTURES = [
 
+  { n: '1a', title: 'Introduction and Review',
+    path: 'lectures/01a-intro-and-review',
+    blurb: 'What the subject is, how the course runs, and the mathematics the rest of ' +
+           'the term assumes you have — every identity, law and worked example on ' +
+           'his slides evaluated rather than asserted. Two of them do not hold, and both ' +
+           'are shown by drawing the answer rather than by correcting the arithmetic. ' +
+           'The anatomical planes sit on a measured walking stride, and his ' +
+           'lecture-topic list is a map of the eighteen decks that now exist.',
+    slides: 29, widgets: 9, updated: '2026-10-08',
+    handout: 'handout.pdf',
+    live: [['the whole course, as a map', 'w-topics'],
+           ['his eleven steps, run once', 'w-method'],
+           ['twenty-four identities, checked', 'w-exponents'],
+           ['three equations, with the answer drawn', 'w-solver'],
+           ['where the three graphs come from', 'w-unitcircle'],
+           ['one triangle, all three relations', 'w-triangle'],
+           ['his two worked examples, to scale', 'w-trigex'],
+           ['the planes, on somebody walking', 'w-axes3'],
+           ['twenty-nine questions from the Tutor', 'w-tutorq1a']] },
+
   { n: '2', title: 'Sensors and data acquisition',
     path: 'lectures/02-sensors-and-data-acquisition',
     blurb: 'How a physical quantity becomes a number on a disk — the sensor, the calibration, ' +
@@ -390,7 +410,6 @@ window.EPHE341_LECTURES = [
            ['twelve problems from the Tutor', 'w-tutorq20']] },
 
   /* ---- still PowerPoint ---- */
-  { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
   /* Work, energy and power was '8' here, clashing with projectile motion, and
      is now lecture 9 above. Everything from angular kinematics on has shifted

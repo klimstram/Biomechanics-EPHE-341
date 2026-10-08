@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fdfdfc">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Introduction and Review</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css?v=20261008e">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'light';
+  try { t = localStorage.getItem('ephe341-theme') || 'light'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <p class="course">Biomechanics (EPHE 341)</p>
+    <h1>Introduction and Review</h1>
+    <div class="rule"></div>
+    <p class="sub">What this subject is, how this course will do it, and the
+      mathematics the rest of the term is going to assume you have.</p>
+  </div>
+  <aside class="notes">First class. Two jobs: make them want to be here, and find out what they remember.
+
+The second half of this lecture is a review, and it is worth saying explicitly that it is not filler. Every term, the students who struggle are not the ones who find mechanics hard — they are the ones who cannot rearrange an equation under time pressure. Say that out loud now and the problem sets stop looking optional.
+
+And tell them the last slide of this deck is a map of the whole course with every lecture attached, so they can see where any week sits.</aside>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Introduction</h2>
+  <p class="subhead">What is biomechanics?</p>
+  <div class="cols a top">
+    <div>
+      <div class="box accent">
+        <p class="small" style="margin:0">The study of the effects of
+          <strong>internal and external forces</strong> on the human body in
+          movement and at rest.</p>
+      </div>
+      <p class="small"><strong>Bio</strong> &mdash; any biological system.</p>
+      <p class="small"><strong>Mechanics</strong> &mdash; the branch of the physical
+        sciences concerned with the state of rest or motion of bodies subjected to
+        the action of forces. Rigid body, fluid, deformable body.</p>
+    </div>
+    <div>
+      <p class="small">The word to notice is <strong>internal</strong>. External
+        forces can be measured &mdash; you stand on a plate and read the number.
+        Internal ones cannot, and they are the ones that decide whether a tendon
+        tears or a hip replacement lasts.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Almost everything this field knows about what
+          the inside of a body is doing is <em>calculated</em>, not measured. The
+          last three lectures of this course are how that calculation works.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Define it, then immediately say why it is not obvious.
+
+The internal/external split is the thing to plant on day one, because the entire arc of the course runs along it: measure the outside, compute the inside. Lectures 19 and 20 are where that gets cashed out, and it helps enormously if they have been waiting for it since week one.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Introduction</h2>
+  <p class="subhead">Qualitative and quantitative</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Qualitative</strong> &mdash; describing movement
+        without numbers. A coach watching a stride, a clinician watching a gait.
+        That is EPHE 201.</p>
+      <p class="small"><strong>Quantitative</strong> &mdash; putting numbers on it.
+        That is this course.</p>
+    </div>
+    <div>
+      <p class="small">Neither is the better one. A clinician has fifteen minutes and
+        needs a judgement; a researcher testing a new rehabilitation protocol needs a
+        measurement. Each answers questions the other cannot.</p>
+      <p class="small">What the quantitative approach buys is the ability to be
+        <strong>wrong in a checkable way</strong> &mdash; which is the whole reason
+        this course spends so much time on units and sanity checks.</p>
+    </div>
+  </div>
+  <aside class="notes">His slide 5 and its speaker note. The note is good and worth reading almost verbatim: both approaches are valuable, with different ranges of application and limitations.
+
+Add the bit his slide does not say: the reason to put numbers on something is that numbers can be checked. A qualitative judgement that is wrong is hard to catch; a number that is wrong fails a units check or a sanity check. That framing makes the rest of the lecture feel like a toolkit rather than a hurdle.</aside>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Introduction</h2>
+  <p class="subhead">The four words you will hear all term</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Statics</strong> &mdash; bodies at rest, or moving at
+        constant velocity, with balanced forces acting. <em>Lecture 19.</em></p>
+      <p class="small"><strong>Dynamics</strong> &mdash; the relationship between
+        motion and the forces that cause it. <em>Lecture 20.</em></p>
+    </div>
+    <div>
+      <p class="small"><strong>Kinematics</strong> &mdash; the spatial and temporal
+        components of motion: position, velocity, acceleration, with no regard to
+        force. The <em>description</em> of movement.</p>
+      <p class="small"><strong>Kinetics</strong> &mdash; bodies in motion with
+        respect to mass, force and energy. The <em>causes</em> of movement.</p>
+    </div>
+  </div>
+  <div class="box">
+    <p class="small" style="margin:0"><em>Kinesis</em>, from the Ancient Greek, is
+      motion &mdash; and <em>kineo</em> is to put in motion. Kinematics describes;
+      kinetics explains. Half the course is each.</p>
+  </div>
+  <aside class="notes">His slides 6, 7 and 8 in one.
+
+The kinematics/kinetics distinction is the one they will get wrong on the midterm, so land it with an example rather than a definition: a video of a jump is kinematics; the force plate under it is kinetics. Same jump, two measurements, and you need both to say anything useful.
+
+Statics and dynamics are the other axis, and it is worth saying that constant velocity counts as statics. That surprises people.</aside>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Introduction</h2>
+  <p class="subhead">What it is for</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">To measure or predict internal and external forces, in:</p>
+      <ul class="small">
+        <li><strong>occupational and industrial</strong> settings &mdash; ergonomics,
+          and designing a task so it injures fewer people;</li>
+        <li><strong>clinical</strong> settings &mdash; assessing whether a
+          rehabilitation method works;</li>
+        <li><strong>sport</strong> &mdash; assessing a technique, and finding out
+          whether a change to it helped.</li>
+      </ul>
+    </div>
+    <div>
+      <p class="small">And the measurement tools themselves are part of the subject:
+        force plates, three-dimensional motion capture, electromyography,
+        accelerometers. You will use most of them.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Nearly every figure in this course and the
+          nineteen that follow it is driven by a <strong>real recording</strong>
+          rather than a drawing. Where one is a model rather than a measurement,
+          the figure says so on its face.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">His slides 9 and 10, plus a promise worth making on day one.
+
+The promise about real data matters: students arrive expecting textbook diagrams of frictionless blocks. Tell them that the walking stride they will see in week two is a real person, that the jump is a real jump, and that when something is simulated the figure will say so. It changes how they read everything afterwards.</aside>
+</section>
+
+<!-- 6 -->
+<section id="w-topics">
+  <h2>Introduction</h2>
+  <p class="subhead">The whole course, on one slide</p>
+  <div class="iplot wide" data-widget="topics"></div>
+  <aside class="notes">His slide 11 was a list of promises. It is now a list of links.
+
+Spend a minute on the shape of it rather than the contents: the left column is mechanics, built in order, each lecture using the one before; the right column is the measurement tools, which are interleaved so that you always have something to measure with by the time you need to measure something.
+
+Tell them these are all live, all on their phones, and all have a handout. The ones with sliders are the ones to play with the night before a test.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <div class="section-slide">
+    <h2>How this course works</h2>
+    <p class="sub">A text you do not have to buy, problem sets that are not
+      graded, and a tutor that is open all night.</p>
+  </div>
+  <aside class="notes">Divider into the admin. Keep it short and make the one promise that matters: everything on the tests comes from the lectures and the problem sets.</aside>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>How This Course Works</h2>
+  <p class="subhead">The text, the problem sets, the Tutor</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>The text is optional.</strong> All test content comes
+        from the lecture notes. <em>Biomechanics of Sport and Exercise</em>
+        (McGinnis) supplements them and is good on qualitative analysis, which this
+        course does not cover in depth.</p>
+      <p class="small"><strong>The problem sets are not graded</strong> &mdash; and
+        the test material is based on them. Those two sentences are not in tension:
+        the problem sets are the practice, the test is the performance.</p>
+    </div>
+    <div>
+      <p class="small"><strong>The Biomechanics Tutor</strong> works by leading
+        questions: it will not just mark your final answer, it walks you through the
+        step you got stuck on.</p>
+      <div class="box accent">
+        <p class="small" style="margin:0">One warning you will be glad of. The Tutor
+          grades your number against an exact range with <strong>no tolerance</strong>,
+          so enter the rounded value it is expecting, not every digit your calculator
+          produced.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">His slides 12, 14 and 15.
+
+The no-tolerance warning is real and worth giving on day one, because the first time a student enters 12.806 and is told they are wrong, they conclude the Tutor is broken and stop using it. It is not broken; it is strict. Tell them to enter what the worked solution shows.
+
+There is one Tutor question in the Basic Math section whose accepted answer is genuinely wrong, and it comes up later in this deck.</aside>
+</section>
+
+<!-- 9 -->
+<section id="w-method">
+  <h2>How This Course Works</h2>
+  <p class="subhead">How to solve a problem</p>
+  <div class="iplot wide" data-widget="method"></div>
+  <aside class="notes">His slide 16 is eleven numbered steps. Read as a list they sound like the kind of advice nobody follows. Run them once on a real problem and two of them turn out to be doing all the work.
+
+Step 6 is where the problem is actually solved: of the three kinematics equations, two need a time that was never given. There is no decision to agonise over once you have written the givens down, which is the whole reason step 5 exists.
+
+Step 10 is the one to insist on. Every term, marks are lost to answers that could not possibly be right — negative masses, velocities faster than light, triangle sides longer than the triangle. Thirty seconds of "does this make sense" would have caught all of them. There is an example in this very deck, on a slide of mine, later.</aside>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>How This Course Works</h2>
+  <p class="subhead">Before next class</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Most of what follows should have been learned in high-school
+        mathematics. It is <strong>crucial</strong>, and it is your responsibility to
+        be able to manipulate numbers and equations confidently.</p>
+      <ul class="small">
+        <li>basic maths</li>
+        <li>trigonometry</li>
+        <li>basic functional anatomy</li>
+        <li>linear kinematics</li>
+      </ul>
+    </div>
+    <div>
+      <p class="small"><strong>Homework.</strong> Review the rest of this deck, work
+        the problem sets for basic maths and trigonometry, and review the linear
+        kinematics lecture.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">The students who find this course hard are almost
+          never the ones who find <em>mechanics</em> hard. They are the ones who
+          cannot rearrange an equation at speed. That is fixable, and now is when
+          it is cheap to fix.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">His slides 17 and 18.
+
+Say the callout out loud; it is the single most useful sentence in the lecture. Mechanics is conceptually easy and algebraically unforgiving. A student who is fluent with exponents and trig will find this course satisfying; one who is not will find it miserable for reasons that have nothing to do with biomechanics.
+
+The rest of this deck is that fluency, and it is all checkable.</aside>
+</section>
+
+<!-- 11 -->
+<section>
+  <div class="section-slide">
+    <h2>The mathematics</h2>
+    <p class="sub">Real numbers, exponents, and three kinds of equation.
+      Nothing here is new; all of it has to be fast.</p>
+  </div>
+  <aside class="notes">Divider. The word to use is fluency, not difficulty.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Basic Math</h2>
+  <p class="subhead">Three properties, and everything else</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Commutative</strong> &mdash; order does not matter.</p>
+      <p class="eq">a + b = b + a&nbsp;&nbsp;&nbsp;a &times; b = b &times; a</p>
+      <p class="small"><strong>Associative</strong> &mdash; grouping does not matter.</p>
+      <p class="eq">(a + b) + c = a + (b + c)</p>
+    </div>
+    <div>
+      <p class="small"><strong>Distributive</strong> &mdash; a multiplier outside a
+        bracket reaches every term inside it.</p>
+      <p class="eq">a(b + c) = a&middot;b + a&middot;c</p>
+      <div class="box accent">
+        <p class="small" style="margin:0">Every one of the sixteen theorems on his
+          slide 24, and every step of every rearrangement you will do this term, is
+          one of these three applied once.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">His slides 20 to 23.
+
+Resist the urge to rush. The distributive property is the one that breaks: students multiply the first term in the bracket and forget the second, and it costs them in every force-resolution problem for the rest of the term.
+
+Note that commutativity is where subtraction and division are NOT included, which is worth saying because a − b ≠ b − a is the source of half the sign errors in the course.</aside>
+</section>
+
+<!-- 13 -->
+<section id="w-exponents">
+  <h2>Basic Math</h2>
+  <p class="subhead">Twenty-four identities, all of them true</p>
+  <div class="iplot wide" data-widget="exponents"></div>
+  <aside class="notes">His slides 24 to 27, checked rather than asserted.
+
+Two tabs. The sixteen theorems are the ones built out of the three properties; the eight laws of exponents are the ones they will actually use, because a moment of inertia is kg·m² and a radius of gyration is a square root, and you cannot do lecture 18 without law 5.
+
+The sliders are the point of the figure. An identity you have watched hold for eight different bases is one you will believe at two in the morning. Change the base to 7 and the powers to 4 and 2 and watch every row stay true.
+
+And say plainly: all twenty-four are right. His review content is sound. There are exactly two errors in fifty-nine slides and they are both coming up.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Basic Math</h2>
+  <p class="subhead">Three kinds of equation</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>One unknown.</strong> Isolate it. Whatever you do to
+        one side you do to the other.</p>
+      <p class="small"><strong>Two unknowns.</strong> You need two equations. Isolate
+        a variable in one, substitute it into the other, solve, then back-substitute.</p>
+      <p class="small"><strong>A quadratic.</strong> Anything of the form
+        <em>ax</em>&sup2; + <em>bx</em> + <em>c</em> = 0, which has
+        <strong>two</strong> answers.</p>
+    </div>
+    <div>
+      <p class="eq">x = (&minus;b &plusmn; &radic;(b&sup2; &minus; 4ac)) / 2a</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Quadratics turn up in this course the moment
+          anything is thrown: a projectile is at a given height
+          <strong>twice</strong>, once going up and once coming down, and the two
+          roots are those two times.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">His slides 28, 29 and 30 set up.
+
+The projectile connection is worth making now rather than in week eight. It explains why a quadratic has two roots in a way that "that is what the formula gives" never will: the ball really is at two metres twice.
+
+It also explains why you cannot just take the positive root and go home — sometimes both are physical.</aside>
+</section>
+
+<!-- 15 -->
+<section id="w-solver">
+  <h2>Basic Math</h2>
+  <p class="subhead">His three examples, with the answer drawn</p>
+  <div class="iplot wide" data-widget="solver"></div>
+  <aside class="notes">Work the first two quickly; they both reproduce exactly.
+
+Then stop on the quadratic, because this is one of the two errors in the deck. His slide graphs y = −2x² + 5x − 2, says in its own text that the curve crosses the axis at a half and at two, applies the formula correctly — and then the concluding line reads "x = ½ and x = 1".
+
+The roots are a half and two. His graph, printed on the same slide, is right. Only the sentence under it is wrong.
+
+Do not make this a gotcha. Make it the lesson: he drew the answer, and the drawing disagreed with the sentence. That is step 10 working. If you draw your answers you will catch your own slips the same way.</aside>
+</section>
+
+<!-- 16 -->
+<section>
+  <div class="section-slide">
+    <h2>Trigonometry</h2>
+    <p class="sub">The part of the review that you will use every single week,
+      because almost every force in this course arrives at an angle.</p>
+  </div>
+  <aside class="notes">Divider, and a justification. Forces are vectors, vectors have directions, and the only way to add two of them is to break them into components. That is trigonometry, every week, from lecture 4 onward.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Trigonometry</h2>
+  <p class="subhead">Eight things about lines and triangles</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Two lines are <strong>perpendicular</strong> when they meet at 90&deg;.</li>
+        <li><strong>Parallel</strong> lines never intersect.</li>
+        <li>Where two lines cross, <strong>opposing angles are equal</strong>.</li>
+        <li>The angles around an intersection sum to <strong>360&deg;</strong>.</li>
+      </ul>
+    </div>
+    <div>
+      <ul class="small">
+        <li>The angles along one line at an intersection sum to
+          <strong>180&deg;</strong>.</li>
+        <li>A line crossing two parallels makes a <strong>Z</strong>, and the
+          corresponding angles are equal.</li>
+        <li>Three non-parallel lines make a <strong>triangle</strong>.</li>
+        <li>A triangle&rsquo;s interior angles sum to <strong>180&deg;</strong>.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box">
+    <p class="small" style="margin:0">The Z rule and the 180&deg; rule between them
+      are how you find an angle you were never given &mdash; which is most of what
+      free body diagrams ask you to do.</p>
+  </div>
+  <aside class="notes">His slides 32 and 33. All eight are correct.
+
+Dwell on the Z. When a limb is at an angle and a force is vertical, the angle you need is almost never the one marked on the figure; it is a corresponding angle two steps away. Students who know the Z pattern find it in seconds and students who do not guess.</aside>
+</section>
+
+<!-- 18 -->
+<section id="w-unitcircle">
+  <h2>Trigonometry</h2>
+  <p class="subhead">Where sine and cosine come from</p>
+  <div class="iplot wide" data-widget="unitcircle"></div>
+  <aside class="notes">His slide 34 prints the three graphs and says they can be memorised. They can, but there is no need: they are one point going round one circle.
+
+Press Go round and let it run a full turn before saying anything. The height of the point is the sine. Its sideways distance is the cosine. The tangent is one divided by the other, which is why it blows up at 90 degrees — the radius is vertical and there is no sideways distance left to divide by.
+
+Then press the special angles. His slide 35 is a table of five rows to memorise; those five rows are five places on this circle, and the table lights up as you pass each one. That is a much better thing to carry into an exam than a memorised table.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Trigonometry</h2>
+  <p class="subhead">Three relations, and when to use each</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Right-angle triangle.</strong></p>
+      <p class="eq">sin&theta; = opposite / hypotenuse</p>
+      <p class="eq">cos&theta; = adjacent / hypotenuse</p>
+      <p class="eq">tan&theta; = opposite / adjacent</p>
+      <p class="small">and Pythagoras: hypotenuse&sup2; = adjacent&sup2; +
+        opposite&sup2;.</p>
+    </div>
+    <div>
+      <p class="small"><strong>Any triangle.</strong></p>
+      <p class="eq">a / sin<em>A</em> = b / sin<em>B</em> = c / sin<em>C</em></p>
+      <p class="eq">a&sup2; = b&sup2; + c&sup2; &minus; 2bc&middot;cos<em>A</em></p>
+      <div class="box accent">
+        <p class="small" style="margin:0">Which one you use is decided by
+          <strong>what you were given</strong>, not by what you want. Two angles and
+          a side &rarr; the sine law. Two sides and the angle between them &rarr;
+          the cosine law.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">His slides 34 and 36.
+
+The callout is the thing to teach. Students learn three boxes and then freeze because they do not know which box to open. The rule is mechanical: look at what you were given, count sides and angles, and the law picks itself.
+
+Say also that the right-angle formulas are not a third thing — they are the sine and cosine laws with one angle at 90 degrees. The next figure shows that happening.</aside>
+</section>
+
+<!-- 20 -->
+<section id="w-triangle">
+  <h2>Trigonometry</h2>
+  <p class="subhead">One triangle, all three relations at once</p>
+  <div class="iplot wide" data-widget="triangle"></div>
+  <aside class="notes">This is the figure to spend time on. Drag a corner and let them watch.
+
+Three things happen at once and all three are worth pointing at. The angles always sum to 180. The three sine-law ratios stay equal to each other while every one of them changes. And the cosine law keeps reproducing the side you can measure.
+
+Then press Make it right-angled and switch to the right-angle tab. The cosine law's last term is 2ab·cos 90°, which is zero, so it has just turned into Pythagoras in front of them. The right-angle functions are not a separate rule to learn; they are this triangle with one corner square.
+
+If a student asks which law to use for the rest of their life, the answer is in the first sentence of the readout.</aside>
+</section>
+
+<!-- 21 -->
+<section id="w-trigex">
+  <h2>Trigonometry</h2>
+  <p class="subhead">His two worked examples</p>
+  <div class="iplot wide" data-widget="trigex"></div>
+  <aside class="notes">Example 1 reproduces to the digit: 60 degrees, 0.5 m, 0.87 m. It is also one of the two special triangles from slide 35, which is worth pointing out.
+
+Example 2 is the other error in this deck, and it is the more important of the two because it is the only non-right-triangle worked example in the whole course. The cosine law with his own givens — 22 degrees, 0.30 m, 0.15 m — gives 0.1705 m. The slide prints 0.3227 m.
+
+Teach it with the picture, not the arithmetic. Drawn to scale, the answer is visibly shorter than the 0.30 m side, and his own sketch on slide 38 shows exactly that. The dashed line on the figure is what 0.3227 m would measure: longer than every side of the triangle it is meant to close. That is step 10 again, and it takes one second.
+
+Then press the Tutor's Q13, which is the same method with different numbers and gets it right. The method is fine. The arithmetic slipped once.</aside>
+</section>
+
+<!-- 22 -->
+<section>
+  <div class="section-slide">
+    <h2>Where things are</h2>
+    <p class="sub">Three planes, three axes, and a vocabulary for saying which
+      way a limb went.</p>
+  </div>
+  <aside class="notes">Divider. The point of this section is that "forward" is not a direction until you have said forward relative to what.</aside>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Planes and Axes</h2>
+  <p class="subhead">The three planes</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Sagittal</strong> &mdash; divides the body into left
+        and right. Most of walking happens here, which is why most of this course
+        is two-dimensional.</p>
+      <p class="small"><strong>Frontal</strong> &mdash; divides front from back.</p>
+      <p class="small"><strong>Transverse</strong> &mdash; divides top from bottom.</p>
+    </div>
+    <div>
+      <p class="small">An <strong>axis</strong> is the straight line where two planes
+        intersect &mdash; and it is also the line a body rotates about.</p>
+      <div class="box accent">
+        <p class="small" style="margin:0">Those two sentences describe the same line,
+          and that is not a coincidence. A joint that moves in one plane rotates about
+          the axis perpendicular to it. Flexing your knee is movement in the sagittal
+          plane about a left&ndash;right axis.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">His slides 39 and 40.
+
+The plane/axis duality is the thing students find slippery, and the callout is the way through it: the axis a joint turns about is perpendicular to the plane the movement happens in. Say it with your own knee.
+
+Also flag why the sagittal plane gets all the attention: walking, running, jumping and lifting are all overwhelmingly sagittal, which is what makes two-dimensional analysis useful rather than lazy.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Planes and Axes</h2>
+  <p class="subhead">And the three axes they make</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>sagittal &cap; frontal = the <strong>z</strong> axis &mdash; distance
+          along it is up and down;</li>
+        <li>frontal &cap; transverse = the <strong>y</strong> axis &mdash; left and
+          right;</li>
+        <li>sagittal &cap; transverse = the <strong>x</strong> axis &mdash; front
+          and back.</li>
+      </ul>
+    </div>
+    <div>
+      <p class="small">That is the convention every figure in this course uses, and
+        it is the convention the motion-capture system in the lab writes its files
+        in. When you open a data file in week ten, these are the columns.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Every number you will ever read off a marker, a
+          force plate or an accelerometer is a distance or a force
+          <em>along one of these three lines</em>.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">His slides 41 to 46, which are six slides of one picture being annotated.
+
+Worth saying that this is not an arbitrary classroom convention: it is what comes out of the lab's own system, and the walking capture in the next figure is in exactly this frame. That is a small thing that makes the data feel less like homework.</aside>
+</section>
+
+<!-- 25 -->
+<section id="w-axes3">
+  <h2>Planes and Axes</h2>
+  <p class="subhead">On somebody who is actually moving</p>
+  <div class="iplot wide" data-widget="axes3"></div>
+  <aside class="notes">His slides 39 to 58 are twenty pictures of one figure being turned by hand. This is that figure, and you can turn it yourself.
+
+Drag it. Show them the sagittal plane edge-on and then face-on. Use the segmented control to take the planes away one at a time and leave just the axes, which is how his slides 41 to 46 build it up.
+
+Then press Walk, and make the point his slides 47 to 50 make in words: the planes stay where they are and the limbs leave them. A swinging leg is not in the sagittal plane for most of the stride. That is why the course keeps saying "the sagittal component" rather than "the movement", and why three-dimensional analysis exists at all.
+
+The body is a real walking capture, the same person the Forces deck uses.</aside>
+</section>
+
+<!-- 26 -->
+<section>
+  <div class="section-slide">
+    <h2>Practice</h2>
+    <p class="sub">Twenty-nine questions you can do tonight, and one of them
+      is broken.</p>
+  </div>
+  <aside class="notes">Divider into the Tutor section.</aside>
+</section>
+
+<!-- 27 -->
+<section id="w-tutorq1a">
+  <h2>Introduction and Review</h2>
+  <p class="subhead">The Tutor, Basic Math and Trigonometry</p>
+  <div class="iplot wide" data-widget="tutorq1a"></div>
+  <aside class="notes">Work two or three and set the rest as the homework his slide 18 asks for.
+
+Basic Math 1 to 6 are rearrangements of the kinematics equations they will meet in week two, so they are doing next week's algebra tonight without the physics in the way. Basic Math 7 to 12 are pure manipulation. Trigonometry 1 to 6 are right triangles, 7 to 15 are the sine and cosine laws.
+
+Then the warning. Basic Math question 6 asks for the initial velocity given d = 100 m, t = 4 s and a = 3 m/s². Its own printed method gives 19 m/s. The answer it accepts is 5.5, which is what that formula gives for d = 46 m. A student who does it correctly is told they are wrong, and will spend twenty minutes looking for a mistake they did not make.
+
+Tell them: do question 6, get 19, and move on. It has been reported.</aside>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Introduction and Review</h2>
+  <p class="subhead">What to take away</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Biomechanics measures the <strong>outside</strong> of a body and
+          computes the <strong>inside</strong>.</li>
+        <li><strong>Kinematics</strong> describes motion;
+          <strong>kinetics</strong> explains it. You need both.</li>
+        <li>Which trigonometric law you use is decided by
+          <strong>what you were given</strong>.</li>
+      </ul>
+    </div>
+    <div>
+      <ul class="small">
+        <li>An <strong>axis</strong> is where two planes meet, and it is the line a
+          joint turns about.</li>
+        <li>The algebra is not the hard part of this course, but it is the part
+          that costs marks. Fix it now.</li>
+        <li><strong>Draw the answer.</strong> Both of the errors in this lecture
+          would have been caught by one sketch.</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">The six lines.
+
+If you say one of them twice, say the last. Both mistakes in fifty-nine slides — a quadratic's roots and a triangle's side — were visible in a drawing that was already on the slide. That is not a coincidence about this deck; it is how arithmetic errors behave.</aside>
+</section>
+
+<!-- 29 -->
+<section>
+  <h2>Introduction and Review</h2>
+  <p class="subhead">Next</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Next class is <strong>sensors and data acquisition</strong>
+        &mdash; how a force becomes a number, and what happens to it on the way.
+        After that, calculus and kinematics, and then forces, and from there the
+        course is continuous to the end.</p>
+    </div>
+    <div>
+      <p class="small">Everything on the map earlier in this deck is live, works on
+        a phone, and has a handout. The figures with sliders are the ones worth
+        half an hour the night before a test.</p>
+      <div class="box">
+        <p class="small" style="margin:0">Work the basic maths and trigonometry
+          problem sets before next class.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Close by pointing back at the map. A student who leaves the first lecture knowing the shape of the whole term is a student who can tell when they are lost.
+
+And repeat the homework, because the gap between this lecture and the second one is the only cheap time they will get to fix their algebra.</aside>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js?v=20261008e"></script>
+<script src="mobile.js?v=20261008e"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="in1adata.js?v=20261008e"></script>
+<script src="deck-core.js?v=20261008e"></script>
+<script src="in1a.js?v=20261008e"></script>
+<script src="deck-tools.js?v=20261008e"></script>
+<script src="fit.js?v=20261008e"></script>
+</body>
+</html>
