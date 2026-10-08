@@ -290,6 +290,29 @@ window.EPHE341_LECTURES = [
            ['is a person actually a pendulum', 'w-pendulum'],
            ['buying clearance at midswing', 'w-clear']] },
 
+  { n: '17', title: 'Angular kinetics 2: centre of gravity',
+    path: 'lectures/17-angular-kinetics-2',
+    blurb: 'One sum, \u03a3(m\u00b7r)/\u03a3m, and where the numbers that go into it come ' +
+           'from. The weighted average in one dimension and then in two, and why the net ' +
+           'torque about the answer is zero; Dempster\u2019s cadavers, Winter\u2019s table, ' +
+           'and the scanners that replaced the saw; the reaction board, worked from one scale ' +
+           'reading; the table run on two real standing poses, which put the centre of gravity ' +
+           'at 55.1% and 55.4% of each person\u2019s own height; a body that changes shape ' +
+           'every time it moves; the moment the ground reaction force makes about the centre ' +
+           'of gravity through a measured stance; why quiet standing needs the centre of ' +
+           'pressure to overshoot; and a force through the centre against a force that misses it.',
+    slides: 35, widgets: 9, updated: '2026-10-08',
+    handout: 'handout.pdf',
+    live: [['is it really 55% of your height', 'w-height'],
+           ['the weighted average, and the torques about it', 'w-cofg1d'],
+           ['the same sum, run twice', 'w-cofg2d'],
+           ['Winter\u2019s table, on any body mass', 'w-segtable'],
+           ['one scale reading, one centre of gravity', 'w-board'],
+           ['move a limb, move the whole-body CofG', 'w-posable'],
+           ['the moment about the CofG through stance', 'w-copcom'],
+           ['why the centre of pressure overshoots', 'w-balance'],
+           ['through the centre, and off it', 'w-freeaxis']] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
@@ -299,7 +322,6 @@ window.EPHE341_LECTURES = [
      match the numbers in the source .pptx filenames. Change them here if you
      would rather they did. */
   { n: '13', title: 'Virtual Muscle Lab' },
-  { n: '17', title: 'Angular kinetics 2' },
   { n: '18', title: 'Angular kinetics 3' },
   { n: '19', title: 'Static analysis' },
   { n: '20', title: 'Dynamic analysis' },

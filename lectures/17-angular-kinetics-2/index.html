@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fdfdfc">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Angular Kinetics 2</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css?v=20261008">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'light';
+  try { t = localStorage.getItem('ephe341-theme') || 'light'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <p class="course">Biomechanics (EPHE 341)</p>
+    <h1>Angular Kinetics 2</h1>
+    <div class="rule"></div>
+    <p class="sub">Centre of gravity: where it is, how anyone found out, and why
+      every turning problem in the course has been quietly about it.</p>
+  </div>
+  <aside class="notes">This lecture is one equation — the weighted mean — and four questions about it: what it means, how you compute it, where the numbers come from, and what goes wrong when the body moves.
+
+The through-line worth stating at the start: in the last lecture a force made a moment about a joint. In this one the same arithmetic locates a point. They are the same sum. Σ(m·r)/Σm and ΣF·d are the same operation applied to different quantities, and a student who sees that gets both for the price of one.</aside>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Centre of mass, centre of gravity</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Centre of mass</strong> — the average location of all of the mass
+        in a body.</p>
+      <p class="small"><strong>Centre of gravity</strong> — the point about which the weight is
+        evenly distributed, and through which the force of gravity acts.</p>
+      <p class="small">For anything near the earth&rsquo;s surface the two coincide, because the
+        gravitational field is the same strength everywhere in the body. The deck uses
+        <strong>CofG</strong> throughout, as his slides do.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">They are not the same idea. Centre of mass is about where the
+          matter is; centre of gravity is about where the <em>weight</em> acts. Take an object tall
+          enough that <em>g</em> is measurably weaker at the top and the two separate &mdash; which
+          matters for a rocket and never for a person.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/cofg-poses.png" alt="Three figures in standing, tree and triangle yoga poses, each with its centre of gravity marked and the marks joined by lines to a label"></div>
+      <p class="small">The point moves when the body does &mdash; and it does not have to stay
+        inside the body at all.</p>
+    </div>
+  </div>
+  <aside class="notes">Get the distinction out of the way in thirty seconds and do not dwell on it: for every problem in this course they are the same point, and the course says centre of gravity.
+
+The figure is worth a moment though. In the third pose the marked point is close to the edge of the body, and with a deeper bend it would leave it entirely. A gymnast in a pike and a high jumper over the bar both have a centre of gravity outside their own skin, which is not a curiosity — it is how the Fosbury flop works.</aside>
+</section>
+
+<!-- 3 -->
+<section id="w-height">
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Is it really 55 to 57% of standing height?</p>
+  <div class="iplot wide" data-widget="height"></div>
+  <aside class="notes">His slide states the number. This figure checks it, and the check is the lecture in miniature.
+
+Take two people who walked through a motion-capture lab. Take their standing calibration trial, which is just a set of marker positions. Put Winter's table on it — a mass fraction and a centre-of-mass fraction for each of sixteen segments — and add up. Subject16 comes out at fifty-five point one per cent of her own stature, Subject15 at fifty-five point four. His range is fifty-five to fifty-seven.
+
+Drag the slider slowly the first time. The answer starts near the floor and climbs, and the moment to point at is when the trunk goes in: half the body mass arrives in one segment and the answer jumps. That is worth saying out loud, because it is the reason the trunk dominates every centre-of-gravity problem in this course, and the reason a lean matters more than an arm.
+
+The honest footnote on the figure: the marker set stops at the cheek, so the head-and-neck endpoint is estimated. Moving it between the cheek and the vertex changes the answer by half a percentage point. The claim survives that.</aside>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Where it sits, and why the midline</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/midsagittal.png" alt="A standing figure with the midsagittal plane drawn as a vertical dashed line through it, the centre of gravity marked on that line, and arrows showing the centre of gravity height against the full standing height"></div>
+    </div>
+    <div>
+      <p class="small">In the anatomical position the centre of gravity is
+        <strong>55&ndash;57%</strong> of standing height &mdash; a little above the navel, roughly
+        at the level of the second sacral vertebra.</p>
+      <p class="small">Because the body is close to symmetrical left and right, it lies in the
+        <strong>midsagittal plane</strong>, the plane that divides the body into left and right
+        halves.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Symmetry is doing the work in that second sentence, not anatomy.
+          Any body whose mass is mirrored about a plane has its centre of gravity in that plane,
+          whatever shape it is. Break the symmetry &mdash; lift one arm, carry a bag &mdash; and
+          the point leaves the midline immediately.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Two useful numbers to give them for later: it is slightly higher in men than in women, by about two per cent of stature, because of the relative mass of shoulders against hips. And it is much higher in a small child — about 60% — because the head is such a large fraction of the body. That is not trivia; it is why toddlers fall over so easily and why a child's car seat is designed the way it is.
+
+The callout is the point of the slide. "Humans are symmetrical, so it is in the midline" is a true statement with the reasoning hidden inside it, and the reasoning is the transferable part.</aside>
+</section>
+
+<!-- 5 -->
+<section>
+  <div class="section-slide">
+    <h2>Finding it</h2>
+    <p class="sub">One sum, and the reason that sum is the right one</p>
+  </div>
+  <aside class="notes">Everything from here to the segment-parameter section is a single formula being applied in slightly harder settings. Say that before you start, so they stop expecting new ideas and start expecting practice.</aside>
+</section>
+
+<!-- 6 -->
+<section id="w-cofg1d">
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">The weighted average, and the balance point</p>
+  <div class="iplot wide" data-widget="cofg1d"></div>
+  <aside class="notes">His slides 4, 6 and 7 are one figure here, because they are one idea told twice.
+
+Start with <strong>Three equal masses</strong> and the formula showing. Three kilograms at one, three and five metres: the answer is three. Now press <strong>Stacked</strong> — all three at three metres — and the answer is still three. That is the clue that the formula is a mean: it does not care how the mass is arranged, only where it is on average.
+
+Then drag a block and watch the answer follow. Ask them to predict before they drag: if I move the left mass further left, which way does the answer go, and by how much? Most people get the direction and underestimate the amount by a factor of three, because they forget to divide by the total.
+
+Now the payoff. Press <strong>The torques about it</strong>. Each weight makes a moment about the computed centre of gravity, and they cancel — nineteen point six two newton metres clockwise against nineteen point six two anticlockwise. That is not a coincidence and it is not a second fact. It is what Σ(m·r)/Σm means: the point where the first moments of the weights sum to zero. The formula is the definition of balance, rearranged.
+
+Drag a block while the torques are showing, and the sum stays at zero, because the answer moves with it.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Why that sum is the balance point</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Gravity pulls on every particle of a body. Each particle&rsquo;s weight makes
+        a moment about any point you care to choose.</p>
+      <p class="small">The centre of gravity is the one point for which all of those moments
+        <strong>cancel</strong>:</p>
+      <p class="eq">&Sigma; m<sub>i</sub> g (r<sub>i</sub> &minus; r<sub>cofg</sub>) = 0</p>
+      <p class="small">Rearranging that, and cancelling the <em>g</em> that appears in every term:</p>
+      <p class="eq">r<sub>cofg</sub> = &Sigma;(m<sub>i</sub> r<sub>i</sub>) &divide; &Sigma;m<sub>i</sub></p>
+      <div class="callout small">
+        <p style="margin-bottom:0">The <em>g</em> cancels, which is why the centre of gravity is in
+          the same place on the Moon &mdash; and why &ldquo;centre of mass&rdquo; and
+          &ldquo;centre of gravity&rdquo; give the same answer here.</p>
+      </div>
+    </div>
+    <div>
+      <p class="small">So the whole weight of the body can be replaced by a single force
+        <strong>W = mg</strong> acting at that one point, and every moment it makes about every
+        other point comes out right.</p>
+      <p class="small">That substitution is what makes the rest of the course possible. A free body
+        diagram of a limb draws one weight vector, not a cloud of them.</p>
+      <div class="fig cap tight"><img src="assets/dempster.png" alt="A standing skeleton with the centre of gravity of each segment marked, and the position of each expressed as a percentage of that segment's length"></div>
+    </div>
+  </div>
+  <aside class="notes">The cancellation of g is worth half a minute. It is the reason the two names in this lecture describe the same point, and it is the reason a balance scale works identically anywhere while a spring scale does not.
+
+The figure on the right is the one they will meet again in two slides. Flag it now: every one of those percentages is a number from the table, and the table is next.</aside>
+</section>
+
+<!-- 8 -->
+<section id="w-cofg2d">
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Two dimensions is the same sum, twice</p>
+  <div class="iplot wide" data-widget="cofg2d"></div>
+  <aside class="notes">His slide 9 gives the two formulas and stops. This does the arithmetic, on his numbers: thigh ten kilograms at fifteen and forty-six, leg four point six five at nineteen and twenty-five, foot one point four five at twenty-seven and five. The answer is seventeen point two, thirty-six point two.
+
+The teaching point is in the layout, not the answer. The x sum and the y sum sit side by side and neither one mentions the other. There is no two-dimensional centre-of-gravity formula; there is the one-dimensional formula, run once per axis. In three dimensions, three times. That generalisation is free if you show it this way and confusing if you write a vector equation first.
+
+Then drag the foot a long way sideways and keep going. The green dot leaves the limb. Students resist this — a centre of gravity outside the object feels wrong — so it is worth making them watch it happen to a shape as simple as three dots. A doughnut, a boomerang and a diver in a pike all have the same property.</aside>
+</section>
+
+<!-- 9 -->
+<section>
+  <div class="section-slide">
+    <h2>Where the numbers come from</h2>
+    <p class="sub">Segment masses and segment centres of gravity, and the four ways
+      anyone has ever measured them</p>
+  </div>
+  <aside class="notes">The formula needs a mass and a position for every segment. Positions come from markers. Masses do not — you cannot weigh a living person's thigh. This section is about how that problem was solved, and the answer is less reassuring than students expect.</aside>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Segment centre of gravity</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/dempster.png" alt="A standing skeleton with joint centres marked and each segment's centre of gravity given as a percentage of segment length measured from the proximal end"></div>
+    </div>
+    <div>
+      <p class="small">To find the centre of gravity of a <em>whole body</em> you need the mass and
+        the centre of gravity of every <strong>segment</strong>.</p>
+      <p class="small">For a living person neither can be measured directly. Four routes have been
+        taken:</p>
+      <ol class="small">
+        <li><strong>Reaction board</strong> &mdash; a plank, a knife edge and a scale;</li>
+        <li><strong>Cadaver dissection</strong> &mdash; segment, weigh, balance;</li>
+        <li><strong>Photogrammetry</strong> &mdash; photographs, volumes, assumed densities;</li>
+        <li><strong>Scanning</strong> &mdash; DEXA and MRI, which measure tissue directly.</li>
+      </ol>
+      <div class="callout small">
+        <p style="margin-bottom:0">The percentages on the figure are remarkably consistent:
+          the centre of gravity of most limb segments sits at about <strong>43%</strong> of the
+          way from the proximal end. Limbs taper, so the mass is nearer the joint it hangs from.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Point at the 43/57 split on three different segments and let them notice it themselves. Then ask why it is not 50. The answer — limbs are thicker at the proximal end — is the first time in the course that an anthropometric number has a mechanical reason behind it rather than being a value to look up.
+
+The foot is the exception at 50/50, and the head-and-neck is the strange one at 100%, which is the table's way of saying the segment is defined from C7 to the ear canal and its centre of gravity is essentially at the far end.</aside>
+</section>
+
+<!-- 11 -->
+<section id="w-segtable">
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">The anthropometry table, with a body in it</p>
+  <div class="iplot wide" data-widget="segtable"></div>
+  <aside class="notes">His slide 15 is the table. This is the table doing something.
+
+Every number in it is a fraction waiting for a body. Give it a mass and a stature and the row becomes four numbers you can use: the segment's mass in kilograms, where its centre of gravity sits measured from either end, and the moment of inertia about three different axes — which is next lecture's material arriving early, and no harm in that.
+
+Now the moment worth building to. Leave the body mass at a hundred kilograms and press <strong>Thigh</strong>, <strong>Leg</strong>, <strong>Foot</strong> in turn. Ten kilograms. Four point six five. One point four five. Those are the masses in his own worked example two slides ago. The example was not invented; it is this table applied to a hundred-kilogram person, and now they can generate it for anyone.
+
+The radius of gyration column is the one to flag and move past: k is a fraction of segment length, I is m times (kL) squared, and the three columns are the same segment measured about three different axes. If they take one thing: the proximal and distal values already include the parallel-axis shift, so you do not do it twice.
+
+And the dashes. The trunk rows have no radius of gyration, because a trunk is not a rod and there is no segment length to take a fraction of. A table that admits what it does not know is a better table.</aside>
+</section>
+
+<!-- 12 -->
+<section id="w-board">
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">The reaction board</p>
+  <div class="iplot wide" data-widget="board"></div>
+  <aside class="notes">A plank, a knife edge and a bathroom scale. This is the oldest measurement in the lecture and it still works.
+
+The person lies on the board. Take moments about the pivot: the scale pushes up at the far end, the person's weight pulls down at some unknown distance L₁, the board's own weight pulls down at its middle. One equation, one unknown, and L₁ falls out.
+
+Now the warning, and say it plainly because it is on his slide. His slide writes the equation as Wp·L₁ + Wb·0.5L₂ + S·L₂ = 0, with all three terms added. Three positive quantities cannot sum to zero. The scale pushes <em>up</em> while the two weights pull <em>down</em>, so one of those terms carries a minus sign. The figure draws the arrows so you can see which. This is the single most common way a student loses marks on a static equilibrium question: writing ΣM = 0 and then adding everything.
+
+Then press <strong>Arms overhead</strong>. The centre of gravity moves toward the head, which is the pivot, so the lever arm shortens and the scale reads less. Same person, same weight, same board — a different number, because the body changed shape. Hold onto that; the next section is entirely about it.
+
+Worth mentioning: run this twice, once with the arms down and once overhead, and the difference between the two scale readings gives you the mass of the arms. That is the segment-parameter version of the same trick, and it is the next slide.</aside>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">The same board, one segment at a time</p>
+  <div class="cols a top">
+    <div>
+      <div class="fig cap"><img src="assets/board-segment.png" alt="A person lying on a board supported at two edges with a scale under one end, the displacement of one segment's centre of mass marked, and the relation W equals D times the change in scale reading divided by that displacement"></div>
+      <p class="small">Move one segment a known distance, read the change in the scale, and the mass
+        of that segment follows:</p>
+      <p class="eq">W = D &middot; &Delta;R &divide; d<sub>w</sub></p>
+      <p class="small">where <em>D</em> is the distance between the supports, <em>d</em><sub>w</sub>
+        the distance the segment&rsquo;s centre of mass moved, and &Delta;<em>R</em> the change in
+        the reading.</p>
+    </div>
+    <div>
+      <div class="fig cap tight"><img src="assets/board-plate-a.png" alt="A standing figure on a force plate in an initial and a final position, with the shift of the segment centre of mass and the shift of the centre of pressure both marked"></div>
+      <div class="fig cap tight"><img src="assets/board-plate-b.png" alt="A person lying on a board over a force plate in two positions, with the distances from the pivot to the segment and to the body centre of mass marked"></div>
+      <p class="small">A force plate reads the same quantity continuously, so the measurement can be
+        made in several postures at once.</p>
+    </div>
+  </div>
+  <aside class="notes">This is the reaction board run backwards. Instead of using known masses to find an unknown position, you move a known distance and use the change in reading to find an unknown mass.
+
+Everything about it is honest and nothing about it is precise. The scale change for moving a forearm is a few hundred grams of reading on a person who weighs seventy kilograms, so the signal is about half a per cent of the measurement. Repeat it twenty times and average. This is why Dempster used cadavers.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Cadaver dissection</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/cadaver-limb.png" alt="A dissected lower limb mounted in a laboratory rig for measuring its mass, centre of gravity and moment of inertia"></div>
+    </div>
+    <div>
+      <p class="small">Segment a cadaver at the joints, weigh each piece, balance it to find its
+        centre of gravity, and swing it as a pendulum to find its moment of inertia.</p>
+      <p class="small">It is the only method that measures all three directly, and almost every
+        number in the table traces back to it.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0"><strong>Dempster&rsquo;s 1955 sample was eight elderly male
+          cadavers.</strong> Those eight people are the source of the segment masses used for every
+          subject in most laboratories today &mdash; children, athletes, women, amputees. The table
+          is the best we have and it is not a measurement of the person in front of you.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Say the sample size out loud and let it land. Eight. Elderly. Male. Nineteen fifty-five.
+
+This is not a reason to distrust the table; it is a reason to know what kind of number it is. For a typical adult the error it introduces is a few per cent and it propagates upward through an inverse dynamics chain, which is exactly why the hip moment was the least trustworthy number in Angular Kinetics 1. For a seven-year-old gymnast or a person with a prosthesis it is worse than that, and the honest thing is to say so in the methods section.
+
+It is also why the scanning methods on the next slides exist.</aside>
+</section>
+
+<!-- 15 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Photogrammetry</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Photograph the body in two planes. Measure each segment&rsquo;s length, width
+        and depth from the photographs.</p>
+      <p class="small">Treat the segment as a stack of <strong>elliptical cylinders</strong>, which
+        gives a volume. Multiply by an assumed <strong>density</strong> and you have a mass, a
+        centre of gravity and a moment of inertia.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">The density is the catch. It is taken from the same cadaver
+          work the method was meant to replace &mdash; the density column is the last one in
+          Winter&rsquo;s table. The geometry is the subject&rsquo;s; the density is still
+          Dempster&rsquo;s.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap tight"><img src="assets/photogram-jensen.png" alt="A body sectioned into transverse slices with joint centres, segment centroids and the whole-body centroid marked"></div>
+      <div class="fig cap tight"><img src="assets/photogram-grid.png" alt="Two standing figures against calibration grids, showing how centimetres per pixel is obtained from a reference object and how total body height is found"></div>
+    </div>
+  </div>
+  <aside class="notes">The elliptical-cylinder model is better than it sounds. A thigh really is close to an ellipse in cross-section, and the volume error over a whole segment is small.
+
+The honest limitation is the one in the callout, and it is a nice example of a method that is subject-specific in one factor and generic in the other. The student takeaway: when a paper says "subject-specific body segment parameters", ask which part was specific.</aside>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Photogrammetry, done properly</p>
+  <div class="fig big cap"><img src="assets/peyer.png" alt="A workflow from raw multi-camera images to a 3D point cloud to a segmented convex hull to segments in a standard pose, with bar charts comparing the resulting segment masses and moments of inertia against published values"></div>
+  <ul class="small two">
+    <li>Many cameras rather than two, and a <strong>3D point cloud</strong> rather than a pair of
+      silhouettes.</li>
+    <li>The hull is segmented and each segment&rsquo;s volume taken directly &mdash; no elliptical
+      assumption at all.</li>
+    <li>The bar charts are the point: these masses and moments of inertia against the published
+      values, per subject. Mostly close. Not always.</li>
+  </ul>
+  <aside class="notes">Peyer, Morris and Sellers. Worth showing because it is the modern version of a 1970s idea and because the comparison bars are honest — they plot their own values against Zatsiorsky's and Dempster's rather than just reporting agreement.
+
+The detail worth pointing at: they apply a correction factor of about zero point five one to the foot mass to compensate for subjects wearing shoes in the scan. That is the kind of thing a methods section buries and a student should learn to look for.</aside>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">DEXA</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Dual-energy X-ray absorptiometry passes a <strong>high and a low energy
+        beam</strong> through the body. Different tissues attenuate the two beams by different
+        amounts, so bone, lean tissue and fat can be separated.</p>
+      <p class="small">The output is a map of mass per unit area. Draw a boundary around a segment
+        and its mass follows by summing &mdash; no density assumption and no geometric model.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">It is a <em>projection</em>, so what comes out is mass per unit
+          area of a two-dimensional image. Moments of inertia still need an assumption about the
+          third dimension.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap tight"><img src="assets/dexa-machine.png" alt="A technician positioning a person lying on a DEXA scanner bed"></div>
+      <div class="fig cap tight"><img src="assets/dexa-scan.png" alt="A DEXA whole-body scan, the mass distribution rendered as a surface, and the resulting mass-per-column profile"></div>
+    </div>
+  </div>
+  <aside class="notes">The radiation dose is tiny — a DEXA whole-body scan is a few microsieverts, less than a transatlantic flight — which is why it is the practical choice among the scanning methods. MRI has no dose at all but costs twenty times as much per scan and takes forty minutes.
+
+The projection limitation in the callout is the one that matters for this course: DEXA gives you an excellent segment mass and centre of gravity, and still leaves you estimating the moment of inertia.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">MRI</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap tight"><img src="assets/mri-machine.jpg" alt="A magnetic resonance imaging scanner with a patient bed"></div>
+      <div class="fig cap tight"><img src="assets/mri-scan.png" alt="A whole-body MRI, a transverse slice through the thorax, the same slice segmented by tissue type, and the resulting mass-per-slice profile"></div>
+    </div>
+    <div>
+      <p class="small">MRI uses strong magnetic fields and radio waves rather than ionising
+        radiation, and images <strong>slice by slice</strong>.</p>
+      <p class="small">Because the slices are genuinely three-dimensional, both the centre of
+        gravity and the <strong>moment of inertia</strong> of a segment can be computed directly
+        from the images, with no geometric model and no assumed density.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">This is the only method on the list that measures everything the
+          table contains, for the actual person. It is also the one nobody can afford to run on a
+          hundred subjects, which is why the 1955 table is still in use.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The last sentence of the callout is the real summary of this whole section, so it is worth pausing there. The best method exists, works, and is too expensive to have replaced the worst one.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">An elliptical model, validated against DEXA</p>
+  <div class="fig big cap"><img src="assets/durkin.png" alt="Four steps: scan the leg, quantify the mass distribution from the image, compare that distribution with a geometric solid, and fit a predictive equation giving body segment parameters from simple measurements"></div>
+  <ul class="small two">
+    <li>Scan the segment, get the real mass distribution, then ask what <strong>simple
+      solid</strong> reproduces it.</li>
+    <li>Fit a predictive equation so that a future subject needs only a tape measure, not a
+      scanner.</li>
+    <li>This is how a method that costs a thousand dollars a subject becomes a method that costs
+      nothing &mdash; once.</li>
+  </ul>
+  <aside class="notes">Durkin and Dowling. The structure of this paper is the structure of most body-segment-parameter work since 1990: use an expensive accurate method on a modest sample, then regress onto measurements anyone can take.
+
+It is worth naming what that means statistically. The predictive equation is only as good as the sample it was fitted on, so the whole problem from the cadaver slide repeats one level up — and this is the honest answer to a student who asks "so which numbers should I use?" The answer is: the ones fitted on a sample that looks like your subject, and say in the paper which one you chose.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <div class="section-slide">
+    <h2>A body that keeps changing shape</h2>
+    <p class="sub">Every limb movement moves the whole</p>
+  </div>
+  <aside class="notes">Up to here the body has been a fixed object with a fixed centre of gravity. It is not one. This is the section where that stops being a simplification.</aside>
+</section>
+
+<!-- 21 -->
+<section id="w-posable">
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Move a limb, move the whole</p>
+  <div class="iplot wide" data-widget="posable"></div>
+  <aside class="notes">His slides 22 to 24 state the rule: for each limb movement the whole-body centre of gravity shifts in the direction of that movement, by an amount that depends on the weight of the limb and how far it moved.
+
+Both halves of that are Σ(m·r)/Σm with one term changed, so here it is a consequence rather than a claim. The starting pose is a real standing trial, not a drawing.
+
+Work through it in this order. Lift the <strong>right arm</strong> on its own: the centre of gravity moves to the right and up, and the number underneath is about a centimetre and a half sideways. Ask them whether that seems like a lot. It is one arm, five per cent of body mass, moved perhaps forty centimetres — so the whole-body shift should be about five per cent of forty, which is two centimetres. The arithmetic in their head should match the figure, and it does.
+
+Now lift <strong>both</strong> arms. The sideways shifts cancel exactly and the upward shift doubles. That is the symmetry argument from the first section, running in reverse.
+
+Then <strong>lean the trunk</strong> by the same angle you moved the arm. The shift is several times larger, because the trunk is half the body. If they remember one thing from this figure it should be that: a small mass moved a long way and a large mass moved a short way can produce the same shift, and the trunk almost always wins.
+
+Finally, the one to leave them with: the figure draws the centre of gravity wherever the arithmetic puts it, including outside the body. Lean far enough and watch.</aside>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Why it moves, in one sentence</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Lifting the left arm does not change how much you weigh. It changes the
+        <strong>moment arm</strong> of the arm&rsquo;s weight about the midline.</p>
+      <p class="small">The arm&rsquo;s weight now makes a larger moment to the left than before, and
+        the only way for the moments to balance again is for the centre of gravity to move
+        <strong>toward</strong> it.</p>
+      <p class="eq">&Delta;r<sub>cofg</sub> = m<sub>limb</sub> &Delta;r<sub>limb</sub> &divide; &Sigma;m</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Read that as a rule of thumb: the whole body moves by the
+          fraction of body mass that moved, times how far it went. An arm is about 5% of you, so
+          moving it 40 cm moves your centre of gravity about 2 cm.</p>
+      </div>
+    </div>
+    <div>
+      <p class="small">The general rule, from his slide:</p>
+      <ul class="small">
+        <li>the centre of gravity shifts <strong>in the direction</strong> of the limb that
+          moved;</li>
+        <li>how far depends on the <strong>mass</strong> of that limb and the <strong>distance</strong>
+          it moved &mdash; that is, on the torque it caused.</li>
+      </ul>
+      <p class="small">And the consequence that matters for everything after this lecture: because
+        the body changes shape constantly while walking, running or jumping, the centre of gravity
+        is a <strong>moving target</strong>, not a landmark.</p>
+    </div>
+  </div>
+  <aside class="notes">The rule of thumb in the callout is the thing to give them for an exam. It is a one-line sanity check on any answer they compute, and it catches factor-of-ten errors instantly.
+
+The last sentence sets up the rest of the lecture and the rest of the course. In the gait deck the centre of mass rose and fell three and a half centimetres twice a stride; that was this, happening continuously.</aside>
+</section>
+
+<!-- 23 -->
+<section>
+  <div class="section-slide">
+    <h2>Centre of gravity, centre of pressure</h2>
+    <p class="sub">Two points that are easy to confuse and are never the same</p>
+  </div>
+  <aside class="notes">Ask before you start: are these the same point? Almost everyone says no but cannot say why not. By the end of this section they should be able to say that one is a property of the body and the other is a property of the contact.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Centre of pressure</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/cop-foot.png" alt="Two foot outlines with the centre of pressure path traced on them over ten seconds, and the forward centre of pressure position plotted against time"></div>
+    </div>
+    <div>
+      <p class="small"><strong>Centre of pressure</strong> &mdash; the point on the supporting
+        surface where the resultant vertical force can be taken to act.</p>
+      <ul class="small">
+        <li>It is a property of the <em>contact</em>, not of the body.</li>
+        <li>On one foot, it lies under that foot. On two, it lies somewhere between them,
+          according to how the weight is shared.</li>
+        <li>It can never leave the base of support. The centre of gravity can, and that is what
+          falling is.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">A shift of the centre of pressure is used as an indirect measure
+          of postural sway &mdash; but it is measuring what the <em>muscles are doing</em>, not
+          where the body is.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The three bullets are the three things students get wrong, in the order they get them wrong.
+
+The second one is worth a demonstration if you have a plate: stand on two feet, shift your weight, and watch the point slide between them without either foot moving. It is a weighted average again — of the pressure distribution this time — which is the third weighted average in the lecture.
+
+The callout matters for anyone who reads a balance paper. Centre of pressure is the easy thing to measure and the centre of gravity is the thing you actually care about, and the literature is full of papers that quietly treat them as the same.</aside>
+</section>
+
+<!-- 25 -->
+<section id="w-copcom">
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">The force acts here, the body turns about there</p>
+  <div class="iplot wide" data-widget="copcom"></div>
+  <aside class="notes">His slide 26 says it in a sentence and draws two stick figures: during single limb support the ground reaction force acts at the centre of pressure and creates a torque about the centre of gravity. It is measurable, so this measures it — plate at two hundred and forty hertz, the authors' own centre of mass, and the moment computed live as the force times the perpendicular distance from the centre of gravity to its line of action.
+
+Roll through stance and watch the sign change. Early on, the foot is out in front of the body, the line of action passes in front of the centre of gravity, and the moment is positive — the step is catching a fall that started in the previous step. At about a third of the way through stance the line passes straight through the centre of gravity and the moment is zero. After that the foot is behind and the moment is negative: the body is toppling forward over its own foot, and that topple is what the next step catches.
+
+That is walking. Not a sequence of poses — a controlled fall, caught and restarted twice per stride, and the whole mechanism is visible in one trace.
+
+Two honest notes on the figure. The perpendicular distance is drawn as the perpendicular, not as the horizontal gap, because the force is not vertical. And the plate record opens a few milliseconds after contact, so the very start of the trace is already under load.</aside>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Quiet standing</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Stand still and the centre of gravity drifts. The centre of pressure moves
+        <strong>around</strong> it, crossing from one side to the other, creating alternating
+        &ldquo;righting&rdquo; moments.</p>
+      <p class="small">Winter&rsquo;s record is the classic demonstration: the two traces on one
+        axis, over seven seconds.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">The centre-of-pressure trace has a <strong>higher frequency</strong>
+          and a <strong>larger amplitude</strong> than the centre-of-gravity trace. That is not an
+          artefact and it is not noise. It is the control signal, and the next slide shows why it
+          has to be bigger.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap tight"><img src="assets/winter-fig1.png" alt="Five drawings of a subject swaying back and forth on a force platform, each showing the centre of gravity and centre of pressure positions with the associated angular accelerations and velocities"></div>
+      <div class="fig cap tight"><img src="assets/winter-fig2.png" alt="A seven second record of simultaneous centre of gravity and centre of pressure fluctuations in quiet stance, the centre of pressure oscillating either side of the centre of gravity with higher frequency and greater amplitude"></div>
+    </div>
+  </div>
+  <aside class="notes">Make them read the second figure before you explain it. The dotted trace is busier and wider than the solid one, and almost everyone's first instinct is that the dotted one must be the noisier measurement. It is the opposite: the centre of pressure is measured far more precisely than the centre of gravity. The difference is real.
+
+Then hold the question — why must it be bigger? — until the next slide, where the model answers it.</aside>
+</section>
+
+<!-- 27 -->
+<section id="w-balance">
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Why the centre of pressure has to overshoot</p>
+  <div class="iplot wide" data-widget="balance"></div>
+  <aside class="notes">This is the one figure in the deck that is a model rather than a measurement, and the figure says so on its face. There is no posturography trial in this course's data, so rather than draw Winter's record again, this simulates the mechanism that produced it.
+
+Standing is an inverted pendulum hinged at the ankles. Write the moment about the centre of mass and you get, after linearising, the sideways acceleration equals g over h times the gap between the centre of gravity and the centre of pressure. That single line explains the whole figure on the previous slide.
+
+Read it carefully with them. The centre of pressure is not following the centre of gravity. It is the <em>only</em> thing that can accelerate it. If the two coincide, the acceleration is zero and the body keeps doing whatever it was already doing — which, if it was falling forward, means it keeps falling. To <em>stop</em> a forward drift the centre of pressure has to get in <em>front</em> of the centre of gravity, and to bring it back it has to stay there a while. It must overshoot. That is why the dotted trace is the bigger one.
+
+Then press <strong>You hold it up</strong> and let them try. Moving the pointer puts the force where they choose. Almost everyone falls over in about two seconds, and the reason is instructive: they chase the centre of gravity instead of leading it. The lead slider is the thing their plantarflexors do without being asked.
+
+Leave them with the number: the correction is being made continuously, about this well, by muscles they are not aware of using, for every minute they are upright.</aside>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">The base of support</p>
+  <div class="cols b top">
+    <div>
+      <div class="fig cap"><img src="assets/winter-fig2.png" alt="The same seven second record of centre of gravity and centre of pressure, annotated to show the centre of pressure moving back and forth to keep the centre of gravity within the base of support"></div>
+    </div>
+    <div>
+      <p class="small">The <strong>base of support</strong> is the area enclosed by the parts of the
+        body in contact with the ground, including the space between them.</p>
+      <p class="small">Balance is one condition: keep the centre of gravity&rsquo;s vertical
+        projection <strong>inside</strong> that area. The centre of pressure is the tool for doing
+        it, and it can only ever act within the base.</p>
+      <ul class="small">
+        <li>Feet apart &mdash; a wider base, more room before a correction is needed.</li>
+        <li>A cane &mdash; a <em>much</em> larger base, which is most of what a cane is for.</li>
+        <li>Up on the toes &mdash; a base a few centimetres long, which is why it is hard.</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">The cane point is worth half a minute because it reframes an everyday object. A cane carries very little load — typically under fifteen per cent of body weight — and does almost all of its work by extending the base of support forward and sideways. Hold that against the previous figure: a bigger base means the centre of pressure has more room to move, and more room to move means a slower, less demanding correction.
+
+If you want to end the section with a demonstration: ask everyone to stand on one leg and then close their eyes. The base did not change; the ability to measure where the centre of gravity is did. Balance needs both.</aside>
+</section>
+
+<!-- 29 -->
+<section>
+  <div class="section-slide">
+    <h2>Forces through it, and forces that miss</h2>
+    <p class="sub">Why anything spins at all</p>
+  </div>
+  <aside class="notes">The last section of the lecture, and the one that connects back to Angular Kinetics 1. A force does two things at once, and which two depends entirely on whether it passes through one particular point.</aside>
+</section>
+
+<!-- 30 -->
+<section id="w-freeaxis">
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Through the centre, and off it</p>
+  <div class="iplot wide" data-widget="freeaxis"></div>
+  <aside class="notes">His slides 29 to 32 are the pencil: push it through the middle and it slides, push it anywhere else and it slides <em>and</em> spins. Here it is, from the equations rather than from a photograph.
+
+Start with the flick through the centre. The rod translates, cleanly, no rotation. Then move the flick off-centre without touching the strength slider and watch two things at once — and the second one is the one students miss.
+
+First, it spins. Expected.
+
+Second, and this is the point: the <em>translation is exactly the same as before</em>. The green line is the path of the centre of gravity, and it is straight and at the same speed whichever point you flick. The off-centre flick did not trade translation for rotation. It added rotation and left the translation alone. F = ma does not know or care where the force was applied; only M = Fd⊥ does.
+
+That is the whole of this section, and it is worth saying explicitly because the intuition runs the other way. Students expect a push at the end to "waste" some of its effect on spinning. It does not.
+
+Then the third thing, which is the slide after this: the spin is about the <em>centre of gravity</em>, not about the point you pushed. Watch the green dot — it never deviates from the straight line even while the rod turns around it. A free body always rotates about its own centre of gravity, whatever you do to it.</aside>
+</section>
+
+<!-- 31 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">The two cases, stated</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">A force <strong>through</strong> the centre of gravity:</p>
+      <ul class="small">
+        <li>changes the <strong>linear</strong> motion of the object;</li>
+        <li>produces no moment about the centre of gravity, because
+          <em>d</em><sub>&perp;</sub> = 0;</li>
+        <li>so there is no change in angular motion at all.</li>
+      </ul>
+      <p class="small">A force <strong>not through</strong> the centre of gravity:</p>
+      <ul class="small">
+        <li>changes the linear motion in <em>exactly the same way</em>;</li>
+        <li><em>and</em> produces a moment <em>M</em> = <em>F</em> <em>d</em><sub>&perp;</sub>;</li>
+        <li>so the object translates and rotates &mdash; and it rotates about its centre of
+          gravity.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="fig cap tight"><img src="assets/body-force.png" alt="A standing figure with a horizontal force arrow applied at the centre of the body"></div>
+      <div class="callout small">
+        <p style="margin-bottom:0">Newton&rsquo;s second law in its two forms, side by side:
+          <strong>F = ma</strong> never mentions where the force was applied, and
+          <strong>M = I&alpha;</strong> is the only equation that does. That is the entire reason
+          a free object spins about its centre of gravity and nothing else.</p>
+      </div>
+      <p class="small">An unconstrained body has no axle. The only point it <em>can</em> rotate
+        about is the one for which the weights balance &mdash; which is the point this whole
+        lecture has been about.</p>
+    </div>
+  </div>
+  <aside class="notes">The callout is the summary of the lecture, so slow down.
+
+A diver leaves the board, and from that moment nothing can change her angular momentum. She rotates about her centre of gravity because there is nothing else to rotate about, and the centre of gravity itself follows a parabola it cannot escape. She can change how fast she spins, by changing her moment of inertia — which is the next lecture — but not whether she spins or where her centre of gravity goes.
+
+The contrast case is a body with a joint: a forearm rotating about the elbow is constrained, so it rotates about the elbow and not about its own centre of gravity. Free versus constrained is the distinction, and it is the one that decides which equation to write.</aside>
+</section>
+
+<!-- 32 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Example 1 &mdash; a force at right angles</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">A 75 N force acts perpendicular to a post, 3 m from the axis at
+        <strong>O</strong>. Find the moment about O.</p>
+      <p class="small"><strong>Magnitude.</strong> The force is already perpendicular, so the
+        moment arm is the distance given:</p>
+      <p class="eq">M<sub>O</sub> = F d<sub>&perp;</sub> = (75 N)(3 m) = <strong>225 N&middot;m</strong></p>
+      <p class="small"><strong>Direction.</strong> By the right-hand rule the moment vector points
+        orthogonally to the page, with a sense going <em>into</em> it &mdash; which in the usual
+        sign convention makes it <strong>negative</strong>.</p>
+    </div>
+    <div>
+      <div class="fig cap tight"><img src="assets/right-hand.png" alt="A right hand curled with the fingers indicating the sense of rotation and the thumb the direction of the moment vector"></div>
+      <div class="callout small">
+        <p style="margin-bottom:0">This is the same example as Angular Kinetics 1, slides 8 to 10,
+          and the deck for that lecture has it as an interactive figure. If it is fresh, move
+          through these four slides quickly.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">His deck repeats this worked example from the previous lecture, so the deck repeats it too rather than quietly dropping a slide he teaches from. But the honest thing is to say that it is a repeat and to point at the lecture where it is interactive, which the callout does.
+
+The sign is the part worth the time, since the magnitude is one multiplication. Right hand, fingers curling the way the force would turn the post, thumb gives the vector. Into the page is clockwise is negative, in the convention this course uses throughout.</aside>
+</section>
+
+<!-- 33 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">Example 2 &mdash; the same force, at 30&deg;</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>Solution A &mdash; resolve the distance.</strong></p>
+      <p class="small">Find the perpendicular distance from the line of action to the axis:</p>
+      <p class="eq">d = (3 m)(cos 30&deg;) = 2.6 m</p>
+      <p class="eq">M<sub>O</sub> = F d<sub>&perp;</sub> = (75 N)(2.6 m) = <strong>195 N&middot;m</strong></p>
+    </div>
+    <div>
+      <p class="small"><strong>Solution B &mdash; resolve the force.</strong></p>
+      <p class="small">Only the component perpendicular to the post contributes:</p>
+      <p class="eq">(75 N)(cos 30&deg;) = 65 N</p>
+      <p class="eq">M<sub>O</sub> = (65 N)(3 m) = <strong>195 N&middot;m</strong></p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Two routes, one answer. Resolve the <em>distance</em> or resolve
+          the <em>force</em> &mdash; never both, which is the commonest error on this question.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Both routes are on his slides and both should be shown, because students find one of them obvious and the other opaque and it is not the same one for everybody.
+
+Two notes on the arithmetic. His slide rounds the moment arm to 2.6 m before multiplying, which gives 195; carrying the cosine through gives 194.86. Either is fine, and the rounding is worth naming so nobody thinks their calculator is broken.
+
+And the error the callout warns about is real and common: resolving the force <em>and</em> the distance, and multiplying by the cosine twice. If an answer comes out at about 169 newton metres, that is what happened.
+
+The sign is the same as example 1 and his slide asks the question again without answering it: negative, into the page.</aside>
+</section>
+
+<!-- 34 -->
+<section>
+  <h2>Angular Kinetics 2</h2>
+  <p class="subhead">What to take away</p>
+  <ul class="small">
+    <li><strong>One sum does all of it.</strong> &Sigma;(m&middot;r) &divide; &Sigma;m locates the
+      centre of gravity in one dimension, and you run it once per axis for the others. There is no
+      separate two-dimensional formula.</li>
+    <li><strong>It is the balance point because the moments cancel there</strong> &mdash; that is
+      not a second fact about it, it is the same fact rearranged.</li>
+    <li><strong>Segment masses are not measured on your subject.</strong> They come from eight
+      elderly male cadavers by way of Dempster, and every centre-of-gravity and inverse-dynamics
+      result in this course inherits that.</li>
+    <li><strong>The centre of gravity moves whenever the body changes shape</strong>, by the
+      fraction of body mass that moved times how far it went. The trunk usually wins.</li>
+    <li><strong>Centre of pressure is not centre of gravity.</strong> One is a property of the
+      contact and can never leave the base of support; the other is a property of the body and
+      leaving the base is exactly what falling is.</li>
+    <li><strong>The centre of pressure has to overshoot the centre of gravity</strong>, because it
+      is the only thing that can accelerate it. That is why its trace is the bigger, busier one.</li>
+    <li><strong>A force through the centre of gravity translates; a force anywhere else translates
+      the same and rotates as well.</strong> F = ma does not care where you pushed. Only
+      M = Fd<sub>&perp;</sub> does.</li>
+  </ul>
+  <aside class="notes">If they keep three: the weighted mean, where the segment numbers come from, and the difference between centre of gravity and centre of pressure.
+
+The last bullet is the bridge to the next lecture. Once you accept that a free body rotates about its centre of gravity, the only remaining question is how <em>fast</em> — and that depends on how the mass is spread out around that point, which is the moment of inertia.</aside>
+</section>
+
+<!-- 35 -->
+<section>
+  <div class="title-slide">
+    <p class="course">Biomechanics (EPHE 341)</p>
+    <h1>Angular Kinetics 2</h1>
+    <div class="rule"></div>
+    <p class="sub">Next up: angular kinetics 3 &mdash; moment of inertia, angular momentum and
+      how a diver changes her rate of spin without changing her angular momentum &middot;
+      Measured data: Lencioni et al., two subjects, standing and level walking &middot;
+      Segment parameters: Winter, Table 4.1, after Dempster</p>
+  </div>
+  <aside class="notes">End by naming the one question this lecture leaves open: we now know where a body rotates about. We do not know how hard it is to make it rotate. That is moment of inertia, and the table they used today already has the column.</aside>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js?v=20261008"></script>
+<script src="mobile.js?v=20261008"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="cofgdata.js?v=20261008"></script>
+<script src="deck-core.js?v=20261008"></script>
+<script src="cofg.js?v=20261008"></script>
+<script src="deck-tools.js?v=20261008"></script>
+<script src="fit.js?v=20261008"></script>
+</body>
+</html>
