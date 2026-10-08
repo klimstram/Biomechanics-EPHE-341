@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fdfdfc">
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<!-- iPhone has no Fullscreen API. Add to Home Screen is the way to a full
+     screen there, and these three lines are what make that launch without
+     Safari's chrome. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EPHE 341">
+<title>EPHE 341 — Static Analysis</title>
+<link rel="stylesheet" href="reveal/dist/reset.css">
+<link rel="stylesheet" href="reveal/dist/reveal.css">
+<link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
+<link rel="stylesheet" href="theme.css?v=20261008b">
+<script>
+/* set the theme before first paint so nothing flashes */
+(function(){
+  var t = 'light';
+  try { t = localStorage.getItem('ephe341-theme') || 'light'; } catch(e) {}
+  if (/print-pdf/gi.test(location.search)) t = 'light';   // handouts always print light
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body data-home="../../index.html">
+<div id="uvic-badge" aria-label="University of Victoria, EPHE 341">
+  <img class="mark light" src="icons/uvic-light.png" alt="University of Victoria">
+  <img class="mark dark" src="icons/uvic-dark.png" alt="">
+  <span class="who"><span>EPHE 341 · BIOMECHANICS</span></span>
+</div>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- 1 -->
+<section>
+  <div class="title-slide">
+    <p class="course">Biomechanics (EPHE 341)</p>
+    <h1>Static Analysis</h1>
+    <div class="rule"></div>
+    <p class="sub">Two conditions, three equations, and the forces inside a
+      body that nobody can measure.</p>
+  </div>
+  <aside class="notes">This is the lecture where the course pays out.
+
+For eighteen lectures we have been building up the language — kinematics to describe motion, kinetics to describe what causes it, Newton's laws to connect them. Today that language does something a student can use: it tells you how hard a muscle is pulling, from measurements taken entirely outside the body.
+
+Say the aim out loud at the start. By the end of this hour you will be able to take a photograph of someone holding still, four measurements off it, and compute a tendon force. That is a real skill and it is on the final.</aside>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Static Analysis</h2>
+  <p class="subhead">Where this fits</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Through kinematics and kinetics we have been working toward being able
+        to quantify human activity, both <strong>in motion</strong> and <strong>at
+        rest</strong>.</p>
+      <p class="small">With those concepts and the relationships Newton&rsquo;s laws give us,
+        we can <strong>solve for unknown variables</strong> &mdash; which is the whole point,
+        because the variables we most want are the ones we cannot measure.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">You cannot put a load cell on a tendon in a living person.
+          You can put a force plate under their foot and a camera in front of them. Static
+          analysis is the bridge between those two facts.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/equilibrium-scene.png" alt="A sequence of walking skeletons with the leg muscles drawn in red"></div>
+      <p class="small">Everything in red is a force nobody has ever directly measured in a
+        walking human being.</p>
+    </div>
+  </div>
+  <aside class="notes">Set the stakes before the mechanics. Internal forces — tendon forces, joint contact forces, ligament forces — matter enormously for injury, surgery, prosthesis design and training, and essentially none of them have ever been measured directly in a living person doing anything interesting. There are a handful of instrumented-implant studies with a few subjects.
+
+So almost everything the field knows about what the inside of a body is doing comes from calculations like today's. That is worth saying plainly, because it makes the method feel like a tool rather than an exercise.</aside>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Static Analysis</h2>
+  <p class="subhead">Back to the first law</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">The ability to solve for unknowns begins with Newton&rsquo;s laws.</p>
+      <p class="small"><strong>Linear.</strong> An object at rest stays at rest, and an object
+        in uniform motion stays in uniform motion, unless acted upon by a
+        <strong>net</strong> external force.</p>
+      <p class="small"><strong>Angular.</strong> A body maintains a constant state of angular
+        motion unless acted on by a <strong>net</strong> external torque.</p>
+      <div class="box accent">
+        <p class="small" style="margin:0">The operative word is <strong>net</strong>. We have
+          to look at <em>all</em> the forces and <em>all</em> the moments acting on the system
+          at once.</p>
+      </div>
+    </div>
+    <div>
+      <p class="small">Which gives two cases, and only two:</p>
+      <ul class="small">
+        <li>&Sigma;<em>F</em> and &Sigma;<em>M</em> are <strong>zero</strong> &rarr; no
+          acceleration. The system is in <strong>equilibrium</strong>.</li>
+        <li>&Sigma;<em>F</em> or &Sigma;<em>M</em> is <strong>not zero</strong> &rarr; the
+          state of motion is changing. There is an acceleration.</li>
+      </ul>
+      <p class="small">Today is the first case. The next lecture is the second one, and the
+        equations barely change &mdash; the right-hand sides stop being zero.</p>
+    </div>
+  </div>
+  <aside class="notes">Spend the time on "net", because it is the word that makes the method work. Any single force in a static problem is unbalanced; it is only the sum that vanishes. Students write ΣF = 0 and then reason about one force at a time, and that is where errors come from.
+
+Flag the forward link explicitly. Everything today is ΣF = 0. In dynamic analysis it becomes ΣF = ma, and that is the only change. If they master the bookkeeping now, next lecture is a one-line extension.</aside>
+</section>
+
+<!-- 4 -->
+<section id="w-equilib">
+  <h2>Static Analysis</h2>
+  <p class="subhead">Two conditions, and neither one implies the other</p>
+  <div class="iplot wide" data-widget="equilib"></div>
+  <aside class="notes">Here is the thing that catches people.
+
+Press the middle case. Two equal forces, opposite directions, so sigma F is exactly zero — and the bar is spinning, because the forces are not in line with each other. Forces balanced, moments not. That is not equilibrium.
+
+Press the third. Now the two forces are both upward and placed symmetrically, so their moments about the pivot cancel — and the whole thing accelerates away, because sigma F is three hundred newtons. Moments balanced, forces not. Also not equilibrium.
+
+Only the first case is equilibrium, and it satisfies both. Drag the forces around and try to break it; every time you move one you have to move another to restore both sums.
+
+The practical consequence for the exam: you get three equations, and you need all three, and a problem with three unknowns is solvable while a problem with four is not.</aside>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Static Analysis</h2>
+  <p class="subhead">The equations of static equilibrium</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">When the sum of all forces and all moments is zero, the object has zero
+        acceleration and is said to be in <strong>equilibrium</strong>. These are the equations
+        we use to solve for unknown quantities:</p>
+      <div class="box accent">
+        <p class="eq big" style="margin:0">&Sigma;<em>F</em> = 0
+          &emsp;&emsp; &Sigma;<em>M</em> = 0</p>
+      </div>
+      <p class="small" style="margin-top:.7em">They hold on every axis:</p>
+      <div class="cols" style="gap:.6em">
+        <div><p class="eq" style="margin:0">&Sigma;<em>F</em><sub>x</sub> = 0<br>
+          &Sigma;<em>F</em><sub>y</sub> = 0<br>
+          &Sigma;<em>F</em><sub>z</sub> = 0</p></div>
+        <div><p class="eq" style="margin:0">&Sigma;<em>M</em><sub>x</sub> = 0<br>
+          &Sigma;<em>M</em><sub>y</sub> = 0<br>
+          &Sigma;<em>M</em><sub>z</sub> = 0</p></div>
+      </div>
+      <p class="small"><strong>In this course we work in two dimensions</strong>, which leaves
+        three:</p>
+      <div class="box">
+        <p class="eq" style="margin:0">&Sigma;<em>F</em><sub>x</sub> = 0 &emsp;
+          &Sigma;<em>F</em><sub>y</sub> = 0 &emsp; &Sigma;<em>M</em> = 0</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/axes-skeleton.jpg" alt="A standing figure with the three cardinal planes and the three axes of rotation drawn through it"></div>
+      <div class="fig cap tight"><img src="assets/three-axes.png" alt="A diagram of three perpendicular axes with a rotation arrow about each"></div>
+    </div>
+  </div>
+  <aside class="notes">Three equations is the number to remember, because it sets what is solvable. Three equations, three unknowns. In today's example the three unknowns are the muscle force and the two components of the joint reaction, and that is not a coincidence — the problem was built to be solvable.
+
+Mention the six-equation version once and move on. Real three-dimensional biomechanics uses all six, and it is also where you discover that the body has far more muscles than equations, which is the indeterminacy problem. Not today.</aside>
+</section>
+
+<!-- 6 -->
+<section id="w-jrf">
+  <h2>Static Analysis</h2>
+  <p class="subhead">The joint reaction force</p>
+  <div class="iplot wide" data-widget="jrf"></div>
+  <aside class="notes">Any applied force is accompanied by a joint reaction force. His slide says that and it is true, but the interesting part is how big it is.
+
+Work it in his order with the sliders. Fifty newtons in the hand, a third of a metre from the elbow, makes sixteen newton metres of moment. The biceps inserts about four centimetres out, so to cancel sixteen newton metres it has to pull with roughly four hundred newtons — eight times the load. And then the joint has to carry both of them, because the elbow is what is holding the whole arrangement together.
+
+Now move the third slider, the insertion distance, inward. The load has not changed. The moment it makes has not changed. But the muscle force and the joint force both climb steeply, because the muscle is being asked to do the same job from a worse position.
+
+That is the single most important idea in musculoskeletal loading, and it is why joint forces in ordinary activities are multiples of body weight rather than fractions of it.</aside>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Static Analysis</h2>
+  <p class="subhead">Where the force acts matters &mdash; but only for the moment</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">For the <strong>force</strong> equations, it does not matter where on
+        the body a force acts. Forces just add:</p>
+      <div class="box">
+        <p class="eq" style="margin:0">&Sigma;<em>F</em> =
+          <em>F</em><sub>applied</sub> + <em>F</em><sub>joint reaction</sub> = 0</p>
+      </div>
+      <p class="small" style="margin-top:.7em">And in components, which is how we will actually
+        use them:</p>
+      <div class="box">
+        <p class="eq" style="margin:0">&Sigma;<em>F</em><sub>x</sub> =
+          <em>F</em><sub>ax</sub> + <em>F</em><sub>rx</sub> = 0</p>
+        <p class="eq" style="margin:.2em 0 0 0">&Sigma;<em>F</em><sub>y</sub> =
+          <em>F</em><sub>ay</sub> + <em>F</em><sub>ry</sub> = 0</p>
+      </div>
+    </div>
+    <div>
+      <p class="small">For the <strong>moment</strong> equation it matters completely. The
+        applied force tends to rotate the segment about the joint, and that moment has to be
+        countered if the limb is to stay still:</p>
+      <div class="box accent">
+        <p class="eq" style="margin:0">&Sigma;<em>M</em> =
+          <em>M</em><sub>applied</sub> + <em>M</em><sub>?</sub> = 0</p>
+      </div>
+      <p class="small" style="margin-top:.7em">The question mark is the muscle, and solving
+        for it is the entire exercise.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">A force applied <em>at</em> the joint makes <strong>no
+          moment about that joint</strong> &mdash; its moment arm is zero. That is why we take
+          moments about the joint: the two unknown reactions vanish from the equation and the
+          muscle force is left on its own.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The callout is the single most useful tactical point in the lecture and it is worth writing on the board.
+
+You have three unknowns: M, Rx and Ry. You have three equations. You could solve the system simultaneously and it would be miserable. Instead, take moments about the joint. Both reactions act at the joint, so both have a moment arm of zero, so both drop out of the moment equation entirely — and you are left with one equation in one unknown, which is M.
+
+Solve that, then put M into the two force equations and read off Rx and Ry one at a time. Three equations, solved in sequence, never simultaneously. Every static problem in this course is built to work that way.</aside>
+</section>
+
+<!-- 8 -->
+<section>
+  <div class="section-slide">
+    <h2>The method</h2>
+    <p class="sub">A free body diagram, a force table, three equations.
+      Always in that order.</p>
+  </div>
+  <aside class="notes">Divider. From here the lecture is one worked example, done slowly, and the method is the content.</aside>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Static Analysis</h2>
+  <p class="subhead">Example problem &mdash; the iron cross</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">Using the diagram of the <strong>right arm of the gymnast</strong>,
+        find the magnitude of the muscle force (<em>M</em>) and the joint reaction forces at
+        the shoulder.</p>
+      <p class="small"><strong>Given</strong></p>
+      <ul class="small">
+        <li>the arm is held horizontal</li>
+        <li>force of the rings = <strong>400 N</strong>, located
+          <strong>0.88 m</strong> from the shoulder</li>
+        <li>the ring force acts at <strong>80&deg; above the negative X axis</strong></li>
+        <li>arm mass = <strong>3.4 kg</strong>, located <strong>0.39 m</strong> from the
+          shoulder</li>
+        <li>the muscle force acts <strong>0.08 m</strong> from the shoulder</li>
+        <li>the muscle force acts at <strong>40&deg; below the negative X axis</strong></li>
+      </ul>
+    </div>
+    <div>
+      <div class="fig cap"><img src="assets/rings-front.png" alt="A gymnast holding an iron cross on the rings, seen from the front"></div>
+      <div class="fig cap tight"><img src="assets/arm-outline.png" alt="An outline of the right arm from above, with the joint reaction, muscle and gravity forces labelled"></div>
+    </div>
+  </div>
+  <aside class="notes">Read the given list out loud and make them notice its shape: six lines, and every one is either a magnitude, a distance or an angle. That is all a static problem ever gives you.
+
+Two of them are easy to get backwards and they are the two that matter. Eighty degrees above the NEGATIVE x axis — not the positive one. Forty degrees BELOW the negative x axis. Get either wrong and the answer changes by thousands of newtons, which the figure two slides from now will let you check.
+
+Also note what is not given: the muscle force, and the two reactions. Three unknowns, three equations.</aside>
+</section>
+
+<!-- 10 -->
+<section id="w-fbd">
+  <h2>Static Analysis</h2>
+  <p class="subhead">Step one: draw a free body diagram</p>
+  <div class="iplot wide" data-widget="fbd"></div>
+  <aside class="notes">The first step of every static equilibrium solution, and the step with the highest failure rate.
+
+Press through his five. Step one is the one that is not in his slides and should be: cut the arm free of the gymnast. The arm is now an object on its own, and everything the rest of the body was doing to it has to be replaced by forces at the cut. That is what a free body diagram is — not a picture of the situation, a picture of one object with every force on it and nothing else.
+
+Then his four. Reaction forces at the shoulder, horizontal and vertical, magnitudes unknown — which is fine, you know they are there. The muscle, at its angle and its insertion point, magnitude unknown. Gravity, three point four kilograms times nine point eight one, at the arm's centre of gravity. And the rings, the only force on the whole diagram whose magnitude you actually know.
+
+Count what is on the diagram at the end: four forces, two of them with unknown magnitudes and one of them with two unknown components. Three unknowns.</aside>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>Static Analysis</h2>
+  <p class="subhead">Step two: build a force table</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">To keep track of the equations and the variables in them, build a
+        <strong>force table</strong>. One row per force; three columns for what that force
+        contributes.</p>
+      <table>
+        <thead><tr><th>Force</th><th><em>F</em><sub>x</sub></th>
+                   <th><em>F</em><sub>y</sub></th><th><em>M</em></th></tr></thead>
+        <tbody>
+          <tr><td>F1</td><td>F1<sub>x</sub></td><td>F1<sub>y</sub></td><td>M1</td></tr>
+          <tr><td>F2</td><td>F2<sub>x</sub></td><td>F2<sub>y</sub></td><td>M2</td></tr>
+          <tr><td>R<sub>x</sub></td><td>R<sub>x</sub></td><td>0</td><td>0</td></tr>
+          <tr><td>R<sub>y</sub></td><td>0</td><td>R<sub>y</sub></td><td>0</td></tr>
+          <tr><td><strong>Total</strong></td><td><strong>0</strong></td>
+              <td><strong>0</strong></td><td><strong>0</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <p class="small">The first column lists every force acting on the system. The three
+        remaining columns are what each force contributes in <em>x</em>, in <em>y</em>, and as
+        a moment.</p>
+      <p class="small">Because of the laws of static equilibrium, <strong>the sum of each
+        column is zero</strong>. So each column becomes an equation:</p>
+      <ul class="small">
+        <li>column two &rarr; &Sigma;<em>F</em><sub>x</sub> = 0</li>
+        <li>column three &rarr; &Sigma;<em>F</em><sub>y</sub> = 0</li>
+        <li>column four &rarr; &Sigma;<em>M</em> = 0</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">Look at the last two rows. The reactions act
+          <em>at</em> the joint, so their moment arm is zero and their moment column entry is
+          zero. <strong>That is the whole trick</strong>, written into the shape of the
+          table.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The table is a bookkeeping device and it is a good one. Its real value is that it makes it impossible to forget a force: every force gets a row, and every row gets three entries, and if a cell is empty you have not finished.
+
+Point at the two zeros in the bottom right again. Students take moments about an arbitrary point, get a messy simultaneous system, and conclude the method is hard. The table makes the right choice obvious, because it is the choice that fills two cells with zeros.</aside>
+</section>
+
+<!-- 12 -->
+<section id="w-forcetable">
+  <h2>Static Analysis</h2>
+  <p class="subhead">His table, filling itself in</p>
+  <div class="iplot wide" data-widget="forcetable"></div>
+  <aside class="notes">This is his slides eighteen to twenty-seven, which fill one cell of a table at a time, in red, in a fixed order. Press "Fill the table" and watch it go.
+
+Go cell by cell with them the first time. Rings: minus four hundred cos eighty, because the force points toward the negative x direction; four hundred sin eighty upward; and a moment of four hundred times zero point eight eight sin eighty, which is the vertical component times its distance out. Gravity: no x component at all, minus three point four times nine point eight one in y, and that times zero point three nine for the moment. The muscle: both components negative because it pulls down and inward, both carrying the unknown M. And the two reaction rows, with their zeros in the moment column.
+
+Then the three equations. The moment equation has one unknown, so solve it: M is six thousand four hundred and eighty-eight newtons. Put that into the x equation: Rx is five thousand and forty. Into the y equation: Ry is three thousand eight hundred and ten. Those are his three printed answers and the figure reproduces them to the newton.
+
+Now the sliders, which a screenshot cannot do. Take the muscle insertion from eight centimetres to four and watch M double. That is the next slide.</aside>
+</section>
+
+<!-- 13 -->
+<section id="w-advantage">
+  <h2>Static Analysis</h2>
+  <p class="subhead">Why the answer was so large</p>
+  <div class="iplot wide" data-widget="advantage"></div>
+  <aside class="notes">Six and a half thousand newtons is roughly two-thirds of a tonne, hanging off one shoulder of a gymnast who weighs maybe seventy kilograms. His slide twenty-eight calls it "extremely large" and leaves it there. Here is why it is that large.
+
+The rings pull from eighty-eight centimetres out. The muscle pulls from eight. Eleven to one, and the muscle is on the wrong side of the ratio — it has the short arm. So to cancel the ring's moment it has to pull about eleven times as hard, and then a bit more again because the two forces point in different directions, which is where sixteen times comes from.
+
+Slide the insertion point and watch the curve. It is a hyperbola, so the loss is not linear: going from eight centimetres to four doubles the force, and going from four to two doubles it again. The last centimetre closest to the joint is worth more than the first ten.
+
+That has a clinical consequence worth a sentence. A tendon reattached a centimetre closer to the joint than it was is a permanent loss of strength that no amount of training recovers, because the lever is gone.
+
+And the design question, which is the good one to leave them with: if short moment arms are so expensive, why is every muscle in the body built that way? Because a short moment arm means a small amount of muscle shortening produces a large, fast movement at the hand. You are buying range and speed, and paying in force.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Static Analysis</h2>
+  <p class="subhead">The three equations, written out</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>&Sigma;<em>M</em> = 0</strong> about the shoulder &mdash; the
+        reactions have no moment there, so this equation has one unknown:</p>
+      <div class="workblock">
+        <p class="eq">400(0.88 sin80&deg;) &minus; 3.4(9.81)(0.39)
+          &minus; <em>M</em>(0.08 sin40&deg;) = 0</p>
+        <p class="eq">346.65 &minus; 13.01 = <em>M</em>(0.05142)</p>
+        <p class="eq"><em>M</em> = <strong>6488 N</strong></p>
+      </div>
+      <p class="small"><strong>&Sigma;<em>F</em><sub>x</sub> = 0</strong>, now that
+        <em>M</em> is known:</p>
+      <div class="workblock">
+        <p class="eq">&minus;400cos80&deg; &minus; 6488cos40&deg; +
+          <em>R</em><sub>x</sub> = 0</p>
+        <p class="eq"><em>R</em><sub>x</sub> = <strong>5040 N</strong></p>
+      </div>
+      <p class="small"><strong>&Sigma;<em>F</em><sub>y</sub> = 0</strong>:</p>
+      <div class="workblock">
+        <p class="eq">400sin80&deg; &minus; 3.4(9.81) &minus; 6488sin40&deg; +
+          <em>R</em><sub>y</sub> = 0</p>
+        <p class="eq"><em>R</em><sub>y</sub> = <strong>3810 N</strong></p>
+      </div>
+    </div>
+    <div>
+      <p class="small">Three equations, solved <strong>in sequence</strong> and never
+        simultaneously, because the first one was arranged to have only one unknown in it.</p>
+      <div class="callout small">
+        <p>Put the answers in human terms before moving on.</p>
+        <p><strong>6488 N</strong> of muscle force is about <strong>195 times the weight of
+          the arm</strong> it is holding up, and <strong>16 times</strong> what the rings are
+          pulling with.</p>
+        <p style="margin-bottom:0">The shoulder joint is carrying a resultant of about
+          <strong>6300 N</strong> &mdash; roughly nine times the gymnast&rsquo;s whole body
+          weight, through one shoulder, while he holds perfectly still.</p>
+      </div>
+      <p class="small">Two rings at 400 N support 800 N in total, which is an 81 kg gymnast
+        &mdash; so the given is self-consistent, and worth checking that way.</p>
+    </div>
+  </div>
+  <aside class="notes">Work the three in order on the board at the pace of the slide, and stress the sequencing: the moment equation first, because you arranged it to have one unknown; then each force equation gives one reaction directly. Nobody should be solving simultaneous equations in this course.
+
+The callout is where the lecture lands. Nine times body weight through one shoulder, holding still. That is why an iron cross takes years to train and why gymnasts' shoulders fail the way they do.
+
+And do the consistency check out loud — two rings at four hundred newtons is eight hundred newtons of support, which is an eighty-one kilogram person. His given is a real gymnast. Checking a problem's givens against the world is a habit worth building.</aside>
+</section>
+
+<!-- 15 -->
+<section id="w-tutorq">
+  <h2>Static Analysis</h2>
+  <p class="subhead">The same method, three more times</p>
+  <div class="iplot wide" data-widget="tutorq"></div>
+  <aside class="notes">These are from the Biomechanics Tutor, and they are the shape the homework and the exam take.
+
+The first is the forearm with everything horizontal. One unknown, one equation, and the muscle comes out at nearly ninety newtons to hold twenty — more than four times, from a moment arm about four times shorter.
+
+The second is the shoulder with the deltoid at an angle. Notice what this one is really asking. The two moments are twenty-four newton metres each and they cancel exactly, so the arm is genuinely in equilibrium — the question is only what the joint pays for that, and the answer is three hundred and seventy-four newtons to hold sixty.
+
+The third is the one to slow down on. Now the forearm itself is tilted thirty-seven degrees and the muscle pulls at forty-seven, and you can no longer read a moment arm off the picture. You have to use F d sine theta, with theta the angle between the force and the segment, and the figure draws that angle for you. Every time a student gets a static problem wrong, this is usually why.</aside>
+</section>
+
+<!-- 16 -->
+<section>
+  <div class="section-slide">
+    <h2>Does it work on real people?</h2>
+    <p class="sub">His slide 28 says these forces cannot be measured.
+      So let us compute some and see how close they land.</p>
+  </div>
+  <aside class="notes">Divider into the measured part.</aside>
+</section>
+
+<!-- 17 -->
+<section id="w-achilles">
+  <h2>Static Analysis</h2>
+  <p class="subhead">The same three equations, on a measured walking stance</p>
+  <div class="iplot wide" data-widget="achilles"></div>
+  <aside class="notes">Everything so far has been his gymnast, whose numbers came off a textbook page. Here is the identical method on somebody who walked through a motion-capture lab.
+
+The foot is the free body. The ground reaction force is measured on a plate at two hundred and forty hertz, and so is the point it acts through. The ankle, heel, toe and knee are measured markers. There is exactly one number on this figure that is not measured — the Achilles tendon's moment arm, which the literature puts between four point seven and five point three centimetres — and it is the second slider, so you can see for yourself what it is worth.
+
+Take moments about the ankle, exactly as we did about the shoulder. At the peak, the moment of the ground reaction force about the ankle is ninety-five newton metres, and with a five-centimetre moment arm that needs a tendon force of two thousand newtons. This person weighs five hundred and forty. The Achilles is pulling with three point seven times her body weight. And then the ankle joint itself carries four point nine times body weight — while the floor, at that instant, is pushing with only one point two six.
+
+Say that again, because it is the whole lecture: the ground is pushing with one and a quarter body weights, the joint is carrying nearly five, and every bit of the difference is muscle.
+
+Then press the third tab, which is the honest one. Static analysis ignores the foot's own weight and its acceleration, so it is an approximation. The authors published a full inverse-dynamics solution of this same stride, and it peaks at one point five one newton metres per kilogram against our one point seven four. Fifteen per cent high. That is the price of the approximation, and it is a price worth knowing rather than hiding.</aside>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Static Analysis</h2>
+  <p class="subhead">Why static analysis matters</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">It is practically impossible to measure internal forces directly. The
+        ability to solve static equilibrium problems <strong>yields an estimate of
+        them</strong> &mdash; and for most of what biomechanics knows about the inside of a
+        living body, an estimate like this is all there has ever been.</p>
+      <p class="small">In the gymnast, the muscle force needed to hold that position was
+        extremely large, and that in turn means a very large stress inside the shoulder
+        joint.</p>
+      <p class="small"><strong>Where it gets used</strong></p>
+      <ul class="small">
+        <li><strong>Ergonomics</strong> &mdash; how much spinal compression a lift costs,
+          and where to put the limit</li>
+        <li><strong>Static postures</strong> &mdash; holding, carrying, standing at a bench</li>
+        <li><strong>Sport</strong> &mdash; any held position, and the instant of peak load in
+          a moving one</li>
+      </ul>
+    </div>
+    <div>
+      <div class="imgrow">
+        <img src="assets/powerlifter.png" alt="A powerlifter at the start of a heavy deadlift">
+        <img src="assets/ergonomics.png" alt="A musculoskeletal model of a person seated at a workstation">
+      </div>
+      <div class="callout small">
+        <p style="margin-bottom:0">The honest caveat, from the last figure: a static analysis
+          ignores the segment&rsquo;s own weight and acceleration. On a real walking stance
+          that made it about <strong>15% high</strong>. It is an estimate, and knowing the size
+          of its error is part of using it.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Close by connecting the two halves. Same three equations, same free body diagram, same force table, once on a gymnast from a textbook and once on a woman walking down a corridor. One gave nine times body weight through a shoulder and the other gave five times body weight through an ankle. Neither number could be measured; both can be computed from outside.
+
+The ergonomics application is the one most of them will meet professionally. Lifting guidelines are built on exactly this calculation done at the lumbar spine, where the erector spinae has a moment arm of about five centimetres and the load in your hands is half a metre out. The ten-to-one ratio you have seen all lecture is why a twenty-kilogram box can put several hundred kilograms of compression through L5-S1.
+
+And flag next lecture: everything today had zero on the right-hand side. Next time it becomes ma, and nothing else changes.</aside>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Static Analysis</h2>
+  <p class="subhead">Signs, and the two mistakes everybody makes</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>1. Components.</strong> Resolve every force the same way, from
+        the same axes, every time:</p>
+      <div class="box">
+        <p class="eq" style="margin:0"><em>F</em><sub>x</sub> = <em>F</em> cos&theta;
+          &emsp;&emsp; <em>F</em><sub>y</sub> = <em>F</em> sin&theta;</p>
+        <p class="small" style="margin:.3em 0 0 0">with &theta; measured
+          <strong>anticlockwise from the positive x axis</strong>, always.</p>
+      </div>
+      <p class="small">His givens are phrased relative to the <em>negative</em> x axis, so
+        convert them once, at the start, and write the converted number down:</p>
+      <ul class="small">
+        <li>80&deg; above the negative x axis &rarr; <strong>&theta; = 100&deg;</strong></li>
+        <li>40&deg; below the negative x axis &rarr; <strong>&theta; = 220&deg;</strong></li>
+      </ul>
+      <p class="small">Then cos and sin give you the signs for free, and you never have to
+        decide whether something is &ldquo;negative&rdquo; by looking at the picture.</p>
+    </div>
+    <div>
+      <p class="small"><strong>2. Moments.</strong> Pick a sense &mdash; anticlockwise
+        positive is standard &mdash; and keep it for the whole problem:</p>
+      <div class="box accent">
+        <p class="eq" style="margin:0"><em>M</em> = <em>F</em> <em>d</em><sub>&perp;</sub>
+          = <em>F</em> <em>d</em> sin&theta;</p>
+        <p class="small" style="margin:.3em 0 0 0">where &theta; is the angle
+          <strong>between the force and the segment</strong> &mdash; not between the force and
+          the horizontal.</p>
+      </div>
+      <div class="callout small">
+        <p>When the segment is horizontal, <em>d</em> sin&theta; is just the vertical component
+          times the distance, which is why the horizontal cases feel easy.</p>
+        <p style="margin-bottom:0">When it is not, that shortcut silently fails. The Tutor&rsquo;s
+          tilted-forearm problem is in the deck for exactly this reason.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">This slide exists because it is where the marks are lost, and it is worth being blunt about that.
+
+The first fix is mechanical: convert every angle to a standard-position angle before you touch the problem, write the converted numbers next to the givens, and then just use cos and sin. The signs come out right automatically. Students who try to reason about signs from the picture get maybe three out of four right, and three out of four is a wrong answer.
+
+The second is conceptual: the moment arm is perpendicular distance, and sin of the angle between is how you get it. It feels unnecessary while everything is horizontal, and then it bites the moment something tilts.</aside>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Static Analysis</h2>
+  <p class="subhead">What to take away</p>
+  <div class="cols a top">
+    <div>
+      <p class="small"><strong>The two conditions</strong></p>
+      <ul class="small">
+        <li>&Sigma;<em>F</em> = 0 stops it going anywhere; &Sigma;<em>M</em> = 0 stops it
+          turning. <strong>Neither implies the other.</strong></li>
+        <li>In 2D that is three equations, which solves three unknowns &mdash; and biomechanics
+          problems are built with exactly three.</li>
+      </ul>
+      <p class="small"><strong>The method, in order</strong></p>
+      <ol class="small">
+        <li>Cut the segment free and draw every force on it &mdash; the free body diagram.</li>
+        <li>Build the force table: a row per force, three columns.</li>
+        <li><strong>Moments about the joint first</strong>, because the reactions have no
+          moment there and drop out, leaving one unknown.</li>
+        <li>Then &Sigma;<em>F</em><sub>x</sub> and &Sigma;<em>F</em><sub>y</sub>, one reaction
+          each.</li>
+      </ol>
+    </div>
+    <div>
+      <p class="small"><strong>What it tells you</strong></p>
+      <ul class="small">
+        <li>Muscles have short moment arms and loads have long ones, so
+          <strong>muscle forces are always large multiples of the load</strong> &mdash; 16&times;
+          in the gymnast.</li>
+        <li>The joint carries the load <em>and</em> the muscle, so
+          <strong>joint forces are larger still</strong> &mdash; 9&times; body weight through
+          one shoulder, 4.9&times; through an ankle in ordinary walking.</li>
+        <li>None of those numbers can be measured. All of them can be computed, from
+          a force plate and a camera.</li>
+      </ul>
+      <div class="callout small">
+        <p style="margin-bottom:0">And the honest limit: a static analysis ignores the
+          segment&rsquo;s own weight and acceleration. Measured against a full inverse-dynamics
+          solution of the same stride, it ran about <strong>15% high</strong>.
+          <strong>Next lecture</strong> the zeros become <em>ma</em>, and that error goes away.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Close on the three numbers: sixteen times, nine times body weight, four point nine times body weight. Those are the ones that stick, and each of them came out of the same four-step method.
+
+Then the forward pointer. Every equation today had zero on the right. Next lecture they have ma and I alpha, the free body diagram is identical, the force table is identical, and the only change is what you write after the equals sign. If they have the bookkeeping, dynamic analysis is a small step.</aside>
+</section>
+
+</div>
+</div>
+
+<script src="reveal/dist/reveal.js"></script>
+<script src="reveal/plugin/notes/notes.js"></script>
+<script src="reveal/plugin/search/search.js"></script>
+<script src="reveal/plugin/zoom/zoom.js"></script>
+<script src="annotate.js?v=20261008b"></script>
+<script src="mobile.js?v=20261008b"></script>
+<script>
+/* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
+   slide on a phone held upright. Merging it here means the first layout is
+   already the right shape. */
+Reveal.initialize(Object.assign({
+  width: 1280,
+  height: 720,
+  margin: 0.045,
+  minScale: 0.2,
+  maxScale: 2.0,
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'default',
+  controls: true,
+  progress: true,
+  center: false,
+  pdfSeparateFragments: false,
+  plugins: [ RevealNotes, RevealSearch, RevealZoom ]
+}, window.DECK_GEOM || {}));
+</script>
+<script src="st19data.js?v=20261008b"></script>
+<script src="deck-core.js?v=20261008b"></script>
+<script src="st19.js?v=20261008b"></script>
+<script src="deck-tools.js?v=20261008b"></script>
+<script src="fit.js?v=20261008b"></script>
+</body>
+</html>

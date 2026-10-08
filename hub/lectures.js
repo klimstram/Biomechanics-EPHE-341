@@ -338,6 +338,28 @@ window.EPHE341_LECTURES = [
            ['the whole-body sum, segment by segment', 'w-gymtable'],
            ['angular impulse on the board', 'w-angimp']] },
 
+  { n: '19', title: 'Static analysis',
+    path: 'lectures/19-static-analysis',
+    blurb: 'Two conditions, three equations, and the forces inside a body that nobody can ' +
+           'measure. Why \u03a3F = 0 and \u03a3M = 0 are both needed and neither implies the ' +
+           'other; the joint reaction, which carries the load AND the muscle; the free body ' +
+           'diagram built the way he builds it; and then his own force table from slides 18 ' +
+           'to 27, filling itself in cell by cell and solving live \u2014 M = 6488 N, ' +
+           'R\u2093 = 5040 N, R\u1d67 = 3810 N, the same as his printed answers to the ' +
+           'newton, with his givens on sliders. Why that number is so large (an 11 : 1 moment ' +
+           'arm), three Tutor problems worked the same way, and the identical method run on a ' +
+           'measured walking stance, which puts 3.7 body weights through the Achilles and 4.9 ' +
+           'through the ankle while the floor pushes with 1.26.',
+    slides: 20, widgets: 7, updated: '2026-10-08',
+    handout: 'handout.pdf',
+    live: [['both conditions, and why you need both', 'w-equilib'],
+           ['what a joint really carries', 'w-jrf'],
+           ['the free body diagram, step by step', 'w-fbd'],
+           ['his force table, filling itself in', 'w-forcetable'],
+           ['why 6488 N \u2014 the 11 : 1 lever', 'w-advantage'],
+           ['three problems from the Tutor', 'w-tutorq'],
+           ['the same method on a measured stance', 'w-achilles']] },
+
   /* ---- still PowerPoint ---- */
   { n: '1a', title: 'Intro and review' },
   { n: '1b', title: 'Linear kinematics review' },
@@ -347,7 +369,6 @@ window.EPHE341_LECTURES = [
      match the numbers in the source .pptx filenames. Change them here if you
      would rather they did. */
   { n: '13', title: 'Virtual Muscle Lab' },
-  { n: '19', title: 'Static analysis' },
   { n: '20', title: 'Dynamic analysis' },
   { n: '22', title: 'Projectile motion' },
   { n: '23', title: 'Signals and LabVIEW' }
