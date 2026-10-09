@@ -916,3 +916,15 @@ html[data-portrait] .fig.cap img,
 html[data-portrait] .cols .fig.cap img{ max-height:360px; }
 html[data-portrait] .fig.cap.tight img,
 html[data-portrait] .cols .fig.cap.tight img{ max-height:300px; }
+
+/* ----------------------------------------------------------------------
+   Lecture 20 only: the stacked moment equation on slides 23, 24 and 27.
+   Each term on its own line so the four can be pointed at one at a time,
+   with a hanging indent so the leading + signs line up under each other.
+   ---------------------------------------------------------------------- */
+.momblock{ margin:.35em 0 .2em 0; }
+.momblock .mline{
+  margin:0 0 .18em 0; padding-left:1.1em; text-indent:-1.1em;
+  font-family:var(--eqfont, inherit); line-height:1.25;
+}
+html[data-portrait] .momblock .mline{ margin-bottom:.12em; }

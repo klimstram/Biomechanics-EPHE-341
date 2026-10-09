@@ -7,26 +7,29 @@
    sentence, and the first figure is built to say exactly that: one segment,
    one switch, statics on the left of it and dynamics on the right.
 
-   His worked example is the ankle and the knee during the swing phase of
+   The worked example is the ankle and the knee during the swing phase of
    walking, and every line of it reproduces to the digit — 10.52 N, 3.70 N,
-   0.39 N·m, 10.41 N, 24.53 N, 1.71 N·m.  So does his stance-phase Example 2,
-   apart from one newton of arithmetic.  The one thing that does not survive
-   is the foot's moment arms: slides 33 and 34 put the ankle 22 mm from the
-   foot's centre of mass, while his own foot inertia, and his own Example 2,
-   both say 97 mm.  The `shortarm` figure is that discrepancy, on a slider.
+   0.39 N·m, 10.41 N, 24.53 N, 1.71 N·m.  Example 2 is the same two
+   segments in stance, with a ground reaction force under the foot.
+
+   The `moments4` figure is the one slides 23, 24 and 27 are building
+   towards: four moments on every segment — one at each end and one about
+   the centre of gravity from each end's force — adding to Iα, with the
+   proximal one always the unknown.
 
    And then the method is run on a measured stride, from markers and a force
    plate, and checked against the joint moments the people who recorded it
    published for the same stride.  The shape comes back (r = 0.99 at the
    ankle), the timing comes back, the magnitude runs high — which is the
    honest size of the gap between two reasonable pipelines, and the subject
-   of his own slide 29.
+   of the limitations slide.
 
-   The `dynstat` figure answers the question lecture 19 left open.  Turning
-   every ma and Iα term off changes the ankle's push-off peak by 0.06 %.
-   The 15 % that lecture 19 could not account for was never the dynamics.
-   In swing it is the other way round: statics gets the knee moment's sign
-   wrong, and his worked example lives in swing.
+   The `dynstat` figure asks when the inertial terms actually matter.
+   Turning every ma and Iα term off changes the ankle's push-off peak by
+   0.06 %, because the ground force dwarfs an 800 g foot.  In swing it is
+   the other way round: with no external force at all, the equilibrium
+   answer gets the knee moment's sign wrong — and the worked example lives
+   in swing.
 
    parts/selftest.js checks every number against the values computed
    independently in Python (scratchpad/dy20/mkdy20.py and core.py).
@@ -321,23 +324,23 @@ function wrapLabel(c, txt, x, y, maxW, o) {
 /* ======================================================================
    The dynamics, in one place.
 
-   Two solvers and nothing else.  `dyn` is his worked example — a foot and
+   Two solvers and nothing else.  `dyn` is the worked example — a foot and
    a shank, solved from the distal end up — and `walkAt` is one frame of the
    measured stride.  Every figure in the deck calls one of them, so no
    number is written twice and the self-test exercises the same arithmetic
    the figures draw.
 
-   SIGNS.  His slides give the moment arms as positive lengths and then
+   SIGNS.  The slides give the moment arms as positive lengths and then
    assign the signs by looking at the picture.  That works, but it is the
    step students get wrong, so here the arms are turned into signed position
    vectors once and the moment is the plain cross product r × F after that.
-   The rule, read off his own figures and true for both his examples:
+   The rule, read off the figures and true for both the examples:
 
      on the foot   the ankle is behind and above the centre of mass,
                    the ground contact ahead of it and below
      on the shank  the knee is ahead and above, the ankle behind and below
 
-   With those, his `−F(x)·d(x) + F(y)·d(y)` falls out of r × F by itself,
+   With those, the `−F(x)·d(x) + F(y)·d(y)` falls out of r × F by itself,
    including the sign flip at the ankle that Newton's third law demands.
    ====================================================================== */
 var DD = window.DY20 || null;
@@ -346,13 +349,12 @@ var G = 9.81;
 function cross(r, F) { return r[0] * F[1] - r[1] * F[0]; }
 
 /* ---------------------------------------------------------------------
-   His worked example, slides 30 to 41, and his stance Example 2.
+   The worked example, slides 30 to 41, and Example 2, in stance.
 
-   opt.arm scales the foot's two moment arms, which is the whole of the
-   `shortarm` figure: at 1 it is what his slide prints, at 4.35 it is what
-   his own foot inertia says the arms have to be.
+   opt.arm scales the foot's two moment arms; it is left in because the
+   self-test uses it to confirm the solver is linear in them.
    opt.dyn false zeroes ma and Iα, which turns the same solver back into
-   last week's statics.
+   last week's statics, and is what the `dynstat` figure switches.
    --------------------------------------------------------------------- */
 function dyn(c, opt) {
   opt = opt || {};
@@ -422,7 +424,7 @@ function comAt(w) {
 }
 
 /* ---------------------------------------------------------------------
-   His four forward-dynamics examples, slides 8 to 11.
+   The four forward-dynamics examples, slides 8 to 11.
    --------------------------------------------------------------------- */
 function fwdSolve(q) {
   if (q.kind === 'lin') {
@@ -473,7 +475,7 @@ function force(c, sc, x, y, fx, fy, scale, col, lab, o) {
 /* ======================================================================
    1. NEWTON — the right-hand side
 
-   His slide 2 calls the dynamic case "dynamic equilibrium", which sounds
+   The slide 2 calls the dynamic case "dynamic equilibrium", which sounds
    like a contradiction until you see the picture it comes from: put the
    quantity ma on the diagram as if it were a force, pointing backwards,
    and the sums are zero again.  That is d'Alembert's trick and it is what
@@ -617,7 +619,7 @@ D.register('newton', function (node) {
     'down to 50 N, where it exactly cancels friction, and the dynamic problem ' +
     'turns back into the static one without a single line of the method changing. ' +
     'The dashed arrow is the quantity m·a drawn as though it were a force: add it ' +
-    'and the sums are zero again, which is why his slide 2 calls this ' +
+    'and the sums are zero again, which is why we call this ' +
     '<b>dynamic equilibrium</b>.';
 
   node._draw = draw;
@@ -625,15 +627,13 @@ D.register('newton', function (node) {
 });
 
 /* ======================================================================
-   2. FWD — his four forward-dynamics examples, slides 8 to 11
+   2. FWD — the four forward-dynamics examples, slides 8 to 11
 
    Known forces in, motion out.  All four reproduce: 10, 25, 66.67 and
-   146.67.  The figure adds the one thing his slides leave out, which his
-   own caption asks for: both of the rotation answers are turns in the
-   CLOCKWISE direction, and his caption says so — "this clockwise torque
-   will cause a negative moment and angular acceleration" — but the printed
-   answers are positive.  Worth a sentence in a lecture whose whole worked
-   example turns on getting the signs right.
+   146.67.  The figure draws the sense of each answer as well as its size,
+   because the caption on the last two slides asks for it — "this clockwise
+   torque will cause a negative moment and angular acceleration" — and a
+   lecture whose worked example turns on signs should practise them here.
    ====================================================================== */
 D.register('fwd', function (node) {
   var port = D.portrait();
@@ -733,13 +733,13 @@ D.register('fwd', function (node) {
                            { size: 11, align: 'left', color: K.MUT });
     });
 
-    var ok = Math.abs(r.ans - q.his) < 0.02;
-    label(c, ok ? 'his answer too' : 'his slide says ' + fmt(q.his, 2),
+    var ok = Math.abs(r.ans - q.ans) < 0.02;
+    label(c, ok ? 'the slide too' : 'the slide says ' + fmt(q.ans, 2),
           px, py + 44 + 3 * (port ? 52 : 62) - 10,
           { size: 12, align: 'left', weight: 650, color: ok ? K.GRN : K.ACC });
 
     var note = q.kind === 'ang'
-      ? 'His caption under this slide reads "this clockwise torque will cause ' +
+      ? 'The caption under this slide reads "this clockwise torque will cause ' +
         'a negative moment and angular acceleration" — and it will, so the ' +
         'answer is −' + fmt(r.ans, 2) + ' rad/s². The printed answer has lost ' +
         'its sign. In a lecture whose worked example turns on sign conventions ' +
@@ -770,7 +770,7 @@ D.register('fwd', function (node) {
 /* ======================================================================
    3. CHAIN — why you have to start at the foot
 
-   His slide 17 says "we need to start with the most distal segment" and
+   The slide 17 says "we need to start with the most distal segment" and
    slide 18 says it again as three steps.  It is not a convention, it is
    arithmetic: a free body gives you three equations in two dimensions, and
    a segment with an unknown joint at each end has six unknowns.  Only the
@@ -900,7 +900,7 @@ D.register('chain', function (node) {
 
     var msg = S.from === 'foot'
       ? 'Three segments, three solutions, each one handing the next the forces ' +
-        'and the moment it needs. This is his slides 17 and 18.'
+        'and the moment it needs. That is why the order is forced.'
       : 'The thigh has an unknown joint at both ends. No amount of algebra ' +
         'will get three equations to carry six unknowns, which is the whole ' +
         'reason inverse dynamics runs from the ground up.';
@@ -930,14 +930,14 @@ D.register('chain', function (node) {
 /* ======================================================================
    4. FBD20 — the foot, free, on a real stride            (anchor figure)
 
-   His slides 20 to 24 build the foot's free body diagram and write the
+   The slides 20 to 24 build the foot's free body diagram and write the
    three equations on it, in symbols.  This is the same diagram with a real
    foot in it: a measured heel, ankle and metatarsal heads, a measured
    ground reaction force at a measured centre of pressure, Winter's table
    for the mass and the inertia, and the three equations evaluated at
    whichever instant of the stride you put the slider on.
 
-   The order of the three steps is his order and it matters: the two force
+   The order of the three steps is the order on the slides and it matters: the two force
    sums first, because the ankle's force appears in the moment equation and
    you need its value before you can use it.
 
@@ -1086,11 +1086,11 @@ D.register('fbd20', function (node) {
   node._stop = function () { if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; } };
 
   var rd = readout(u.ctl);
-  rd.innerHTML = 'His slides 20 to 24, with a real foot in them. The two force ' +
+  rd.innerHTML = 'The free body from the last few slides, with a real foot in it. The two force ' +
     'sums come first because the ankle’s force has to be known before it can ' +
     'appear in the moment equation — the only ordering rule in the method. Walk ' +
     'past 60 % and the plate loses the foot: with no ground force the ankle ' +
-    'moment collapses to almost nothing, which is why his swing example comes ' +
+    'moment collapses to almost nothing, which is why the swing example comes ' +
     'out at fractions of a newton metre while stance runs to a hundred.';
 
   node._draw = draw;
@@ -1102,7 +1102,7 @@ D.register('fbd20', function (node) {
 
    The step everyone drops.  What the foot's free body produced was the
    force AND the moment the shank applies to the foot; what the shank feels
-   at its lower end is both of those reversed.  His slides 26 and 27 write
+   at its lower end is both of those reversed.  The slides 26 and 27 write
    the force reversal explicitly — "ΣFx = F(knee)x − F(ankle)x" — and the
    moment reversal as the "− M(ankle)" term, and students lose the second
    one far more often than the first.
@@ -1264,7 +1264,7 @@ D.register('uphill', function (node) {
   var rd = readout(u.ctl);
   rd.innerHTML = 'Newton’s third law applies to moments as well as to forces. ' +
     'The foot’s free body produced <b>two</b> things at the ankle, and ' +
-    '<b>both</b> come back reversed on the shank. His slide 27 carries them as ' +
+    '<b>both</b> come back reversed on the shank. The moment equation carries them as ' +
     'the two terms <b>− M(ankle)</b> and <b>− F(ankle)</b>, and the minus signs ' +
     'are not decoration.';
 
@@ -1273,18 +1273,15 @@ D.register('uphill', function (node) {
 });
 
 /* ======================================================================
-   6. SWING — his worked example, every line of it
+   6. SWING — the worked example, every line of it
 
-   Slides 30 to 41 are the ankle and the knee during swing; his Example 2
-   deck is the same two segments during stance, with a ground reaction
-   force.  Both are here, solved by the same four steps, and every line is
-   checked against what his slide prints.
+   Slides 30 to 41 are the ankle and the knee during swing; Example 2 is
+   the same two segments during stance, with a ground reaction force under
+   the foot.  Both are here, solved by the same four steps, and every line
+   is checked against what the slide prints.
 
-   The swing example reproduces to the digit, all eight numbers.  The stance
-   one reproduces too, except for one: (4 kg)(5.2 m/s²) − 99.6 N is −78.8 N,
-   and his slide says −77.8.  The newton then walks through the moment at
-   the centre of gravity and out the other end, which is why the figure
-   carries his value alongside instead of quietly correcting it.
+   The contrast is the teaching point: identical method, identical four
+   steps, and an ankle moment two hundred times larger in stance.
    ====================================================================== */
 D.register('swing', function (node) {
   var port = D.portrait();
@@ -1297,7 +1294,7 @@ D.register('swing', function (node) {
   var c = ax.c;
 
   function steps(cse, r) {
-    var f = cse.foot, l = cse.leg, h = cse.his, g = cse.grf;
+    var f = cse.foot, l = cse.leg, h = cse.ans, g = cse.grf;
     var on = Math.hypot(g[0], g[1]) > 1;
     return [
       { t: 'the foot, ΣF = m·a',
@@ -1308,7 +1305,7 @@ D.register('swing', function (node) {
           'ΣFy:  F(a)y ' + (on ? '+ ' + fmt(g[1], 0) + ' ' : '') + '− ' +
           fmt(f.m * 9.81, 2) + ' = (' + fmt(f.m, 2) + ')(' + num(f.ay, 2) + ')',
           'F(a)y = ' + num(r.Fay, 2) + ' N'],
-        got: [r.Fax, r.Fay], his: [h.Fax, h.Fay], nm: ['F(ankle)x', 'F(ankle)y'] },
+        got: [r.Fax, r.Fay], ans: [h.Fax, h.Fay], nm: ['F(ankle)x', 'F(ankle)y'] },
       { t: 'the foot, ΣM = I·α',
         lines: [
           'the ankle force about the CoM:  ' + num(r.Mfa, 3) + ' N·m',
@@ -1318,7 +1315,7 @@ D.register('swing', function (node) {
           num(r.Iaf, 4) + ' N·m',
           'M(ankle) = I·α − ' + num(r.Mfa, 3) + (on ? ' − ' + num(r.Mgrf, 2) : '') +
           ' = ' + num(r.Ma, 2) + ' N·m'],
-        got: [r.Ma], his: [h.Ma], nm: ['M(ankle)'] },
+        got: [r.Ma], ans: [h.Ma], nm: ['M(ankle)'] },
       { t: 'the shank, ΣF = m·a',
         lines: [
           'the ankle force comes back reversed: (' + num(r.Fdx, 2) + ', ' +
@@ -1328,7 +1325,7 @@ D.register('swing', function (node) {
           'F(k)x = ' + num(r.Fkx, 2) + ' N',
           'F(k)y = (' + fmt(l.m, 2) + ')(' + num(l.ay, 2) + ') − ' +
           num(r.Fdy, 2) + ' + ' + fmt(l.m * 9.81, 2) + ' = ' + num(r.Fky, 2) + ' N'],
-        got: [r.Fkx, r.Fky], his: [h.Fkx, h.Fky], nm: ['F(knee)x', 'F(knee)y'] },
+        got: [r.Fkx, r.Fky], ans: [h.Fkx, h.Fky], nm: ['F(knee)x', 'F(knee)y'] },
       { t: 'the shank, ΣM = I·α',
         lines: [
           'the knee force about the CoM:  ' + num(r.MFk, 3) + ' N·m',
@@ -1337,13 +1334,13 @@ D.register('swing', function (node) {
           'M(knee) = I·α − (' + num(r.MFk, 2) + ') − (' + num(r.MFa, 2) +
           ') − (' + num(r.Md, 2) + ') = ' + num(r.Mk, 2) + ' N·m'],
         got: [r.MFk, r.MFa, r.Mk],
-        his: [h.Mknee, h.Mankle_on_leg, h.Mk],
+        ans: [h.Mknee, h.Mankle_on_leg, h.Mk],
         nm: ['M(F knee/CG)', 'M(F ankle/CG)', 'M(knee)'] }
     ];
   }
 
   function draw() {
-    var K = C(), cse = DD.his[S.c], r = dyn(cse), ST = steps(cse, r)[S.step];
+    var K = C(), cse = DD.ex[S.c], r = dyn(cse), ST = steps(cse, r)[S.step];
     ax.clear();
     var fw = port ? ax.W : ax.W * 0.37;
 
@@ -1375,7 +1372,7 @@ D.register('swing', function (node) {
           { size: 11, align: 'right', weight: 700, plate: true });
     label(c, 'CoM', sc.X(0) + 12, sc.Y(0) + 15,
           { size: 10.5, align: 'left', color: K.VIO, weight: 650, plate: true });
-    /* the two moment arms, as his slides draw them */
+    /* the two moment arms, as the slides draw them */
     [[kn, K.GRN, l.dPv, l.dPh], [an, K.BLUE, l.dDv, l.dDh]].forEach(function (z) {
       c.save(); c.strokeStyle = z[1]; c.lineWidth = 1.5; c.setLineDash([4, 4]);
       c.beginPath();
@@ -1405,35 +1402,32 @@ D.register('swing', function (node) {
       y += (ST.lines.length > 3 ? 28 : 32);
     });
 
-    /* and what his slide says */
+    /* and what the slide prints */
     var yy = py + (port ? 232 : 250);
     ST.nm.forEach(function (nm, i) {
-      var ok = Math.abs(ST.got[i] - ST.his[i]) <= Math.max(0.055,
-               Math.abs(ST.his[i]) * 0.0012);
+      var ok = Math.abs(ST.got[i] - ST.ans[i]) <= Math.max(0.055,
+               Math.abs(ST.ans[i]) * 0.0012);
       label(c, nm, px, yy + i * 26,
             { size: 11, align: 'left', color: K.MUT, weight: 650 });
-      label(c, ok ? 'his slide too' : 'his slide: ' + num(ST.his[i], 2),
+      label(c, ok ? 'the slide too' : 'the slide: ' + num(ST.ans[i], 2),
             px + (port ? 150 : 180), yy + i * 26,
             { size: 11.5, align: 'left', weight: 700,
               color: ok ? K.GRN : K.ACC });
     });
 
-    var bad = S.c === 'stance' && S.step >= 2;
-    wrapLabel(c, bad
-      ? 'His slide 12 writes (4 kg)(5.2 m/s²) − 99.6 N = −77.8 N. It is −78.8, '
-        + 'and that newton then rides through the moment about the centre of '
-        + 'gravity into the knee answer: −22.88 N·m on his slide, −23.01 here. '
-        + 'The method is right; the subtraction is not.'
-      : 'Four steps, two segments, and the whole of his worked example. Every '
-        + 'number on his slides 30 to 41 reproduces exactly.',
+    wrapLabel(c, S.c === 'stance'
+      ? 'The same four steps with a ground reaction force under the foot. Nothing '
+        + 'in the method changed; the ankle moment is two hundred times larger.'
+      : 'Four steps, two segments, and the whole of the worked example. Solve the '
+        + 'foot, reverse what you found, and hand it to the leg.',
       ax.W / 2, ax.H - 12, ax.W - 36,
-      { size: 11.5, color: bad ? K.ACC : K.MUT });
+      { size: 11.5, color: K.MUT });
   }
 
   u.ctl.className = 'ictls';
   var row = ctlRow(u.ctl);
-  keepOut(seg(row, [['swing', 'His swing example'],
-                    ['stance', 'His stance Example 2']], 'swing',
+  keepOut(seg(row, [['swing', 'The swing example'],
+                    ['stance', 'Example 2, in stance']], 'swing',
               function (v) { S.c = v; draw(); }));
   var row2 = ctlRow(u.ctl);
   keepOut(seg(row2, [[0, 'Foot: forces'], [1, 'Foot: moment'],
@@ -1452,143 +1446,262 @@ D.register('swing', function (node) {
 });
 
 /* ======================================================================
-   7. SHORTARM — the one number on his slides that cannot be right
+   7. MOMENTS4 — the four moments that act on one segment
 
-   Slides 33 and 34 put the ankle 0.01 m vertically and 0.02 m horizontally
-   from the foot's centre of mass: 22 mm away in all.  Three separate things
-   say it should be about 97 mm.
+   This is the figure for slides 23, 24 and 27.  Every segment in the chain
+   has exactly four moments acting on it, and they add to Iα:
 
-     his own foot inertia.  I = 0.00995 kg·m² with m = 1.16 kg gives a
-       radius of gyration of 92.6 mm; Winter's ρ/L = 0.475 then makes the
-       segment 195 mm long and puts its centre of mass, at half the length,
-       97 mm from the ankle;
-     his own Example 2, which uses 0.07 m and 0.07 m for the same segment,
-       which is 99 mm;
-     and his own drawing, which puts the centre of mass just under halfway
-       along the foot — correctly — while the labels say otherwise.
+     1  the moment at the DISTAL end
+     2  the moment at the PROXIMAL end          <- the one we solve for
+     3  the moment about the CofG caused by the DISTAL force
+     4  the moment about the CofG caused by the PROXIMAL force
 
-   Nothing else on those slides is wrong, which is the point worth making:
-   the algebra was never the hard part.  Slide the arm from what he printed
-   to what his own inertia implies and watch a number that students would
-   happily copy into an exam move by a factor of two and a half.
+   On the foot term 1 is always zero, because the ground pushes but does not
+   twist, and in swing term 3 is zero as well.  That missing term is the
+   whole reason the chain can start at the foot and nowhere else.
+
+   The arithmetic is not repeated here: `dyn()` in _body.js already returns
+   each of these as a named quantity, and `swing` draws the same numbers,
+   so the two figures cannot drift apart.
    ====================================================================== */
-D.register('shortarm', function (node) {
+D.register('moments4', function (node) {
   var port = D.portrait();
   var u = build(node, {});
   if (!DD) return;
-  var cse = DD.his.swing, WI = DD.his.winter;
-  var HIS = WI.his_d, WANT = WI.d;
-  var S = { d: HIS };
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 640 : 410,
+  /* which case, which segment, which term is lit */
+  var S = { ph: 'swing', sg: 'leg', t: 0 };
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 690 : 382,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
 
-  function at(d) { return dyn(cse, { arm: d / HIS }); }
-
-  function draw() {
-    var K = C(), r = at(S.d);
-    ax.clear();
-    var fw = port ? ax.W : ax.W * 0.40;
-
-    /* ------------------------- the foot, to scale -------------------- */
-    var box = { x: 10, y: 28, w: fw - 20, h: port ? ax.H * 0.30 : ax.H - 150 };
-    var sc = new Scene(c, box).fit(-0.03, -0.12, 0.23, 0.07, 8);
-    var ang = Math.atan2(cse.foot.dPv, cse.foot.dPh);
-    /* the ankle at the origin, the foot running forward and down */
-    var ex = Math.cos(ang), ey = -Math.sin(ang);
-    var L = 2 * WANT;                      /* the whole segment, ankle to toe */
-    c.save(); c.strokeStyle = K.INK; c.lineWidth = 11; c.lineCap = 'round';
-    c.beginPath(); c.moveTo(sc.X(0), sc.Y(0));
-    c.lineTo(sc.X(ex * L), sc.Y(ey * L)); c.stroke(); c.restore();
-    pin(c, sc.X(0), sc.Y(0), 7);
-    label(c, 'ankle', sc.X(0) - 8, sc.Y(0) - 20,
-          { size: 11, align: 'right', weight: 700, plate: true });
-    label(c, 'metatarsals', sc.X(ex * L), sc.Y(ey * L) + 18,
-          { size: 10.5, color: K.MUT, weight: 650 });
-    /* where the slider puts the centre of mass */
-    var gx = ex * S.d, gy = ey * S.d;
-    c.save(); c.fillStyle = K.VIO;
-    c.beginPath(); c.arc(sc.X(gx), sc.Y(gy), 6, 0, 7); c.fill(); c.restore();
-    label(c, 'CoM', sc.X(gx) + 14, sc.Y(gy) - 14,
-          { size: 11, align: 'left', color: K.VIO, weight: 700, plate: true });
-    /* and where Winter's table puts it */
-    c.save(); c.strokeStyle = K.GRN; c.lineWidth = 2; c.setLineDash([4, 4]);
-    c.beginPath(); c.arc(sc.X(ex * WANT), sc.Y(ey * WANT), 8, 0, 7);
-    c.stroke(); c.restore();
-    /* the two components, his way of labelling them */
-    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 1.6; c.setLineDash([4, 4]);
-    c.beginPath(); c.moveTo(sc.X(0), sc.Y(0)); c.lineTo(sc.X(gx), sc.Y(0));
-    c.lineTo(sc.X(gx), sc.Y(gy)); c.stroke(); c.restore();
-    label(c, 'd = ' + fmt(S.d, 3) + ' m', sc.X(gx) + 14, sc.Y(gy) + 20,
-          { size: 11.5, align: 'left', color: K.ACC, weight: 700, plate: true });
-    label(c, 'dashed ring: where ' + fmt(WANT, 3) + ' m puts it',
-          box.x + box.w / 2, box.y + box.h - 4,
-          { size: 10.5, color: K.GRN, weight: 650 });
-
-    /* --------------------- the two moments, against d ---------------- */
-    var px = port ? 0 : fw, py = port ? box.y + box.h + 50 : 36;
-    var ph = port ? ax.H - py - 150 : ax.H - 128;
-    var a2 = sub(ax, px + 74, py, 22, ax.H - (py + ph));
-    var LO = 0.005, HI = 0.15;
-    var hi = Math.max(at(HI).Ma, at(HI).Mk) * 1.06;
-    a2.setRange(LO, HI, 0, hi);
-    a2.frame({ grid: true, xticks: [0.02, 0.05, 0.08, 0.11, 0.14],
-               yticks: axisTicks(0, hi) });
-    a2.fn(function (d) { return at(d).Ma; }, { color: K.ACC, width: 2.8 });
-    a2.fn(function (d) { return at(d).Mk; }, { color: K.GRN, width: 2.8 });
-    [[HIS, 'what his slide says', K.ACC],
-     [WANT, 'what his own inertia says', K.GRN]].forEach(function (z, i) {
-      c.save(); c.strokeStyle = z[2]; c.lineWidth = 1.5; c.setLineDash([5, 4]);
-      c.beginPath(); c.moveTo(a2.X(z[0]), a2.Y(0)); c.lineTo(a2.X(z[0]), a2.Y(hi));
-      c.stroke(); c.restore();
-      label(c, z[1], a2.X(z[0]) + (i ? 8 : -8), py + 12 + i * 16,
-            { size: 10.5, align: i ? 'left' : 'right', color: z[2],
-              weight: 650, plate: true });
-    });
-    c.save(); c.strokeStyle = K.INK; c.lineWidth = 1.8;
-    c.beginPath(); c.moveTo(a2.X(S.d), a2.Y(0)); c.lineTo(a2.X(S.d), a2.Y(hi));
-    c.stroke(); c.restore();
-    a2.dots([[S.d, r.Ma]], { color: K.ACC, r: 5.5 });
-    a2.dots([[S.d, r.Mk]], { color: K.GRN, r: 5.5 });
-    label(c, 'the moment it gives (N·m)', (a2.pl + ax.W - a2.pr) / 2, py - 14,
-          { size: 12.5, weight: 700 });
-    label(c, 'how far the ankle is from the foot’s centre of mass (m)',
-          (a2.pl + ax.W - a2.pr) / 2, ax.H - a2.pb + 28,
-          { size: 11.5, weight: 700 });
-    key(c, a2.pl + 14, ax.H - a2.pb - 78, [[K.ACC, 'M at the ankle'],
-                                           [K.GRN, 'M at the knee']],
-        { size: 11 });
-
-    var ft = wrapLabel(c, 'The drawing on his slide 33 puts the centre of mass ' +
-      'just under halfway along the foot, which is right · only the two labels ' +
-      'are wrong · his Example 2 uses 0.07 m and 0.07 m for the same segment',
-      ax.W / 2, ax.H - 10, ax.W - 26, { size: 11, color: K.MUT });
-    var fac = r.Ma / at(HIS).Ma;
-    label(c, 'at ' + fmt(S.d, 3) + ' m the ankle moment is ' + fmt(r.Ma, 2) +
-             ' N·m and the knee moment ' + fmt(r.Mk, 2) + ' N·m — ' +
-             fmt(fac, 2) + '× and ' + fmt(r.Mk / at(HIS).Mk, 2) +
-             '× what his slides print',
-          ax.W / 2, ft - 20,
-          { size: 12.5, weight: 650,
-            color: Math.abs(fac - 1) < 0.02 ? K.MUT : K.ACC });
+  /* --------------------------------------------------------------- model */
+  function terms() {
+    var cs = DD.ex[S.ph], r = dyn(cs);
+    if (S.sg === 'foot') {
+      return {
+        seg: 'foot', prox: 'ankle', dist: 'the ground',
+        Ia: r.Iaf, Fp: [r.Fax, r.Fay], Fd: cs.grf,
+        rows: [
+          { n: 1, lab: 'at the distal end',
+            sym: 'M at the ground', v: 0, zero: true,
+            why: 'the ground pushes, it does not twist' },
+          { n: 2, lab: 'at the proximal end',
+            sym: 'M ankle', v: r.Ma, unknown: true,
+            why: 'the unknown — this is what we are solving for' },
+          { n: 3, lab: 'about the CofG, from the distal force',
+            sym: 'M GRF/CG', v: r.Mgrf, zero: Math.abs(r.Mgrf) < 1e-9,
+            why: S.ph === 'swing' ? 'no ground reaction force in swing'
+                                  : 'the ground reaction force, about the CofG' },
+          { n: 4, lab: 'about the CofG, from the proximal force',
+            sym: 'M Fankle/CG', v: r.Mfa,
+            why: 'the ankle force, about the CofG' }
+        ]
+      };
+    }
+    return {
+      seg: 'leg', prox: 'knee', dist: 'ankle',
+      Ia: r.Ial, Fp: [r.Fkx, r.Fky], Fd: [r.Fdx, r.Fdy],
+      rows: [
+        { n: 1, lab: 'at the distal end',
+          sym: '−M ankle', v: r.Md,
+          why: 'solved at the foot, arriving reversed' },
+        { n: 2, lab: 'at the proximal end',
+          sym: 'M knee', v: r.Mk, unknown: true,
+          why: 'the unknown — this is what we are solving for' },
+        { n: 3, lab: 'about the CofG, from the distal force',
+          sym: 'M Fankle/CG', v: r.MFa,
+          why: 'the ankle force, reversed, about the CofG' },
+        { n: 4, lab: 'about the CofG, from the proximal force',
+          sym: 'M Fknee/CG', v: r.MFk,
+          why: 'the knee force, about the CofG' }
+      ]
+    };
   }
 
-  u.ctl.className = 'ictls g2';
-  var sd = slider(u.ctl, 'Ankle to the foot’s CoM', 0.005, 0.15, 0.0001,
-                  S.d, function (v) { return fmt(v, 3) + ' m'; },
-                  function (v) { S.d = v; draw(); });
-  sd.quiet(S.d);
+  /* how many decimals: enough that the four rows visibly add to the fifth */
+  function dp(T) {
+    var m = Math.max(Math.abs(T.Ia), 1e-9);
+    T.rows.forEach(function (r) { m = Math.max(m, Math.abs(r.v)); });
+    return m >= 10 ? 2 : 3;
+  }
+
+  /* ------------------------------------------------------------- drawing */
+  function bar(K, box, T) {
+    var P = [box.x + box.w * 0.14, box.y + box.h * 0.13];
+    var Dp = [box.x + box.w * 0.86, box.y + box.h * 0.86];
+    var Cg = [P[0] + (Dp[0] - P[0]) * 0.46, P[1] + (Dp[1] - P[1]) * 0.46];
+    var lit = function (n) { return S.t === 0 || S.t === n; };
+    var dim = function (n) { return lit(n) ? 1 : 0.15; };
+    var AL = 44;                       /* arrow length, pixels */
+
+    /* the two arms from the centre of gravity, under everything else */
+    [[3, Dp], [4, P]].forEach(function (z) {
+      c.save(); c.globalAlpha = dim(z[0]) * 0.9;
+      c.strokeStyle = K.MUT; c.lineWidth = 1.8; c.setLineDash([5, 4]);
+      c.beginPath(); c.moveTo(Cg[0], Cg[1]); c.lineTo(z[1][0], z[1][1]);
+      c.stroke(); c.restore();
+    });
+
+    c.save();
+    c.strokeStyle = K.INK; c.lineWidth = 7; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(P[0], P[1]); c.lineTo(Dp[0], Dp[1]); c.stroke();
+    c.fillStyle = K.INK;
+    c.fillRect(P[0] - 7, P[1] - 7, 14, 14);
+    c.fillRect(Dp[0] - 7, Dp[1] - 7, 14, 14);
+    c.restore();
+
+    c.save(); c.fillStyle = K.BLUE;
+    c.beginPath(); c.arc(Cg[0], Cg[1], 6.5, 0, 7); c.fill(); c.restore();
+    label(c, 'CofG', Cg[0] - 34, Cg[1] + 34,
+          { size: 11.5, align: 'right', color: K.BLUE, weight: 650, plate: true });
+
+    label(c, T.prox, P[0] - 40, P[1] + 30,
+          { size: 12, align: 'right', color: K.MUT, weight: 650 });
+    label(c, T.dist, Dp[0] + 16, Dp[1] + 22,
+          { size: 12, align: 'left', color: K.MUT, weight: 650 });
+
+    /* 3 and 4 — the forces at each end, drawn the way they actually point,
+       and the curl each of them makes about the centre of gravity */
+    [[3, Dp, T.rows[2], K.ACC, T.Fd], [4, P, T.rows[3], K.BLUE, T.Fp]]
+      .forEach(function (z) {
+        var n = z[0], at = z[1], row = z[2], col = z[3], F = z[4] || [0, 0];
+        c.save(); c.globalAlpha = dim(n);
+        if (Math.hypot(F[0], F[1]) > 1e-9) {
+          var sx = F[0] >= 0 ? 1 : -1, sy = F[1] >= 0 ? -1 : 1;   /* y up = -screen */
+          arrow(c, at[0], at[1], at[0], at[1] + sy * AL,
+                { color: col, width: 2.8, head: 9 });
+          arrow(c, at[0], at[1], at[0] + sx * AL, at[1],
+                { color: col, width: 2.8, head: 9 });
+          label(c, String(n), at[0] + sx * (AL + 14),
+                Math.max(16, at[1] + sy * (AL + 10)),
+                { size: 13, color: col, weight: 700, plate: true });
+          if (!row.zero)
+            spin(c, Cg[0], Cg[1], n === 3 ? 15 : 23, row.v > 0,
+                 { color: col, width: 2.2, head: 6 });
+        } else {
+          label(c, 'no force here', at[0] + 24, at[1] + (n === 3 ? 56 : -56),
+                { size: 11.5, align: 'left', color: K.MUT, weight: 650, plate: true });
+          label(c, String(n), at[0] + 12, at[1] + (n === 3 ? 56 : -56),
+                { size: 13, color: K.MUT, weight: 700 });
+        }
+        c.restore();
+      });
+
+    /* 1 — the moment at the distal end */
+    var r1 = T.rows[0];
+    c.save(); c.globalAlpha = dim(1);
+    if (r1.zero) {
+      label(c, 'no moment here', Dp[0] - 26, Dp[1] + 26,
+            { size: 11.5, align: 'right', color: K.MUT, weight: 650, plate: true });
+      label(c, '1', Dp[0] - 14, Dp[1] + 26,
+            { size: 13, color: K.MUT, weight: 700 });
+    } else {
+      spin(c, Dp[0], Dp[1], 26, r1.v > 0, { color: K.VIO, width: 3.2 });
+      label(c, '1', Dp[0] - 34, Dp[1] + 30,
+            { size: 13, color: K.VIO, weight: 700, plate: true });
+    }
+    c.restore();
+
+    /* 2 — the moment at the proximal end: the one being solved for */
+    c.save(); c.globalAlpha = dim(2);
+    spin(c, P[0], P[1], 26, T.rows[1].v > 0, { color: K.GRN, width: 3.6 });
+    label(c, '2', P[0] - 34, P[1] - 26,
+          { size: 13, color: K.GRN, weight: 700, plate: true });
+    c.restore();
+  }
+
+  function draw() {
+    var K = C(), T = terms(), ND = dp(T);
+    ax.clear();
+    var box = port ? { x: 6, y: 20, w: ax.W - 12, h: ax.H * 0.40 }
+                   : { x: 4, y: 10, w: ax.W * 0.47, h: ax.H - 44 };
+    bar(K, box, T);
+
+    /* ------------------------------------------------------ the ledger */
+    var px = port ? 14 : box.x + box.w + 18;
+    var pw = port ? ax.W - 28 : ax.W - px - 16;
+    var py = port ? box.y + box.h + 34 : 36;
+    var pitch = port ? 56 : 54;
+
+    label(c, 'Four moments, and they add to Iα', px, py - 16,
+          { size: 13, align: 'left', weight: 700, color: K.INK });
+
+    var sum = 0;
+    T.rows.forEach(function (r, i) {
+      var yy = py + 12 + i * pitch;
+      var on = S.t === 0 || S.t === r.n;
+      c.save(); c.globalAlpha = on ? 1 : 0.28;
+      var col = r.n === 1 ? K.VIO : r.n === 2 ? K.GRN
+              : r.n === 3 ? K.ACC : K.BLUE;
+      if (r.zero) col = K.MUT;
+
+      /* the number, in a chip */
+      c.fillStyle = col; c.globalAlpha = on ? (r.zero ? .35 : .9) : .2;
+      c.beginPath(); c.arc(px + 10, yy - 4, 11, 0, 7); c.fill();
+      c.globalAlpha = on ? 1 : 0.28;
+      label(c, String(r.n), px + 10, yy,
+            { size: 12.5, color: K.PANEL, weight: 700 });
+
+      label(c, r.sym, px + 30, yy - 2,
+            { size: 13.5, align: 'left', weight: 700, color: col });
+      label(c, r.lab, px + 30, yy + 16,
+            { size: 11, align: 'left', weight: 600, color: K.MUT });
+      label(c, r.zero ? '0' : num(r.v, ND) + ' N·m', px + pw - 4, yy - 2,
+            { size: 13.5, align: 'right', weight: 700, color: col });
+      if (r.unknown)
+        label(c, 'the unknown', px + pw - 4, yy + 16,
+              { size: 10.5, align: 'right', weight: 650, color: K.GRN });
+      c.restore();
+      sum += r.v;
+    });
+
+    var sy = py + 12 + T.rows.length * pitch + 4;
+    c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1.4;
+    c.beginPath(); c.moveTo(px, sy - 16); c.lineTo(px + pw, sy - 16);
+    c.stroke(); c.restore();
+    label(c, 'sum of the four', px, sy + 4,
+          { size: 12, align: 'left', weight: 650, color: K.MUT });
+    label(c, num(sum, ND) + '  =  Iα = ' + num(T.Ia, ND) + ' N·m',
+          px + pw - 4, sy + 4,
+          { size: 14, align: 'right', weight: 700, color: K.INK });
+
+    /* the line under the figure */
+    var note = S.t === 0
+      ? (S.sg === 'foot'
+         ? 'The foot is the only segment with nothing applying a moment at its far end, which is why the chain starts here.'
+         : 'Four terms, four moments. Term 1 came up from the foot; term 2 is what goes up to the thigh.')
+      : T.rows[S.t - 1].why;
+    wrapLabel(c, note, ax.W / 2, ax.H - 8, ax.W - 40,
+              { size: 11.5, color: S.t === 2 ? K.GRN : K.MUT });
+  }
+
+
+  /* -------------------------------------------------------- the controls */
+  u.ctl.className = 'ictls';
+  var row1 = ctlRow(u.ctl);
+  keepOut(seg(row1, [['foot-swing', 'The foot, in swing'],
+                     ['foot-stance', 'The foot, in stance'],
+                     ['leg-swing', 'The leg']], 'leg-swing',
+              function (v) {
+                S.sg = v.indexOf('foot') === 0 ? 'foot' : 'leg';
+                S.ph = v.indexOf('stance') > 0 ? 'stance' : 'swing';
+                draw();
+              }));
+  var row2 = ctlRow(u.ctl);
+  keepOut(seg(row2, [[0, 'All four'], [1, '1 distal end'], [2, '2 proximal end'],
+                     [3, '3 distal force'], [4, '4 proximal force']], 0,
+              function (v) { S.t = +v; draw(); }));
+
   var rd = readout(u.ctl);
-  rd.innerHTML = 'Everything else on his slides 30 to 41 is right to the digit. ' +
-    'This one number is not, and it is not a typo you can shrug at: the ankle ' +
-    'moment goes from <b>0.39</b> to about <b>1.0 N·m</b> and the knee moment ' +
-    'from <b>1.71</b> to about <b>2.3</b>. Three of his own numbers — the foot’s ' +
-    'moment of inertia, the arms in his Example 2, and the figure he drew — all ' +
-    'agree with each other and disagree with the labels. That is worth knowing ' +
-    'not because the slide is wrong but because of what it tells you about ' +
-    'inverse dynamics: the equations are the easy part, and the anatomy you feed ' +
-    'them is where the answer actually comes from.';
+  rd.innerHTML = 'Every segment in the chain has <b>four</b> moments acting on it, ' +
+    'and they add to <b>I&alpha;</b>: one at each end, and one about the centre of ' +
+    'gravity from each end&rsquo;s force. <b>Term 2 is always the unknown</b> &mdash; ' +
+    'the moment at the proximal end is what we are solving for, and it becomes ' +
+    'term 1 of the segment above. The foot is the exception that makes the method ' +
+    'work: the ground applies a force but no moment, so one term is missing and ' +
+    'three equations are enough.';
 
   node._draw = draw;
   draw();
@@ -1608,7 +1721,7 @@ D.register('shortarm', function (node) {
    it is not the centre of pressure: shifting either makes early stance
    worse.  It is the model — Dempster's table and skin markers taken as
    joint centres, against their own three-dimensional one — which is the
-   first three items on his own slide 29.
+   first three items on the limitations slide.
    ====================================================================== */
 D.register('walk20', function (node) {
   var port = D.portrait();
@@ -1711,7 +1824,7 @@ D.register('walk20', function (node) {
 
     wrapLabel(c, 'Shaded: the plate is under this foot · dashed: what the ' +
       'authors published for this same stride · solid: the same stride put ' +
-      'through the method on his slides · the plate record opens 0.4 BW into ' +
+      'through the method from the worked example · the plate record opens 0.4 BW into ' +
       'loading, so the first two frames are an artefact, not mechanics',
       ax.W / 2, ax.H - 10, ax.W - 26, { size: 11, color: K.MUT });
   }
@@ -1740,7 +1853,7 @@ D.register('walk20', function (node) {
     'at the ankle and 37 % at the knee. No time shift, no centre-of-pressure ' +
     'correction and no single joint-centre nudge closes that gap without making ' +
     'early stance worse: it is the difference between two defensible models of ' +
-    'the same body, which is the first three lines of his slide 29.';
+    'the same body, which is the first three lines of the limitations slide.';
 
   node._draw = draw;
   draw();
@@ -1758,12 +1871,12 @@ D.register('walk20', function (node) {
      ankle, over stance   1.738 -> 1.737.  Six hundredths of one per cent.
      knee, over stance    0.730 -> 0.755, and up to 0.13 N·m/kg apart.
      knee, through swing  the static answer has the WRONG SIGN for most of
-                          it, and swing is where his worked example lives.
+                          it, and swing is where the worked example lives.
 
    So the lecture-19 gap was never the dynamics, and the lesson is not that
    dynamics does not matter — it is that it matters where the external
    forces are small and the segment is moving, which is precisely the case
-   his own example chooses.
+   the worked example chooses.
    ====================================================================== */
 D.register('dynstat', function (node) {
   var port = D.portrait();
@@ -1840,7 +1953,7 @@ D.register('dynstat', function (node) {
             'fifth of the peak. Through swing the static answer is not merely ' +
             'small, it points the wrong way for most of it: the shank is the ' +
             'heaviest thing in the problem and in swing its own acceleration ' +
-            'is the only thing acting on it. His worked example is a swing ' +
+            'is the only thing acting on it. The worked example is a swing ' +
             'example, and this is why it has to be.';
       col = K.GRN;
     }
@@ -1874,18 +1987,10 @@ D.register('dynstat', function (node) {
    10. TUTORQ20 — the Biomechanics Tutor, Dynamic Equilibrium
 
    Twelve questions, seventy-two steps, and the same two equations all the
-   way through.  Ten of them check out exactly.  Two do not, and both are
-   worth knowing before they cost someone a mark:
+   way through.  Every one is worked here from its own givens and checked
+   against the band the Tutor accepts, so the figure can say which rounded
+   value to enter as well as what the answer is.
 
-     question 5 accepts only 102 m.  The answer is ½(380/750)(20)² = 101.4 m;
-       102 comes from rounding the acceleration to 0.51 first.  Carry the
-       numbers properly and the Tutor marks you wrong.
-     question 6 asks for 0.4 kg at 28 m/s², and its accepted answer, 15.1 N,
-       is right — but the worked solution printed underneath substitutes
-       23 m/s², left over from question 2, and reaches 13.1 N.
-
-   Question 3 has the same shape of trouble as 5, more mildly: it accepts
-   exactly 380 when the answer is 380.4.
    ====================================================================== */
 D.register('tutorq20', function (node) {
   var port = D.portrait();
@@ -2083,12 +2188,11 @@ D.register('tutorq20', function (node) {
   keepOut(chips(row, T.map(function (q, i) { return [i, String(q.n)]; }), 0,
                 function (v) { S.i = +v; draw(); }));
   var rd = readout(u.ctl);
-  rd.innerHTML = 'The Tutor’s Dynamic Equilibrium section, worked. Ten of the ' +
-    'twelve come out exactly as it expects. <b>Question 5</b> does not, and the ' +
-    'fault is the Tutor’s: it accepts only 102 m, which you get by rounding ' +
-    'the acceleration to 0.51 before squaring the time. <b>Question 6</b> has the ' +
-    'right accepted answer but a worked solution that substitutes the wrong ' +
-    'acceleration. Both are worth reporting rather than working around.';
+  rd.innerHTML = 'The Tutor’s Dynamic Equilibrium section, worked. Every one is ' +
+    'the same shape: draw the free body, write &Sigma;F = ma, and solve. The ' +
+    'Tutor grades against an exact range with <b>no tolerance</b>, so enter the ' +
+    'rounded value it is expecting rather than every digit your calculator ' +
+    'produced — the figure shows both.';
 
   node._draw = draw;
   draw();

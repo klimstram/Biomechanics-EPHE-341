@@ -382,31 +382,29 @@ window.EPHE341_LECTURES = [
 
   { n: '20', title: 'Dynamic analysis',
     path: 'lectures/20-dynamic-analysis',
-    blurb: 'Last week every equation had zero on the right-hand side; this week the zeros ' +
-           'become ma and I\u03b1 and nothing else changes \u2014 not the free ' +
-           'body diagram, not the force table, not the sign conventions. Forward dynamics ' +
-           'against inverse, and why only the inverse one can be done to a living person; ' +
-           'why three equations and three unknowns force you to start at the segment ' +
-           'touching the ground and work upward; his own worked example from slides 30 to ' +
-           '41, every line of it reproducing to the digit, with his stance Example 2 beside ' +
-           'it; the one moment arm on those slides that his own foot inertia contradicts by ' +
-           'a factor of four; and then the whole method run on a measured stride and marked ' +
-           'against the joint moments the people who recorded it published \u2014 same shape, ' +
-           'same timing, 15% high at the ankle. And the answer to last week\u2019s open ' +
-           'question: turning every ma and I\u03b1 term off moves the ' +
-           'ankle\u2019s push-off peak by 0.06%, so the gap static analysis left behind was ' +
-           'never the missing dynamics.',
-    slides: 31, widgets: 10, updated: '2026-10-08',
+    blurb: 'Last week every equation had zero on the right-hand side; this week the ' +
+           'zeros become ma and I\u03b1 and the method does not change \u2014 not the ' +
+           'free body diagram, not the force table, not the sign conventions. Dynamic ' +
+           'equilibrium and when it does not hold; forward dynamics against inverse, and ' +
+           'why only the inverse one can be done to a living person; why three equations ' +
+           'and three unknowns force you to start at the segment touching the ground and ' +
+           'work upward; the four moments that act on every segment and add to I\u03b1, ' +
+           'with the proximal one always the unknown; the worked example from slides 30 ' +
+           'to 41, every line of it, with Example 2 in stance beside it; and the whole ' +
+           'method run on a measured stride and marked against the joint moments the ' +
+           'people who recorded it published \u2014 same shape, same timing, 15% high at ' +
+           'the ankle, which is the limitations slide made concrete.',
+    slides: 43, widgets: 10, updated: '2026-10-09',
     handout: 'handout.pdf',
-    live: [['the right-hand side', 'w-newton'],
-           ['his four forward-dynamics examples', 'w-fwd'],
-           ['why you have to start at the foot', 'w-chain'],
-           ['the foot, cut free, on a real stride', 'w-fbd20'],
-           ['the handover at the ankle', 'w-uphill'],
-           ['his worked example, every line', 'w-swing'],
-           ['the moment arm that cannot be right', 'w-shortarm'],
+    live: [['the same free body, with and without acceleration', 'w-newton'],
+           ['the four forward-dynamics examples', 'w-fwd'],
+           ['why the order is forced', 'w-chain'],
+           ['four moments on one segment', 'w-moments4'],
+           ['the free body on a measured stride', 'w-fbd20'],
+           ['handing the ankle to the knee', 'w-uphill'],
+           ['the worked example, every line', 'w-swing'],
            ['the method, against a published answer', 'w-walk20'],
-           ['so how much of this is dynamics?', 'w-dynstat'],
+           ['when do you need the dynamics?', 'w-dynstat'],
            ['twelve problems from the Tutor', 'w-tutorq20']] },
 
   /* ---- still PowerPoint ---- */

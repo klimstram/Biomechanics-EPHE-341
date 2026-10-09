@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20261008c">
+<link rel="stylesheet" href="theme.css?v=20261009a">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -46,86 +46,209 @@
     <div class="rule"></div>
     <p class="sub">Last week every equation had zero on the right-hand side.
       This week the zeros become <em>ma</em> and <em>I&alpha;</em>, and
-      nothing else changes.</p>
+      the method does not change.</p>
   </div>
   <aside class="notes">Open by making the promise small, because it is true and it is reassuring.
 
 Last week they learned a method: free body diagram, force table, three equations, solve. Today they do not learn a new method. They learn that the same method works when things are accelerating, and the only edit is that the right-hand sides stop being zero.
 
-Then say what it buys. Static analysis could tell you about a gymnast holding still. Inverse dynamics tells you the moment at someone's knee in the fourteenth step of a run — from a camera and a plate, with nothing inside the body measured at all. Essentially everything the field knows about joint loading comes from this calculation.</aside>
+Then say what it buys. Static analysis could tell you about a gymnast holding still. Inverse dynamics gives the moment at someone's knee in the fourteenth step of a run, from a camera and a plate, with nothing inside the body measured at all.</aside>
 </section>
 
 <!-- 2 -->
 <section>
   <h2>Dynamic Analysis</h2>
-  <p class="subhead">Where this fits</p>
+  <p class="subhead">Dynamic Equilibrium</p>
   <div class="cols a top">
     <div>
-      <p class="small">Newton&rsquo;s first law gave us two cases, and last week we
-        took the first one.</p>
       <ul class="small">
-        <li>&Sigma;<em>F</em> = 0 and &Sigma;<em>M</em> = 0 &mdash; nothing is
-          accelerating. <strong>Static analysis.</strong></li>
-        <li>&Sigma;<em>F</em> &ne; 0 or &Sigma;<em>M</em> &ne; 0 &mdash; the state
-          of motion is changing. <strong>Dynamic analysis.</strong></li>
+        <li>State of an object which is moving with constant* (uniform) linear
+          and/or angular velocity. <span class="muted">* no acceleration.</span></li>
+        <li>Dynamic equilibrium exists if there is a balance between the applied
+          forces and inertial forces for a body in motion, with all the applied
+          forces resulting in equal and oppositely directed inertial forces.</li>
+        <li>Therefore the same rules apply from static to dynamic equilibrium but
+          you need to keep in mind that the object is in motion.</li>
       </ul>
-      <p class="small">Almost everything a person does is the second case. Walking
-        is the second case. So is standing up, throwing, landing, and pedalling.</p>
     </div>
     <div>
-      <div class="box accent">
-        <p class="small" style="margin:0">A body moving at <strong>constant
-          velocity</strong> is still the first case. No acceleration means no net
-          force, however fast it is going. His slide 2 calls this
-          <em>dynamic equilibrium</em>, and it is genuinely a statics problem
-          wearing a coat.</p>
+      <div class="fig">
+        <svg viewBox="0 0 460 250" role="img"
+             aria-label="A runner travelling at constant velocity with the applied
+                         force and the resistance drawn equal and opposite">
+          <g fill="none" stroke="var(--muted)" stroke-width="2"
+             stroke-linecap="round" opacity=".55">
+            <path d="M50 104h58M38 132h58M50 160h58"/>
+          </g>
+          <g fill="none" stroke="var(--ink)" stroke-width="3.4"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M228 148 L244 98 L249 86"/>
+            <path d="M228 148 L276 142 L270 188 L290 192"/>
+            <path d="M228 148 L188 172 L164 208 L148 214"/>
+            <path d="M244 98 L214 118 L222 146"/>
+            <path d="M244 98 L280 110 L298 86"/>
+          </g>
+          <circle cx="252" cy="76" r="12.5" fill="none"
+                  stroke="var(--ink)" stroke-width="3.4"/>
+          <path d="M40 218 H430" stroke="var(--rule)" stroke-width="2"/>
+
+          <g stroke="var(--brand)" stroke-width="2.6" fill="var(--brand)">
+            <path d="M300 36 H392" fill="none"/>
+            <path d="M392 36 l-9 -5 v10 z"/>
+          </g>
+          <text x="346" y="26" text-anchor="middle" font-size="13"
+                font-weight="650" fill="var(--brand)">v constant</text>
+
+          <g stroke="var(--good)" stroke-width="2.8" fill="var(--good)">
+            <path d="M308 150 H384" fill="none"/>
+            <path d="M384 150 l-10 -5.5 v11 z"/>
+          </g>
+          <text x="346" y="142" text-anchor="middle" font-size="12.5"
+                font-weight="650" fill="var(--good)">applied</text>
+
+          <g stroke="var(--accent)" stroke-width="2.8" fill="var(--accent)">
+            <path d="M152 150 H76" fill="none"/>
+            <path d="M76 150 l10 -5.5 v11 z"/>
+          </g>
+          <text x="114" y="142" text-anchor="middle" font-size="12.5"
+                font-weight="650" fill="var(--accent)">resistance</text>
+
+          <text x="230" y="244" text-anchor="middle" font-size="15"
+                font-weight="700" fill="var(--ink-strong)">&Sigma;F = 0</text>
+        </svg>
+        <figcaption>Moving quickly is not the same as accelerating. Equal and
+          oppositely directed, so the sums are still zero.</figcaption>
       </div>
-      <p class="small">The phrase comes from a trick: put the quantity <em>ma</em>
-        on the diagram as though it were a force, pointing backwards, and the sums
-        are zero again. That is d&rsquo;Alembert&rsquo;s idea, and it is why the
-        method does not have to change.</p>
     </div>
   </div>
-  <aside class="notes">Two things to land here.
+  <aside class="notes">The thing students assume is that "moving" means "dynamic". It does not. A cyclist holding 30 km/h on the flat has zero net force acting on them, and so does a cheetah at top speed once it stops speeding up.
 
-First, constant velocity is a statics problem. Students assume "moving" means "dynamic". It does not. A cyclist holding 30 km/h on the flat has zero net force on them.
+The second bullet is where the phrase comes from: put ma on the diagram as though it were a force pointing backwards, and the sums balance again. That is d'Alembert's idea, and it is why the third bullet is true — the same rules carry over.
 
-Second, the phrase "dynamic equilibrium" on his slide 2 confuses people until they see where it comes from. D'Alembert's trick: move ma to the left side and call it an inertial force. Then every dynamics problem looks like a statics problem. We will not use that framing for the rest of the lecture — we will keep ma on the right — but it explains the slide title.</aside>
+We will keep ma on the right-hand side for the rest of the lecture rather than moving it across, but the slide title is worth explaining or it sounds like a contradiction.</aside>
 </section>
 
 <!-- 3 -->
-<section id="w-newton">
+<section>
   <h2>Dynamic Analysis</h2>
-  <p class="subhead">The right-hand side</p>
-  <div class="iplot wide" data-widget="newton"></div>
-  <aside class="notes">Spend a minute here. Slide the push down to 50 newtons, where it exactly cancels friction, and say out loud: this is now last week's problem. The free body diagram did not change. The force table did not change. The sign conventions did not change. Only the number on the right.
+  <p class="subhead">When it is not in equilibrium</p>
+  <div class="cols b top">
+    <div>
+      <ul class="small">
+        <li>When an object is not in equilibrium the net forces do not equal zero
+          and it requires a <strong>non-equilibrium dynamic analysis</strong>.</li>
+        <li>To understand dynamic analysis we need to start with
+          <strong>Newton&rsquo;s second law</strong>.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="fig">
+        <svg viewBox="0 0 470 250" role="img"
+             aria-label="A walker crossing two force plates, with the ground
+                         reaction force drawn at three instants">
+          <path d="M20 214 H452" stroke="var(--rule)" stroke-width="2"/>
+          <g fill="var(--surface-solid)" stroke="var(--muted)" stroke-width="1.6">
+            <rect x="96" y="202" width="118" height="12" rx="2"/>
+            <rect x="262" y="202" width="118" height="12" rx="2"/>
+          </g>
 
-Then slide it back up. That is the whole lecture.
+          <g fill="none" stroke="var(--ink)" stroke-width="3.2"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M150 140 L163 92"/>
+            <path d="M150 140 L132 172 L126 202"/>
+            <path d="M150 140 L186 168 L196 202"/>
+            <path d="M163 92 L137 116 L142 146"/>
+            <path d="M163 92 L192 110 L186 142"/>
+          </g>
+          <circle cx="169" cy="74" r="12" fill="none"
+                  stroke="var(--ink)" stroke-width="3.2"/>
 
-The dashed arrow is ma drawn as if it were a force. Point at it and name d'Alembert, then move on — it is a framing, not a method they need.</aside>
+          <g stroke="var(--accent)" stroke-width="3" fill="var(--accent)">
+            <path d="M196 202 L188 112" fill="none"/>
+            <path d="M188 112 l-4.5 11 l9.5 -0.6 z"/>
+          </g>
+          <text x="208" y="120" font-size="12.5" font-weight="650"
+                fill="var(--accent)">GRF</text>
+
+          <g stroke="var(--accent)" stroke-width="2.4" fill="var(--accent)"
+             opacity=".55">
+            <path d="M300 202 L292 142" fill="none"/>
+            <path d="M292 142 l-4 9.5 l8.4 -0.5 z"/>
+            <path d="M352 202 L358 158" fill="none"/>
+            <path d="M358 158 l-6.5 7.5 l8.4 1.6 z"/>
+          </g>
+          <text x="332" y="236" text-anchor="middle" font-size="11.5"
+                fill="var(--muted)">the same force, two instants later</text>
+        </svg>
+        <figcaption>A plate measures the one external force we can see. Nothing
+          in this picture sums to zero.</figcaption>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Short slide, one job: say that the interesting case is the one where the sums are not zero, and that it needs a different kind of analysis.
+
+Point at the vectors and note that they move, tilt and change length through the step. That is what a force plate gives us, and it is the only external force in the whole problem.
+
+Then hand straight over to the second law.</aside>
 </section>
 
 <!-- 4 -->
 <section>
   <h2>Dynamic Analysis</h2>
-  <p class="subhead">The two equations, in general form</p>
+  <p class="subhead">Newton&rsquo;s Second Law &mdash; the law of acceleration</p>
   <div class="cols a top">
     <div>
-      <p class="eq big">&Sigma;<em>F</em> = <em>m</em>&middot;<em>a</em></p>
-      <p class="small">Newton&rsquo;s second law. The net force on a body equals its
-        mass times the acceleration of its <strong>centre of mass</strong> &mdash;
-        not of any other point on it.</p>
-      <p class="eq big">&Sigma;<em>M</em> = <em>I</em>&middot;&alpha;</p>
-      <p class="small">The rotational twin. The net moment equals the moment of
-        inertia times the angular acceleration, both taken about the
-        <strong>same axis</strong>.</p>
+      <h4>Linear</h4>
+      <p class="small">A net force applied to a body causes an acceleration of that
+        body of a magnitude proportional to the force, in the direction of the
+        force, and inversely proportional to the body&rsquo;s mass.</p>
+      <p class="eq big">&Sigma;<em>F</em> = <em>m</em><em>a</em></p>
     </div>
     <div>
-      <p class="small">In two dimensions that is three scalar equations, and three is
-        exactly what a free body diagram gives you:</p>
-      <p class="eq">&Sigma;<em>F</em><sub>x</sub> = <em>m</em>&middot;<em>a</em><sub>x</sub></p>
-      <p class="eq">&Sigma;<em>F</em><sub>y</sub> = <em>m</em>&middot;<em>a</em><sub>y</sub></p>
-      <p class="eq">&Sigma;<em>M</em> = <em>I</em>&middot;&alpha;</p>
+      <h4>Angular</h4>
+      <p class="small">A net torque (moment) applied to a body causes an angular
+        acceleration of that body of a magnitude proportional to the torque, in the
+        direction of the torque (moment), and inversely proportional to the moment
+        of inertia.</p>
+      <p class="eq big">&Sigma;<em>M</em> = <em>I</em>&alpha;</p>
+    </div>
+  </div>
+  <div class="callout small">
+    <p style="margin-bottom:0">Two cautions that cost marks later. The <em>a</em> in
+      <em>F</em> = <em>ma</em> is the acceleration of the <strong>centre of
+      mass</strong> &mdash; not of the heel, not of the joint. And the <em>M</em>
+      and the <em>I</em> in <em>M</em> = <em>I</em>&alpha; must be taken about the
+      <strong>same axis</strong>.</p>
+  </div>
+  <aside class="notes">Read the two statements as a pair and let the symmetry do the work. Force to mass as torque is to moment of inertia; linear acceleration to angular acceleration.
+
+The two cautions are worth writing on the board. The centre-of-mass one is the reason the next few slides insist on taking everything about the centre of mass, and the same-axis one is why we do not mix a moment taken about the joint with an I taken about the centre of mass.</aside>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Dynamic Analysis</h2>
+  <p class="subhead">In two dimensions</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>In a 2-dimensional analysis it is important to consider the components
+          of forces and moment(s).</li>
+        <li>This leaves us with the <strong>3 equations</strong> of a system under
+          dynamic conditions.</li>
+      </ul>
+      <p class="eq">&Sigma;<em>F</em><sub>x</sub> = <em>m</em><em>a</em><sub>x</sub></p>
+      <p class="eq">&Sigma;<em>F</em><sub>y</sub> = <em>m</em><em>a</em><sub>y</sub></p>
+      <p class="eq">&Sigma;<em>M</em> = <em>I</em>&alpha;</p>
+    </div>
+    <div>
+      <div class="box">
+        <p class="small" style="margin:0"><strong>Leonhard Euler (1707&ndash;1783)</strong>
+          wrote the rotational law for a rigid body, and the two laws together
+          describe any motion of anything solid. Hence the
+          <strong>Newton&ndash;Euler</strong> equations, which is what this method is
+          called in every paper that uses it.</p>
+      </div>
       <div class="callout small">
         <p style="margin-bottom:0">Three equations means <strong>three
           unknowns</strong>, and not one more. Everything about how inverse dynamics
@@ -133,41 +256,9 @@ The dashed arrow is ma drawn as if it were a force. Point at it and name d'Alemb
       </div>
     </div>
   </div>
-  <aside class="notes">Two cautions, both of which cost marks later.
+  <aside class="notes">Three equations per segment. Say the number out loud, because the whole structure of the method is a consequence of it and we come back to it in about ten minutes.
 
-The a in F = ma is the acceleration of the centre of mass. Not the heel, not the joint — the centre of mass of the segment you drew the free body around.
-
-The M and the I in M = I alpha must be about the same axis. We will take every moment about the segment's own centre of mass for the rest of the lecture, which is why his slide 21 says "if we calculate all values with reference to the centre of mass we can use the general forms".
-
-And flag the three-equations-three-unknowns line now. It is the reason we start at the foot, and we will come back to it in about ten minutes.</aside>
-</section>
-
-<!-- 5 -->
-<section>
-  <h2>Dynamic Analysis</h2>
-  <p class="subhead">Leonhard Euler, 1707&ndash;1783</p>
-  <div class="cols b top">
-    <div>
-      <p class="small">Newton gave us <em>F</em> = <em>ma</em> for a particle.
-        It was <strong>Euler</strong> who wrote the rotational law for a rigid body
-        and showed that the two together are enough to describe any motion of
-        anything solid.</p>
-      <p class="small">Hence <strong>Newton&ndash;Euler</strong> equations, which is
-        what the method in this lecture is properly called, and what you will see it
-        called in every paper that uses it.</p>
-    </div>
-    <div>
-      <div class="box">
-        <p class="small" style="margin:0">Euler also lost the sight in one eye at 28
-          and in the other at 59, and produced roughly half of his work after going
-          completely blind, dictating it to his sons. He is still the most prolific
-          mathematician who has ever lived.</p>
-      </div>
-    </div>
-  </div>
-  <aside class="notes">Thirty seconds of history, no more, but it earns its place: students meet the phrase "Newton-Euler equations" in every biomechanics paper they will ever read and nobody ever tells them where the Euler came from.
-
-The blindness detail is worth one sentence. It tends to stick.</aside>
+Euler is worth thirty seconds. Students meet the phrase "Newton-Euler equations" in every biomechanics paper they will ever read and nobody tells them where the Euler came from.</aside>
 </section>
 
 <!-- 6 -->
@@ -176,30 +267,44 @@ The blindness detail is worth one sentence. It tends to stick.</aside>
   <p class="subhead">Why two dimensions</p>
   <div class="cols a top">
     <div>
-      <p class="small">Everything in this lecture is <strong>planar</strong>: motion in
-        the sagittal plane, forces in the sagittal plane, one moment axis
-        perpendicular to it.</p>
-      <p class="small">In three dimensions there are six equations rather than three,
-        and the moment equation acquires terms that have no two-dimensional
-        equivalent. The <em>method</em> is identical. The bookkeeping is not.</p>
+      <ul class="small">
+        <li>Dynamic analysis of a multi-segment rigid body (like a human body) in
+          3-dimensions can be very complex.</li>
+        <li>We will cover <strong>2-dimensional</strong> examples of dynamic
+          analysis.</li>
+      </ul>
+      <p class="small">Everything from here is planar: motion in the sagittal plane,
+        forces in the sagittal plane, one moment axis perpendicular to it.</p>
     </div>
     <div>
       <div class="callout small">
-        <p style="margin-bottom:0">This is not only a teaching simplification.
-          A large fraction of published gait analysis reports sagittal joint moments
+        <p style="margin-bottom:0">This is not only a teaching simplification. A
+          large fraction of published gait analysis reports sagittal joint moments
           computed exactly this way, because the sagittal plane is where most of
           walking happens.</p>
       </div>
-      <p class="small">At the end of the lecture we will run the real thing on a real
-        stride and find out how much the simplification costs.</p>
+      <p class="small">At the end of the lecture we run the method on a real stride
+        and compare it with a three-dimensional solution of the same data.</p>
     </div>
   </div>
-  <aside class="notes">Pre-empt the objection. Yes, people are three-dimensional. The sagittal plane carries most of the mechanical work of walking, and two-dimensional inverse dynamics was the standard tool for decades and is still what most clinical reports show for flexion-extension moments.
+  <aside class="notes">Pre-empt the objection. Yes, people are three-dimensional. In 3D there are six equations rather than three and the moment equation picks up terms with no planar equivalent — the method is identical, the bookkeeping is not.
 
-And promise the payoff: at the end we check our two-dimensional answer against a three-dimensional one computed by the people who recorded the data, and the difference is measurable and interesting.</aside>
+And promise the payoff: at the end we check our two-dimensional answer against a three-dimensional one computed by the people who recorded the data.</aside>
 </section>
 
 <!-- 7 -->
+<section id="w-newton">
+  <h2>Dynamic Analysis</h2>
+  <p class="subhead">The same free body, with and without acceleration</p>
+  <div class="iplot wide" data-widget="newton"></div>
+  <aside class="notes">Spend a minute here. Slide the push down to 50 newtons, where it exactly cancels friction, and say out loud: this is now last week's problem, and it is the dynamic equilibrium case from slide two. The free body diagram did not change. The force table did not change. The sign conventions did not change. Only the number on the right.
+
+Then slide it back up. That is the whole lecture.
+
+The dashed arrow is ma drawn as if it were a force. Point at it, name d'Alembert, then move on.</aside>
+</section>
+
+<!-- 8 -->
 <section>
   <div class="section-slide">
     <h2>Two directions</h2>
@@ -209,86 +314,202 @@ And promise the payoff: at the end we check our two-dimensional answer against a
   <aside class="notes">Divider. The forward/inverse split is the organising idea of the rest of the lecture and it deserves its own beat.</aside>
 </section>
 
-<!-- 8 -->
+<!-- 9 -->
 <section>
   <h2>Dynamic Analysis</h2>
-  <p class="subhead">Forward and inverse</p>
+  <p class="subhead">Forward dynamics</p>
   <div class="cols a top">
     <div>
-      <p class="small"><strong>Forward dynamics.</strong> You know the forces and the
-        moments. You solve for the accelerations, and from them the motion.</p>
-      <p class="small">This is what a simulation does, and what a robot&rsquo;s
-        controller does. It is also what every physics problem you have ever been
-        set does.</p>
-      <p class="eq">forces &rarr; <em>a</em>, &alpha; &rarr; motion</p>
+      <ul class="small">
+        <li>There are <strong>2 approaches</strong> to solving dynamic problems
+          depending on what variables are known or can be manipulated.</li>
+        <li>Forward and inverse dynamics.</li>
+      </ul>
+      <h4>Forward dynamics analysis</h4>
+      <ul class="small">
+        <li>When you know the forces and are trying to determine the
+          accelerations.</li>
+        <li>An example of this is in robotics where you have motors that produce a
+          prescribed force or torque.</li>
+        <li>That is, given the forces and torques, what are the linear and angular
+          accelerations?</li>
+      </ul>
     </div>
     <div>
-      <p class="small"><strong>Inverse dynamics.</strong> You know the motion, because
-        you filmed it, and you know the external forces, because you stood the person
-        on a plate. You solve for the forces and moments <strong>inside</strong>.</p>
-      <p class="small">This is the one you can do to a human being, and it is the rest
-        of this lecture.</p>
-      <p class="eq">motion + external forces &rarr; internal forces</p>
+      <p class="eq">forces &rarr; <em>a</em>, &alpha; &rarr; motion</p>
+      <div class="box accent">
+        <p class="small" style="margin:0">This is the direction every physics
+          problem you have ever been set runs in. It is also the direction you
+          <strong>cannot</strong> run on a person, because nobody can tell you what
+          the muscle forces were.</p>
+      </div>
     </div>
   </div>
-  <div class="box accent">
-    <p class="small" style="margin:0">The asymmetry is the whole point. You cannot
-      put a load cell inside somebody. You can put a camera in front of them and a
-      force plate under them &mdash; so the only direction available is the inverse
-      one.</p>
-  </div>
-  <aside class="notes">Make the asymmetry concrete.
+  <aside class="notes">Name both approaches here, then take forward dynamics on its own for the next few slides and come back for inverse.
 
-Forward dynamics on a person would mean knowing every muscle force. Nobody knows those. The handful of studies that have measured internal forces directly used instrumented implants in a few dozen people in the whole history of the field.
-
-So inverse dynamics is not a second-best. For human movement it is the only door into the building.</aside>
-</section>
-
-<!-- 9 -->
-<section id="w-fwd">
-  <h2>Dynamic Analysis</h2>
-  <p class="subhead">Forward dynamics, four examples</p>
-  <div class="iplot wide" data-widget="fwd"></div>
-  <aside class="notes">These four are a warm-up and should go quickly. One equation each.
-
-Do stop on the last two. His caption under both reads "this clockwise torque will cause a negative moment and angular acceleration" — and then the printed answer is positive. The arithmetic is right, the sign got dropped on the way to the box.
-
-Say why it matters: in the worked example at the end of this lecture, every single line turns on getting a sign right, and the first place to practise is here.</aside>
+The asymmetry is worth planting early. Forward dynamics on a person would mean knowing every muscle force. The handful of studies that have measured internal forces directly used instrumented implants in a few dozen people in the whole history of the field.</aside>
 </section>
 
 <!-- 10 -->
-<section>
+<section id="w-fwd">
   <h2>Dynamic Analysis</h2>
-  <p class="subhead">Where forward dynamics does earn its keep</p>
-  <div class="cols a top">
-    <div>
-      <p class="small">Build a model of a body &mdash; segments, joints, muscles with
-        force&ndash;length and force&ndash;velocity properties &mdash; choose a pattern
-        of muscle activation, and let the equations run. The model walks, or jumps,
-        or falls over.</p>
-      <p class="small">Then change something you could never change in a person: delete
-        a muscle, weaken a tendon, alter a moment arm, add a prosthesis. Run it again.</p>
-    </div>
-    <div>
-      <div class="callout small">
-        <p style="margin-bottom:0">Forward dynamics answers questions of the form
-          <em>what would happen if</em>. Inverse dynamics answers
-          <em>what did happen</em>. You need both, and they are not substitutes.</p>
-      </div>
-      <p class="small">The cost is that a forward model is only as good as the
-        assumptions inside it, and there are hundreds of them. An inverse-dynamics
-        answer rests on far fewer &mdash; which is the subject of the last third of
-        this lecture.</p>
-    </div>
-  </div>
-  <aside class="notes">His slide 12 is a single line about simulation; this expands it into something students can hold.
+  <p class="subhead">Example problems, forward dynamics</p>
+  <div class="iplot wide" data-widget="fwd"></div>
+  <aside class="notes">Four examples, one equation each. These should go quickly.
 
-The what-if versus what-happened distinction is the useful one. Simulation is how you test a surgery before performing it, or a shoe before building it.
+Do stop on the last two. The caption under both says the clockwise torque causes a negative moment and a negative angular acceleration — so read the answer back with its sign attached, out loud, before moving on.
 
-And set up the ending: a forward model has hundreds of assumptions, an inverse-dynamics calculation has maybe ten. We are going to count them later and find out what they cost.</aside>
+Say why it matters: in the worked example at the end of this lecture every single line turns on getting a sign right, and this is the place to practise.</aside>
 </section>
 
 <!-- 11 -->
+<section>
+  <h2>Dynamic Analysis</h2>
+  <p class="subhead">Simulation</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Another application of forward dynamics is in the
+        <strong>simulation of human movement</strong>, when approximate muscle
+        forces are input into models to replicate the performance of a movement.</p>
+      <p class="small">Build a model &mdash; segments, joints, muscles with
+        force&ndash;length and force&ndash;velocity properties &mdash; choose a
+        pattern of activation, and let the equations run. The model walks, or jumps,
+        or falls over.</p>
+    </div>
+    <div>
+      <div class="callout small">
+        <p style="margin-bottom:0">Then change something you could never change in a
+          person: delete a muscle, weaken a tendon, alter a moment arm, add a
+          prosthesis. Run it again.</p>
+      </div>
+      <p class="small">Forward dynamics answers <em>what would happen if</em>.
+        Inverse dynamics answers <em>what did happen</em>. We need both, and they
+        are not substitutes.</p>
+    </div>
+  </div>
+  <aside class="notes">The what-if versus what-happened distinction is the useful one. Simulation is how you test a surgery before performing it, or a shoe before building it.
+
+And set up the ending: a forward model carries hundreds of assumptions, an inverse-dynamics calculation maybe ten. We count them later and find out what they cost.</aside>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Dynamic Analysis</h2>
+  <p class="subhead">Inverse dynamics analysis</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>When you know the <strong>kinematics</strong> and are trying to solve
+          for the <strong>kinetics</strong>.</li>
+        <li>An example of this type of solution is when you can measure the movement
+          of the body segment and want to solve for the muscle force and joint
+          reaction forces required to produce that movement.</li>
+      </ul>
+      <p class="eq">motion + external forces &rarr; internal forces</p>
+    </div>
+    <div>
+      <div class="box accent">
+        <p class="small" style="margin:0">You cannot put a load cell inside
+          somebody. You can put a camera in front of them and a force plate under
+          them &mdash; so for human movement this is the only direction
+          available.</p>
+      </div>
+      <p class="small">Everything from here to the end of the lecture is this one
+        calculation.</p>
+    </div>
+  </div>
+  <aside class="notes">This is the hinge of the lecture. Say plainly that inverse dynamics is not a second-best — for human movement it is the only door into the building.
+
+Two quick examples next, one linear and one angular, then the real thing.</aside>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Dynamic Analysis</h2>
+  <p class="subhead">Example Problem #1 (inverse dynamics)</p>
+  <div class="cols b top">
+    <div>
+      <p class="small"><strong>What is the resultant force applied to a 23 kg object
+        if the acceleration is 17.6 m/s&sup2;?</strong></p>
+      <div class="fig small">
+        <svg viewBox="0 0 400 130" role="img"
+             aria-label="A 23 kg block pushed to the right, accelerating at
+                         17.6 metres per second squared">
+          <g stroke="var(--accent)" stroke-width="3" fill="var(--accent)">
+            <path d="M46 70 H120" fill="none"/>
+            <path d="M120 70 l-11 -6 v12 z"/>
+          </g>
+          <text x="60" y="56" font-size="14" font-weight="700"
+                fill="var(--accent)">F</text>
+          <rect x="124" y="42" width="78" height="56" rx="3"
+                fill="var(--surface-solid)" stroke="var(--ink)" stroke-width="2.6"/>
+          <text x="163" y="77" text-anchor="middle" font-size="15"
+                font-weight="700" fill="var(--ink-strong)">23 kg</text>
+          <g stroke="var(--brand)" stroke-width="3" fill="var(--brand)"
+             stroke-dasharray="7 5">
+            <path d="M206 70 H300" fill="none"/>
+          </g>
+          <path d="M300 70 l-11 -6 v12 z" fill="var(--brand)"/>
+          <text x="258" y="56" text-anchor="middle" font-size="13.5"
+                font-weight="700" fill="var(--brand)">17.6 m/s&sup2;</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <h4>Solution</h4>
+      <p class="eq">&Sigma;<em>F</em><sub>x</sub> = <em>m</em>&middot;<em>a</em><sub>x</sub></p>
+      <p class="eq"><em>F</em> = 23(17.6)</p>
+      <p class="eq"><em>F</em> = 404.8 N</p>
+    </div>
+  </div>
+  <aside class="notes">Thirty seconds. One equation, one substitution.
+
+The only thing worth saying is that we are running it backwards from the usual school problem: the acceleration was the measurement and the force is the answer. That is the whole idea of inverse dynamics in one line.</aside>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Dynamic Analysis</h2>
+  <p class="subhead">Example Problem #1 (inverse dynamics)</p>
+  <div class="cols b top">
+    <div>
+      <p class="small"><strong>Calculate the moment required for an angular
+        acceleration of 112 rad/s&sup2;, given the moment of inertia about the elbow
+        is 0.18 kg&middot;m&sup2;.</strong></p>
+      <div class="fig small">
+        <svg viewBox="0 0 400 150" role="img"
+             aria-label="A forearm rotating about the elbow under a moment M">
+          <g fill="none" stroke="var(--ink)" stroke-width="3.4"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M92 48 L268 104"/>
+            <path d="M268 104 l24 7 l16 -3"/>
+          </g>
+          <circle cx="92" cy="48" r="13" fill="none"
+                  stroke="var(--ink)" stroke-width="3"/>
+          <circle cx="92" cy="48" r="4" fill="var(--ink)"/>
+          <g stroke="var(--accent)" stroke-width="3" fill="none">
+            <path d="M126 24 A 44 44 0 0 0 70 22"/>
+          </g>
+          <path d="M70 22 l12 -3.4 l-1.6 12.6 z" fill="var(--accent)"/>
+          <text x="140" y="22" font-size="15" font-weight="700"
+                fill="var(--accent)">M</text>
+          <text x="96" y="84" font-size="12.5" fill="var(--muted)">elbow</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <h4>Solution</h4>
+      <p class="eq">&Sigma;<em>M</em> = <em>I</em>&middot;&alpha;</p>
+      <p class="eq"><em>M</em> = 0.18(112)</p>
+      <p class="eq"><em>M</em> = 20.2 N&middot;m</p>
+    </div>
+  </div>
+  <aside class="notes">The angular twin of the previous slide, and the first time they see a moment of inertia used in anger.
+
+Worth one sentence: 0.18 kg·m² is a real forearm, 112 rad/s² is a brisk elbow flexion, and 20 N·m is what a joint has to produce to do it. Those are the orders of magnitude for the rest of the lecture.</aside>
+</section>
+
+<!-- 15 -->
 <section>
   <div class="section-slide">
     <h2>The method</h2>
@@ -298,181 +519,486 @@ And set up the ending: a forward model has hundreds of assumptions, an inverse-d
   <aside class="notes">Divider. From here to the end of the lecture there is one method, applied over and over.</aside>
 </section>
 
-<!-- 12 -->
+<!-- 16 -->
 <section>
   <h2>Inverse Dynamics</h2>
-  <p class="subhead">What you can actually measure</p>
+  <p class="subhead">Inverse dynamics in human gait analysis</p>
   <div class="cols a top">
     <div>
-      <p class="small">We can record the <strong>movement</strong>: a motion capture
-        system, video, accelerometers, gyroscopes.</p>
-      <p class="small">We can record the <strong>external forces</strong>: a force
-        plate gives the ground reaction force and where it acts.</p>
-      <p class="small">We cannot record anything <strong>inside</strong>. Not one
-        tendon, not one joint contact force, not one ligament.</p>
+      <ul class="small">
+        <li>We can record the movement of the human body using a motion capture
+          system, video camera, accelerometers, gyros, etc&hellip;</li>
+        <li>and measure the external forces,</li>
+        <li>but we do not know what is going on <strong>inside</strong> the body to
+          produce the motion.</li>
+      </ul>
     </div>
     <div>
       <div class="box accent">
-        <p class="small" style="margin:0">So: recorded trajectories, recorded ground
-          forces, Newton&ndash;Euler, and out comes the <strong>net joint moment and
-          the net joint force</strong> at every joint, at every instant.</p>
+        <p class="small" style="margin:0">Based on recorded data (motion
+          trajectories, GRFs) and simple dynamics principles (Newton&ndash;Euler
+          equations) we can reconstruct the <strong>net joint moments and
+          forces</strong>.</p>
       </div>
       <p class="small">The word <strong>net</strong> is doing a great deal of work in
-        that sentence, and we will come back to it before the end.</p>
+        that sentence, and we come back to it before the end.</p>
     </div>
   </div>
-  <aside class="notes">This is his slide 16, and it is the sales pitch.
+  <aside class="notes">This is the sales pitch for the whole method. Cameras and a plate on the outside, joint moments on the inside, and nothing invasive anywhere.
 
-Flag the word "net" now and promise to return to it. Students hear "the moment at the knee" and picture a muscle. It is the sum of everything crossing that joint — every muscle, every ligament, the capsule, the contact. A co-contracting pair of muscles can produce enormous forces and a net moment of zero.</aside>
+Flag the word "net" now and promise to return to it. Students hear "the moment at the knee" and picture a muscle. It is the sum of everything crossing that joint — every muscle, every ligament, the capsule, the contact. A co-contracting pair can produce enormous forces and a net moment of zero.</aside>
 </section>
 
-<!-- 13 -->
+<!-- 17 -->
+<section>
+  <h2>Inverse Dynamics</h2>
+  <p class="subhead">One segment at a time, starting at the bottom</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li>Inverse dynamics involves taking into account all the forces and moments
+          that act on each segment, and the effect of these forces and moments on
+          the following segments.</li>
+        <li>For example, if we want to find out the forces and moments at the hip
+          during a movement we need to consider <strong>each segment
+          separately</strong>.</li>
+        <li>We need to start with the <strong>most distal segment</strong> and then
+          carry the solutions for each joint forward.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box">
+        <p class="small" style="margin:0"><strong>Step 1:</strong> Foot<br>
+          <strong>Step 2:</strong> Leg<br>
+          <strong>Step 3:</strong> Thigh</p>
+      </div>
+      <p class="small">Each step hands its answer to the next one. Nothing can be
+        solved out of order.</p>
+    </div>
+  </div>
+  <aside class="notes">Two ideas, and the second one is the one that makes the rest feel inevitable rather than arbitrary: the order is forced.
+
+Do not justify it yet — the next figure does that with a ledger of unknowns. Just assert it here and let them wonder why.</aside>
+</section>
+
+<!-- 18 -->
 <section id="w-chain">
   <h2>Inverse Dynamics</h2>
-  <p class="subhead">Why you have to start at the foot</p>
+  <p class="subhead">Why the order is forced</p>
   <div class="iplot wide" data-widget="chain"></div>
-  <aside class="notes">This is his slides 17 and 18 turned into arithmetic, and it is the part that makes the rest feel inevitable rather than arbitrary.
-
-Press "Start at the hip" and let them look at the ledger. The thigh has an unknown joint at both ends: six unknowns, three equations. There is no clever algebra that fixes that.
+  <aside class="notes">Press "Start at the hip" and let them look at the ledger. The thigh has an unknown joint at both ends: six unknowns, three equations. There is no clever algebra that fixes that.
 
 Then press "Start at the foot". One end of the foot is the ground, and a force plate has measured it. Three unknowns, three equations. Solve, hand the ankle up, and now the shank has three unknowns too.
 
 The phrase to leave them with: inverse dynamics runs from the ground up because the ground is the only place where anything is known.</aside>
 </section>
 
-<!-- 14 -->
+<!-- 19 -->
 <section>
   <h2>Inverse Dynamics</h2>
-  <p class="subhead">The foot, cut free</p>
+  <p class="subhead">A net joint force and a net joint moment</p>
   <div class="cols a top">
     <div>
-      <p class="small">Draw the foot on its own and put on it <strong>everything</strong>
-        that touches it:</p>
+      <p class="small"><strong>1.</strong> We need to consider all the forces acting
+        upon the segment and the moments that they would produce.</p>
       <ul class="small">
-        <li>the <strong>ground reaction force</strong>, acting at the centre of
-          pressure &mdash; measured;</li>
-        <li>its own <strong>weight</strong>, acting at its centre of mass &mdash;
-          from the anthropometric table;</li>
-        <li>the <strong>force the shank applies</strong> at the ankle, two
-          components &mdash; unknown;</li>
-        <li>and the <strong>moment the shank applies</strong> at the ankle &mdash;
-          unknown.</li>
+        <li>bone-on-bone forces</li>
+        <li>ligament forces</li>
+        <li>muscle forces, and the joint moment of force they produce</li>
+        <li>the segment&rsquo;s own weight</li>
+        <li>the external force, where there is one</li>
       </ul>
     </div>
     <div>
-      <div class="callout small">
-        <p style="margin-bottom:0">Three unknowns, three equations. The two force
-          sums come <strong>first</strong>, because the ankle force appears in the
-          moment equation and you need its value before you can use it. That is the
-          only ordering rule in the whole method.</p>
+      <p class="small"><strong>2.</strong> Really we can say that we can add all these
+        forces to create a <strong>net joint force</strong> and a <strong>net joint
+        moment</strong>, and then account for the internal and external moments.</p>
+      <div class="fig small">
+        <svg viewBox="0 0 430 240" role="img" aria-label="The many forces crossing a joint replaced by one net joint force and one net joint moment"><g opacity=".95"><path d="M96.0 118.0 L76.9 90.2" stroke="var(--accent)" stroke-width="2.2" fill="none" stroke-linecap="round"/><polygon points="74.0,86.0 80.3,89.0 74.6,93.0" fill="var(--accent)"/><path d="M96.0 118.0 L104.7 84.9" stroke="var(--good)" stroke-width="2.2" fill="none" stroke-linecap="round"/><polygon points="106.0,80.0 107.8,86.8 101.1,85.0" fill="var(--good)"/><path d="M96.0 118.0 L120.3 95.4" stroke="var(--violet)" stroke-width="2.2" fill="none" stroke-linecap="round"/><polygon points="124.0,92.0 121.9,98.7 117.2,93.6" fill="var(--violet)"/><path d="M96.0 118.0 L74.4 129.6" stroke="var(--muted)" stroke-width="2.2" fill="none" stroke-linecap="round"/><polygon points="70.0,132.0 73.7,126.1 77.0,132.2" fill="var(--muted)"/><path d="M96.0 118.0 L123.8 137.1" stroke="var(--muted)" stroke-width="2.2" fill="none" stroke-linecap="round"/><polygon points="128.0,140.0 121.0,139.4 125.0,133.7" fill="var(--muted)"/></g><path d="M86 108 L150 168" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" fill="none"/><text x="100.0" y="192.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--muted)">every force, separately</text><path d="M176.0 134.0 L208.2 134.0" stroke="var(--muted)" stroke-width="2.2" fill="none" stroke-linecap="round"/><polygon points="214.0,134.0 207.1,138.0 207.1,130.0" fill="var(--muted)"/><path d="M258 108 L322 168" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M258.0 108.0 L282.0 77.1" stroke="var(--brand)" stroke-width="3" fill="none" stroke-linecap="round"/><polygon points="286.0,72.0 284.7,80.9 277.7,75.4" fill="var(--brand)"/><text x="300.0" y="68.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--brand)">F<tspan baseline-shift="sub" font-size="9">ankle</tspan></text><path d="M240 104 A 26 26 0 0 1 266 82" stroke="var(--brand)" stroke-width="2.6" fill="none"/><polygon points="266,82 256,80 262,91" fill="var(--brand)"/><text x="222.0" y="96.0" text-anchor="end" font-size="12" font-weight="700" fill="var(--brand)">M<tspan baseline-shift="sub" font-size="9">ankle</tspan></text><circle cx="290" cy="138" r="5.5" fill="var(--brand)"/><path d="M290.0 138.0 L276.6 164.8" stroke="var(--good)" stroke-width="2.4" fill="none" stroke-linecap="round"/><polygon points="274.0,170.0 273.5,162.0 280.7,165.6" fill="var(--good)"/><text x="262.0" y="184.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--good)">m<tspan baseline-shift="sub" font-size="9">foot</tspan> g</text><path d="M348.0 190.0 L328.6 170.6" stroke="var(--accent)" stroke-width="2.8" fill="none" stroke-linecap="round"/><polygon points="324.0,166.0 332.7,168.3 326.3,174.7" fill="var(--accent)"/><text x="360.0" y="200.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--accent)">F<tspan baseline-shift="sub" font-size="9">ground</tspan></text><text x="300.0" y="222.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--muted)">one net force, one net moment</text></svg>
       </div>
-      <p class="small">His slide 19 makes the simplification explicit: every muscle,
-        ligament and contact force crossing the ankle is replaced by
-        <strong>one net force and one net moment</strong>. That replacement is exact
-        for the mechanics and lossy for the anatomy.</p>
     </div>
   </div>
-  <aside class="notes">Walk the list slowly. The commonest mistake in the whole topic is leaving something off the free body diagram, and the second commonest is forgetting that the joint carries a moment as well as a force.
+  <aside class="notes">Walk the list on the left slowly. The commonest mistake in the whole topic is leaving something off the diagram, and the second commonest is forgetting that the joint carries a moment as well as a force.
 
-The "exact for the mechanics, lossy for the anatomy" line is worth saying twice. Replacing twenty muscle forces by one force and one moment loses no mechanics at all — the segment accelerates identically. What it loses is any way of telling which muscle did it.</aside>
+Then make the simplification explicit: every muscle, ligament and contact force crossing the ankle is replaced by one net force and one net moment. That replacement is exact for the mechanics — the segment accelerates identically — and lossy for the anatomy, because afterwards there is no way of telling which muscle did it.</aside>
 </section>
 
-<!-- 15 -->
-<section id="w-fbd20">
-  <h2>Inverse Dynamics</h2>
-  <p class="subhead">The foot, on a real stride</p>
-  <div class="iplot wide" data-widget="fbd20"></div>
-  <aside class="notes">This is his slides 20 to 24 with a real foot in them. Press Walk and let it run once before saying anything.
-
-Then stop it around 45 per cent and read the three equations out. The foot weighs eight tenths of a kilogram and the ground is pushing with nearly seven hundred newtons a hand's breadth in front of the ankle. Ask them which term they think is doing the work. They will say the ground force, and they will be right, and we will quantify exactly how right at the end of the lecture.
-
-Then walk it past sixty per cent. The plate loses the foot, and the ankle moment collapses to almost nothing. That is why his worked example, which is set in swing, comes out at fractions of a newton metre.</aside>
-</section>
-
-<!-- 16 -->
+<!-- 20 -->
 <section>
   <h2>Inverse Dynamics</h2>
-  <p class="subhead">The moment arms</p>
+  <p class="subhead">A really simple diagram</p>
   <div class="cols a top">
     <div>
-      <p class="small">Take every moment about the segment&rsquo;s own
-        <strong>centre of mass</strong>. Then <em>I</em>&alpha; is the plain
-        <em>I</em>&alpha; from the table, with no parallel-axis correction.</p>
-      <p class="small">His slides write each force&rsquo;s moment as two terms:</p>
-      <p class="eq"><em>F</em><sub>x</sub>&middot;<em>d</em>(sin&theta;)
-        + <em>F</em><sub>y</sub>&middot;<em>d</em>(cos&theta;)</p>
-      <p class="small">which is the same thing as the cross product
-        <em>r</em> &times; <em>F</em>, written out. The horizontal force acts through
-        a <strong>vertical</strong> arm, and the vertical force through a
-        <strong>horizontal</strong> one.</p>
+      <p class="small">So let&rsquo;s make a really simple diagram so we can see the
+        steps necessary to calculate the net joint forces and moments.</p>
+      <div class="fig small">
+        <svg viewBox="0 0 430 300" role="img" aria-label="A segment drawn as a bar between its proximal joint and its distal end, with the centre of mass marked"><path d="M148.0 66.0 L306.0 236.0" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" fill="none"/><rect x="140.5" y="58.5" width="15" height="15" fill="var(--ink)"/><rect x="298.5" y="228.5" width="15" height="15" fill="var(--ink)"/><circle cx="220.7" cy="144.2" r="7" fill="var(--brand)"/><text x="134.0" y="52.0" text-anchor="end" font-size="11.5" font-weight="700" fill="var(--muted)">proximal</text><text x="320.0" y="256.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--muted)">distal</text><text x="234.7" y="170.2" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--brand)">centre of mass</text></svg>
+      </div>
     </div>
     <div>
-      <div class="box accent">
-        <p class="small" style="margin:0">Pairing <em>F</em><sub>x</sub> with the
-          horizontal distance is the single commonest error in this topic. The arm
-          a force turns through is <strong>perpendicular</strong> to it.</p>
+      <p class="eq">&Sigma;<em>F</em><sub>x</sub> = <em>m</em><em>a</em><sub>x</sub></p>
+      <p class="eq">&Sigma;<em>F</em><sub>y</sub> = <em>m</em><em>a</em><sub>y</sub></p>
+      <p class="eq">&Sigma;<em>M</em> = <em>I</em>&alpha;</p>
+      <div class="callout small">
+        <p style="margin-bottom:0"><strong>NB.</strong> The technique for calculating
+          the net joint forces and moments is slightly different from the technique
+          we are used to. It is the same in principle, but it may feel a bit
+          different because we are taking moments about a different axis. Either
+          technique could be used, but the one I am showing you simplifies the
+          calculations given the number of variables.</p>
       </div>
-      <p class="small">His slides give the arms as positive lengths and assign the
-        signs by looking at the picture. That works, and it is also where marks go
-        missing. If you write the positions as signed vectors first and take
-        <em>r</em> &times; <em>F</em>, the signs look after themselves &mdash;
-        including the reversal at the ankle that Newton&rsquo;s third law demands.</p>
     </div>
   </div>
-  <aside class="notes">Draw this on the board if there is one. Fx pointing forward, applied above the centre of mass: it turns the segment. Applied level with the centre of mass: it does not. The arm is the vertical offset.
+  <aside class="notes">This is the slide where the bar replaces the anatomy. Say that out loud: for the next ten minutes a foot is a line with a square at each end and a dot in the middle.
 
-His notation dP sin theta and dP cos theta is correct — the sine of the segment angle times the segment-to-joint distance is the vertical component. Students read it as "x goes with x" and get it backwards.
-
-The signed-vector advice is the thing to actually teach. It is one extra line of setup and it removes an entire category of error.</aside>
+The NB matters. Last week we took moments about the joint. From here we take them about the segment's own centre of mass, which is why the equations look unfamiliar. Both work. This one has fewer terms to carry.</aside>
 </section>
 
-<!-- 17 -->
-<section id="w-uphill">
+<!-- 21 -->
+<section>
+  <h2>Inverse Dynamics</h2>
+  <p class="subhead">The forces, in general form</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">If we calculate all values with reference to the
+        <strong>centre of mass</strong> we can use the general forms of the
+        Newton&ndash;Euler equations that we learned earlier.</p>
+      <p class="eq">&Sigma;<em>F</em><sub>x</sub> =
+        <em>F</em><sub>x-proximal</sub> + <em>F</em><sub>x-distal</sub> =
+        <em>m</em><em>a</em><sub>x</sub></p>
+      <p class="eq">&Sigma;<em>F</em><sub>y</sub> =
+        <em>F</em><sub>y-proximal</sub> + <em>F</em><sub>y-distal</sub> +
+        <em>mg</em> = <em>m</em><em>a</em><sub>y</sub></p>
+      <div class="callout small">
+        <p style="margin-bottom:0">While these are the general forms of the
+          equations you need to keep close attention to the <strong>directions
+          (signs)</strong> of the forces when calculating the values.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig">
+        <svg viewBox="0 0 430 300" role="img" aria-label="The general free body: proximal and distal force components, weight, and the inertial terms at the centre of mass"><path d="M148.0 66.0 L306.0 236.0" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" fill="none"/><rect x="140.5" y="58.5" width="15" height="15" fill="var(--ink)"/><rect x="298.5" y="228.5" width="15" height="15" fill="var(--ink)"/><circle cx="220.7" cy="144.2" r="7" fill="var(--brand)"/><path d="M220.7 144.2 L276.9 144.2" stroke="var(--muted)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="6 4"/><polygon points="282.7,144.2 275.7,148.2 275.7,140.2" fill="var(--muted)"/><text x="292.7" y="149.2" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--muted)">ma<tspan baseline-shift="sub" font-size="9">x</tspan></text><path d="M220.7 144.2 L220.7 98.0" stroke="var(--muted)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="6 4"/><polygon points="220.7,92.2 224.7,99.1 216.7,99.1" fill="var(--muted)"/><text x="224.7" y="86.2" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--muted)">ma<tspan baseline-shift="sub" font-size="9">y</tspan></text><path d="M220.7 144.2 L173.5 175.0" stroke="var(--good)" stroke-width="2.4" fill="none" stroke-linecap="round"/><polygon points="168.7,178.2 172.3,171.1 176.7,177.7" fill="var(--good)"/><text x="162.7" y="190.2" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--good)">mg</text><path d="M148.0 66.0 L148.0 19.8" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="5 4"/><polygon points="148.0,14.0 152.0,20.9 144.0,20.9" fill="var(--ink)"/><text x="148.0" y="6.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ink)">F<tspan baseline-shift="sub" font-size="9">y-proximal</tspan></text><path d="M148.0 66.0 L200.2 66.0" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="5 4"/><polygon points="206.0,66.0 199.1,70.0 199.1,62.0" fill="var(--ink)"/><text x="214.0" y="60.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--ink)">F<tspan baseline-shift="sub" font-size="9">x-proximal</tspan></text><path d="M306.0 236.0 L306.0 189.8" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="5 4"/><polygon points="306.0,184.0 310.0,190.9 302.0,190.9" fill="var(--ink)"/><text x="316.0" y="182.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--ink)">F<tspan baseline-shift="sub" font-size="9">y-distal</tspan></text><path d="M306.0 236.0 L356.2 236.0" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="5 4"/><polygon points="362.0,236.0 355.1,240.0 355.1,232.0" fill="var(--ink)"/><text x="336.0" y="258.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--ink)">F<tspan baseline-shift="sub" font-size="9">x-distal</tspan></text></svg>
+        <figcaption>The forces about the <strong>distal</strong> end are the ground
+          reaction forces. The forces about the <strong>proximal</strong> end are
+          normally the unknown forces.</figcaption>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Two sentences to land, and they are both in the caption.
+
+The distal end of the foot is the ground, and the plate measured that force. The proximal end is the ankle, and that is what we are solving for. Every segment after this one has the same shape: one end known, one end unknown.
+
+Then the signs. The equations as written assume every component is positive in the positive direction. Put a negative number in and the arithmetic handles it — but you have to be the one who knows the number is negative.</aside>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Inverse Dynamics</h2>
+  <p class="subhead">The forces, with specific values</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">In this example we can give specific forces.</p>
+      <p class="eq">&Sigma;<em>F</em><sub>x</sub> = <em>F</em><sub>ankle-x</sub> +
+        GRF<sub>x</sub> = <em>m</em><em>a</em><sub>x</sub></p>
+      <p class="eq"><em>F</em><sub>ankle-x</sub> =
+        <em>m</em><em>a</em><sub>x</sub> &minus; GRF<sub>x</sub></p>
+      <p class="eq">&Sigma;<em>F</em><sub>y</sub> = <em>F</em><sub>ankle-y</sub> +
+        GRF<sub>y</sub> + <em>mg</em> = <em>m</em><em>a</em><sub>y</sub></p>
+      <p class="eq"><em>F</em><sub>ankle-y</sub> =
+        <em>m</em><em>a</em><sub>y</sub> &minus; GRF<sub>y</sub> &minus; <em>mg</em></p>
+    </div>
+    <div>
+      <div class="fig">
+        <svg viewBox="0 0 430 300" role="img" aria-label="The same free body with the ankle force and the ground reaction force named"><path d="M148.0 66.0 L306.0 236.0" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" fill="none"/><rect x="140.5" y="58.5" width="15" height="15" fill="var(--ink)"/><rect x="298.5" y="228.5" width="15" height="15" fill="var(--ink)"/><circle cx="220.7" cy="144.2" r="7" fill="var(--brand)"/><path d="M220.7 144.2 L276.9 144.2" stroke="var(--muted)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="6 4"/><polygon points="282.7,144.2 275.7,148.2 275.7,140.2" fill="var(--muted)"/><text x="292.7" y="149.2" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--muted)">ma<tspan baseline-shift="sub" font-size="9">x</tspan></text><path d="M220.7 144.2 L220.7 98.0" stroke="var(--muted)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="6 4"/><polygon points="220.7,92.2 224.7,99.1 216.7,99.1" fill="var(--muted)"/><text x="224.7" y="86.2" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--muted)">ma<tspan baseline-shift="sub" font-size="9">y</tspan></text><path d="M220.7 144.2 L173.5 175.0" stroke="var(--good)" stroke-width="2.4" fill="none" stroke-linecap="round"/><polygon points="168.7,178.2 172.3,171.1 176.7,177.7" fill="var(--good)"/><text x="162.7" y="190.2" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--good)">mg</text><path d="M148.0 66.0 L148.0 20.5" stroke="var(--brand)" stroke-width="2.8" fill="none" stroke-linecap="round"/><polygon points="148.0,14.0 152.5,21.8 143.5,21.8" fill="var(--brand)"/><text x="140.0" y="8.0" text-anchor="end" font-size="11.5" font-weight="700" fill="var(--brand)">F<tspan baseline-shift="sub" font-size="9">ankle-y</tspan></text><path d="M148.0 66.0 L199.5 66.0" stroke="var(--brand)" stroke-width="2.8" fill="none" stroke-linecap="round"/><polygon points="206.0,66.0 198.2,70.5 198.2,61.5" fill="var(--brand)"/><text x="214.0" y="60.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--brand)">F<tspan baseline-shift="sub" font-size="9">ankle-x</tspan></text><path d="M306.0 236.0 L306.0 184.8" stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round"/><polygon points="306.0,178.0 310.7,186.2 301.3,186.2" fill="var(--accent)"/><text x="316.0" y="176.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--accent)">GRF<tspan baseline-shift="sub" font-size="9">y</tspan></text><path d="M306.0 236.0 L355.2 236.0" stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round"/><polygon points="362.0,236.0 353.8,240.7 353.8,231.3" fill="var(--accent)"/><text x="336.0" y="258.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--accent)">GRF<tspan baseline-shift="sub" font-size="9">x</tspan></text></svg>
+        <figcaption><span style="color:var(--brand)">The muscle force acting at the
+          ankle</span> &middot; <span style="color:var(--accent)">the ground reaction
+          force</span></figcaption>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Same diagram, same equations, names instead of placeholders. Nothing new has happened — that is the point of showing it twice.
+
+Rearranged, each force equation gives one unknown directly. Two of the three unknowns are now gone, and only the ankle moment is left.
+
+It is very important to pay close attention to the signs.</aside>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Inverse Dynamics</h2>
+  <p class="subhead">The moments</p>
+  <div class="cols b top">
+    <div>
+      <p class="eq big">&Sigma;<em>M</em> = <em>I</em>&alpha;</p>
+      <p class="eq"><span style="color:var(--good)"><em>M</em><sub>ankle</sub></span>
+        + <span style="color:var(--accent)"><em>M</em><sub>Fankle/CG</sub></span>
+        + <span style="color:var(--brand)"><em>M</em><sub>GRF/CG</sub></span>
+        = <em>I</em>&alpha;</p>
+      <div class="momblock small">
+        <p class="mline" style="color:var(--good)"><em>M</em><sub>ankle</sub></p>
+        <p class="mline" style="color:var(--accent)">+ <em>F</em><sub>ankle-x</sub> &middot; <em>d</em><sub>P</sub>(sin&theta;)</p>
+        <p class="mline" style="color:var(--accent)">+ <em>F</em><sub>ankle-y</sub> &middot; <em>d</em><sub>P</sub>(cos&theta;)</p>
+        <p class="mline" style="color:var(--brand)">+ GRF<sub>x</sub> &middot; <em>d</em><sub>D</sub>(sin&theta;)</p>
+        <p class="mline" style="color:var(--brand)">+ GRF<sub>y</sub> &middot; <em>d</em><sub>D</sub>(cos&theta;)</p>
+        <p class="mline">= <em>I</em>&alpha;</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig">
+        <svg viewBox="0 0 430 300" role="img" aria-label="The moment arms from the centre of mass to the proximal joint and to the distal end, with the segment angle theta"><path d="M148.0 66.0 L306.0 236.0" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" fill="none"/><rect x="140.5" y="58.5" width="15" height="15" fill="var(--ink)"/><rect x="298.5" y="228.5" width="15" height="15" fill="var(--ink)"/><circle cx="220.7" cy="144.2" r="7" fill="var(--brand)"/><path d="M220.7 144.2 L148.0 66.0" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 4" fill="none"/><path d="M220.7 144.2 L306.0 236.0" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 4" fill="none"/><text x="162.3" y="115.1" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--muted)">d<tspan baseline-shift="sub" font-size="9">P</tspan></text><text x="241.3" y="200.1" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--muted)">d<tspan baseline-shift="sub" font-size="9">D</tspan></text><path d="M306.0 236.0 H188.0" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 5" fill="none"/><path d="M266.0 236.0 A 40 40 0 0 0 278.8 206.7" stroke="var(--violet)" stroke-width="2" fill="none"/><text x="254.0" y="222.0" text-anchor="middle" font-size="13" font-weight="700" fill="var(--violet)">&theta;</text><path d="M118.0 66.0 A 30 30 0 1 1 148.0 36.0" stroke="var(--good)" stroke-width="3" fill="none"/><polygon points="148.0,36.0 138.0,30.0 140.0,42.0" fill="var(--good)"/><text x="104.0" y="72.0" text-anchor="end" font-size="11.5" font-weight="700" fill="var(--good)">M<tspan baseline-shift="sub" font-size="9">ankle</tspan></text><path d="M148.0 66.0 L148.0 16.5" stroke="var(--brand)" stroke-width="2.6" fill="none" stroke-linecap="round"/><polygon points="148.0,10.0 152.5,17.8 143.5,17.8" fill="var(--brand)"/><text x="156.0" y="6.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--brand)">F<tspan baseline-shift="sub" font-size="9">ankle-y</tspan></text><path d="M148.0 66.0 L193.5 66.0" stroke="var(--brand)" stroke-width="2.6" fill="none" stroke-linecap="round"/><polygon points="200.0,66.0 192.2,70.5 192.2,61.5" fill="var(--brand)"/><text x="206.0" y="80.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--brand)">F<tspan baseline-shift="sub" font-size="9">ankle-x</tspan></text><path d="M306.0 236.0 L306.0 186.5" stroke="var(--accent)" stroke-width="2.8" fill="none" stroke-linecap="round"/><polygon points="306.0,180.0 310.5,187.8 301.5,187.8" fill="var(--accent)"/><text x="314.0" y="178.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--accent)">GRF<tspan baseline-shift="sub" font-size="9">y</tspan></text><path d="M306.0 236.0 L351.5 236.0" stroke="var(--accent)" stroke-width="2.8" fill="none" stroke-linecap="round"/><polygon points="358.0,236.0 350.2,240.5 350.2,231.5" fill="var(--accent)"/><text x="332.0" y="258.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--accent)">GRF<tspan baseline-shift="sub" font-size="9">x</tspan></text></svg>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Read the top line first and name the three pieces: the moment at the ankle itself, the moment the ankle force makes about the centre of mass, and the moment the ground reaction force makes about the centre of mass.
+
+Then expand. Each force contributes two terms because each force has two components, and each component turns the segment through its own arm. dP is the distance from the centre of mass to the proximal joint; dD to the distal end; theta is the segment's angle.
+
+The pairing is the thing students get backwards. Fx is paired with dP sin theta, which is the VERTICAL offset. The arm a force turns through is perpendicular to it.</aside>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Inverse Dynamics</h2>
+  <p class="subhead">The same moments, with the geometry drawn</p>
+  <div class="cols b top">
+    <div>
+      <p class="eq">&Sigma;<em>M</em> = <em>I</em>&alpha;</p>
+      <div class="momblock small">
+        <p class="mline" style="color:var(--good)"><em>M</em><sub>ankle</sub></p>
+        <p class="mline" style="color:var(--accent)">+ <em>F</em><sub>ankle-x</sub> &middot; <em>d</em><sub>P</sub>(sin&theta;)</p>
+        <p class="mline" style="color:var(--accent)">+ <em>F</em><sub>ankle-y</sub> &middot; <em>d</em><sub>P</sub>(cos&theta;)</p>
+        <p class="mline" style="color:var(--brand)">+ GRF<sub>x</sub> &middot; <em>d</em><sub>D</sub>(sin&theta;)</p>
+        <p class="mline" style="color:var(--brand)">+ GRF<sub>y</sub> &middot; <em>d</em><sub>D</sub>(cos&theta;)</p>
+        <p class="mline">= <em>I</em>&alpha;</p>
+      </div>
+      <p class="small"><em>d</em><sub>P</sub>sin&theta; and <em>d</em><sub>D</sub>sin&theta;
+        are <strong>vertical</strong> offsets, and they go with the
+        <strong>horizontal</strong> forces. The arm a force turns through is
+        perpendicular to it.</p>
+    </div>
+    <div>
+      <div class="fig">
+        <svg viewBox="0 0 430 300" role="img" aria-label="The moment arms resolved into their horizontal and vertical components"><path d="M148.0 66.0 L306.0 236.0" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" fill="none"/><rect x="140.5" y="58.5" width="15" height="15" fill="var(--ink)"/><rect x="298.5" y="228.5" width="15" height="15" fill="var(--ink)"/><circle cx="220.7" cy="144.2" r="7" fill="var(--brand)"/><path d="M220.7 144.2 H148.0 V144.2" stroke="var(--violet)" stroke-width="1.8" stroke-dasharray="4 4" fill="none"/><path d="M220.7 144.2 H306.0 V144.2" stroke="var(--violet)" stroke-width="1.8" stroke-dasharray="4 4" fill="none"/><path d="M220.7 144.2 L148.0 66.0" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 4" fill="none"/><path d="M220.7 144.2 L306.0 236.0" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 4" fill="none"/><text x="138.0" y="105.1" text-anchor="end" font-size="10.5" font-weight="700" fill="var(--violet)">d<tspan baseline-shift="sub" font-size="9">P</tspan>sin&theta;</text><text x="184.3" y="160.2" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--violet)">d<tspan baseline-shift="sub" font-size="9">P</tspan>cos&theta;</text><text x="294.0" y="190.1" text-anchor="end" font-size="10.5" font-weight="700" fill="var(--violet)">d<tspan baseline-shift="sub" font-size="9">D</tspan>sin&theta;</text><text x="263.3" y="134.2" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--violet)">d<tspan baseline-shift="sub" font-size="9">D</tspan>cos&theta;</text><path d="M306.0 236.0 H188.0" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 5" fill="none"/><path d="M266.0 236.0 A 40 40 0 0 0 278.8 206.7" stroke="var(--violet)" stroke-width="2" fill="none"/><text x="254.0" y="222.0" text-anchor="middle" font-size="13" font-weight="700" fill="var(--violet)">&theta;</text><path d="M148.0 66.0 L148.0 22.5" stroke="var(--brand)" stroke-width="2.6" fill="none" stroke-linecap="round"/><polygon points="148.0,16.0 152.5,23.8 143.5,23.8" fill="var(--brand)"/><text x="156.0" y="12.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--brand)">F<tspan baseline-shift="sub" font-size="9">ankle-y</tspan></text><path d="M148.0 66.0 L191.5 66.0" stroke="var(--brand)" stroke-width="2.6" fill="none" stroke-linecap="round"/><polygon points="198.0,66.0 190.2,70.5 190.2,61.5" fill="var(--brand)"/><text x="204.0" y="60.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--brand)">F<tspan baseline-shift="sub" font-size="9">ankle-x</tspan></text><path d="M306.0 236.0 L306.0 192.5" stroke="var(--accent)" stroke-width="2.8" fill="none" stroke-linecap="round"/><polygon points="306.0,186.0 310.5,193.8 301.5,193.8" fill="var(--accent)"/><text x="314.0" y="182.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--accent)">GRF<tspan baseline-shift="sub" font-size="9">y</tspan></text><path d="M306.0 236.0 L349.5 236.0" stroke="var(--accent)" stroke-width="2.8" fill="none" stroke-linecap="round"/><polygon points="356.0,236.0 348.2,240.5 348.2,231.5" fill="var(--accent)"/><text x="332.0" y="258.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--accent)">GRF<tspan baseline-shift="sub" font-size="9">x</tspan></text></svg>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Same equation, with the arms resolved. This is the slide to point at when somebody asks why sine goes with x.
+
+Drop a vertical from the centre of mass to the level of the joint: that height is dP sin theta, and it is the arm that a horizontal force turns through. Go across instead and you get dP cos theta, which is the arm for a vertical force.
+
+Draw it on the board if there is one. Fx applied above the centre of mass turns the segment; applied level with it, it does not.</aside>
+</section>
+
+<!-- 25 -->
+<section>
   <h2>Inverse Dynamics</h2>
   <p class="subhead">Up the chain</p>
-  <div class="iplot wide" data-widget="uphill"></div>
-  <aside class="notes">The step everyone drops.
+  <div class="cols a top">
+    <div>
+      <p class="small">Now that we have found the net ankle joint force and moment we
+        can then use that information to input into the <strong>next limb
+        segment</strong>.</p>
+      <p class="eq">&Sigma;<em>F</em><sub>x</sub> = <em>m</em><em>a</em><sub>x</sub></p>
+      <p class="eq">&Sigma;<em>F</em><sub>y</sub> = <em>m</em><em>a</em><sub>y</sub></p>
+      <p class="eq">&Sigma;<em>M</em> = <em>I</em>&alpha;</p>
+      <p class="small">Same three equations, new segment. The leg&rsquo;s distal end
+        is the ankle, and we have just finished measuring it.</p>
+    </div>
+    <div>
+      <div class="fig">
+        <svg viewBox="0 0 430 310" role="img" aria-label="The leg as a free body: the knee at the proximal end and the ankle, now known, at the distal end"><path d="M148.0 66.0 L306.0 236.0" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" fill="none"/><rect x="140.5" y="58.5" width="15" height="15" fill="var(--ink)"/><rect x="298.5" y="228.5" width="15" height="15" fill="var(--ink)"/><circle cx="220.7" cy="144.2" r="7" fill="var(--brand)"/><text x="134.0" y="32.0" text-anchor="end" font-size="11.5" font-weight="700" fill="var(--muted)">knee</text><text x="322.0" y="258.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--muted)">ankle</text><path d="M220.7 144.2 L276.9 144.2" stroke="var(--muted)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="6 4"/><polygon points="282.7,144.2 275.7,148.2 275.7,140.2" fill="var(--muted)"/><text x="292.7" y="149.2" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--muted)">ma<tspan baseline-shift="sub" font-size="9">x</tspan></text><path d="M220.7 144.2 L220.7 98.0" stroke="var(--muted)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="6 4"/><polygon points="220.7,92.2 224.7,99.1 216.7,99.1" fill="var(--muted)"/><text x="224.7" y="86.2" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--muted)">ma<tspan baseline-shift="sub" font-size="9">y</tspan></text><path d="M220.7 144.2 L173.5 175.0" stroke="var(--good)" stroke-width="2.4" fill="none" stroke-linecap="round"/><polygon points="168.7,178.2 172.3,171.1 176.7,177.7" fill="var(--good)"/><text x="162.7" y="190.2" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--good)">mg</text><path d="M148.0 66.0 L148.0 19.8" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="5 4"/><polygon points="148.0,14.0 152.0,20.9 144.0,20.9" fill="var(--ink)"/><text x="148.0" y="6.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ink)">F<tspan baseline-shift="sub" font-size="9">y-proximal</tspan></text><path d="M148.0 66.0 L200.2 66.0" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="5 4"/><polygon points="206.0,66.0 199.1,70.0 199.1,62.0" fill="var(--ink)"/><text x="214.0" y="60.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--ink)">F<tspan baseline-shift="sub" font-size="9">x-proximal</tspan></text><path d="M306.0 236.0 L306.0 280.2" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="5 4"/><polygon points="306.0,286.0 302.0,279.1 310.0,279.1" fill="var(--ink)"/><text x="316.0" y="298.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--ink)">F<tspan baseline-shift="sub" font-size="9">y-distal</tspan></text><path d="M306.0 236.0 L255.8 236.0" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="5 4"/><polygon points="250.0,236.0 256.9,232.0 256.9,240.0" fill="var(--ink)"/><text x="244.0" y="256.0" text-anchor="end" font-size="11.5" font-weight="700" fill="var(--ink)">F<tspan baseline-shift="sub" font-size="9">x-distal</tspan></text></svg>
+        <figcaption>The distal arrows point the other way now &mdash; that is
+          Newton&rsquo;s third law, and it is the next slide.</figcaption>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Nothing new in the method. The only thing to flag is that the distal arrows have flipped, and the next slide says why.
 
-What the foot's free body produced was the force AND the moment that the shank applies to the foot. What the shank feels at its lower end is both of those, reversed. His slide 26 writes the force reversal explicitly — minus F ankle — and his slide 27 carries the moment reversal as the minus M ankle term.
-
-Press "Forget the moment" and watch the knee answer move. The arithmetic does not complain, the units are still right, and the answer is wrong by exactly the ankle moment. That is what makes it such a reliable mistake.</aside>
+If anyone is drifting, this is the moment to say that the whole lecture is now just this slide repeated: solve a segment, flip what you found, hand it up.</aside>
 </section>
 
-<!-- 18 -->
+<!-- 26 -->
 <section>
   <h2>Inverse Dynamics</h2>
-  <p class="subhead">The method, in six lines</p>
+  <p class="subhead">The leg, with specific forces</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">In this example we can give specific forces.</p>
+      <p class="eq">&Sigma;<em>F</em><sub>x</sub> = <em>F</em><sub>knee-x</sub>
+        &minus; <em>F</em><sub>ankle-x</sub> =
+        <em>m</em><em>a</em><sub>x(leg)</sub></p>
+      <p class="eq"><em>F</em><sub>knee-x</sub> =
+        <em>m</em><em>a</em><sub>x</sub> + <em>F</em><sub>ankle-x</sub></p>
+      <p class="eq">&Sigma;<em>F</em><sub>y</sub> = <em>F</em><sub>knee-y</sub>
+        &minus; <em>F</em><sub>ankle-y</sub> + <em>mg</em> =
+        <em>m</em><em>a</em><sub>y(leg)</sub></p>
+      <p class="eq"><em>F</em><sub>knee-y</sub> =
+        <em>m</em><em>a</em><sub>y</sub> + <em>F</em><sub>ankle-y</sub> &minus;
+        <em>mg</em></p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Need to consider <strong>action/reaction</strong>
+          forces. Those minus signs are the whole content of this slide.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig">
+        <svg viewBox="0 0 430 310" role="img" aria-label="The leg with the knee force unknown at the top and the ankle reaction force, reversed, at the bottom"><path d="M148.0 66.0 L306.0 236.0" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" fill="none"/><rect x="140.5" y="58.5" width="15" height="15" fill="var(--ink)"/><rect x="298.5" y="228.5" width="15" height="15" fill="var(--ink)"/><circle cx="220.7" cy="144.2" r="7" fill="var(--brand)"/><path d="M220.7 144.2 L276.9 144.2" stroke="var(--muted)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="6 4"/><polygon points="282.7,144.2 275.7,148.2 275.7,140.2" fill="var(--muted)"/><text x="292.7" y="149.2" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--muted)">ma<tspan baseline-shift="sub" font-size="9">x</tspan></text><path d="M220.7 144.2 L220.7 98.0" stroke="var(--muted)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="6 4"/><polygon points="220.7,92.2 224.7,99.1 216.7,99.1" fill="var(--muted)"/><text x="224.7" y="86.2" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--muted)">ma<tspan baseline-shift="sub" font-size="9">y</tspan></text><path d="M220.7 144.2 L173.5 175.0" stroke="var(--good)" stroke-width="2.4" fill="none" stroke-linecap="round"/><polygon points="168.7,178.2 172.3,171.1 176.7,177.7" fill="var(--good)"/><text x="162.7" y="190.2" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--good)">mg</text><path d="M148.0 66.0 L148.0 18.5" stroke="var(--brand)" stroke-width="2.8" fill="none" stroke-linecap="round"/><polygon points="148.0,12.0 152.5,19.8 143.5,19.8" fill="var(--brand)"/><text x="140.0" y="8.0" text-anchor="end" font-size="11.5" font-weight="700" fill="var(--brand)">F<tspan baseline-shift="sub" font-size="9">knee-y</tspan></text><path d="M148.0 66.0 L195.5 66.0" stroke="var(--brand)" stroke-width="2.8" fill="none" stroke-linecap="round"/><polygon points="202.0,66.0 194.2,70.5 194.2,61.5" fill="var(--brand)"/><text x="208.0" y="60.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--brand)">F<tspan baseline-shift="sub" font-size="9">knee-x</tspan></text><path d="M306.0 236.0 L306.0 279.5" stroke="var(--accent)" stroke-width="2.8" fill="none" stroke-linecap="round"/><polygon points="306.0,286.0 301.5,278.2 310.5,278.2" fill="var(--accent)"/><text x="316.0" y="298.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--accent)">F<tspan baseline-shift="sub" font-size="9">ankle-y</tspan></text><path d="M306.0 236.0 L258.5 236.0" stroke="var(--accent)" stroke-width="2.8" fill="none" stroke-linecap="round"/><polygon points="252.0,236.0 259.8,231.5 259.8,240.5" fill="var(--accent)"/><text x="246.0" y="256.0" text-anchor="end" font-size="11.5" font-weight="700" fill="var(--accent)">F<tspan baseline-shift="sub" font-size="9">ankle-x</tspan></text></svg>
+        <figcaption><span style="color:var(--brand)">The muscle force acting at the
+          knee</span> &middot; <span style="color:var(--accent)">the ankle reaction
+          force</span></figcaption>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The step everyone drops. What the foot's free body produced was the force the shank applies to the foot. What the shank feels at its lower end is that force reversed.
+
+Put both diagrams side by side in their heads: the arrow at the ankle pointed up on the foot, so it points down on the leg. Same number, opposite sign, and that is why the equations have minus signs in front of the ankle terms.
+
+The arithmetic will not complain if you forget. You will just get the wrong knee force and never find out.</aside>
+</section>
+
+<!-- 27 -->
+<section>
+  <h2>Inverse Dynamics</h2>
+  <p class="subhead">The leg, with specific moments</p>
+  <div class="cols b top">
+    <div>
+      <p class="small">In this example we can give specific moments.</p>
+      <p class="eq big">&Sigma;<em>M</em> = <em>I</em>&alpha;</p>
+      <p class="eq"><span style="color:var(--good)"><em>M</em><sub>knee</sub></span>
+        + <span style="color:var(--brand)"><em>M</em><sub>Fknee/CG</sub></span>
+        + <span style="color:var(--accent)"><em>M</em><sub>Fankle/CG</sub></span>
+        &minus; <span style="color:var(--violet)"><em>M</em><sub>ankle</sub></span>
+        = <em>I</em>&alpha;</p>
+      <p class="eq"><em>M</em><sub>knee</sub> = <em>I</em>&alpha;
+        &minus; <em>M</em><sub>Fknee/CG</sub>
+        &minus; <em>M</em><sub>Fankle/CG</sub>
+        + <em>M</em><sub>ankle</sub></p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Really just remember that what we solved for at
+          the ankle will affect each limb up the chain.</p>
+      </div>
+    </div>
+    <div>
+      <div class="fig">
+        <svg viewBox="0 0 430 320" role="img" aria-label="The leg with a moment at both ends: the knee moment being solved for and the ankle moment carried up from the foot"><path d="M148.0 66.0 L306.0 236.0" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" fill="none"/><rect x="140.5" y="58.5" width="15" height="15" fill="var(--ink)"/><rect x="298.5" y="228.5" width="15" height="15" fill="var(--ink)"/><circle cx="220.7" cy="144.2" r="7" fill="var(--brand)"/><path d="M118.0 66.0 A 30 30 0 1 1 148.0 36.0" stroke="var(--good)" stroke-width="3" fill="none"/><polygon points="148.0,36.0 138.0,30.0 140.0,42.0" fill="var(--good)"/><text x="104.0" y="72.0" text-anchor="end" font-size="11.5" font-weight="700" fill="var(--good)">M<tspan baseline-shift="sub" font-size="9">knee</tspan></text><path d="M334.0 236.0 A 28 28 0 1 1 306.0 264.0" stroke="var(--violet)" stroke-width="3" fill="none"/><polygon points="306.0,264.0 316.0,270.0 314.0,258.0" fill="var(--violet)"/><text x="350.0" y="240.0" text-anchor="start" font-size="11.5" font-weight="700" fill="var(--violet)">M<tspan baseline-shift="sub" font-size="9">ankle</tspan></text><path d="M148.0 66.0 L148.0 16.5" stroke="var(--brand)" stroke-width="2.6" fill="none" stroke-linecap="round"/><polygon points="148.0,10.0 152.5,17.8 143.5,17.8" fill="var(--brand)"/><text x="156.0" y="6.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--brand)">F<tspan baseline-shift="sub" font-size="9">knee-y</tspan></text><path d="M148.0 66.0 L193.5 66.0" stroke="var(--brand)" stroke-width="2.6" fill="none" stroke-linecap="round"/><polygon points="200.0,66.0 192.2,70.5 192.2,61.5" fill="var(--brand)"/><text x="206.0" y="80.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--brand)">F<tspan baseline-shift="sub" font-size="9">knee-x</tspan></text><path d="M306.0 236.0 L306.0 277.5" stroke="var(--accent)" stroke-width="2.6" fill="none" stroke-linecap="round"/><polygon points="306.0,284.0 301.5,276.2 310.5,276.2" fill="var(--accent)"/><text x="298.0" y="296.0" text-anchor="end" font-size="11" font-weight="700" fill="var(--accent)">F<tspan baseline-shift="sub" font-size="9">ankle-y</tspan></text><path d="M306.0 236.0 L260.5 236.0" stroke="var(--accent)" stroke-width="2.6" fill="none" stroke-linecap="round"/><polygon points="254.0,236.0 261.8,231.5 261.8,240.5" fill="var(--accent)"/><text x="248.0" y="228.0" text-anchor="end" font-size="11" font-weight="700" fill="var(--accent)">F<tspan baseline-shift="sub" font-size="9">ankle-x</tspan></text><path d="M220.7 144.2 L179.4 172.9" stroke="var(--good)" stroke-width="2.4" fill="none" stroke-linecap="round"/><polygon points="174.7,176.2 178.1,169.0 182.7,175.5" fill="var(--good)"/><text x="166.7" y="188.2" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--good)">mg</text></svg>
+        <figcaption>A moment at <strong>both</strong> ends now &mdash; the one we
+          want at the knee, and the one we already solved at the ankle.</figcaption>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">This is the slide the next figure unpacks, so read the equation carefully and count the terms with them: four moments, and they add to I alpha.
+
+Mknee is the one we want. MFknee/CG and MFankle/CG are the moments the two joint forces make about the centre of mass. Mankle is the moment we already solved at the foot, arriving here reversed — hence the minus.
+
+Then the rearranged line: everything known on the right, the unknown alone on the left. That is the shape of every step up the chain.</aside>
+</section>
+
+<!-- 28 -->
+<section id="w-moments4">
+  <h2>Inverse Dynamics</h2>
+  <p class="subhead">Four moments on one segment</p>
+  <div class="iplot wide" data-widget="moments4"></div>
+  <aside class="notes">This is the figure for the last two slides and it is worth the time.
+
+Take the terms one at a time with the buttons. The moment at the distal end; the moment at the proximal end; the moment about the centre of mass made by the distal force; the moment about the centre of mass made by the proximal force. Four, and they add to I alpha.
+
+Then switch to the foot and count again: the ground pushes but it does not twist, so the distal moment is zero and only three terms survive. That is exactly why the chain can start at the foot and nowhere else.
+
+Finally point at the second term and say it once more: that is the one we are solving for, every time, all the way up.</aside>
+</section>
+
+<!-- 29 -->
+<section id="w-fbd20">
+  <h2>Inverse Dynamics</h2>
+  <p class="subhead">The same free body, on a measured stride</p>
+  <div class="iplot wide" data-widget="fbd20"></div>
+  <aside class="notes">Press Walk and let it run once before saying anything. The bar is the foot from the simple diagram; the arrows are a real recording.
+
+Then stop it around 45 per cent and read the three equations out. The foot weighs eight tenths of a kilogram and the ground is pushing with nearly seven hundred newtons a hand's breadth in front of the ankle. Ask which term they think is doing the work.
+
+Then walk it past sixty per cent. The plate loses the foot and the ankle moment collapses to almost nothing — which is why the worked example coming up, set in swing, comes out at fractions of a newton metre.</aside>
+</section>
+
+<!-- 30 -->
+<section id="w-uphill">
+  <h2>Inverse Dynamics</h2>
+  <p class="subhead">Handing the ankle to the knee</p>
+  <div class="iplot wide" data-widget="uphill"></div>
+  <aside class="notes">The action/reaction step, made arithmetic.
+
+Press "Forget the moment" and watch the knee answer move. The units are still right, the arithmetic does not complain, and the answer is wrong by exactly the ankle moment. That is what makes it such a reliable mistake.</aside>
+</section>
+
+<!-- 31 -->
+<section>
+  <h2>Inverse Dynamics</h2>
+  <p class="subhead">In summary&hellip;</p>
+  <p class="small">What do you need to remember from the last few slides? In order to
+    solve for joint forces and moments:</p>
   <div class="cols a top">
     <div>
       <ul class="small">
-        <li>Record the <strong>kinematics</strong> and any
+        <li>You need to know the <strong>kinematics</strong> of the movement and any
           <strong>external forces</strong>.</li>
-        <li>Get each segment&rsquo;s <strong>mass, centre of mass and moment of
-          inertia</strong> from an anthropometric table.</li>
-        <li>Differentiate the kinematics twice for <em>a</em> and &alpha;.</li>
+        <li>Break up each multi-limb segment into <strong>individual limbs</strong>.</li>
       </ul>
     </div>
     <div>
       <ul class="small">
-        <li>Start at the <strong>most distal</strong> segment and write its three
-          equations.</li>
-        <li><strong>Reverse</strong> the force and the moment you found, and apply
-          them to the next segment up.</li>
-        <li>Repeat to the top of the chain.</li>
+        <li>Use the <strong>Newton&ndash;Euler equations</strong> to solve for unknown
+          net forces and moments for each joint, starting from the most distal
+          segment.</li>
+        <li><strong>Transfer</strong> forces and moments up the link of segments.</li>
       </ul>
     </div>
   </div>
   <div class="box">
-    <p class="small" style="margin:0">That is his slide 28, and it is the examinable
-      part. Everything after this is one worked example and then a long, honest look
-      at how much the answer can be trusted.</p>
+    <p class="small" style="margin:0">This gives you an idea of the forces and
+      moments experienced at each joint that result from the external forces and the
+      movements.</p>
   </div>
-  <aside class="notes">Pause here and let them write it down. Six lines, and it is the whole method.
+  <aside class="notes">Pause here and let them write it down. Four lines, and it is the whole method.
 
-If you are short of time, this is the slide to stop on. Everything after it is either practice or epistemology.</aside>
+If time is short, this is the slide to stop on. Everything after it is one worked example and then an honest look at what the answer can be trusted to say.</aside>
 </section>
 
-<!-- 19 -->
+<!-- 32 -->
+<section>
+  <h2>Inverse Dynamics</h2>
+  <p class="subhead">What inverse dynamics can and cannot tell us</p>
+  <div class="cols a top">
+    <div>
+      <h4>What it can tell us</h4>
+      <ul class="small">
+        <li><strong>NET</strong> joint moments, powers and forces.</li>
+      </ul>
+      <h4>What it cannot tell us</h4>
+      <ul class="small">
+        <li>Contributions/activations of individual muscles.</li>
+        <li>Total amount of muscle work done &mdash; it does not account for
+          co-contraction of muscles.</li>
+        <li>Internal bone-to-bone forces at joints.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Other assumptions and limitations</h4>
+      <ul class="small">
+        <li>Frictionless joints.</li>
+        <li>Generalized, uniform and/or concentrated mass distribution.</li>
+        <li>Estimation of joint centre of rotation.</li>
+        <li>Measurement errors: skin and motion artifacts, temporal or spatial
+          misalignment between force plates and motion capture.</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">This is the slide that keeps the method honest, and it is worth more than it looks.
+
+Net is the word. A knee moment of 40 N·m does not mean one muscle pulling. It means everything crossing the joint summed to 40 N·m, and a co-contracting pair could be producing hundreds of newtons each while the sum stays small.
+
+Keep the limitations list in mind for the last part of the lecture — we run the method on a real stride, compare it with a three-dimensional solution of the same data, and every item on this list is in the difference.</aside>
+</section>
+
+<!-- 33 -->
 <section>
   <div class="section-slide">
     <h2>The worked example</h2>
@@ -482,12 +1008,14 @@ If you are short of time, this is the slide to stop on. Everything after it is e
   <aside class="notes">Divider. Slow down from here. This example is the one they will be asked to reproduce.</aside>
 </section>
 
-<!-- 20 -->
+<!-- 34 -->
 <section>
-  <h2>A Worked Example</h2>
+  <h2>Inverse Dynamics Analysis Example</h2>
   <p class="subhead">What you are given</p>
   <div class="cols a top">
     <div>
+      <p class="small">Calculate the forces and moments about the ankle and knee
+        during the <strong>swing phase</strong> of walking using the data below.</p>
       <table>
         <tr><th></th><th>Foot</th><th>Leg</th></tr>
         <tr><td><em>m</em> (kg)</td><td>1.16</td><td>3.72</td></tr>
@@ -508,59 +1036,41 @@ If you are short of time, this is the slide to stop on. Everything after it is e
           <strong>80.0 kg</strong>. The same person, to three figures.</p>
       </div>
       <p class="small">The leg&rsquo;s inertia checks out too: it implies a radius of
-        gyration of 0.297 of the segment length against Winter&rsquo;s 0.302, and his
+        gyration of 0.297 of the segment length against Winter&rsquo;s 0.302, and the
         joint distances put the leg&rsquo;s centre of mass at 0.434 of its length
         against Winter&rsquo;s 0.433.</p>
     </div>
   </div>
   <aside class="notes">Do the 80 kilogram check out loud. It takes fifteen seconds and it teaches a habit worth more than the lecture: when you are handed numbers, find out whether they are consistent with each other.
 
-It also quietly makes the point that the anthropometric table is not decoration. Every one of these givens came out of it.
+It also quietly makes the point that the anthropometric table is not decoration. Every one of these givens came out of it, and the whole answer depends on them.
 
-And it sets up the slide after next, where one number from the same table does not check out.</aside>
+Note that swing means no ground reaction force, so the distal terms on the foot are all zero. That is why the numbers that come out are small.</aside>
 </section>
 
-<!-- 21 -->
+<!-- 35 -->
 <section id="w-swing">
-  <h2>A Worked Example</h2>
-  <p class="subhead">His worked example, every line</p>
+  <h2>Inverse Dynamics Analysis Example</h2>
+  <p class="subhead">The worked example, every line</p>
   <div class="iplot wide" data-widget="swing"></div>
   <aside class="notes">Work the four steps in order, with the class, out loud. Do not rush the second one.
 
-Every number on his slides 30 to 41 reproduces exactly: 10.52, 3.70, 0.39, 10.41, 24.53, 2.14, minus 1.09, 1.71. Say that — it is a compliment to the slides and it tells the class the arithmetic is safe to copy.
+Step 1 and 2 are the foot: the two force equations give F ankle-x and F ankle-y straight away, and then the moment equation gives M ankle = 0.39 N·m, a dorsiflexor moment. Step 3 and 4 are the leg, with the ankle force and the ankle moment arriving reversed, and M knee = 1.71 N·m, an extensor moment.
 
-Then switch to the stance example. Same four steps, but now there is a ground reaction force, and the ankle moment goes from 0.39 newton metres to minus 76. Two hundred times larger, from the same method.
-
-The stance example has one slip: four times 5.2 minus 99.6 is minus 78.8, and his slide says minus 77.8. It is a newton and it does not change the physics, but it walks through the next two lines, so the figure shows both.</aside>
+Then switch to the stance example. Same four steps, but now there is a ground reaction force, and the ankle moment goes from 0.39 newton metres to minus 76. Two hundred times larger, from exactly the same method. That contrast is the most useful thing on the slide.</aside>
 </section>
 
-<!-- 22 -->
-<section id="w-shortarm">
-  <h2>A Worked Example</h2>
-  <p class="subhead">The one number that cannot be right</p>
-  <div class="iplot wide" data-widget="shortarm"></div>
-  <aside class="notes">This is the part to teach, not just to show.
-
-Slides 33 and 34 put the ankle one centimetre vertically and two centimetres horizontally from the foot's centre of mass. That is 22 millimetres away in total. A foot's centre of mass is about ten centimetres from the ankle.
-
-Three of his own numbers say so. The foot inertia he gives, 0.00995 with a mass of 1.16, implies a radius of gyration of 93 millimetres; Winter's ratio then puts the centre of mass 97 millimetres from the ankle. His own Example 2 uses 0.07 and 0.07, which is 99 millimetres. And the figure he drew puts the centre of mass just under halfway along the foot, which is correct — only the two labels are wrong.
-
-Slide it across and the ankle moment goes from 0.39 to about 1.0 newton metres and the knee from 1.71 to about 2.3.
-
-Then say the useful thing: everything else on those slides is right to the digit. The equations were never the hard part. Where the answer actually comes from is the anatomy you feed them — and that is the bridge into the last third of the lecture.</aside>
-</section>
-
-<!-- 23 -->
+<!-- 36 -->
 <section>
   <div class="section-slide">
     <h2>On a real stride</h2>
-    <p class="sub">The same six lines, run on measured data, and checked
+    <p class="sub">The same method, run on measured data, and checked
       against somebody else&rsquo;s answer.</p>
   </div>
-  <aside class="notes">Divider. The tone changes here: from "how to do it" to "how much to believe it".</aside>
+  <aside class="notes">Divider. The tone changes here: from "how to do it" to "how much to believe it". This is the evidence for the limitations slide we just read.</aside>
 </section>
 
-<!-- 24 -->
+<!-- 37 -->
 <section>
   <h2>On Real Data</h2>
   <p class="subhead">The recording</p>
@@ -573,8 +1083,8 @@ Then say the useful thing: everything else on those slides is right to the digit
         pressure at 960 Hz. The plate is under the right foot for the first 60 % of
         the cycle. Peak vertical force 678 N, which is 1.26 body weights.</p>
       <p class="small">Lencioni <em>et al.</em> (2019), <em>Scientific Data</em>
-        <strong>6</strong>:309, CC BY 4.0 &mdash; the same recording lectures 16 and
-        19 use.</p>
+        <strong>6</strong>:309, CC BY 4.0 &mdash; the same recording we used in the
+        gait analysis and static analysis lectures.</p>
     </div>
     <div>
       <div class="box accent">
@@ -589,81 +1099,42 @@ Then say the useful thing: everything else on those slides is right to the digit
         extended record so the seam of the stride does not produce an artefact.</p>
     </div>
   </div>
-  <aside class="notes">Emphasise the independence. This is not a demonstration that was tuned until it agreed. The published curves were computed by the people who collected the data, in a different lab, with a different model, years before this deck existed.
+  <aside class="notes">Emphasise the independence. This is not a demonstration that was tuned until it agreed. The published curves were computed by the people who collected the data, in a different lab, with a different model.
 
 Mention the shank length check if there is time: measured 0.385 metres on a 1.61 metre person is 0.239 of stature, against Winter's 0.246. The markers and the table agree about the body before we compute anything.</aside>
 </section>
 
-<!-- 25 -->
+<!-- 38 -->
 <section id="w-walk20">
   <h2>On Real Data</h2>
   <p class="subhead">The same method, run for real</p>
   <div class="iplot wide" data-widget="walk20"></div>
-  <aside class="notes">Press Walk and let a full stride go by before you say anything.
+  <aside class="notes">Press Walk and let a full stride go by before you say anything. Foot first, then leg, then thigh — the four steps from the summary slide, on a real recording.
 
-Then the honest conversation. The shapes match: r is 0.99 at the ankle and 0.98 at the knee, and both peaks land on the same instant of the cycle as theirs. The magnitudes do not: ours runs fifteen per cent high at the ankle and thirty-seven per cent at the knee.
+Then the honest conversation. The shapes match: r is 0.99 at the ankle and 0.98 at the knee, and both peaks land on the same instant of the cycle as the published ones. The magnitudes do not: ours runs fifteen per cent high at the ankle and thirty-seven per cent at the knee.
 
 Say plainly that the gap was chased. It is not a timing offset between the camera and the plate — the best fit is two milliseconds. It is not the centre of pressure — shifting it helps push-off and ruins early stance. It is not one joint centre — the ankle wants to move forwards and the knee wants to move backwards, so it is not a registration error either.
 
-What is left is the model. Dempster's table against theirs; skin markers taken as joint centres against their regressions; two dimensions against three. That is the honest size of the disagreement between two reasonable pipelines on identical data, and it is the first three lines of his own slide 29.
+What is left is every item on the limitations slide: a cadaver-derived anthropometric table, joint centres estimated from markers on skin, two dimensions instead of three. That is the honest size of the disagreement between two reasonable pipelines on identical data.
 
 The thing to leave them with: a joint moment is not a measurement. It is a calculation, and two careful people can differ by fifteen per cent.</aside>
 </section>
 
-<!-- 26 -->
+<!-- 39 -->
 <section id="w-dynstat">
   <h2>On Real Data</h2>
-  <p class="subhead">So how much of this is dynamics?</p>
+  <p class="subhead">When do you actually need the dynamics?</p>
   <div class="iplot wide" data-widget="dynstat"></div>
-  <aside class="notes">This is the figure last week's lecture asked for, and the answer is not what anybody expects.
+  <aside class="notes">Back to the first two slides of the lecture, now with a number on them.
 
-Last week we solved a walking ankle as a statics problem and got 1.74 newton metres per kilogram against the published 1.51, and left the missing fifteen per cent hanging with the obvious suspect being the dynamics we had thrown away.
+Take the full Newton-Euler solution of this stride and set every ma and I alpha term to zero — that is, treat each segment as if it were in equilibrium. At the ankle in stance, the push-off peak moves from 1.738 to 1.737 N·m/kg. Six hundredths of one per cent. The foot weighs eight hundred grams and the ground is pushing on it with 678 newtons, so the inertial terms cannot matter there, and they do not.
 
-It was not them. Take the full Newton-Euler solution and set every ma and I alpha term to zero: the ankle's push-off peak moves from 1.738 to 1.737. Six hundredths of one per cent. The foot weighs eight hundred grams, and the ground is pushing on it with 678 newtons.
+Then press "The knee" and show the other half. Over stance the two differ by a fifth of the peak. Through swing the equilibrium answer has the wrong sign for most of the phase, because there is no external force at all and the segment's own acceleration is the only thing acting.
 
-Then press "The knee" and show the other half. Over stance the two differ by a fifth of the peak. Through swing the static answer has the wrong sign for most of it, because there is no external force at all and the segment's own acceleration is the only thing acting.
-
-So the rule worth remembering is not "dynamics matters" or "dynamics does not matter". It is: dynamics matters when the external forces are small and the segment is moving. Which is exactly the case his worked example chose — and now they know why he chose it.</aside>
+So the rule is not "dynamics always matters". It is: the inertial terms matter when the external forces are small and the segment is moving. Which is exactly the case the worked example chose, and it is why those numbers came out in fractions of a newton metre.</aside>
 </section>
 
-<!-- 27 -->
-<section>
-  <h2>On Real Data</h2>
-  <p class="subhead">What inverse dynamics cannot tell you</p>
-  <div class="cols a top">
-    <div>
-      <p class="small"><strong>It gives you:</strong> the net joint moment, the net
-        joint force and the joint power, at every joint, at every instant.</p>
-      <p class="small"><strong>It cannot give you:</strong></p>
-      <ul class="small">
-        <li>which muscles produced the moment, or how hard any one of them pulled;</li>
-        <li>the total muscular work, because co-contraction is invisible to it
-          &mdash; two muscles pulling hard against each other sum to nothing;</li>
-        <li>the bone-on-bone contact force, which is far larger than the net joint
-          force and is not the same quantity.</li>
-      </ul>
-    </div>
-    <div>
-      <p class="small"><strong>And it assumes:</strong> frictionless joints; rigid
-        segments with masses and inertias taken from a table built on cadavers;
-        joint centres estimated from markers on skin that slides over bone; and
-        perfect alignment, in space and in time, between the camera system and the
-        force plate.</p>
-      <div class="callout small">
-        <p style="margin-bottom:0">Those assumptions are not hypothetical. We just
-          watched them cost fifteen per cent at the ankle and thirty-seven at the
-          knee on a clean recording of ordinary walking.</p>
-      </div>
-    </div>
-  </div>
-  <aside class="notes">His slide 29, with the previous two figures standing behind it.
-
-The co-contraction point deserves a demonstration if you have thirty seconds: have them hold their arm still and contract biceps and triceps together as hard as they can. Enormous forces, zero net moment, and inverse dynamics would report nothing happening.
-
-The net joint force versus bone-on-bone force distinction is the one students most often get wrong on exams. The net joint force is what is left after the muscles have been summed into the moment. The actual contact force between the bones is much larger, because the muscles squeeze the joint together.</aside>
-</section>
-
-<!-- 28 -->
+<!-- 40 -->
 <section>
   <div class="section-slide">
     <h2>Practice</h2>
@@ -673,7 +1144,7 @@ The net joint force versus bone-on-bone force distinction is the one students mo
   <aside class="notes">Divider into the Tutor section.</aside>
 </section>
 
-<!-- 29 -->
+<!-- 41 -->
 <section id="w-tutorq20">
   <h2>Dynamic Analysis</h2>
   <p class="subhead">The Tutor, Dynamic Equilibrium</p>
@@ -682,12 +1153,10 @@ The net joint force versus bone-on-bone force distinction is the one students mo
 
 Question 1 is the one that matters for this course: a man lands and his centre of mass accelerates upward at 15 metres per second squared, so the ground pushes with his weight plus ma — 1861 newtons for a 75 kilogram man, two and a half times body weight. That is the whole of impact mechanics in one line.
 
-Two warnings. Question 5 accepts only 102 metres; the answer is 101.4, and 102 is what you get if you round the acceleration to 0.51 before squaring the time. Tell them to enter 102 and not to worry, and tell them why. Question 6 has the right accepted answer but its printed worked solution substitutes the wrong acceleration, left over from question 2 — ignore the working, trust the answer.
-
-Both have been reported.</aside>
+The rest are the same shape: draw the free body, write the two force equations, put ma on the right. Remind them that the Tutor wants the rounded value it is expecting, not every digit their calculator produced.</aside>
 </section>
 
-<!-- 30 -->
+<!-- 42 -->
 <section>
   <h2>Dynamic Analysis</h2>
   <p class="subhead">What to take away</p>
@@ -699,16 +1168,17 @@ Both have been reported.</aside>
           are unchanged.</li>
         <li>Three equations means three unknowns, which is why you start at the
           segment touching the ground and work upward.</li>
-        <li>Both the force <strong>and</strong> the moment reverse at every joint on
-          the way up.</li>
+        <li>Four moments act on every segment, and they add to <em>I</em>&alpha;:
+          one at each end, and one about the centre of mass from each end&rsquo;s
+          force.</li>
       </ul>
     </div>
     <div>
       <ul class="small">
+        <li>Both the force <strong>and</strong> the moment reverse at every joint on
+          the way up.</li>
         <li>Take moments about each segment&rsquo;s own centre of mass, and pair
           each force with the arm <strong>perpendicular</strong> to it.</li>
-        <li>In stance the ground force dominates everything; in swing the
-          segment&rsquo;s own inertia is all there is.</li>
         <li>A joint moment is a <strong>calculation</strong>, not a measurement, and
           it is only as good as the anatomy you fed it.</li>
       </ul>
@@ -719,7 +1189,7 @@ Both have been reported.</aside>
 If you only have time to say one thing, say the last one. It is the difference between a student who can do the arithmetic and one who can read a paper.</aside>
 </section>
 
-<!-- 31 -->
+<!-- 43 -->
 <section>
   <h2>Dynamic Analysis</h2>
   <p class="subhead">Where this goes next</p>
@@ -741,7 +1211,7 @@ If you only have time to say one thing, say the last one. It is the difference b
   <div class="box">
     <p class="small" style="margin:0">All done.</p>
   </div>
-  <aside class="notes">His slide 42 says "All done!!" and that is fair enough, but it is worth one forward look.
+  <aside class="notes">One forward look before closing.
 
 Joint power is moment times angular velocity, and it is what every clinical gait report plots underneath the moments. The ankle generates a large burst of power at push-off; the knee mostly absorbs. One multiplication away from everything in this lecture.
 
@@ -755,8 +1225,8 @@ And close on the limitation, because it is the honest end of the arc: this metho
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20261008c"></script>
-<script src="mobile.js?v=20261008c"></script>
+<script src="annotate.js?v=20261009a"></script>
+<script src="mobile.js?v=20261009a"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -778,10 +1248,10 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="dy20data.js?v=20261008c"></script>
-<script src="deck-core.js?v=20261008c"></script>
-<script src="dy20.js?v=20261008c"></script>
-<script src="deck-tools.js?v=20261008c"></script>
-<script src="fit.js?v=20261008c"></script>
+<script src="dy20data.js?v=20261009a"></script>
+<script src="deck-core.js?v=20261009a"></script>
+<script src="dy20.js?v=20261009a"></script>
+<script src="deck-tools.js?v=20261009a"></script>
+<script src="fit.js?v=20261009a"></script>
 </body>
 </html>
