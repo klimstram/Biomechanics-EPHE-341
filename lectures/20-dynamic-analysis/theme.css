@@ -928,3 +928,61 @@ html[data-portrait] .cols .fig.cap.tight img{ max-height:300px; }
   font-family:var(--eqfont, inherit); line-height:1.25;
 }
 html[data-portrait] .momblock .mline{ margin-bottom:.12em; }
+
+/* ----------------------------------------------------------------------
+   Lecture 20: hover a term in an equation, light it on the diagram.
+   The span carries data-hi; so does the <g> in the figure. Dimming the
+   rest is the whole effect — nothing moves and no colour changes.
+   ---------------------------------------------------------------------- */
+/* no padding or margin: a hover highlight must not change the layout, or
+   the overflow check reports every term as spilling out of its column */
+.hv{ cursor:pointer; border-radius:3px;
+     transition:background .12s, box-shadow .12s; }
+.hv:hover,.hv.on{
+  background:color-mix(in srgb, var(--brand) 20%, transparent);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--brand) 20%, transparent);
+}
+svg.hifig [data-hi]{ transition:opacity .13s; }
+svg.hifig.lit [data-hi]:not(.on){ opacity:.16; }
+svg.hifig.lit .sil{ opacity:.45; }
+svg.hifig [data-hi]{ cursor:pointer; }
+@media print{
+  svg.hifig [data-hi]{ opacity:1 !important; }
+  .hv{ background:none !important; }
+}
+
+/* the stacked moment equation carries hover spans; they must stay inline
+   so the subscripts keep their baseline */
+.momblock .mline .hv{ display:inline; white-space:nowrap; }
+.momblock .mline{ font-size:1.02em; }
+svg.hifig.nosil .sil{ display:none; }
+.siltog{
+  font:inherit; font-size:.56em; font-weight:650; letter-spacing:.01em;
+  color:var(--muted); background:var(--chip); cursor:pointer;
+  border:1px solid var(--rule); border-radius:999px; padding:.18em .8em;
+  margin-top:.35em;
+}
+.siltog:hover{ color:var(--ink); border-color:var(--brand); }
+@media print{ .siltog{ display:none; } }
+.ibtn.ghost,html[data-theme="light"] .ibtn.ghost,
+html[data-theme="dark"] .ibtn.ghost{
+  background:var(--chip); color:var(--muted); border:1px solid var(--rule);
+  font-weight:650;
+}
+.ibtn.ghost:hover,html[data-theme="light"] .ibtn.ghost:hover{
+  color:var(--ink); border-color:var(--brand); filter:none;
+}
+
+/* Lecture 20: the segment figures are inline SVG and must be capped in SLIDE
+   units, not vh — a vh cap grows the figure relative to the slide as the
+   window grows, so a slide that fits at 1280x720 overflows at 1920x1080. */
+.fig svg.hifig{ max-height:470px; }
+.cols .fig svg.hifig{ max-height:424px; }
+html[data-portrait] .fig svg.hifig,
+html[data-portrait] .cols .fig svg.hifig{ max-height:330px; }
+
+/* a data table that has to be read from the back of the room */
+.reveal table.bigtab{ font-size:.86em; }
+.reveal table.bigtab th{ padding:.42em 1.05em; }
+.reveal table.bigtab td{ padding:.38em 1.05em; }
+html[data-portrait] .reveal table.bigtab{ font-size:.80em; }

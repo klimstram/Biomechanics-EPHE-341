@@ -383,29 +383,26 @@ window.EPHE341_LECTURES = [
   { n: '20', title: 'Dynamic analysis',
     path: 'lectures/20-dynamic-analysis',
     blurb: 'Last week every equation had zero on the right-hand side; this week the ' +
-           'zeros become ma and I\u03b1 and the method does not change \u2014 not the ' +
-           'free body diagram, not the force table, not the sign conventions. Dynamic ' +
-           'equilibrium and when it does not hold; forward dynamics against inverse, and ' +
-           'why only the inverse one can be done to a living person; why three equations ' +
-           'and three unknowns force you to start at the segment touching the ground and ' +
-           'work upward; the four moments that act on every segment and add to I\u03b1, ' +
-           'with the proximal one always the unknown; the worked example from slides 30 ' +
-           'to 41, every line of it, with Example 2 in stance beside it; and the whole ' +
-           'method run on a measured stride and marked against the joint moments the ' +
-           'people who recorded it published \u2014 same shape, same timing, 15% high at ' +
-           'the ankle, which is the limitations slide made concrete.',
-    slides: 43, widgets: 10, updated: '2026-10-09',
+           'zeros become ma and I\u03b1 and the method does not change. Dynamic ' +
+           'equilibrium and when it does not hold; forward dynamics against inverse, ' +
+           'and why only the inverse one can be done to a living person; why three ' +
+           'equations and three unknowns force you to start at the segment touching ' +
+           'the ground and work upward; the four moments that act on every segment ' +
+           'and add to I\u03b1; the worked example line by line; and the whole method ' +
+           'run on a measured stride and marked against the joint moments the people ' +
+           'who recorded it published. Hover any term in an equation and it lights up ' +
+           'on the diagram.',
+    slides: 41, widgets: 9, updated: '2026-10-09',
     handout: 'handout.pdf',
     live: [['the same free body, with and without acceleration', 'w-newton'],
            ['the four forward-dynamics examples', 'w-fwd'],
            ['why the order is forced', 'w-chain'],
-           ['four moments on one segment', 'w-moments4'],
+           ['every segment carries four moments', 'w-moments4'],
            ['the free body on a measured stride', 'w-fbd20'],
            ['handing the ankle to the knee', 'w-uphill'],
            ['the worked example, every line', 'w-swing'],
            ['the method, against a published answer', 'w-walk20'],
-           ['when do you need the dynamics?', 'w-dynstat'],
-           ['twelve problems from the Tutor', 'w-tutorq20']] },
+           ['when do you need the dynamics?', 'w-dynstat']] },
 
   /* ---- still PowerPoint ---- */
   { n: '1b', title: 'Linear kinematics review' },
