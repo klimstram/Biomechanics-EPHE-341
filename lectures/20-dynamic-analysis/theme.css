@@ -978,6 +978,10 @@ html[data-theme="dark"] .ibtn.ghost{
    window grows, so a slide that fits at 1280x720 overflows at 1920x1080. */
 .fig svg.hifig{ max-height:470px; }
 .cols .fig svg.hifig{ max-height:424px; }
+/* a portrait segment figure can take more height -- the leg slides have a
+   short left column, so the cap that suits a wide figure wastes the space */
+.fig.tall svg.hifig,
+.cols .fig.tall svg.hifig{ max-height:578px; }
 html[data-portrait] .fig svg.hifig,
 html[data-portrait] .cols .fig svg.hifig{ max-height:330px; }
 

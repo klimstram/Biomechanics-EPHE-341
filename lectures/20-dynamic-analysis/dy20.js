@@ -321,6 +321,97 @@ function wrapLabel(c, txt, x, y, maxW, o) {
   return y0;
 }
 
+/* ---------------------------------------------------------------------
+   STRIP — a small time-series panel across the gait cycle.
+
+   Marc, on the two stride figures: he wants the full calculation live,
+   the movement, AND a graph of the resultant joint forces and moments,
+   all on the same slide.  This is that graph: stance shaded, a zero line,
+   one curve per joint, and a cursor wherever the slider is, so the number
+   in the equations panel and the point on the curve are the same instant.
+
+   o = { pc, on, series: [{v, col, lab, dash}], k, title, unit, fmt }
+   --------------------------------------------------------------------- */
+function strip(c, K, box, o) {
+  var pc = o.pc, ser = o.series, n = pc.length, i, s;
+  var lo = Infinity, hi = -Infinity;
+  for (i = 0; i < ser.length; i++)
+    for (var j = 0; j < n; j++) {
+      var v = ser[i].v[j];
+      if (!isFinite(v)) continue;
+      if (v < lo) lo = v;
+      if (v > hi) hi = v;
+    }
+  if (!isFinite(lo)) { lo = 0; hi = 1; }
+  lo = Math.min(lo, 0); hi = Math.max(hi, 0);
+  var pad = (hi - lo) * 0.14 || 1;
+  lo -= pad; hi += pad;
+
+  var L = box.x + 50, R = box.x + box.w - 8;
+  var T = box.y + 22, B = box.y + box.h - 18;
+  var X = function (p) { return L + (p / 100) * (R - L); };
+  var Y = function (v) { return B - (v - lo) / (hi - lo) * (B - T); };
+
+  /* the part of the cycle the plate has the foot */
+  if (o.on) {
+    var a = -1, b = -1;
+    for (i = 0; i < n; i++) { if (o.on[i]) { if (a < 0) a = i; b = i; } }
+    if (a >= 0) {
+      c.save(); c.fillStyle = K.FILL; c.globalAlpha = 0.5;
+      c.fillRect(X(pc[a]), T, X(pc[b]) - X(pc[a]), B - T); c.restore();
+      label(c, 'stance', (X(pc[a]) + X(pc[b])) / 2, B + 14,
+            { size: 10, color: K.MUT, weight: 650 });
+    }
+  }
+
+  /* frame, zero line and the two end values of the y axis */
+  c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(L + .5, T); c.lineTo(L + .5, B); c.lineTo(R, B);
+  c.stroke();
+  c.setLineDash([4, 4]);
+  c.beginPath(); c.moveTo(L, Y(0) + .5); c.lineTo(R, Y(0) + .5); c.stroke();
+  c.restore();
+  label(c, fmt(hi - pad, 2), L - 7, T + 9, { size: 10, align: 'right', color: K.MUT });
+  label(c, fmt(lo + pad, 2), L - 7, B, { size: 10, align: 'right', color: K.MUT });
+  label(c, '0', L - 7, Y(0) + 4, { size: 10, align: 'right', color: K.MUT });
+  label(c, '0', L, B + 14, { size: 10, color: K.MUT });
+  label(c, '100 %', R, B + 14, { size: 10, align: 'right', color: K.MUT });
+
+  label(c, o.title, box.x, box.y + 10,
+        { size: 12, align: 'left', weight: 700, color: K.INK });
+  if (o.unit)
+    label(c, o.unit, R, box.y + 10,
+          { size: 10.5, align: 'right', color: K.MUT, weight: 650 });
+
+  /* the curves */
+  for (i = 0; i < ser.length; i++) {
+    s = ser[i];
+    c.save(); c.strokeStyle = s.col; c.lineWidth = s.dash ? 2 : 2.6;
+    if (s.dash) c.setLineDash(s.dash);
+    c.beginPath();
+    for (var m = 0; m < n; m++) {
+      if (!isFinite(s.v[m])) continue;
+      if (m === 0) c.moveTo(X(pc[m]), Y(s.v[m])); else c.lineTo(X(pc[m]), Y(s.v[m]));
+    }
+    c.stroke(); c.restore();
+  }
+
+  /* the cursor, and the value each curve has there */
+  var k = Math.max(0, Math.min(n - 1, o.k));
+  c.save(); c.strokeStyle = K.ACC; c.lineWidth = 1.6; c.setLineDash([3, 3]);
+  c.beginPath(); c.moveTo(X(pc[k]) + .5, T); c.lineTo(X(pc[k]) + .5, B);
+  c.stroke(); c.restore();
+  for (i = 0; i < ser.length; i++) {
+    s = ser[i];
+    if (!isFinite(s.v[k])) continue;
+    c.save(); c.fillStyle = s.col;
+    c.beginPath(); c.arc(X(pc[k]), Y(s.v[k]), 4, 0, 7); c.fill(); c.restore();
+    label(c, s.lab + ' ' + (o.fmt ? o.fmt(s.v[k]) : fmt(s.v[k], 2)),
+          R - 2, T + 12 + i * 15,
+          { size: 11, align: 'right', color: s.col, weight: 700, plate: true });
+  }
+}
+
 /* ======================================================================
    The segment silhouettes, for canvas.
 
@@ -332,9 +423,9 @@ function wrapLabel(c, txt, x, y, maxW, o) {
    the distal end, y perpendicular and positive on the shin/knee side.
    ====================================================================== */
 var SIL = {
-  foot: [["M", 0.06, 0.38], ["L", -0.12, 0.36], ["Q", -0.3, 0.32, -0.34, 0.12], ["L", -0.38, -0.06], ["Q", -0.4, -0.18, -0.26, -0.19], ["L", 0.88, -0.21], ["Q", 1.1, -0.21, 1.15, -0.15], ["Q", 1.17, -0.09, 1.01, -0.06], ["L", 0.6, 0.02], ["Q", 0.36, 0.07, 0.22, 0.19], ["Q", 0.1, 0.29, 0.08, 0.38], ["Z"]],
-  footDetail: [[["M", 0.86, -0.21], ["Q", 0.84, -0.12, 0.76, -0.04]], [["M", -0.26, -0.13], ["Q", 0.16, -0.08, 0.44, -0.01]]],
-  leg: [["M", 0.0, 0.1], ["C", 0.3, 0.075, 0.64, 0.062, 0.92, 0.05], ["Q", 1.04, 0.045, 1.05, 0.012], ["Q", 1.06, -0.022, 0.95, -0.038], ["C", 0.8, -0.062, 0.62, -0.1, 0.42, -0.152], ["C", 0.33, -0.176, 0.22, -0.186, 0.14, -0.166], ["Q", 0.04, -0.14, 0.01, -0.07], ["Q", -0.01, -0.02, 0.0, 0.1], ["Z"]]
+  foot: [["M", 0.1, 0.185], ["L", -0.06, 0.195], ["Q", -0.26, 0.175, -0.33, 0.014999999999999996], ["Q", -0.37, -0.125, -0.22, -0.185], ["L", 0.92, -0.195], ["Q", 1.12, -0.195, 1.18, -0.135], ["Q", 1.2, -0.07500000000000001, 1.05, -0.045000000000000005], ["L", 0.64, 0.024999999999999994], ["Q", 0.4, 0.075, 0.24, 0.155], ["Z"]],
+  footDetail: [[["M", 0.9, -0.085], ["Q", 0.88, -0.0050000000000000044, 0.8, 0.08499999999999999]], [["M", -0.2, -0.05], ["Q", 0.18, -0.020000000000000004, 0.5, 0.04999999999999999]]],
+  leg: [["M", 0.0, 0.159], ["C", 0.35, 0.134, 0.72, 0.114, 0.95, 0.099], ["Q", 1.045, 0.087, 1.06, 0.028999999999999998], ["Q", 1.045, -0.029000000000000005, 0.92, -0.04100000000000001], ["C", 0.7, -0.07100000000000001, 0.46, -0.11599999999999999, 0.3, -0.143], ["C", 0.2, -0.159, 0.07, -0.14100000000000001, 0.02, -0.091], ["Q", -0.02, -0.04100000000000001, 0.0, 0.159], ["Z"]]
 };
 
 function silPath(outline, P, Dp) {
@@ -374,6 +465,21 @@ function drawSil(c, kind, P, Dp, K) {
     SIL.footDetail.forEach(function (d) { c.stroke(silPath(d, P, Dp)); });
   }
   c.restore();
+}
+
+/* The pose the slide figures use, so the widgets can match them.
+   Degrees below horizontal, proximal joint up-left, distal end down-right. */
+var SIL_DEG = { foot: 27.0, leg: 67.7 };
+
+/* Lay the segment bar inside `box` at that shared angle, centred, taking up
+   `frac` of whichever of the box's dimensions runs out first. */
+function barAt(box, kind, frac) {
+  var t = (SIL_DEG[kind === 'leg' ? 'leg' : 'foot']) * Math.PI / 180;
+  var ux = Math.cos(t), uy = Math.sin(t), f = frac || 0.70;
+  var L = Math.min(box.w * f / ux, box.h * f / uy);
+  var cx = box.x + box.w / 2, cy = box.y + box.h / 2;
+  return [[cx - ux * L / 2, cy - uy * L / 2],
+          [cx + ux * L / 2, cy + uy * L / 2]];
 }
 
 /* ======================================================================
@@ -873,7 +979,7 @@ D.register('chain', function (node) {
               'they act at the knee'],
       table: 'm, I and the centre of mass of the thigh',
       unk: ['F<sub>hip-x</sub>', 'F<sub>hip-y</sub>', 'M<sub>hip</sub>'],
-      hand: 'and that is the hip, which is where we wanted to get to' }
+      hand: 'the hip force and the hip moment come out, and that is where we wanted to get to' }
   ];
 
   function plain(s) {
@@ -917,8 +1023,8 @@ D.register('chain', function (node) {
 
   function freebody(K, box, st) {
     /* the live segment, cut free and blown up */
-    var P = [box.x + box.w * 0.30, box.y + box.h * 0.22];
-    var Dp = [box.x + box.w * 0.74, box.y + box.h * 0.82];
+    var bb = barAt(box, st.kind || 'leg', 0.54);
+    var P = bb[0], Dp = bb[1];
     if (S.sil && st.kind) drawSil(c, st.kind, P, Dp, K);
     var Cg = [P[0] + (Dp[0] - P[0]) * 0.46, P[1] + (Dp[1] - P[1]) * 0.46];
 
@@ -934,15 +1040,15 @@ D.register('chain', function (node) {
     /* what is known, at the distal end */
     arrow(c, Dp[0], Dp[1], Dp[0], Dp[1] - 48, { color: K.GRN, width: 3, head: 9 });
     arrow(c, Dp[0], Dp[1], Dp[0] + 44, Dp[1], { color: K.GRN, width: 3, head: 9 });
-    label(c, 'known', Dp[0] + 52, Dp[1] + 20,
-          { size: 12.5, align: 'left', color: K.GRN, weight: 700 });
+    label(c, 'known', Dp[0] + 4, Dp[1] + 40,
+          { size: 12.5, color: K.GRN, weight: 700 });
     if (S.step > 0) spin(c, Dp[0], Dp[1], 24, false, { color: K.GRN, width: 2.6 });
 
     /* what is unknown, at the proximal end */
     arrow(c, P[0], P[1], P[0], P[1] - 48, { color: K.ACC, width: 3, head: 9 });
     arrow(c, P[0], P[1], P[0] + 44, P[1], { color: K.ACC, width: 3, head: 9 });
     spin(c, P[0], P[1], 24, true, { color: K.ACC, width: 2.8 });
-    label(c, 'unknown', P[0] - 24, P[1] - 44,
+    label(c, 'unknown', P[0] - 16, P[1] - 46,
           { size: 12.5, align: 'right', color: K.ACC, weight: 700 });
 
     /* weight and the inertial terms */
@@ -954,10 +1060,10 @@ D.register('chain', function (node) {
     label(c, 'ma, Iα', Cg[0] + 54, Cg[1] - 20,
           { size: 11.5, align: 'left', color: K.MUT, weight: 650 });
 
-    label(c, st.prox, P[0] - 26, P[1] + 34,
+    label(c, st.prox, P[0] - 30, P[1] + 22,
           { size: 12, align: 'right', color: K.MUT, weight: 650 });
-    label(c, st.dist, Dp[0] + 20, Dp[1] + 44,
-          { size: 12, align: 'left', color: K.MUT, weight: 650 });
+    label(c, st.dist, Dp[0] + 4, Dp[1] + 58,
+          { size: 12, color: K.MUT, weight: 650 });
     label(c, 'Step ' + (S.step + 1) + ' · ' + st.name,
           box.x + box.w / 2, box.y - 4,
           { size: 14, weight: 700, color: K.ACC });
@@ -1075,25 +1181,49 @@ D.register('fbd20', function (node) {
   if (!DD) return;
   var W = DD.walk, S = { k: 30, step: 2 }, timer = null;
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 660 : 378,
+  var ax = new Axes(u.cv, { w: port ? 460 : 1400, h: port ? 980 : 460,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
   var FS = 0.115 / 700;                 /* newtons -> metres on the diagram */
+  var BW = W.mass_kg * 9.81;            /* one body weight, in newtons */
+
+  /* the two answers the method produces, over the whole stride, so the
+     number in the equations panel can be read as a point on a curve */
+  var TR = (function () {
+    var Ma = [], Mk = [], Fa = [], Fk = [], i;
+    for (i = 0; i < W.nf; i++) {
+      Ma.push(W.full.Ma[i]);
+      Mk.push(W.full.Mk[i]);
+      Fa.push(Math.hypot(W.full.Fax[i], W.full.Fay[i]) / BW);
+      Fk.push(Math.hypot(W.full.Fkx[i], W.full.Fky[i]) / BW);
+    }
+    return { Ma: Ma, Mk: Mk, Fa: Fa, Fk: Fk };
+  })();
 
   function draw() {
     var K = C(), w = walkAt(S.k), cm = comAt(w);
     ax.clear();
-    var fw = port ? ax.W : ax.W * 0.44;
+    var fw = port ? ax.W : ax.W * 0.42;
+    /* the two graph panels sit at the foot: side by side in landscape,
+       stacked in portrait */
+    var gH = port ? 138 : 120;
+    var gTop = port ? ax.H - 2 * gH - 14 : ax.H - gH - 8;
 
     var A = w.P.ankR, H = w.P.heelR, M = w.P.metR, G0 = cm.foot;
-    var cx = (H[0] + M[0]) / 2;
-    var box = { x: 8, y: 22, w: fw - 16, h: port ? ax.H * 0.36 : ax.H - 118 };
-    var sc = new Scene(c, box).fit(cx - 0.24, -0.17, cx + 0.24, 0.27, 8);
+    var cx = (H[0] + M[0]) / 2, cy = (A[1] + M[1]) / 2;
+    var box = { x: 8, y: 22, w: fw - 16,
+                h: port ? 300 : gTop - 34 };
+    /* the window follows the foot in both directions -- it climbs to 22 cm in
+       swing, and a window pinned to the floor has to be half empty in stance
+       to keep it in view */
+    var sc = new Scene(c, box).fit(cx - 0.17, cy - 0.135, cx + 0.17, cy + 0.125, 8);
 
-    /* the floor */
-    c.save(); c.strokeStyle = K.GRID; c.lineWidth = 2;
-    c.beginPath(); c.moveTo(box.x, sc.Y(0)); c.lineTo(box.x + box.w, sc.Y(0));
-    c.stroke(); c.restore();
+    /* the floor, when it is still in view */
+    if (sc.Y(0) > box.y + 4 && sc.Y(0) < box.y + box.h - 4) {
+      c.save(); c.strokeStyle = K.GRID; c.lineWidth = 2;
+      c.beginPath(); c.moveTo(box.x, sc.Y(0)); c.lineTo(box.x + box.w, sc.Y(0));
+      c.stroke(); c.restore();
+    }
 
     /* the foot: heel to metatarsals, with the ankle on its stalk */
     c.save(); c.strokeStyle = K.INK; c.lineWidth = 12; c.lineCap = 'round';
@@ -1105,25 +1235,31 @@ D.register('fbd20', function (node) {
     c.restore();
     pin(c, sc.X(A[0]), sc.Y(A[1]), 7);
     label(c, 'ankle', sc.X(A[0]) - 40, sc.Y(A[1]) + 6,
-          { size: 11.5, align: 'right', weight: 700, plate: true });
+          { size: 12.5, align: 'right', weight: 700, plate: true });
 
     /* the centre of mass, which is what the moments are taken about */
     c.save(); c.fillStyle = K.VIO;
     c.beginPath(); c.arc(sc.X(G0[0]), sc.Y(G0[1]), 5.5, 0, 7); c.fill();
     c.restore();
     label(c, 'CoM', sc.X(G0[0]) + 22, sc.Y(G0[1]) + 4,
-          { size: 11, color: K.VIO, weight: 650, plate: true });
+          { size: 12, color: K.VIO, weight: 650, plate: true });
 
     /* the ground reaction force, where the plate says it acts */
     if (w.on && Math.hypot(w.F[0], w.F[1]) > 5) {
-      force(c, sc, w.C[0], w.C[1], w.F[0] * FS, w.F[1] * FS, 1, K.BLUE,
-            fmt(Math.hypot(w.F[0], w.F[1]), 0) + ' N', { size: 12 });
+      force(c, sc, w.C[0], w.C[1], w.F[0] * FS, w.F[1] * FS, 1, K.BLUE, '',
+            { width: 3.2 });
+      /* at the foot of the arrow, under the floor line: the only reliably
+         empty part of the figure at every instant of stance */
+      label(c, fmt(Math.hypot(w.F[0], w.F[1]), 0) + ' N',
+            sc.X(w.C[0]), sc.Y(w.C[1]) + 22,
+            { size: 12.5, color: K.BLUE, weight: 700, plate: true });
       c.save(); c.fillStyle = K.BLUE;
       c.beginPath(); c.arc(sc.X(w.C[0]), sc.Y(w.C[1]), 4, 0, 7); c.fill();
       c.restore();
     } else {
       label(c, 'the foot is in the air — no ground force',
-            sc.X(cx), sc.Y(0.33), { size: 12, color: K.MUT, weight: 650 });
+            box.x + box.w / 2, box.y + box.h - 6,
+            { size: 12.5, color: K.MUT, weight: 650 });
     }
 
     /* its own weight */
@@ -1135,22 +1271,22 @@ D.register('fbd20', function (node) {
     if (S.step >= 1) {
       force(c, sc, A[0], A[1], w.Fa[0] * FS * 1.0, w.Fa[1] * FS * 1.0, 1, K.ACC,
             '', { width: 3.4 });
-      label(c, 'F ankle', sc.X(A[0] + w.Fa[0] * FS) + 8,
-            sc.Y(A[1] + w.Fa[1] * FS) - 10,
-            { size: 11.5, align: 'left', color: K.ACC, weight: 700, plate: true });
+      label(c, 'F ankle', sc.X(A[0] + w.Fa[0] * FS) + 10,
+            sc.Y(A[1] + w.Fa[1] * FS) + 4,
+            { size: 12.5, align: 'left', color: K.ACC, weight: 700, plate: true });
     }
     if (S.step >= 2 && Math.abs(w.Ma) > 0.02) {
       spin(c, sc.X(A[0]), sc.Y(A[1]), 24, w.Ma < 0, { color: K.ORG, width: 2.6 });
-      label(c, 'M ankle', sc.X(A[0]) - 34, sc.Y(A[1]) - 44,
-            { size: 11.5, align: 'left', color: K.ORG, weight: 700, plate: true });
+      label(c, 'M ankle', sc.X(A[0]) - 34, sc.Y(A[1]) - 42,
+            { size: 12.5, align: 'right', color: K.ORG, weight: 700, plate: true });
     }
 
     /* --------------------------- the equations ----------------------- */
     var px = port ? 16 : fw + 14, pw = port ? ax.W - 32 : ax.W - fw - 30;
-    var py = port ? box.y + box.h + 36 : 44;
+    var py = port ? box.y + box.h + 40 : 46;
     var m = W.seg.foot.m, I = W.seg.foot.I;
     label(c, fmt(w.pc, 0) + ' % of the gait cycle', px, py,
-          { size: 13, align: 'left', weight: 700, color: K.INK });
+          { size: 15, align: 'left', weight: 700, color: K.INK });
 
     var rows = [
       ['ΣFx = m·ax',
@@ -1166,28 +1302,44 @@ D.register('fbd20', function (node) {
        num(w.alF, 1) + ')',
        'M(ankle) = ' + num(-w.Ma * W.mass_kg, 2) + ' N·m', K.ORG, 2]
     ];
+    var pitch = port ? 78 : 78;
     rows.forEach(function (r, i) {
-      var yy = py + 30 + i * (port ? 76 : 84);
+      var yy = py + 32 + i * pitch;
       var live = S.step >= r[4];
       c.save(); c.globalAlpha = live ? 1 : 0.34;
-      label(c, r[0], px, yy, { size: 13.5, align: 'left', weight: 700 });
-      wrapLabel(c, r[1], px, yy + (port ? 26 : 28), pw - 6,
-                { size: 11, align: 'left', color: K.MUT });
-      label(c, live ? r[2] : '…', px, yy + (port ? 50 : 56),
-            { size: 14, align: 'left', weight: 700, color: r[3] });
+      label(c, r[0], px, yy, { size: 15, align: 'left', weight: 700 });
+      wrapLabel(c, r[1], px, yy + 26, pw - 6,
+                { size: 12.5, align: 'left', color: K.MUT });
+      label(c, live ? r[2] : '…', px, yy + 54,
+            { size: 17, align: 'left', weight: 700, color: r[3] });
       c.restore();
     });
 
     label(c, 'that is ' + num(w.Ma, 3) + ' N·m per kilogram, counting a ' +
              'plantarflexor moment as positive',
-          px, py + 30 + 3 * (port ? 76 : 84) + 2,
-          { size: 11.5, align: 'left', color: K.MUT, weight: 650 });
+          px, py + 32 + 2 * pitch + 78,
+          { size: 12.5, align: 'left', color: K.MUT, weight: 650 });
 
-    wrapLabel(c, 'Winter’s table gives the foot ' + fmt(m, 2) + ' kg and ' +
-              fmt(I, 5) + ' kg·m² · the markers give its acceleration · the ' +
-              'plate gives the force and where it acts · everything else is ' +
-              'the three equations',
-              ax.W / 2, ax.H - 12, ax.W - 36, { size: 11.5, color: K.MUT });
+    /* ------------------------- the whole stride ---------------------- */
+    var gw = port ? ax.W - 24 : (ax.W - 46) / 2;
+    var g1 = { x: port ? 12 : 16, y: gTop, w: gw, h: gH };
+    var g2 = port ? { x: 12, y: gTop + gH + 14, w: gw, h: gH }
+                  : { x: 30 + gw, y: gTop, w: gw, h: gH };
+
+    strip(c, K, g1, {
+      pc: W.pc, on: W.grf.on, k: S.k,
+      title: 'Resultant joint moment', unit: 'N·m / kg',
+      fmt: function (v) { return fmt(v, 2); },
+      series: [{ v: TR.Ma, col: K.ORG, lab: 'ankle' },
+               { v: TR.Mk, col: K.GRN, lab: 'knee' }]
+    });
+    strip(c, K, g2, {
+      pc: W.pc, on: W.grf.on, k: S.k,
+      title: 'Resultant joint force', unit: 'body weights',
+      fmt: function (v) { return fmt(v, 2); },
+      series: [{ v: TR.Fa, col: K.ORG, lab: 'ankle' },
+               { v: TR.Fk, col: K.GRN, lab: 'knee' }]
+    });
   }
 
   u.ctl.className = 'ictls g2';
@@ -1198,7 +1350,7 @@ D.register('fbd20', function (node) {
   var row = ctlRow(u.ctl);
   keepOut(seg(row, [[0, 'The diagram'], [1, 'The forces'], [2, 'The moment']],
               2, function (v) { S.step = +v; draw(); }));
-  var pb = playBtn(u.ctl, '▶ Walk');
+  var pb = playBtn(row, '▶ Walk');
   pb.setAttribute('data-unsafe', '1');
   pb.addEventListener('click', function () {
     if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; return; }
@@ -1210,12 +1362,9 @@ D.register('fbd20', function (node) {
   node._stop = function () { if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; } };
 
   var rd = readout(u.ctl);
-  rd.innerHTML = 'The free body from the last few slides, with a real foot in it. The two force ' +
-    'sums come first because the ankle’s force has to be known before it can ' +
-    'appear in the moment equation — the only ordering rule in the method. Walk ' +
-    'past 60 % and the plate loses the foot: with no ground force the ankle ' +
-    'moment collapses to almost nothing, which is why the swing example comes ' +
-    'out at fractions of a newton metre while stance runs to a hundred.';
+  rd.innerHTML = 'The free body from the last few slides, with a real foot in it, and ' +
+    'both answers across the whole stride. Past 60 % the plate loses the foot and ' +
+    'the ankle moment collapses to almost nothing.';
 
   node._draw = draw;
   draw();
@@ -1242,10 +1391,11 @@ D.register('uphill', function (node) {
   if (!DD) return;
   var W = DD.walk, S = { k: 30, pass: 1 }, timer = null;
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 660 : 378,
+  var ax = new Axes(u.cv, { w: port ? 460 : 1400, h: port ? 980 : 460,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
   var FS = 0.115 / 700;
+  var BW = W.mass_kg * 9.81;
 
   /* the knee moment, recomputed here so the toggle is a real calculation
      and not a stored second copy */
@@ -1264,15 +1414,34 @@ D.register('uphill', function (node) {
     return { Fk: Fk, Fd: Fd, Md: Md, M: M, rK: rK, rA: rA };
   }
 
+  /* the knee answer across the whole stride, with the moment handed up and
+     with it dropped -- from the same function the figure uses, so the curve
+     and the number under the cursor cannot disagree */
+  var TR = (function () {
+    var ok = [], bad = [], Fa = [], Fk = [], i, w, cm;
+    for (i = 0; i < W.nf; i++) {
+      w = walkAt(i); cm = comAt(w);
+      ok.push(kneeM(w, cm, 1).M / W.mass_kg);
+      bad.push(kneeM(w, cm, 0).M / W.mass_kg);
+      Fa.push(Math.hypot(W.full.Fax[i], W.full.Fay[i]) / BW);
+      Fk.push(Math.hypot(W.full.Fkx[i], W.full.Fky[i]) / BW);
+    }
+    return { ok: ok, bad: bad, Fa: Fa, Fk: Fk };
+  })();
+
   function draw() {
     var K = C(), w = walkAt(S.k), cm = comAt(w), q = kneeM(w, cm, S.pass);
     ax.clear();
-    var fw = port ? ax.W : ax.W * 0.44;
+    var fw = port ? ax.W : ax.W * 0.42;
+    var gH = port ? 138 : 120;
+    var gTop = port ? ax.H - 2 * gH - 14 : ax.H - gH - 8;
 
     var A = w.P.ankR, Kn = w.P.kneeR, H = w.P.heelR, M = w.P.metR;
-    var cx = (Kn[0] + M[0]) / 2, cy = Kn[1] / 2;
-    var box = { x: 8, y: 22, w: fw - 16, h: port ? ax.H * 0.38 : ax.H - 118 };
-    var sc = new Scene(c, box).fit(cx - 0.27, cy - 0.30, cx + 0.27, cy + 0.30, 8);
+    var cx = (Kn[0] + M[0]) / 2;
+    var box = { x: 8, y: 22, w: fw - 16, h: port ? 300 : gTop - 34 };
+    /* the pair spans knee to toe plus the arrows at both ends: the window is
+       absolute, because the knee only moves between 41 and 47 cm */
+    var sc = new Scene(c, box).fit(cx - 0.25, -0.125, cx + 0.25, 0.595, 8);
 
     var GAP = 0.045;                 /* how far the two bodies are pulled apart */
 
@@ -1292,7 +1461,7 @@ D.register('uphill', function (node) {
       spin(c, sc.X(A[0]), sc.Y(A[1] - GAP), 18, w.Ma < 0,
            { color: K.ORG, width: 2.4 });
     label(c, 'on the foot', sc.X(M[0]) + 10, sc.Y(M[1] - GAP) + 16,
-          { size: 10.5, align: 'left', color: K.MUT, weight: 650, plate: true });
+          { size: 12, align: 'left', color: K.MUT, weight: 650, plate: true });
     /* the ground force, so the foot's free body is not missing a side */
     if (w.on && w.F[1] > 5)
       force(c, sc, w.C[0], w.C[1] - GAP, w.F[0] * FS, w.F[1] * FS, 1, K.BLUE,
@@ -1304,8 +1473,8 @@ D.register('uphill', function (node) {
     c.lineTo(sc.X(A[0]), sc.Y(A[1] + GAP)); c.stroke(); c.restore();
     pin(c, sc.X(Kn[0]), sc.Y(Kn[1] + GAP), 7);
     pin(c, sc.X(A[0]), sc.Y(A[1] + GAP), 6);
-    label(c, 'knee', sc.X(Kn[0]) - 13, sc.Y(Kn[1] + GAP),
-          { size: 11.5, align: 'right', weight: 700 });
+    label(c, 'knee', sc.X(Kn[0]) - 15, sc.Y(Kn[1] + GAP),
+          { size: 13, align: 'right', weight: 700, plate: true });
     c.save(); c.fillStyle = K.VIO;
     c.beginPath(); c.arc(sc.X(cm.leg[0]), sc.Y(cm.leg[1] + GAP), 5.5, 0, 7);
     c.fill(); c.restore();
@@ -1319,7 +1488,7 @@ D.register('uphill', function (node) {
       spin(c, sc.X(A[0]), sc.Y(A[1] + GAP), 18, w.Ma > 0,
            { color: K.ORG, width: 2.4 });
     label(c, 'on the shank', sc.X(A[0]) + 30, sc.Y(A[1] + GAP) + 16,
-          { size: 10.5, align: 'left', color: K.MUT, weight: 650, plate: true });
+          { size: 12, align: 'left', color: K.MUT, weight: 650, plate: true });
 
     /* and the answer at the knee */
     force(c, sc, Kn[0], Kn[1] + GAP, q.Fk[0] * FS, q.Fk[1] * FS, 1, K.GRN, '',
@@ -1328,13 +1497,13 @@ D.register('uphill', function (node) {
       spin(c, sc.X(Kn[0]), sc.Y(Kn[1] + GAP), 24, q.M > 0,
            { color: K.GRN, width: 2.6 });
     label(c, 'M knee', sc.X(Kn[0]) + 34, sc.Y(Kn[1] + GAP) - 12,
-          { size: 11.5, align: 'left', color: K.GRN, weight: 700, plate: true });
+          { size: 13, align: 'left', color: K.GRN, weight: 700, plate: true });
 
     /* --------------------------- the working ------------------------- */
     var px = port ? 16 : fw + 14, pw = port ? ax.W - 32 : ax.W - fw - 30;
-    var py = port ? box.y + box.h + 34 : 46;
+    var py = port ? box.y + box.h + 38 : 46;
     label(c, fmt(w.pc, 0) + ' % of the gait cycle', px, py,
-          { size: 13, align: 'left', weight: 700 });
+          { size: 15, align: 'left', weight: 700 });
     var rows = [
       ['what the foot produced',
        'F = (' + num(w.Fa[0], 1) + ', ' + num(w.Fa[1], 1) + ') N,  M = ' +
@@ -1348,24 +1517,43 @@ D.register('uphill', function (node) {
        'M(knee) = ' + num(q.M, 2) + ' N·m = ' + num(q.M / W.mass_kg, 3) +
        ' N·m/kg', K.GRN]
     ];
+    var pitch = port ? 56 : 56;
     rows.forEach(function (r, i) {
-      var yy = py + 30 + i * (port ? 48 : 62);
-      label(c, r[0], px, yy, { size: 11, align: 'left', weight: 650, color: K.MUT });
-      wrapLabel(c, r[1], px, yy + 19, pw - 6,
-                { size: 12.5, align: 'left', weight: 700, color: r[2] });
+      var yy = py + 32 + i * pitch;
+      label(c, r[0], px, yy, { size: 12.5, align: 'left', weight: 650, color: K.MUT });
+      wrapLabel(c, r[1], px, yy + 22, pw - 6,
+                { size: 15, align: 'left', weight: 700, color: r[2] });
     });
 
-    var truth = kneeM(w, cm, 1).M;
-    var err = Math.abs(truth - kneeM(w, cm, 0).M);
+    var err = Math.abs(kneeM(w, cm, 1).M - kneeM(w, cm, 0).M);
     wrapLabel(c, S.pass
-      ? 'Both halves of the handover are in: the force reversed and the moment ' +
-        'reversed. At this instant dropping the moment alone would move the ' +
-        'knee answer by ' + fmt(err, 2) + ' N·m.'
-      : 'The moment is being dropped — only the force is handed up. The knee ' +
-        'answer is wrong by exactly the ankle moment, ' + fmt(err, 2) + ' N·m, ' +
-        'and nothing in the arithmetic complains.',
-      ax.W / 2, ax.H - 12, ax.W - 36,
-      { size: 11.5, color: S.pass ? K.MUT : K.ACC });
+      ? 'Both halves of the handover are in. At this instant dropping the ' +
+        'moment alone would move the knee answer by ' + fmt(err, 2) + ' N·m.'
+      : 'The moment is being dropped. The knee answer is wrong by exactly the ' +
+        'ankle moment, ' + fmt(err, 2) + ' N·m, and nothing complains.',
+      px + (pw - 6) / 2, py + 32 + 4 * pitch + (port ? 50 : 6), pw - 6,
+      { size: 12.5, color: S.pass ? K.MUT : K.ACC, weight: 650 });
+
+    /* ------------------------- the whole stride ---------------------- */
+    var gw = port ? ax.W - 24 : (ax.W - 46) / 2;
+    var g1 = { x: port ? 12 : 16, y: gTop, w: gw, h: gH };
+    var g2 = port ? { x: 12, y: gTop + gH + 14, w: gw, h: gH }
+                  : { x: 30 + gw, y: gTop, w: gw, h: gH };
+
+    strip(c, K, g1, {
+      pc: W.pc, on: W.grf.on, k: S.k,
+      title: 'Knee moment, with the handover and without',
+      unit: 'N·m / kg', fmt: function (v) { return fmt(v, 2); },
+      series: [{ v: TR.ok, col: K.GRN, lab: 'handed up' },
+               { v: TR.bad, col: K.ACC, lab: 'dropped', dash: [6, 4] }]
+    });
+    strip(c, K, g2, {
+      pc: W.pc, on: W.grf.on, k: S.k,
+      title: 'Resultant joint force', unit: 'body weights',
+      fmt: function (v) { return fmt(v, 2); },
+      series: [{ v: TR.Fa, col: K.ORG, lab: 'ankle' },
+               { v: TR.Fk, col: K.GRN, lab: 'knee' }]
+    });
   }
 
   u.ctl.className = 'ictls g2';
@@ -1376,7 +1564,7 @@ D.register('uphill', function (node) {
   var row = ctlRow(u.ctl);
   keepOut(seg(row, [[1, 'Hand the moment up'], [0, 'Forget the moment']], 1,
               function (v) { S.pass = +v; draw(); }));
-  var pb = playBtn(u.ctl, '▶ Walk');
+  var pb = playBtn(row, '▶ Walk');
   pb.setAttribute('data-unsafe', '1');
   pb.addEventListener('click', function () {
     if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; return; }
@@ -1386,11 +1574,9 @@ D.register('uphill', function (node) {
   node._stop = function () { if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; } };
 
   var rd = readout(u.ctl);
-  rd.innerHTML = 'Newton’s third law applies to moments as well as to forces. ' +
-    'The foot’s free body produced <b>two</b> things at the ankle, and ' +
-    '<b>both</b> come back reversed on the shank. The moment equation carries them as ' +
-    'the two terms <b>− M(ankle)</b> and <b>− F(ankle)</b>, and the minus signs ' +
-    'are not decoration.';
+  rd.innerHTML = 'Newton’s third law applies to moments as well as to forces: the ' +
+    'foot’s free body produced <b>two</b> things at the ankle and <b>both</b> come ' +
+    'back reversed, as the terms <b>− M(ankle)</b> and <b>− F(ankle)</b>.';
 
   node._draw = draw;
   draw();
@@ -1596,7 +1782,7 @@ D.register('moments4', function (node) {
   /* which case, which segment, which term is lit */
   var S = { ph: 'swing', sg: 'leg', t: 0, sil: true };
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 690 : 382,
+  var ax = new Axes(u.cv, { w: port ? 460 : 1180, h: port ? 690 : 404,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
 
@@ -1653,8 +1839,12 @@ D.register('moments4', function (node) {
 
   /* ------------------------------------------------------------- drawing */
   function bar(K, box, T) {
-    var P = [box.x + box.w * 0.14, box.y + box.h * 0.13];
-    var Dp = [box.x + box.w * 0.86, box.y + box.h * 0.86];
+    /* the foot is nearly horizontal, so it runs out of box width long before
+       the leg runs out of height -- each gets the fraction that leaves room
+       for its own labels */
+    var isleg = S.sg === 'leg';
+    var bb = barAt(box, isleg ? 'leg' : 'foot', isleg ? 0.68 : 0.56);
+    var P = bb[0], Dp = bb[1];
     var Cg = [P[0] + (Dp[0] - P[0]) * 0.46, P[1] + (Dp[1] - P[1]) * 0.46];
     var lit = function (n) { return S.t === 0 || S.t === n; };
     var dim = function (n) { return lit(n) ? 1 : 0.15; };
@@ -1683,9 +1873,9 @@ D.register('moments4', function (node) {
     label(c, 'CofG', Cg[0] - 34, Cg[1] + 34,
           { size: 11.5, align: 'right', color: K.BLUE, weight: 650, plate: true });
 
-    label(c, T.prox, P[0] - 40, P[1] + 30,
+    label(c, T.prox, P[0] - 44, P[1] + 34,
           { size: 12, align: 'right', color: K.MUT, weight: 650 });
-    label(c, T.dist, Dp[0] + 16, Dp[1] + 22,
+    label(c, T.dist, Dp[0] + 34, Dp[1] + 44,
           { size: 12, align: 'left', color: K.MUT, weight: 650 });
 
     /* 3 and 4 — the forces at each end, drawn the way they actually point,
@@ -1707,9 +1897,9 @@ D.register('moments4', function (node) {
             spin(c, Cg[0], Cg[1], n === 3 ? 15 : 23, row.v > 0,
                  { color: col, width: 2.2, head: 6 });
         } else {
-          label(c, 'no force here', at[0] + 24, at[1] + (n === 3 ? 56 : -56),
-                { size: 11.5, align: 'left', color: K.MUT, weight: 650, plate: true });
-          label(c, String(n), at[0] + 12, at[1] + (n === 3 ? 56 : -56),
+          label(c, 'no force here', at[0] - 30, at[1] + (n === 3 ? 54 : -56),
+                { size: 11.5, align: 'right', color: K.MUT, weight: 650, plate: true });
+          label(c, String(n), at[0] - 18, at[1] + (n === 3 ? 54 : -56),
                 { size: 13, color: K.MUT, weight: 700 });
         }
         c.restore();
@@ -1719,9 +1909,9 @@ D.register('moments4', function (node) {
     var r1 = T.rows[0];
     c.save(); c.globalAlpha = dim(1);
     if (r1.zero) {
-      label(c, 'no moment here', Dp[0] - 26, Dp[1] + 26,
+      label(c, 'no moment here', Dp[0] - 30, Dp[1] + 30,
             { size: 11.5, align: 'right', color: K.MUT, weight: 650, plate: true });
-      label(c, '1', Dp[0] - 14, Dp[1] + 26,
+      label(c, '1', Dp[0] - 18, Dp[1] + 30,
             { size: 13, color: K.MUT, weight: 700 });
     } else {
       spin(c, Dp[0], Dp[1], 26, r1.v > 0, { color: K.VIO, width: 3.2 });
@@ -1742,14 +1932,14 @@ D.register('moments4', function (node) {
     var K = C(), T = terms(), ND = dp(T);
     ax.clear();
     var box = port ? { x: 6, y: 20, w: ax.W - 12, h: ax.H * 0.40 }
-                   : { x: 4, y: 10, w: ax.W * 0.47, h: ax.H - 44 };
+                   : { x: 4, y: 6, w: ax.W * 0.33, h: ax.H - 36 };
     bar(K, box, T);
 
     /* ------------------------------------------------------ the ledger */
     var px = port ? 14 : box.x + box.w + 18;
     var pw = port ? ax.W - 28 : ax.W - px - 16;
-    var py = port ? box.y + box.h + 34 : 36;
-    var pitch = port ? 56 : 54;
+    var py = port ? box.y + box.h + 46 : 64;
+    var pitch = port ? 56 : 60;
 
     label(c, 'Four moments, and they add to Iα', px, py - 16,
           { size: 13, align: 'left', weight: 700, color: K.INK });
@@ -1834,13 +2024,11 @@ D.register('moments4', function (node) {
               function (v) { S.t = +v; draw(); }));
 
   var rd = readout(u.ctl);
-  rd.innerHTML = 'Every segment in the chain has <b>four</b> moments acting on it, ' +
-    'and they add to <b>I&alpha;</b>: one at each end, and one about the centre of ' +
-    'gravity from each end&rsquo;s force. <b>Term 2 is always the unknown</b> &mdash; ' +
-    'the moment at the proximal end is what we are solving for, and it becomes ' +
-    'term 1 of the segment above. The foot is the exception that makes the method ' +
-    'work: the ground applies a force but no moment, so one term is missing and ' +
-    'three equations are enough.';
+  rd.innerHTML = 'Every segment has <b>four</b> moments acting on it and they add ' +
+    'to <b>I&alpha;</b>: one at each end, and one about the centre of gravity from ' +
+    'each end&rsquo;s force. <b>Term 2 is always the unknown</b> &mdash; the moment ' +
+    'at the proximal end is what we are solving for, and it becomes term 1 of the ' +
+    'segment above.';
 
   node._draw = draw;
   draw();
