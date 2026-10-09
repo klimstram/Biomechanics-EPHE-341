@@ -156,6 +156,14 @@ html[data-theme="dark"] .reveal img[src^="assets/"]{
    ============================================================ */
 .eq{ font-family:"Cambria Math",Cambria,Georgia,serif; font-size:1.08em; letter-spacing:.01em; }
 .eq.big{ font-size:1.45em; }
+/* The worked example runs eight or nine lines of arithmetic beside a figure.
+   In the handout every fragment is shown at once, so the text column is what
+   decides whether the page fits -- these slides give it a tighter rhythm. */
+.cols.work .eq{ font-size:.96em; margin:.22em 0; }
+.cols.work .eq.big{ font-size:1.22em; margin:.28em 0; }
+.cols.work p.small{ margin:.3em 0; }
+.cols.work .momblock{ margin:.3em 0; }
+.cols.work .callout{ margin-top:.4em; }
 .eq sup{ font-size:.62em; top:-.55em; }
 .eq sub{ font-size:.62em; }
 .frac{ display:inline-block; vertical-align:middle; text-align:center; margin:0 .25em; }

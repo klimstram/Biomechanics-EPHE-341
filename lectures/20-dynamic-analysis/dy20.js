@@ -419,13 +419,18 @@ function strip(c, K, box, o) {
    the slide SVGs draw from.  Do not edit by hand -- edit figs.py and run
    `python3 slides/mksil.py`.
 
-   Coordinates are in SEGMENT space: x from 0 at the proximal joint to 1 at
-   the distal end, y perpendicular and positive on the shin/knee side.
+   Each segment is a soft-tissue outline with its bones inside it, the way
+   the Winter plates in the source deck are drawn.  Coordinates are in
+   SEGMENT space: x from 0 at the proximal joint to 1 at the distal end, y
+   perpendicular and positive on the shin / anterior side.
    ====================================================================== */
 var SIL = {
-  foot: [["M", 0.1, 0.185], ["L", -0.06, 0.195], ["Q", -0.26, 0.175, -0.33, 0.014999999999999996], ["Q", -0.37, -0.125, -0.22, -0.185], ["L", 0.92, -0.195], ["Q", 1.12, -0.195, 1.18, -0.135], ["Q", 1.2, -0.07500000000000001, 1.05, -0.045000000000000005], ["L", 0.64, 0.024999999999999994], ["Q", 0.4, 0.075, 0.24, 0.155], ["Z"]],
-  footDetail: [[["M", 0.9, -0.085], ["Q", 0.88, -0.0050000000000000044, 0.8, 0.08499999999999999]], [["M", -0.2, -0.05], ["Q", 0.18, -0.020000000000000004, 0.5, 0.04999999999999999]]],
-  leg: [["M", 0.0, 0.159], ["C", 0.35, 0.134, 0.72, 0.114, 0.95, 0.099], ["Q", 1.045, 0.087, 1.06, 0.028999999999999998], ["Q", 1.045, -0.029000000000000005, 0.92, -0.04100000000000001], ["C", 0.7, -0.07100000000000001, 0.46, -0.11599999999999999, 0.3, -0.143], ["C", 0.2, -0.159, 0.07, -0.14100000000000001, 0.02, -0.091], ["Q", -0.02, -0.04100000000000001, 0.0, 0.159], ["Z"]]
+  foot: [["M", 0.1, 0.20350000000000001], ["Q", -0.06, 0.23349999999999999, -0.2, 0.1835], ["Q", -0.39, 0.1135, -0.4, -0.0515], ["Q", -0.405, -0.1965, -0.25, -0.21649999999999997], ["Q", -0.08, -0.23349999999999999, 0.12, -0.1965], ["Q", 0.44, -0.1315, 0.76, -0.1895], ["Q", 0.98, -0.22549999999999998, 1.15, -0.20750000000000002], ["Q", 1.3, -0.1895, 1.285, -0.1195], ["Q", 1.265, -0.0635, 1.07, -0.041499999999999995], ["L", 0.64, 0.0345], ["Q", 0.35, 0.0985, 0.18, 0.1735], ["Z"]],
+  footBones: [[["M", -0.36, 0.053500000000000006], ["Q", -0.398, -0.0315, -0.33, -0.1315], ["Q", -0.245, -0.1935, -0.08, -0.17149999999999999], ["Q", 0.055, -0.15150000000000002, 0.075, -0.0715], ["Q", 0.086, -0.0014999999999999961, -0.02, 0.028500000000000004], ["Q", -0.18, 0.0685, -0.28, 0.0785], ["Q", -0.346, 0.0835, -0.36, 0.053500000000000006], ["Z"]], [["M", -0.09, 0.0635], ["Q", -0.102, 0.14850000000000002, 0.0, 0.16049999999999998], ["Q", 0.1, 0.16449999999999998, 0.128, 0.0785], ["Q", 0.138, 0.028500000000000004, 0.075, 0.013500000000000005], ["Q", -0.015, 0.0005000000000000039, -0.09, 0.0635], ["Z"]], [["M", 0.15, 0.1135], ["Q", 0.275, 0.1085, 0.375, 0.0505], ["Q", 0.412, -0.003499999999999996, 0.355, -0.057499999999999996], ["Q", 0.245, -0.1095, 0.15, -0.0655], ["Q", 0.105, -0.013499999999999996, 0.15, 0.1135], ["Z"]], [["M", 0.385, 0.05850000000000001], ["L", 1.035, -0.0665], ["L", 1.035, -0.1115], ["L", 0.385, 0.012500000000000004], ["Z"]], [["M", 0.372, -0.005499999999999996], ["L", 1.015, -0.1235], ["L", 1.015, -0.16949999999999998], ["L", 0.372, -0.055499999999999994], ["Z"]], [["M", 1.052, -0.0715], ["L", 1.16, -0.09749999999999999], ["L", 1.16, -0.14950000000000002], ["L", 1.052, -0.1195], ["Z"]], [["M", 1.178, -0.1035], ["L", 1.248, -0.1215], ["L", 1.248, -0.16949999999999998], ["L", 1.178, -0.15349999999999997], ["Z"]]],
+  leg: [["M", 0.0, 0.159], ["C", 0.35, 0.134, 0.72, 0.114, 0.95, 0.099], ["Q", 1.045, 0.087, 1.06, 0.028999999999999998], ["Q", 1.045, -0.029000000000000005, 0.92, -0.04100000000000001], ["C", 0.7, -0.07100000000000001, 0.46, -0.11599999999999999, 0.3, -0.143], ["C", 0.2, -0.159, 0.07, -0.14100000000000001, 0.02, -0.091], ["Q", -0.02, -0.04100000000000001, 0.0, 0.159], ["Z"]],
+  legBones: [[["M", 0.0, 0.131], ["L", 0.006, 0.008999999999999998], ["Q", 0.046, -0.013000000000000005, 0.1, 0.0009999999999999974], ["C", 0.4, 0.0049999999999999975, 0.7, 0.006999999999999999, 0.94, 0.008999999999999998], ["Q", 1.014, 0.011, 1.014, 0.039], ["Q", 1.014, 0.07100000000000001, 0.944, 0.073], ["C", 0.7, 0.079, 0.4, 0.089, 0.13, 0.109], ["Q", 0.046, 0.126, 0.0, 0.131], ["Z"]], [["M", 0.088, -0.023], ["Q", 0.136, -0.063, 0.172, -0.029000000000000005], ["C", 0.42, -0.049, 0.7, -0.051000000000000004, 0.93, -0.043], ["Q", 0.988, -0.03900000000000001, 0.988, -0.0050000000000000044], ["Q", 0.988, 0.020999999999999998, 0.944, 0.016999999999999998], ["C", 0.7, -0.015, 0.42, -0.019000000000000003, 0.172, -0.0010000000000000009], ["Q", 0.128, 0.002999999999999999, 0.088, -0.023], ["Z"]]],
+  thigh: [["M", 0.0, 0.16999999999999998], ["C", 0.3, 0.14999999999999997, 0.65, 0.12, 0.915, 0.09699999999999999], ["Q", 1.02, 0.087, 1.03, 0.0049999999999999906], ["Q", 1.02, -0.07700000000000001, 0.915, -0.09000000000000001], ["C", 0.65, -0.12000000000000001, 0.3, -0.15700000000000003, 0.08, -0.16999999999999998], ["Q", -0.015, -0.16999999999999998, 0.0, 0.16999999999999998], ["Z"]],
+  thighBones: [[["M", 0.044, 0.03099999999999999], ["Q", -0.012, 0.07699999999999999, 0.022, 0.11699999999999999], ["Q", 0.072, 0.14300000000000002, 0.102, 0.08299999999999999], ["C", 0.35, 0.04299999999999999, 0.65, 0.00899999999999999, 0.888, -0.017000000000000008], ["Q", 0.978, -0.02700000000000001, 0.978, -0.067], ["Q", 0.978, -0.10700000000000001, 0.888, -0.09500000000000001], ["C", 0.65, -0.067, 0.35, -0.01900000000000001, 0.122, 0.02499999999999999], ["Q", 0.062, 0.03299999999999999, 0.044, 0.03099999999999999], ["Z"]]]
 };
 
 function silPath(outline, P, Dp) {
@@ -453,28 +458,36 @@ function silPath(outline, P, Dp) {
   return p;
 }
 
-/* draw a ghosted foot or leg behind a segment drawn from P to Dp */
+/* draw a ghosted segment behind a bar drawn from P to Dp */
 function drawSil(c, kind, P, Dp, K) {
-  var o = kind === 'leg' ? SIL.leg : SIL.foot;
+  var o = kind === 'leg' ? SIL.leg : kind === 'thigh' ? SIL.thigh : SIL.foot;
+  var bones = kind === 'leg' ? SIL.legBones
+            : kind === 'thigh' ? SIL.thighBones : SIL.footBones;
   var p = silPath(o, P, Dp);
   c.save();
-  c.fillStyle = K.INK; c.globalAlpha = 0.10; c.fill(p);
-  c.globalAlpha = 0.30; c.strokeStyle = K.INK; c.lineWidth = 1.5; c.stroke(p);
-  if (kind !== 'leg') {
-    c.globalAlpha = 0.24; c.lineWidth = 1.2;
-    SIL.footDetail.forEach(function (d) { c.stroke(silPath(d, P, Dp)); });
-  }
+  c.fillStyle = K.INK; c.globalAlpha = 0.085; c.fill(p);
+  c.globalAlpha = 0.26; c.strokeStyle = K.INK; c.lineWidth = 1.5; c.stroke(p);
+  /* the bones, filled with the page colour so they read as light against
+     the tissue in either theme */
+  c.globalAlpha = 0.92;
+  c.lineWidth = 1.3;
+  bones.forEach(function (b) {
+    var q = silPath(b, P, Dp);
+    c.fillStyle = K.PLATE; c.fill(q);
+    c.save(); c.globalAlpha = 0.66; c.strokeStyle = K.INK; c.stroke(q);
+    c.restore();
+  });
   c.restore();
 }
 
 /* The pose the slide figures use, so the widgets can match them.
    Degrees below horizontal, proximal joint up-left, distal end down-right. */
-var SIL_DEG = { foot: 27.0, leg: 67.7 };
+var SIL_DEG = { foot: 27.0, leg: 67.7, thigh: 67.7 };
 
 /* Lay the segment bar inside `box` at that shared angle, centred, taking up
    `frac` of whichever of the box's dimensions runs out first. */
 function barAt(box, kind, frac) {
-  var t = (SIL_DEG[kind === 'leg' ? 'leg' : 'foot']) * Math.PI / 180;
+  var t = (SIL_DEG[kind] || SIL_DEG.foot) * Math.PI / 180;
   var ux = Math.cos(t), uy = Math.sin(t), f = frac || 0.70;
   var L = Math.min(box.w * f / ux, box.h * f / uy);
   var cx = box.x + box.w / 2, cy = box.y + box.h / 2;
@@ -972,7 +985,7 @@ D.register('chain', function (node) {
       table: 'm, I and the centre of mass of the leg',
       unk: ['F<sub>knee-x</sub>', 'F<sub>knee-y</sub>', 'M<sub>knee</sub>'],
       hand: 'the knee force and the knee moment go up to step 3' },
-    { seg: 'thigh', a: 'hip', b: 'knee', kind: null,
+    { seg: 'thigh', a: 'hip', b: 'knee', kind: 'thigh',
       name: 'the thigh', prox: 'hip', dist: 'the knee',
       known: ['F<sub>knee-x</sub>, F<sub>knee-y</sub> — from step 2, reversed',
               'M<sub>knee</sub> — from step 2, reversed',
@@ -1023,7 +1036,7 @@ D.register('chain', function (node) {
 
   function freebody(K, box, st) {
     /* the live segment, cut free and blown up */
-    var bb = barAt(box, st.kind || 'leg', 0.54);
+    var bb = barAt(box, st.kind, 0.54);
     var P = bb[0], Dp = bb[1];
     if (S.sil && st.kind) drawSil(c, st.kind, P, Dp, K);
     var Cg = [P[0] + (Dp[0] - P[0]) * 0.46, P[1] + (Dp[1] - P[1]) * 0.46];
