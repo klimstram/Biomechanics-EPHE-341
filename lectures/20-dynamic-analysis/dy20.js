@@ -1187,9 +1187,13 @@ D.register('chain', function (node) {
           { size: 12.5, align: 'right', color: K.ACC, weight: 700 });
 
     /* weight and the inertial terms */
-    arrow(c, Cg[0], Cg[1], Cg[0] - 40, Cg[1] + 28, { color: K.GRN, width: 2.2, head: 7 });
-    label(c, 'mg', Cg[0] - 48, Cg[1] + 42,
-          { size: 11.5, color: K.GRN, weight: 650 });
+    /* straight down, because that is where weight points.  It used to be
+       drawn off to the lower left to keep it clear of ma and Ia, which is
+       tidier and wrong -- in a lecture about resolving forces into x and y,
+       of all places. */
+    arrow(c, Cg[0], Cg[1], Cg[0], Cg[1] + 44, { color: K.GRN, width: 2.2, head: 7 });
+    label(c, 'mg', Cg[0] - 8, Cg[1] + 32,
+          { size: 11.5, align: 'right', color: K.GRN, weight: 650 });
     arrow(c, Cg[0], Cg[1], Cg[0] + 46, Cg[1], { color: K.MUT, width: 2, head: 7, dash: [5, 4] });
     arrow(c, Cg[0], Cg[1], Cg[0], Cg[1] - 40, { color: K.MUT, width: 2, head: 7, dash: [5, 4] });
     label(c, 'ma, Iα', Cg[0] + 54, Cg[1] - 20,
@@ -2620,15 +2624,19 @@ D.register('equil', function (node) {
    simulation of human movement when approximate muscle forces are input
    into models to replicate the performance of a movement."
 
-   So: a leg hanging from a fixed hip, two segments, with a torque you set
-   at each joint.  Press play and the equations of motion are integrated
-   forward.  Nothing is prescribed except the two torques; everything the
-   limb does is the answer.
+   Two things to drive, both of them the real equations of motion integrated
+   in time.  Nothing here is a recording.
 
-   This is the real thing, not an animation of a stored trajectory.  The
-   mass, length, centre of mass and radius of gyration of both segments
-   come off the same Dempster table the rest of the lecture uses, for the
-   same 55 kg subject, so the limb swinging here is her leg.
+   HANGING LEG.  A leg from a fixed hip, two segments, a torque you set at
+   each joint.  Press play and watch what the limb does about it.
+
+   CYCLING.  Both legs, a crank, and a flywheel.  The torques are no longer
+   constants: each joint gets a sinusoid locked to the CRANK ANGLE, which is
+   roughly what a muscle does -- it fires at a place in the cycle, not at a
+   time.  The feet are tied to the pedals by a stiff bushing and the crank
+   carries its own inertia against a resistance, so whether the thing turns
+   over at all is an OUTPUT.  Set the timing wrong by forty degrees and the
+   same muscle forces do nothing, which is the point.
 
    Absolute angles from the downward vertical, which keeps the mass matrix
    symmetric and the whole thing twelve lines:
@@ -2638,42 +2646,76 @@ D.register('equil', function (node) {
      C1  =  m2*l1*lc2*sin(f1-f2)*w2^2     C2 = -m2*l1*lc2*sin(f1-f2)*w1^2
      G1  = (m1*lc1 + m2*l1)*g*sin(f1)     G2 =  m2*lc2*g*sin(f2)
      Q1  = tau_hip - tau_knee             Q2 = tau_knee
+
+   plus, when the foot is on a pedal, the bushing force carried into each
+   coordinate through its own Jacobian.
    ====================================================================== */
-D.register('sim', function (node) {
-  var port = D.portrait();
-  var u = build(node, {});
-  var timer = null;
+var SIM = (function () {
+  var g = 9.81;
 
   /* Winter's table, for the 55 kg subject of the recording.  Link 2 is the
      leg and foot together, which is a row of the same table. */
-  var g = 9.81;
   var m1 = 5.500, l1 = 0.392, lc1 = 0.433 * l1, I1 = m1 * Math.pow(0.323 * l1, 2);
   var m2 = 3.355, l2 = 0.385, lc2 = 0.606 * l2, I2 = m2 * Math.pow(0.416 * l2, 2);
 
-  var S = { f1: 0.35, f2: 0.55, w1: 0, w2: 0, th: 0, tk: 0, t: 0,
-            trail: [], hip: [], knee: [] };
+  /* A limb is not a frictionless linkage.  Each joint carries a passive
+     stiffness toward a rest posture and a damper -- the passive joint
+     moments a musculoskeletal model carries -- which is what stops a
+     constant torque spinning the leg up for ever. */
+  var KH = 10, BH = 3.5, R1 = 0.0;       /* hip:  N·m/rad, N·m·s, rad */
+  var KK = 8, BK = 2.4, R2 = -0.30;      /* knee: rest is 17 deg of FLEXION */
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1340, h: port ? 820 : 352,
-                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
-  var c = ax.c;
+  /* The joints also have ends.  rel = f2 - f1 is positive when the shank is
+     carried AHEAD of the thigh, which at the knee means hyperextension: a
+     knee goes the other way.  Getting this backwards -- which is how it
+     shipped at first -- gives a leg that folds forwards at the knee and
+     cannot bend, and Marc spotted it straight away. */
+  var FLEX_MAX = 2.44;                   /* about 140 degrees */
+  var HIP_MIN = -0.52, HIP_MAX = 2.09;   /* 30 deg behind, 120 in front */
 
-  /* A limb is not a frictionless linkage.  Each joint gets a passive
-     stiffness toward a rest posture and a damper, which is what stops a
-     constant torque from spinning the leg up for ever -- and is the same
-     thing a musculoskeletal model carries as its passive joint moments.
-     Numbers chosen so the limb settles in about a second, the way a
-     relaxed leg does. */
-  var KH = 26, BH = 5.0, R1 = 0.0;          /* hip:  N·m/rad, N·m·s, rad */
-  var KK = 18, BK = 3.2, R2 = 0.30;         /* knee: measured from the thigh */
+  function hard(over, rate) { return -2600 * over - 50 * rate; }
 
-  /* and the knee cannot hyperextend: a stiff spring and damper once the
-     shank passes the thigh's line, which is a joint stop, not a muscle */
-  function stop(rel, dw) {
-    if (rel >= 0) return 0;
-    return -2600 * rel - 50 * dw;
+  function kneeStop(rel, dw) {
+    if (rel > 0) return hard(rel, dw);                    /* no hyperextension */
+    if (rel + FLEX_MAX < 0) return hard(rel + FLEX_MAX, dw);  /* folded up */
+    return 0;
+  }
+  function hipStop(f1, w1) {
+    if (f1 > HIP_MAX) return hard(f1 - HIP_MAX, w1);
+    if (f1 < HIP_MIN) return hard(f1 - HIP_MIN, w1);
+    return 0;
   }
 
-  function accel(f1, f2, w1, w2, th, tk) {
+  /* -------------------------------------------------------- the bicycle */
+  var CRANK = 0.170;                     /* crank length, m */
+  var BB = [0.120, 0.570];               /* bottom bracket, from the hip */
+  var KP = 12000, CP = 120;              /* foot-on-pedal bushing, N/m, N·s/m */
+  var ICR = 3.0;                         /* crank + flywheel, kg·m² */
+
+  function ankle(f1, f2) {
+    return [Math.sin(f1) * l1 + Math.sin(f2) * l2,
+            Math.cos(f1) * l1 + Math.cos(f2) * l2];
+  }
+  function knee(f1) { return [Math.sin(f1) * l1, Math.cos(f1) * l1]; }
+  function pedal(cr) {
+    return [BB[0] + Math.sin(cr) * CRANK, BB[1] + Math.cos(cr) * CRANK];
+  }
+
+  /* one leg's accelerations, and the torque it puts into the crank */
+  function limb(q, th, tk, cr, cw, onPedal) {
+    var f1 = q[0], f2 = q[1], w1 = q[2], w2 = q[3];
+    var F = [0, 0], Qc = 0, Q1 = 0, Q2 = 0;
+    if (onPedal) {
+      var a = ankle(f1, f2), p = pedal(cr);
+      var av = [Math.cos(f1) * l1 * w1 + Math.cos(f2) * l2 * w2,
+                -Math.sin(f1) * l1 * w1 - Math.sin(f2) * l2 * w2];
+      var pv = [Math.cos(cr) * CRANK * cw, -Math.sin(cr) * CRANK * cw];
+      F = [-KP * (a[0] - p[0]) - CP * (av[0] - pv[0]),
+           -KP * (a[1] - p[1]) - CP * (av[1] - pv[1])];
+      Qc = (-F[0]) * Math.cos(cr) * CRANK + F[1] * Math.sin(cr) * CRANK;
+      Q1 = F[0] * Math.cos(f1) * l1 - F[1] * Math.sin(f1) * l1;
+      Q2 = F[0] * Math.cos(f2) * l2 - F[1] * Math.sin(f2) * l2;
+    }
     var d = f1 - f2, cd = Math.cos(d), sd = Math.sin(d);
     var rel = f2 - f1, dw = w2 - w1;
     var M11 = I1 + m1 * lc1 * lc1 + m2 * l1 * l1;
@@ -2683,93 +2725,223 @@ D.register('sim', function (node) {
     var C2 = -m2 * l1 * lc2 * sd * w1 * w1;
     var G1 = (m1 * lc1 + m2 * l1) * g * Math.sin(f1);
     var G2 = m2 * lc2 * g * Math.sin(f2);
-    /* everything acting at each joint, applied plus passive plus the stop */
-    var TH = th - KH * (f1 - R1) - BH * w1;
-    var TK = tk - KK * (rel - R2) - BK * dw + stop(rel, dw);
-    var b1 = (TH - TK) - C1 - G1, b2 = TK - C2 - G2;
+    var TH = th - KH * (f1 - R1) - BH * w1 + hipStop(f1, w1);
+    var TK = tk - KK * (rel - R2) - BK * dw + kneeStop(rel, dw);
+    var b1 = (TH - TK) + Q1 - C1 - G1, b2 = TK + Q2 - C2 - G2;
     var det = M11 * M22 - M12 * M12;
-    return [(b1 * M22 - M12 * b2) / det, (M11 * b2 - M12 * b1) / det];
+    return { a: [(b1 * M22 - M12 * b2) / det, (M11 * b2 - M12 * b1) / det],
+             Qc: Qc, F: F };
   }
 
-  function step(dt) {
-    /* midpoint: good enough at 2 ms and it keeps the stop stable */
-    var a = accel(S.f1, S.f2, S.w1, S.w2, S.th, S.tk);
-    var hf1 = S.f1 + S.w1 * dt / 2, hf2 = S.f2 + S.w2 * dt / 2;
-    var hw1 = S.w1 + a[0] * dt / 2, hw2 = S.w2 + a[1] * dt / 2;
-    var b = accel(hf1, hf2, hw1, hw2, S.th, S.tk);
-    S.f1 += hw1 * dt; S.f2 += hw2 * dt;
-    S.w1 += b[0] * dt; S.w2 += b[1] * dt;
+  /* the muscle pattern: a sinusoid locked to the crank, not to the clock */
+  var PH_HIP = Math.PI, PH_KNEE = 330 * Math.PI / 180;
+  function drive(S, side) {
+    var c = S.cr + (side ? Math.PI : 0) + S.tim;
+    return [0.9 * S.eff * Math.sin(c + PH_HIP),
+            0.6 * S.eff * Math.sin(c + PH_KNEE)];
+  }
+
+  function deriv(S) {
+    if (S.mode !== 'cycle') {
+      var L0 = limb([S.f1, S.f2, S.w1, S.w2], S.th, S.tk, 0, 0, false);
+      return { near: L0.a, far: [0, 0], acr: 0, F: [0, 0] };
+    }
+    var dn = drive(S, 0), df = drive(S, 1);
+    var L = limb([S.f1, S.f2, S.w1, S.w2], dn[0], dn[1], S.cr, S.cw, true);
+    var R = limb([S.g1, S.g2, S.v1, S.v2], df[0], df[1],
+                 S.cr + Math.PI, S.cw, true);
+    return { near: L.a, far: R.a, acr: (L.Qc + R.Qc - S.res * S.cw) / ICR,
+             F: L.F };
+  }
+
+  /* midpoint: good enough at 2 ms and it keeps the stops stable */
+  var KEYS = ['f1', 'f2', 'w1', 'w2', 'g1', 'g2', 'v1', 'v2', 'cr', 'cw'];
+  function rates(S, d) {
+    return [S.w1, S.w2, d.near[0], d.near[1],
+            S.v1, S.v2, d.far[0], d.far[1], S.cw, d.acr];
+  }
+  function step(S, dt) {
+    var r1 = rates(S, deriv(S)), h = {}, i;
+    for (i = 0; i < KEYS.length; i++) h[KEYS[i]] = S[KEYS[i]] + r1[i] * dt / 2;
+    h.mode = S.mode; h.th = S.th; h.tk = S.tk;
+    h.eff = S.eff; h.tim = S.tim; h.res = S.res;
+    var d2 = deriv(h), r2 = rates(h, d2);
+    for (i = 0; i < KEYS.length; i++) S[KEYS[i]] += r2[i] * dt;
     S.t += dt;
+    S.pedalF = Math.hypot(d2.F[0], d2.F[1]);
+    return S;
   }
 
-  function reset() {
-    S.f1 = 0.35; S.f2 = 0.55; S.w1 = 0; S.w2 = 0; S.t = 0;
-    S.trail = []; S.hip = []; S.knee = [];
+  /* put a leg on a pedal: the elbow-down solution, which is the only one a
+     knee can do */
+  function place(cr) {
+    var p = pedal(cr), d = Math.min(Math.hypot(p[0], p[1]), l1 + l2 - 1e-4);
+    var cl = function (v) { return Math.max(-1, Math.min(1, v)); };
+    var k = Math.acos(cl((l1 * l1 + l2 * l2 - d * d) / (2 * l1 * l2)));
+    var base = Math.atan2(p[0], p[1]);
+    var a1 = base + Math.acos(cl((l1 * l1 + d * d - l2 * l2) / (2 * l1 * d)));
+    return [a1, a1 - (Math.PI - k)];
+  }
+
+  function fresh(mode) {
+    var S = { mode: mode, t: 0, th: 0, tk: 0, eff: 65, tim: 0, res: 4.0,
+              pedalF: 0 };
+    if (mode === 'cycle') {
+      S.cr = Math.PI; S.cw = -45 * 2 * Math.PI / 60;   /* a push to start */
+      var n = place(S.cr), f = place(S.cr + Math.PI);
+      S.f1 = n[0]; S.f2 = n[1]; S.g1 = f[0]; S.g2 = f[1];
+    } else {
+      S.cr = 0; S.cw = 0;
+      S.f1 = 0.35; S.f2 = 0.05; S.g1 = 0; S.g2 = 0;
+    }
+    S.w1 = S.w2 = S.v1 = S.v2 = 0;
+    return S;
+  }
+
+  return { step: step, fresh: fresh, ankle: ankle, knee: knee, pedal: pedal,
+           place: place, drive: drive,
+           L1: l1, L2: l2, CRANK: CRANK, BB: BB, ICR: ICR,
+           FLEX_MAX: FLEX_MAX, HIP_MIN: HIP_MIN, HIP_MAX: HIP_MAX };
+})();
+
+D.register('sim', function (node) {
+  var port = D.portrait();
+  var u = build(node, {});
+  var timer = null;
+  var S = SIM.fresh('hang');
+  var hist = { pc: [], hip: [], knee: [] };
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1340, h: port ? 760 : 296,
+                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
+  var c = ax.c;
+
+  function reset(mode) {
+    S = SIM.fresh(mode || S.mode);
+    S.eff = +sEff.input.value; S.res = +sRes.input.value;
+    S.tim = +sTim.input.value * Math.PI / 180;
+    S.th = +sTh.input.value; S.tk = +sTk.input.value;
+    hist = { pc: [], hip: [], knee: [] };
     draw();
   }
 
   function draw() {
-    var K = C();
+    var K = C(), cyc = S.mode === 'cycle';
     ax.clear();
-    var gH = port ? 150 : 148;
+    var gH = port ? 140 : 126;
     var gTop = port ? ax.H - 2 * gH - 12 : ax.H - gH - 6;
 
-    var box = { x: 8, y: 10, w: port ? ax.W - 16 : ax.W * 0.36,
+    /* the figure is limited by height, not width, so a third of the canvas
+       is a third of it empty: give the panel only what the drawing uses and
+       let the numbers have the rest */
+    var box = { x: 8, y: 10, w: port ? ax.W - 16 : ax.W * 0.27,
                 h: port ? 330 : ax.H - 18 };
-    var HIP = [box.x + box.w * 0.52, box.y + 34];
-    var sk = Math.min(box.w * 0.62 / 0.78, (box.h - 52) / 0.86);
+    /* one world box, one scale on both axes, or the leg comes out bandy */
+    var X0 = cyc ? -0.26 : -0.52, X1 = cyc ? 0.46 : 0.52;
+    var Y0 = cyc ? -0.17 : -0.10, Y1 = cyc ? 0.82 : 0.88;
+    var sk = Math.min(box.w / (X1 - X0), box.h / (Y1 - Y0));
+    var HIP = [box.x + box.w / 2 - (X0 + X1) / 2 * sk,
+               box.y + 6 - Y0 * sk];
+    function W(p) { return [HIP[0] + p[0] * sk, HIP[1] + p[1] * sk]; }
 
-    function P(f, L, from) {
-      return [from[0] + Math.sin(f) * L * sk, from[1] + Math.cos(f) * L * sk];
+    /* ------------------------------------------------------ the bicycle.
+       Order matters: frame, then the far leg faintly, then the near leg,
+       then the near crank on top of it -- the foot is on the pedal, so the
+       pedal has to be the thing you can see. */
+    var bb = cyc ? W(SIM.BB) : null;
+    if (cyc) {
+      c.save();
+      c.strokeStyle = K.MUT; c.globalAlpha = 0.45;
+      c.lineWidth = 6; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(HIP[0], HIP[1]); c.lineTo(bb[0], bb[1]); c.stroke();
+      c.lineWidth = 8;                                     /* the saddle */
+      c.beginPath();
+      c.moveTo(HIP[0] - 0.105 * sk, HIP[1] - 0.012 * sk);
+      c.lineTo(HIP[0] + 0.030 * sk, HIP[1] - 0.004 * sk);
+      c.stroke();
+      c.globalAlpha = 1;
+      c.strokeStyle = K.GRID; c.lineWidth = 1.6; c.setLineDash([5, 4]);
+      c.beginPath(); c.arc(bb[0], bb[1], SIM.CRANK * sk, 0, 7); c.stroke();
+      c.restore();
     }
-    var KNEE = P(S.f1, l1, HIP);
-    var ANK = P(S.f2, l2, KNEE);
 
-    /* where the toe has been */
-    S.trail.push([ANK[0], ANK[1]]);
-    if (S.trail.length > 150) S.trail.shift();
-    c.save(); c.strokeStyle = K.ACC; c.globalAlpha = 0.28; c.lineWidth = 2;
-    c.beginPath();
-    S.trail.forEach(function (q, i) {
-      if (i === 0) c.moveTo(q[0], q[1]); else c.lineTo(q[0], q[1]);
-    });
-    c.stroke(); c.restore();
+    function crankArm(ang, alpha) {
+      var p = W(SIM.pedal(ang));
+      c.save(); c.globalAlpha = alpha;
+      c.strokeStyle = K.MUT; c.lineWidth = 5; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(bb[0], bb[1]); c.lineTo(p[0], p[1]); c.stroke();
+      c.fillStyle = K.INK; c.fillRect(p[0] - 12, p[1] - 3.5, 24, 7);
+      c.restore();
+    }
 
-    drawSil(c, 'thigh', HIP, KNEE, K);
-    drawSil(c, 'leg', KNEE, ANK, K);
-    c.save(); c.strokeStyle = K.INK; c.lineWidth = 7; c.lineCap = 'round';
-    c.beginPath(); c.moveTo(HIP[0], HIP[1]); c.lineTo(KNEE[0], KNEE[1]);
-    c.lineTo(ANK[0], ANK[1]); c.stroke();
-    c.fillStyle = K.INK;
-    [HIP, KNEE, ANK].forEach(function (q) {
-      c.fillRect(q[0] - 6.5, q[1] - 6.5, 13, 13);
-    });
-    c.restore();
+    /* the far leg: a plain stick.  A second silhouette with its own skeleton
+       inside it, on top of the first, is unreadable. */
+    function ghostLeg(f1, f2) {
+      var KN = W(SIM.knee(f1)), AN = W(SIM.ankle(f1, f2));
+      c.save(); c.globalAlpha = 0.24;
+      c.strokeStyle = K.MUT; c.lineWidth = 14;
+      c.lineCap = 'round'; c.lineJoin = 'round';
+      c.beginPath(); c.moveTo(HIP[0], HIP[1]); c.lineTo(KN[0], KN[1]);
+      c.lineTo(AN[0], AN[1]); c.stroke();
+      c.restore();
+    }
 
-    /* the two torques, drawn the way they are set */
-    [[HIP, S.th, 'hip', K.ACC], [KNEE, S.tk, 'knee', K.GRN]].forEach(function (z) {
-      if (Math.abs(z[1]) < 1) return;
-      spin(c, z[0][0], z[0][1], 28, z[1] > 0, { color: z[3], width: 3.4 });
-      label(c, fmt(z[1], 0) + ' N·m', z[0][0] - 36, z[0][1] - 24,
-            { size: 12, align: 'right', color: z[3], weight: 700, plate: true });
+    function drawLeg(f1, f2) {
+      var KN = W(SIM.knee(f1)), AN = W(SIM.ankle(f1, f2));
+      drawSil(c, 'thigh', HIP, KN, K);
+      drawSil(c, 'leg', KN, AN, K);
+      c.save();
+      c.strokeStyle = K.INK; c.lineWidth = 7; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(HIP[0], HIP[1]); c.lineTo(KN[0], KN[1]);
+      c.lineTo(AN[0], AN[1]); c.stroke();
+      c.fillStyle = K.INK;
+      [HIP, KN, AN].forEach(function (q) {
+        c.fillRect(q[0] - 6.5, q[1] - 6.5, 13, 13);
+      });
+      c.restore();
+      return [KN, AN];
+    }
+
+    if (cyc) { ghostLeg(S.g1, S.g2); crankArm(S.cr + Math.PI, 0.28); }
+    var near = drawLeg(S.f1, S.f2);
+    if (cyc) {
+      crankArm(S.cr, 1);
+      c.save(); c.fillStyle = K.INK;
+      c.beginPath(); c.arc(bb[0], bb[1], 4.5, 0, 7); c.fill(); c.restore();
+    }
+
+    /* the two torques, drawn the way they are being applied */
+    var dr = cyc ? SIM.drive(S, 0) : [S.th, S.tk];
+    [[HIP, dr[0], K.ACC], [near[0], dr[1], K.GRN]].forEach(function (z) {
+      if (Math.abs(z[1]) < 1.5) return;
+      spin(c, z[0][0], z[0][1], 26, z[1] > 0, { color: z[2], width: 3.2 });
+      label(c, fmt(z[1], 0) + ' N·m', z[0][0] - 34, z[0][1] - 22,
+            { size: 12, align: 'right', color: z[2], weight: 700, plate: true });
     });
-    label(c, 'hip, fixed', HIP[0] + 22, HIP[1] - 16,
+    label(c, cyc ? 'hip, on the saddle' : 'hip, fixed',
+          HIP[0] + (cyc ? 0.05 * sk : 20), HIP[1] - (cyc ? 0.055 * sk : 14),
           { size: 11.5, align: 'left', color: K.MUT, weight: 650 });
-    label(c, fmt(S.t, 2) + ' s', box.x + box.w / 2, box.y + box.h - 4,
-          { size: 13, weight: 700, color: K.INK });
+    label(c, fmt(S.t, 2) + ' s', box.x + 6, box.y + 14,
+          { size: 13, weight: 700, color: K.INK, align: 'left' });
 
     /* ------------------------------------------------- what is going on */
     var px = port ? 16 : box.x + box.w + 22;
     var pw = port ? ax.W - 32 : ax.W - px - 18;
-    var py = port ? box.y + box.h + 30 : 30;
-    var rows = [
-      ['you set', fmt(S.th, 0) + ' N·m at the hip, ' + fmt(S.tk, 0) +
-       ' at the knee', K.ACC],
-      ['the equations give', 'hip ' + fmt(S.f1 * 180 / Math.PI, 0) + '°, knee ' +
-       fmt((S.f2 - S.f1) * 180 / Math.PI, 0) + '° of flexion', K.INK],
-      ['turning at', fmt(S.w1, 2) + ' and ' + fmt(S.w2 - S.w1, 2) + ' rad/s',
-       K.BLUE]
-    ];
+    var py = port ? box.y + box.h + 26 : 26;
+    var rpm = -S.cw * 60 / (2 * Math.PI);
+    var rows = cyc
+      ? [['you set', fmt(S.eff, 0) + ' % effort, timing ' +
+          num(S.tim * 180 / Math.PI, 0) + '°', K.ACC],
+         ['the crank turns at', fmt(Math.abs(rpm), 0) + ' rpm' +
+          (rpm < -1 ? ' — backwards' : ''), K.INK],
+         ['and it takes', fmt(S.res * S.cw * S.cw, 0) + ' W at the crank, ' +
+          fmt(S.pedalF, 0) + ' N on the pedal', K.BLUE]]
+      : [['you set', fmt(S.th, 0) + ' N·m at the hip, ' + fmt(S.tk, 0) +
+          ' at the knee', K.ACC],
+         ['the equations give', 'hip ' + fmt(S.f1 * 180 / Math.PI, 0) +
+          '°, knee ' + fmt((S.f1 - S.f2) * 180 / Math.PI, 0) + '° of flexion',
+          K.INK],
+         ['turning at', fmt(S.w1, 2) + ' and ' + fmt(S.w1 - S.w2, 2) + ' rad/s',
+          K.BLUE]];
     rows.forEach(function (r, i) {
       var yy = py + i * (port ? 64 : 62);
       label(c, r[0], px, yy, { size: 12.5, align: 'left', weight: 650,
@@ -2778,27 +2950,58 @@ D.register('sim', function (node) {
                                     color: r[2] });
     });
 
-    S.hip.push(S.f1 * 180 / Math.PI);
-    S.knee.push((S.f2 - S.f1) * 180 / Math.PI);
-    if (S.hip.length > 240) { S.hip.shift(); S.knee.shift(); }
-    var pc = S.hip.map(function (_, i) { return i / Math.max(1, S.hip.length - 1) * 100; });
+    hist.hip.push(S.f1 * 180 / Math.PI);
+    hist.knee.push((S.f1 - S.f2) * 180 / Math.PI);
+    if (hist.hip.length > 240) { hist.hip.shift(); hist.knee.shift(); }
+    var pc = hist.hip.map(function (_, i) {
+      return i / Math.max(1, hist.hip.length - 1) * 100;
+    });
     strip(c, K, { x: px - 4, y: gTop, w: pw + 4, h: gH }, {
-      pc: pc, k: S.hip.length - 1,
+      pc: pc, k: hist.hip.length - 1,
       title: 'What the limb then does, over the last few seconds',
       unit: 'degrees',
       fmt: function (v) { return fmt(v, 0) + '°'; },
-      series: [{ v: S.hip, col: K.ACC, lab: 'hip' },
-               { v: S.knee, col: K.GRN, lab: 'knee flexion' }]
+      series: [{ v: hist.hip, col: K.ACC, lab: 'hip' },
+               { v: hist.knee, col: K.GRN, lab: 'knee flexion' }]
     });
   }
 
+  /* ---------------------------------------------------------- controls */
   u.ctl.className = 'ictls g2';
-  slider(u.ctl, 'Torque at the hip', -40, 40, 1, 0,
-         function (v) { return fmt(v, 0) + ' N·m'; },
-         function (v) { S.th = +v; draw(); });
-  slider(u.ctl, 'Torque at the knee', -40, 40, 1, 0,
-         function (v) { return fmt(v, 0) + ' N·m'; },
-         function (v) { S.tk = +v; draw(); });
+  var modeRow = ctlRow(u.ctl);
+  seg(modeRow, [['hang', 'A leg, and two torques'],
+                ['cycle', 'Pedalling']], 'hang', function (v) {
+    if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Run it'; }
+    show(v); reset(v);
+  });
+  keepOut(modeRow);
+
+  var sTh = slider(u.ctl, 'Torque at the hip', -40, 40, 1, 0,
+                   function (v) { return fmt(v, 0) + ' N·m'; },
+                   function (v) { S.th = +v; draw(); });
+  var sTk = slider(u.ctl, 'Torque at the knee', -40, 40, 1, 0,
+                   function (v) { return fmt(v, 0) + ' N·m'; },
+                   function (v) { S.tk = +v; draw(); });
+  var sEff = slider(u.ctl, 'Effort', 20, 100, 1, 65,
+                    function (v) { return fmt(v, 0) + ' %'; },
+                    function (v) { S.eff = +v; draw(); });
+  var sTim = slider(u.ctl, 'Timing of the push', -90, 90, 5, 0,
+                    function (v) { return num(v, 0) + '°'; },
+                    function (v) { S.tim = +v * Math.PI / 180; draw(); });
+  var sRes = slider(u.ctl, 'Resistance', 1, 8, 0.5, 4,
+                    function (v) { return fmt(v, 1); },
+                    function (v) { S.res = +v; draw(); });
+
+  function show(mode) {
+    var cyc = mode === 'cycle';
+    sTh.row.style.display = cyc ? 'none' : '';
+    sTk.row.style.display = cyc ? 'none' : '';
+    sEff.row.style.display = cyc ? '' : 'none';
+    sTim.row.style.display = cyc ? '' : 'none';
+    sRes.row.style.display = cyc ? '' : 'none';
+    rd.innerHTML = cyc ? TEXT.cycle : TEXT.hang;
+  }
+
   var row = ctlRow(u.ctl);
   var pb = playBtn(row, '▶ Run it');
   pb.setAttribute('data-unsafe', '1');
@@ -2806,7 +3009,7 @@ D.register('sim', function (node) {
     if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Run it'; return; }
     pb.textContent = '❚❚ Pause';
     timer = setInterval(function () {
-      for (var i = 0; i < 8; i++) step(0.002);
+      for (var i = 0; i < 8; i++) SIM.step(S, 0.002);
       draw();
     }, 16);
   });
@@ -2823,16 +3026,25 @@ D.register('sim', function (node) {
   };
 
   var rd = readout(u.ctl);
-  rd.innerHTML = 'Forward dynamics, run forwards. You set two torques; ' +
-    'everything else is the equations of motion integrated in time. The ' +
-    'segment masses, lengths and inertias are the same subject&rsquo;s, off ' +
-    'the same table; each joint also carries a passive stiffness and a damper, ' +
-    'as a musculoskeletal model does. <b>Nothing here is a recording</b> ' +
-    '&mdash; change a torque and the movement changes, which is what a ' +
-    'simulation is for and what you cannot do to a person.';
+  var TEXT = {
+    hang: 'Forward dynamics, run forwards. You set two torques; everything ' +
+      'else is the equations of motion integrated in time. Masses, lengths ' +
+      'and inertias are the same subject&rsquo;s, off the same table, and ' +
+      'each joint carries a passive stiffness, a damper and its own end ' +
+      'stops. <b>Nothing here is a recording</b> &mdash; change a torque ' +
+      'and the movement changes, which is what you cannot do to a person.',
+    cycle: 'Both legs, a crank, a flywheel and a resistance. Each joint ' +
+      'gets a sinusoid <b>locked to the crank angle</b>, which is nearer to ' +
+      'what a muscle does than a constant torque: it fires at a place in ' +
+      'the cycle. Nothing about the cadence is prescribed &mdash; ' +
+      '<b>whether the thing turns over at all is the answer, not the ' +
+      'input</b>. Move the timing forty degrees and the same forces do ' +
+      'nothing.'
+  };
+  show('hang');
 
   node._draw = draw;
-  draw();
+  reset('hang');
 });
 
 /* ======================================================================
@@ -2918,6 +3130,9 @@ window.DY = { dyn: dyn, walkAt: walkAt, comAt: comAt, cross: cross,
               fwdSolve: fwdSolve, tutorSolve: tutorSolve, G: G,
               /* the angles every method figure is drawn at, so the self-test
                  can check they are angles this subject's stride reaches */
-              SIL_DEG: SIL_DEG };
+              SIL_DEG: SIL_DEG,
+              /* the forward-dynamics model behind the `sim` widget, so the
+                 self-test drives the shipped code rather than a copy */
+              SIM: SIM };
 D.boot();
 })();

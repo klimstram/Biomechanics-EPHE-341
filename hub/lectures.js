@@ -391,15 +391,15 @@ window.EPHE341_LECTURES = [
            'and add to I\u03b1; the worked example line by line; and the whole method ' +
            'run on a measured stride and marked against the joint moments the people ' +
            'who recorded it published. A two-segment leg is also simulated ' +
-           'forwards from two torques you set, which is the direction you ' +
-           'cannot run on a person. Hover any term in an equation and it ' +
-           'lights up on the diagram.',
+           'forwards from torques you set \u2014 and then both legs on a crank, ' +
+           'where the cadence is the answer rather than the input. Hover any ' +
+           'term in an equation and it lights up on the diagram.',
     slides: 51, widgets: 11, updated: '2026-10-10',
     handout: 'handout.pdf',
     live: [['a measured stride, differentiated', 'w-equil'],
            ['the same free body, with and without acceleration', 'w-newton'],
            ['the four forward-dynamics examples', 'w-fwd'],
-           ['two torques in, the movement out', 'w-sim'],
+           ['a leg, and then a bicycle, from torques alone', 'w-sim'],
            ['why the order is forced', 'w-chain'],
            ['every segment carries four moments', 'w-moments4'],
            ['the free body on a measured stride', 'w-fbd20'],
