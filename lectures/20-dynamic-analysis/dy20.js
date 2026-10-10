@@ -412,6 +412,49 @@ function strip(c, K, box, o) {
   }
 }
 
+/* ---------------------------------------------------------------------
+   The measured walker, on canvas.  Same body the slide SVGs draw, so the
+   person on the opening slide and the person at the end are one person.
+
+   The recording carries the lower limbs and one upper-body marker, and
+   that marker sits about 115 mm behind the hips at every instant -- it is
+   a posterior marker, not the centre of the head -- so the trunk is drawn
+   upright at the height it was measured at rather than through it.
+   --------------------------------------------------------------------- */
+function walkerC(c, P, sc, o) {
+  o = o || {};
+  var K = o.K, w = o.w == null ? 3.2 : o.w, hr = o.head == null ? 8 : o.head;
+  var NEARL = [['hipR', 'kneeR'], ['kneeR', 'ankR'], ['ankR', 'heelR'],
+               ['ankR', 'metR'], ['heelR', 'metR']];
+  var FARL = [['hipL', 'kneeL'], ['kneeL', 'ankL'], ['ankL', 'heelL'],
+              ['ankL', 'metL'], ['heelL', 'metL']];
+  function run(list) {
+    c.beginPath();
+    list.forEach(function (s) {
+      var a = sc(P[s[0]][0], P[s[0]][1]), b = sc(P[s[1]][0], P[s[1]][1]);
+      c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]);
+    });
+    c.stroke();
+  }
+  var hx = (P.hipR[0] + P.hipL[0]) / 2, hy = (P.hipR[1] + P.hipL[1]) / 2;
+  var n = sc(hx, hy), t = sc(hx, P.head[1]);
+
+  c.save();
+  c.strokeStyle = o.col || K.INK; c.lineWidth = w;
+  c.lineCap = 'round'; c.lineJoin = 'round';
+  c.globalAlpha = (o.alpha == null ? 1 : o.alpha) * 0.38;
+  run(FARL);
+  c.globalAlpha = (o.alpha == null ? 1 : o.alpha);
+  run(NEARL);
+  c.beginPath();
+  var pr = sc(P.hipR[0], P.hipR[1]), pl = sc(P.hipL[0], P.hipL[1]);
+  c.moveTo(pr[0], pr[1]); c.lineTo(pl[0], pl[1]);
+  c.moveTo(t[0], t[1] + hr); c.lineTo(n[0], n[1]);
+  c.stroke();
+  c.beginPath(); c.arc(t[0], t[1], hr, 0, 7); c.stroke();
+  c.restore();
+}
+
 /* ======================================================================
    The segment silhouettes, for canvas.
 
@@ -646,6 +689,61 @@ function force(c, sc, x, y, fx, fy, scale, col, lab, o) {
   return [tx, ty];
 }
 
+/* ---------------------------------------------------------------------
+   The whole-body centre of mass across the stride, and what it is doing.
+
+   Winter's table applied to the segments the recording actually carries:
+   both thighs, both shanks, both feet, and everything above the hips
+   lumped at HAT.  Differentiated periodically -- a stride is a closed
+   cycle, and the stride's forward travel is added back on each wrap so x
+   stays monotonic -- because both ends of a 69-sample record are late
+   swing, where this matters most.
+   --------------------------------------------------------------------- */
+var COMW = (function () {
+  var W = DD && DD.walk; if (!W) return null;
+  var SEG = [['hipR', 'kneeR', 0.100, 0.433], ['kneeR', 'ankR', 0.0465, 0.433],
+             ['ankR', 'metR', 0.0145, 0.500], ['hipL', 'kneeL', 0.100, 0.433],
+             ['kneeL', 'ankL', 0.0465, 0.433], ['ankL', 'metL', 0.0145, 0.500]];
+  var HAT = 0.678, HATC = 0.626;
+  var n = W.nf, x = [], y = [], i, j;
+  for (i = 0; i < n; i++) {
+    var mx = 0, my = 0, mt = 0;
+    for (j = 0; j < SEG.length; j++) {
+      var s = SEG[j];
+      var ax = W.fig[s[0]][0][i] / 100, ay = W.fig[s[0]][1][i] / 100;
+      var bx = W.fig[s[1]][0][i] / 100, by = W.fig[s[1]][1][i] / 100;
+      mx += s[2] * (ax + (bx - ax) * s[3]);
+      my += s[2] * (ay + (by - ay) * s[3]);
+      mt += s[2];
+    }
+    var hx = (W.fig.hipR[0][i] + W.fig.hipL[0][i]) / 200;
+    var hy = (W.fig.hipR[1][i] + W.fig.hipL[1][i]) / 200;
+    var up = W.fig.head[1][i] / 100 - hy;
+    mx += HAT * hx; my += HAT * (hy + up * HATC); mt += HAT;
+    x.push(mx / mt); y.push(my / mt);
+  }
+  /* periodic central difference, with the stride's travel added on a wrap */
+  /* The travel per cycle has to come off the data, not off W.stride_m: that
+     number is rounded to the millimetre, and 0.4 mm over dt squared is
+     1.4 m/s2 of nonsense in the two frames either side of the wrap.  Frame
+     n-1 is frame 0 one stride later, exactly, so the difference is exact. */
+  var dt = W.cycle_s / (n - 1), S = x[n - 1] - x[0];
+  function at(i) { return ((i % (n - 1)) + (n - 1)) % (n - 1); }
+  function wrapx(i) {
+    var laps = Math.floor(i / (n - 1));
+    return x[at(i)] + laps * S;
+  }
+  function wrapy(i) { return y[at(i)]; }
+  var vx = [], vy = [], ax2 = [], ay2 = [];
+  for (i = 0; i < n; i++) {
+    vx.push((wrapx(i + 1) - wrapx(i - 1)) / (2 * dt));
+    vy.push((wrapy(i + 1) - wrapy(i - 1)) / (2 * dt));
+    ax2.push((wrapx(i + 1) - 2 * wrapx(i) + wrapx(i - 1)) / (dt * dt));
+    ay2.push((wrapy(i + 1) - 2 * wrapy(i) + wrapy(i - 1)) / (dt * dt));
+  }
+  return { x: x, y: y, vx: vx, vy: vy, ax: ax2, ay: ay2, dt: dt };
+})();
+
 /* ======================================================================
    1. NEWTON — the right-hand side
 
@@ -813,14 +911,23 @@ D.register('fwd', function (node) {
   var port = D.portrait();
   var u = build(node, {});
   if (!DD) return;
-  var Q = DD.fwd, S = { i: 0 };
+  /* One slide per example, each pinned with data-case, and a slider on the
+     first force so the law is something they can move rather than read. */
+  var FIX = node.getAttribute('data-case');
+  var Q = DD.fwd, S = { i: FIX == null ? 0 : (+FIX - 1), sc: 1 };
 
   var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 600 : 400,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
 
   function draw() {
-    var K = C(), q = Q[S.i], r = fwdSolve(q);
+    var K = C(), q0 = Q[S.i];
+    /* the first force is the one the slider moves; at 1.0 everything is
+       exactly the number printed on his slide */
+    var q = { n: q0.n, q: q0.q, kind: q0.kind, m: q0.m, I: q0.I, d: q0.d,
+              ans: q0.ans, u: q0.u,
+              F: q0.F.map(function (v, i) { return i ? v : v * S.sc; }) };
+    var r = fwdSolve(q);
     ax.clear();
     var fw = port ? ax.W : ax.W * 0.52;
 
@@ -883,8 +990,8 @@ D.register('fwd', function (node) {
     /* ----------------------------- the working ----------------------- */
     var px = port ? 16 : fw + 14, pw = port ? ax.W - 32 : ax.W - fw - 30;
     var py = port ? box.y + box.h + 44 : 56;
-    py = wrapLabel(c, q.q, px + pw / 2, py, pw,
-                   { size: 12.5, weight: 650, color: K.INK }) + 10;
+    py = wrapLabel(c, q0.q, px + pw / 2, py, pw,
+                   { size: 14, weight: 650, color: K.INK }) + 10;
     var lines = q.kind === 'lin'
       ? [[r.sym, 'the forces all act through the centre of gravity, so ' +
           'nothing turns'],
@@ -901,14 +1008,17 @@ D.register('fwd', function (node) {
           fmt(r.ans, 2) + ' ' + r.u, '']];
     lines.forEach(function (ln, i) {
       var yy = py + 44 + i * (port ? 52 : 62);
-      label(c, ln[0], px, yy, { size: 13.5, align: 'left', weight: 700,
+      label(c, ln[0], px, yy, { size: i === 2 ? 19 : 16, align: 'left',
+                                weight: 700,
                                 color: i === 2 ? K.ACC : K.INK });
-      if (ln[1]) wrapLabel(c, ln[1], px, yy + 42, pw,
-                           { size: 11, align: 'left', color: K.MUT });
+      if (ln[1]) wrapLabel(c, ln[1], px, yy + 44, pw,
+                           { size: 12, align: 'left', color: K.MUT });
     });
 
-    var ok = Math.abs(r.ans - q.ans) < 0.02;
-    label(c, ok ? 'the slide too' : 'the slide says ' + fmt(q.ans, 2),
+    var ok = S.sc === 1 && Math.abs(r.ans - q.ans) < 0.02;
+    label(c, ok ? 'the slide too'
+            : S.sc === 1 ? 'the slide says ' + fmt(q.ans, 2)
+            : 'at ' + fmt(S.sc, 2) + ' × the first force; his slide has it at 1',
           px, py + 44 + 3 * (port ? 52 : 62) - 10,
           { size: 12, align: 'left', weight: 650, color: ok ? K.GRN : K.ACC });
 
@@ -926,16 +1036,23 @@ D.register('fwd', function (node) {
               { size: 11.5, color: q.kind === 'ang' ? K.ACC : K.MUT });
   }
 
-  u.ctl.className = 'ictls';
-  var row = ctlRow(u.ctl);
-  keepOut(seg(row, Q.map(function (q, i) { return [i, '#' + q.n]; }), 0,
-              function (v) { S.i = +v; draw(); }));
+  u.ctl.className = 'ictls g2';
+  var F0 = Q[S.i].F[0];
+  slider(u.ctl, Q[S.i].kind === 'lin' ? 'The first force' : 'The first force',
+         0.2, 2.0, 0.05, 1,
+         function (v) { return fmt(F0 * v, 0) + ' N'; },
+         function (v) { S.sc = +v; draw(); });
+  if (FIX == null) {
+    var row = ctlRow(u.ctl);
+    keepOut(seg(row, Q.map(function (q, i) { return [i, '#' + q.n]; }), 0,
+                function (v) { S.i = +v; draw(); }));
+  }
   var rd = readout(u.ctl);
-  rd.innerHTML = 'Four problems, one equation each, and between them they are ' +
-    'the whole of forward dynamics: <b>known forces in, motion out</b>. Two ' +
-    'linear, two angular. Nothing here needs a free body diagram with unknowns ' +
-    'in it, which is exactly what makes the inverse problem — the rest of this ' +
-    'lecture — harder.';
+  rd.innerHTML = 'Forward dynamics: <b>known forces in, motion out</b>. Move ' +
+    'the slider and watch the answer follow it in proportion — that is the ' +
+    'whole of the second law. Nothing here needs a free body diagram with ' +
+    'unknowns in it, which is exactly what makes the inverse problem — the ' +
+    'rest of this lecture — harder.';
 
   node._draw = draw;
   draw();
@@ -1610,9 +1727,9 @@ D.register('swing', function (node) {
   var port = D.portrait();
   var u = build(node, {});
   if (!DD) return;
-  var S = { c: 'swing', step: 3 };
+  var S = { c: 'swing', step: 3, gf: 1 };
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 680 : 400,
+  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 680 : 360,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
 
@@ -1662,8 +1779,20 @@ D.register('swing', function (node) {
     ];
   }
 
+  /* The seven slides before this one walk the arithmetic line by line, so
+     the widget earns its place by doing the thing they cannot: sweeping the
+     ground reaction force from nothing to full and watching the ankle moment
+     go with it.  At 0 the stance example IS the swing case; at 1 it is his
+     Example 2.  The method never changes; only one input does. */
+  function cased() {
+    var c0 = DD.ex[S.c];
+    if (S.gf === 1) return c0;
+    return { name: c0.name, src: c0.src, foot: c0.foot, leg: c0.leg,
+             ans: c0.ans, grf: [c0.grf[0] * S.gf, c0.grf[1] * S.gf] };
+  }
+
   function draw() {
-    var K = C(), cse = DD.ex[S.c], r = dyn(cse), ST = steps(cse, r)[S.step];
+    var K = C(), cse = cased(), r = dyn(cse), ST = steps(cse, r)[S.step];
     ax.clear();
     var fw = port ? ax.W : ax.W * 0.37;
 
@@ -1726,13 +1855,15 @@ D.register('swing', function (node) {
     });
 
     /* and what the slide prints */
-    var yy = py + (port ? 232 : 250);
+    var yy = py + (port ? 232 : 214);
     ST.nm.forEach(function (nm, i) {
-      var ok = Math.abs(ST.got[i] - ST.ans[i]) <= Math.max(0.055,
+      var ok = S.gf === 1 && Math.abs(ST.got[i] - ST.ans[i]) <= Math.max(0.055,
                Math.abs(ST.ans[i]) * 0.0012);
       label(c, nm, px, yy + i * 26,
             { size: 11, align: 'left', color: K.MUT, weight: 650 });
-      label(c, ok ? 'the slide too' : 'the slide: ' + num(ST.ans[i], 2),
+      label(c, ok ? 'the slide too'
+            : S.gf !== 1 ? 'at ' + fmt(S.gf * 100, 0) + ' % of the ground force'
+            : 'the slide: ' + num(ST.ans[i], 2),
             px + (port ? 150 : 180), yy + i * 26,
             { size: 11.5, align: 'left', weight: 700,
               color: ok ? K.GRN : K.ACC });
@@ -1747,22 +1878,25 @@ D.register('swing', function (node) {
       { size: 11.5, color: K.MUT });
   }
 
-  u.ctl.className = 'ictls';
+  u.ctl.className = 'ictls g2';
+  var gs = slider(u.ctl, 'How much ground force', 0, 1, 0.02, 1,
+                  function (v) { return fmt(v * 100, 0) + ' %'; },
+                  function (v) { S.gf = +v; draw(); });
   var row = ctlRow(u.ctl);
   keepOut(seg(row, [['swing', 'The swing example'],
                     ['stance', 'Example 2, in stance']], 'swing',
-              function (v) { S.c = v; draw(); }));
+              function (v) { S.c = v; gs.quiet(1); S.gf = 1; draw(); }));
   var row2 = ctlRow(u.ctl);
   keepOut(seg(row2, [[0, 'Foot: forces'], [1, 'Foot: moment'],
                      [2, 'Shank: forces'], [3, 'Shank: moment']], 3,
               function (v) { S.step = +v; draw(); }));
   var rd = readout(u.ctl);
-  rd.innerHTML = 'The same four steps, twice. In <b>swing</b> there is no ground ' +
-    'force at all, so the ankle moment is nothing but the segment’s own ' +
-    'inertia and the force at its top end: 0.39 N·m. In <b>stance</b> the ground ' +
-    'pushes with 450 N a hand’s breadth from the centre of mass and the same ' +
-    'ankle moment is −76 N·m, two hundred times larger. Nothing about the method ' +
-    'changed between them.';
+  rd.innerHTML = 'The same four steps, twice &mdash; and then a third thing the ' +
+    'slides cannot do. Put it on <b>Example 2</b> and wind the ground force ' +
+    'down from 100 % to nothing. The ankle moment goes from &minus;76 N·m to ' +
+    'almost zero and back, in proportion, with every other input held still. ' +
+    'That is the answer to <b>where does an ankle moment come from</b>: in ' +
+    'stance it is the ground reaction force and very little else.';
 
   node._draw = draw;
   draw();
@@ -2069,7 +2203,7 @@ D.register('walk20', function (node) {
   if (!DD) return;
   var W = DD.walk, H = W.hl, S = { k: 30, show: 'both' }, timer = null;
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 700 : 392,
+  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 700 : 306,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
   var FS = 0.42 / 700;
@@ -2318,6 +2452,373 @@ D.register('dynstat', function (node) {
     'in swing it is the other way round entirely, and that is the case worth ' +
     'remembering: <b>no external force, a heavy segment, and dynamics is the ' +
     'whole of the answer</b>.';
+
+  node._draw = draw;
+  draw();
+});
+
+/* ======================================================================
+   11. EQUIL — what "not in equilibrium" looks like on a real walk
+
+   Slide 2 shows a strobe of this same stride and invites them to call it
+   constant velocity, because the five gaps are almost equal.  This slide
+   takes the same recording and differentiates it.
+
+   The centre of mass rises and falls 34 mm twice per stride and its
+   forward speed swings from 1.06 to 1.39 m/s about a mean of 1.15.  So
+   the acceleration is not zero, so the net force is not zero, so the
+   static method does not apply -- which is his slide 3 in one figure.
+
+   Nothing here uses the force plate.  This is markers only, which is the
+   point: you can show a body is not in equilibrium from the motion alone.
+   ====================================================================== */
+D.register('equil', function (node) {
+  var port = D.portrait();
+  var u = build(node, {});
+  if (!DD || !COMW) return;
+  var W = DD.walk, S = { k: 24, show: 'a' }, timer = null;
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1340, h: port ? 900 : 364,
+                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
+  var c = ax.c;
+
+  function draw() {
+    var K = C(), k = S.k;
+    ax.clear();
+    /* The walker runs full height down the left; the numbers and the
+       whole-stride plot share the right.  Keeping the canvas short is what
+       lets this page fit in the handout. */
+    var gH = port ? 150 : 150;
+    var gTop = port ? ax.H - 2 * gH - 14 : ax.H - gH - 8;
+
+    /* ----------------------------------------------------- the walker */
+    var box = { x: 8, y: 12, w: port ? ax.W - 16 : ax.W * 0.40,
+                h: port ? 300 : ax.H - 22 };
+    /* one scale on both axes, or the legs splay */
+    var x0 = COMW.x[k] - 0.62, y0 = -0.05, y1 = 1.52;
+    var sk = Math.min(box.w / 1.24, box.h / (y1 - y0));
+    var cx0 = box.x + box.w / 2, cy0 = box.y + box.h;
+    function sc(x, y) {
+      return [cx0 + (x - COMW.x[k]) * sk, cy0 - (y - y0) * sk];
+    }
+
+    c.save(); c.strokeStyle = K.GRID; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(box.x, sc(0, 0)[1]);
+    c.lineTo(box.x + box.w, sc(0, 0)[1]); c.stroke(); c.restore();
+
+    var P = {};
+    for (var j in W.fig) P[j] = [W.fig[j][0][k] / 100, W.fig[j][1][k] / 100];
+    walkerC(c, P, sc, { K: K, w: 3.4, head: 0.085 * sk });
+
+    var g = sc(COMW.x[k], COMW.y[k]);
+    /* the acceleration of the centre of mass, drawn from it */
+    var AS = 26;                       /* pixels per m/s² */
+    var axv = COMW.ax[k], ayv = COMW.ay[k];
+    arrow(c, g[0], g[1], g[0] + axv * AS, g[1] - ayv * AS,
+          { color: K.ACC, width: 3.4, head: 10 });
+    label(c, 'a', g[0] + axv * AS + (axv >= 0 ? 16 : -16),
+          g[1] - ayv * AS - (ayv >= 0 ? 12 : -16),
+          { size: 15, color: K.ACC, weight: 700, plate: true });
+    c.save(); c.fillStyle = K.BLUE;
+    c.beginPath(); c.arc(g[0], g[1], 7, 0, 7); c.fill(); c.restore();
+    label(c, 'centre of mass', g[0] - 20, g[1] + 34,
+          { size: 12.5, align: 'right', color: K.BLUE, weight: 650,
+            plate: true });
+
+    label(c, fmt(W.pc[k], 0) + ' % of the gait cycle', box.x + 4, box.y + 12,
+          { size: 14, weight: 700, color: K.INK, align: 'left' });
+
+    /* --------------------------------------------------- the numbers */
+    var px = port ? 16 : box.x + box.w + 22;
+    var pw = port ? ax.W - 32 : ax.W - px - 18;
+    var py = port ? box.y + box.h + 34 : 30;
+    var rows = [
+      ['forward speed of the centre of mass',
+       fmt(COMW.vx[k], 2) + ' m/s', K.INK,
+       'mean over the stride 1.15, and it never stops changing'],
+      ['forward acceleration',
+       num(COMW.ax[k], 2) + ' m/s²', K.ACC,
+       'if this were equilibrium it would be zero'],
+      ['vertical acceleration',
+       num(COMW.ay[k], 2) + ' m/s²', K.ACC,
+       'the centre of mass rises and falls 34 mm, twice a stride'],
+      ['so the net force is',
+       num(W.mass_kg * COMW.ax[k], 0) + ' N across, ' +
+       num(W.mass_kg * (COMW.ay[k] + 9.81), 0) + ' N up', K.GRN,
+       fmt(W.mass_kg, 0) + ' kg × a, and the weight is 540 N']
+    ];
+    /* two by two in landscape, so the plot can sit underneath them */
+    var pitch = port ? 72 : 80;
+    var colw = port ? pw : (pw - 16) / 2;
+    rows.forEach(function (r, i) {
+      var cxx = port ? px : px + (i % 2) * (colw + 16);
+      var yy = py + (port ? i : Math.floor(i / 2)) * pitch;
+      label(c, r[0], cxx, yy, { size: 12.5, align: 'left', weight: 650,
+                                color: K.MUT });
+      label(c, r[1], cxx, yy + 25, { size: 18, align: 'left', weight: 700,
+                                     color: r[2] });
+      label(c, r[3], cxx, yy + 44, { size: 11, align: 'left',
+                                     color: K.MUT, weight: 600 });
+    });
+
+    /* ----------------------------------------------- the whole stride */
+    var gw = port ? ax.W - 24 : pw + 4;
+    strip(c, K, { x: port ? 12 : px - 4, y: gTop, w: gw, h: gH }, {
+      pc: W.pc, on: W.grf.on, k: k,
+      title: 'Acceleration of the centre of mass, one stride',
+      unit: 'm / s²', fmt: function (v) { return fmt(v, 2); },
+      series: [{ v: COMW.ax, col: K.ACC, lab: 'forward' },
+               { v: COMW.ay, col: K.BLUE, lab: 'vertical' }]
+    });
+  }
+
+  u.ctl.className = 'ictls g2';
+  var sk = slider(u.ctl, 'Where in the stride', 0, W.nf - 1, 1, S.k,
+                  function (v) { return fmt(W.pc[Math.round(v)], 0) + ' %'; },
+                  function (v) { S.k = Math.round(v); draw(); });
+  sk.quiet(S.k);
+  var row = ctlRow(u.ctl);
+  var pb = playBtn(row, '▶ Walk');
+  pb.setAttribute('data-unsafe', '1');
+  pb.addEventListener('click', function () {
+    if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; return; }
+    pb.textContent = '❚❚ Pause';
+    timer = setInterval(function () {
+      S.k = (S.k + 1) % W.nf; sk.quiet(S.k); draw();
+    }, 70);
+  });
+  node._stop = function () {
+    if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; }
+  };
+
+  var rd = readout(u.ctl);
+  rd.innerHTML = 'The same stride as the last slide, differentiated. The ' +
+    'centre of mass accelerates by up to 4.4 m/s² forwards and 2.7 m/s² ' +
+    'vertically, so <b>&Sigma;F is not zero</b> and the static method does ' +
+    'not apply. Nothing here uses the force plate &mdash; the markers alone ' +
+    'are enough to show a body is not in equilibrium.';
+
+  node._draw = draw;
+  draw();
+});
+
+/* ======================================================================
+   12. SIM — forward dynamics, run forwards
+
+   His slide 12: "another application of forward dynamics is in the
+   simulation of human movement when approximate muscle forces are input
+   into models to replicate the performance of a movement."
+
+   So: a leg hanging from a fixed hip, two segments, with a torque you set
+   at each joint.  Press play and the equations of motion are integrated
+   forward.  Nothing is prescribed except the two torques; everything the
+   limb does is the answer.
+
+   This is the real thing, not an animation of a stored trajectory.  The
+   mass, length, centre of mass and radius of gyration of both segments
+   come off the same Dempster table the rest of the lecture uses, for the
+   same 55 kg subject, so the limb swinging here is her leg.
+
+   Absolute angles from the downward vertical, which keeps the mass matrix
+   symmetric and the whole thing twelve lines:
+
+     M11 = I1 + m1*lc1^2 + m2*l1^2        M12 = m2*l1*lc2*cos(f1-f2)
+     M22 = I2 + m2*lc2^2
+     C1  =  m2*l1*lc2*sin(f1-f2)*w2^2     C2 = -m2*l1*lc2*sin(f1-f2)*w1^2
+     G1  = (m1*lc1 + m2*l1)*g*sin(f1)     G2 =  m2*lc2*g*sin(f2)
+     Q1  = tau_hip - tau_knee             Q2 = tau_knee
+   ====================================================================== */
+D.register('sim', function (node) {
+  var port = D.portrait();
+  var u = build(node, {});
+  var timer = null;
+
+  /* Winter's table, for the 55 kg subject of the recording.  Link 2 is the
+     leg and foot together, which is a row of the same table. */
+  var g = 9.81;
+  var m1 = 5.500, l1 = 0.392, lc1 = 0.433 * l1, I1 = m1 * Math.pow(0.323 * l1, 2);
+  var m2 = 3.355, l2 = 0.385, lc2 = 0.606 * l2, I2 = m2 * Math.pow(0.416 * l2, 2);
+
+  var S = { f1: 0.35, f2: 0.55, w1: 0, w2: 0, th: 0, tk: 0, t: 0,
+            trail: [], hip: [], knee: [] };
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1340, h: port ? 820 : 352,
+                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
+  var c = ax.c;
+
+  /* A limb is not a frictionless linkage.  Each joint gets a passive
+     stiffness toward a rest posture and a damper, which is what stops a
+     constant torque from spinning the leg up for ever -- and is the same
+     thing a musculoskeletal model carries as its passive joint moments.
+     Numbers chosen so the limb settles in about a second, the way a
+     relaxed leg does. */
+  var KH = 26, BH = 5.0, R1 = 0.0;          /* hip:  N·m/rad, N·m·s, rad */
+  var KK = 18, BK = 3.2, R2 = 0.30;         /* knee: measured from the thigh */
+
+  /* and the knee cannot hyperextend: a stiff spring and damper once the
+     shank passes the thigh's line, which is a joint stop, not a muscle */
+  function stop(rel, dw) {
+    if (rel >= 0) return 0;
+    return -2600 * rel - 50 * dw;
+  }
+
+  function accel(f1, f2, w1, w2, th, tk) {
+    var d = f1 - f2, cd = Math.cos(d), sd = Math.sin(d);
+    var rel = f2 - f1, dw = w2 - w1;
+    var M11 = I1 + m1 * lc1 * lc1 + m2 * l1 * l1;
+    var M12 = m2 * l1 * lc2 * cd;
+    var M22 = I2 + m2 * lc2 * lc2;
+    var C1 = m2 * l1 * lc2 * sd * w2 * w2;
+    var C2 = -m2 * l1 * lc2 * sd * w1 * w1;
+    var G1 = (m1 * lc1 + m2 * l1) * g * Math.sin(f1);
+    var G2 = m2 * lc2 * g * Math.sin(f2);
+    /* everything acting at each joint, applied plus passive plus the stop */
+    var TH = th - KH * (f1 - R1) - BH * w1;
+    var TK = tk - KK * (rel - R2) - BK * dw + stop(rel, dw);
+    var b1 = (TH - TK) - C1 - G1, b2 = TK - C2 - G2;
+    var det = M11 * M22 - M12 * M12;
+    return [(b1 * M22 - M12 * b2) / det, (M11 * b2 - M12 * b1) / det];
+  }
+
+  function step(dt) {
+    /* midpoint: good enough at 2 ms and it keeps the stop stable */
+    var a = accel(S.f1, S.f2, S.w1, S.w2, S.th, S.tk);
+    var hf1 = S.f1 + S.w1 * dt / 2, hf2 = S.f2 + S.w2 * dt / 2;
+    var hw1 = S.w1 + a[0] * dt / 2, hw2 = S.w2 + a[1] * dt / 2;
+    var b = accel(hf1, hf2, hw1, hw2, S.th, S.tk);
+    S.f1 += hw1 * dt; S.f2 += hw2 * dt;
+    S.w1 += b[0] * dt; S.w2 += b[1] * dt;
+    S.t += dt;
+  }
+
+  function reset() {
+    S.f1 = 0.35; S.f2 = 0.55; S.w1 = 0; S.w2 = 0; S.t = 0;
+    S.trail = []; S.hip = []; S.knee = [];
+    draw();
+  }
+
+  function draw() {
+    var K = C();
+    ax.clear();
+    var gH = port ? 150 : 148;
+    var gTop = port ? ax.H - 2 * gH - 12 : ax.H - gH - 6;
+
+    var box = { x: 8, y: 10, w: port ? ax.W - 16 : ax.W * 0.36,
+                h: port ? 330 : ax.H - 18 };
+    var HIP = [box.x + box.w * 0.52, box.y + 34];
+    var sk = Math.min(box.w * 0.62 / 0.78, (box.h - 52) / 0.86);
+
+    function P(f, L, from) {
+      return [from[0] + Math.sin(f) * L * sk, from[1] + Math.cos(f) * L * sk];
+    }
+    var KNEE = P(S.f1, l1, HIP);
+    var ANK = P(S.f2, l2, KNEE);
+
+    /* where the toe has been */
+    S.trail.push([ANK[0], ANK[1]]);
+    if (S.trail.length > 150) S.trail.shift();
+    c.save(); c.strokeStyle = K.ACC; c.globalAlpha = 0.28; c.lineWidth = 2;
+    c.beginPath();
+    S.trail.forEach(function (q, i) {
+      if (i === 0) c.moveTo(q[0], q[1]); else c.lineTo(q[0], q[1]);
+    });
+    c.stroke(); c.restore();
+
+    drawSil(c, 'thigh', HIP, KNEE, K);
+    drawSil(c, 'leg', KNEE, ANK, K);
+    c.save(); c.strokeStyle = K.INK; c.lineWidth = 7; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(HIP[0], HIP[1]); c.lineTo(KNEE[0], KNEE[1]);
+    c.lineTo(ANK[0], ANK[1]); c.stroke();
+    c.fillStyle = K.INK;
+    [HIP, KNEE, ANK].forEach(function (q) {
+      c.fillRect(q[0] - 6.5, q[1] - 6.5, 13, 13);
+    });
+    c.restore();
+
+    /* the two torques, drawn the way they are set */
+    [[HIP, S.th, 'hip', K.ACC], [KNEE, S.tk, 'knee', K.GRN]].forEach(function (z) {
+      if (Math.abs(z[1]) < 1) return;
+      spin(c, z[0][0], z[0][1], 28, z[1] > 0, { color: z[3], width: 3.4 });
+      label(c, fmt(z[1], 0) + ' N·m', z[0][0] - 36, z[0][1] - 24,
+            { size: 12, align: 'right', color: z[3], weight: 700, plate: true });
+    });
+    label(c, 'hip, fixed', HIP[0] + 22, HIP[1] - 16,
+          { size: 11.5, align: 'left', color: K.MUT, weight: 650 });
+    label(c, fmt(S.t, 2) + ' s', box.x + box.w / 2, box.y + box.h - 4,
+          { size: 13, weight: 700, color: K.INK });
+
+    /* ------------------------------------------------- what is going on */
+    var px = port ? 16 : box.x + box.w + 22;
+    var pw = port ? ax.W - 32 : ax.W - px - 18;
+    var py = port ? box.y + box.h + 30 : 30;
+    var rows = [
+      ['you set', fmt(S.th, 0) + ' N·m at the hip, ' + fmt(S.tk, 0) +
+       ' at the knee', K.ACC],
+      ['the equations give', 'hip ' + fmt(S.f1 * 180 / Math.PI, 0) + '°, knee ' +
+       fmt((S.f2 - S.f1) * 180 / Math.PI, 0) + '° of flexion', K.INK],
+      ['turning at', fmt(S.w1, 2) + ' and ' + fmt(S.w2 - S.w1, 2) + ' rad/s',
+       K.BLUE]
+    ];
+    rows.forEach(function (r, i) {
+      var yy = py + i * (port ? 64 : 62);
+      label(c, r[0], px, yy, { size: 12.5, align: 'left', weight: 650,
+                               color: K.MUT });
+      label(c, r[1], px, yy + 25, { size: 16, align: 'left', weight: 700,
+                                    color: r[2] });
+    });
+
+    S.hip.push(S.f1 * 180 / Math.PI);
+    S.knee.push((S.f2 - S.f1) * 180 / Math.PI);
+    if (S.hip.length > 240) { S.hip.shift(); S.knee.shift(); }
+    var pc = S.hip.map(function (_, i) { return i / Math.max(1, S.hip.length - 1) * 100; });
+    strip(c, K, { x: px - 4, y: gTop, w: pw + 4, h: gH }, {
+      pc: pc, k: S.hip.length - 1,
+      title: 'What the limb then does, over the last few seconds',
+      unit: 'degrees',
+      fmt: function (v) { return fmt(v, 0) + '°'; },
+      series: [{ v: S.hip, col: K.ACC, lab: 'hip' },
+               { v: S.knee, col: K.GRN, lab: 'knee flexion' }]
+    });
+  }
+
+  u.ctl.className = 'ictls g2';
+  slider(u.ctl, 'Torque at the hip', -40, 40, 1, 0,
+         function (v) { return fmt(v, 0) + ' N·m'; },
+         function (v) { S.th = +v; draw(); });
+  slider(u.ctl, 'Torque at the knee', -40, 40, 1, 0,
+         function (v) { return fmt(v, 0) + ' N·m'; },
+         function (v) { S.tk = +v; draw(); });
+  var row = ctlRow(u.ctl);
+  var pb = playBtn(row, '▶ Run it');
+  pb.setAttribute('data-unsafe', '1');
+  pb.addEventListener('click', function () {
+    if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Run it'; return; }
+    pb.textContent = '❚❚ Pause';
+    timer = setInterval(function () {
+      for (var i = 0; i < 8; i++) step(0.002);
+      draw();
+    }, 16);
+  });
+  var rb = el('button', 'ibtn ghost', '↺ Back to the start');
+  rb.setAttribute('data-unsafe', '1');
+  rb.addEventListener('click', function () {
+    if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Run it'; }
+    reset();
+  });
+  row.appendChild(rb);
+  keepOut(row);
+  node._stop = function () {
+    if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Run it'; }
+  };
+
+  var rd = readout(u.ctl);
+  rd.innerHTML = 'Forward dynamics, run forwards. You set two torques; ' +
+    'everything else is the equations of motion integrated in time. The ' +
+    'segment masses, lengths and inertias are the same subject&rsquo;s, off ' +
+    'the same table; each joint also carries a passive stiffness and a damper, ' +
+    'as a musculoskeletal model does. <b>Nothing here is a recording</b> ' +
+    '&mdash; change a torque and the movement changes, which is what a ' +
+    'simulation is for and what you cannot do to a person.';
 
   node._draw = draw;
   draw();

@@ -390,12 +390,16 @@ window.EPHE341_LECTURES = [
            'the ground and work upward; the four moments that act on every segment ' +
            'and add to I\u03b1; the worked example line by line; and the whole method ' +
            'run on a measured stride and marked against the joint moments the people ' +
-           'who recorded it published. Hover any term in an equation and it lights up ' +
-           'on the diagram.',
-    slides: 41, widgets: 9, updated: '2026-10-09',
+           'who recorded it published. A two-segment leg is also simulated ' +
+           'forwards from two torques you set, which is the direction you ' +
+           'cannot run on a person. Hover any term in an equation and it ' +
+           'lights up on the diagram.',
+    slides: 51, widgets: 11, updated: '2026-10-09',
     handout: 'handout.pdf',
-    live: [['the same free body, with and without acceleration', 'w-newton'],
+    live: [['a measured stride, differentiated', 'w-equil'],
+           ['the same free body, with and without acceleration', 'w-newton'],
            ['the four forward-dynamics examples', 'w-fwd'],
+           ['two torques in, the movement out', 'w-sim'],
            ['why the order is forced', 'w-chain'],
            ['every segment carries four moments', 'w-moments4'],
            ['the free body on a measured stride', 'w-fbd20'],

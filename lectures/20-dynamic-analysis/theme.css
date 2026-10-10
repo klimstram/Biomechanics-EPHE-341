@@ -161,9 +161,21 @@ html[data-theme="dark"] .reveal img[src^="assets/"]{
    decides whether the page fits -- these slides give it a tighter rhythm. */
 .cols.work .eq{ font-size:.96em; margin:.22em 0; }
 .cols.work .eq.big{ font-size:1.22em; margin:.28em 0; }
-.cols.work p.small{ margin:.3em 0; }
+.cols.work p.small{ margin:.28em 0; }
+.cols.work ul.small{ margin:.2em 0; }
+.cols.work .box{ margin:.3em 0; }
 .cols.work .momblock{ margin:.3em 0; }
 .cols.work .callout{ margin-top:.4em; }
+
+/* Dempster's table, on the face of the slide that uses it.  The last two
+   columns are what the lecture actually consumes, so they are the ones the
+   eye should land on. */
+.demptab{ font-size:.78em; }
+.demptab th{ font-weight:650; line-height:1.15; vertical-align:bottom; }
+.demptab th .muted{ font-weight:450; font-size:.82em; }
+.demptab td{ text-align:right; }
+.demptab td:first-child{ text-align:left; }
+.demptab td.got{ color:var(--brand); font-weight:700; }
 .eq sup{ font-size:.62em; top:-.55em; }
 .eq sub{ font-size:.62em; }
 .frac{ display:inline-block; vertical-align:middle; text-align:center; margin:0 .25em; }
@@ -919,6 +931,10 @@ html[data-portrait] .cols .lawstack img{ max-height:150px; }
    The slide's own coordinate system is fixed, so a px cap holds everywhere. */
 .fig.cap img,.cols .fig.cap img{ max-height:330px; }
 .fig.cap.tight img,.cols .fig.cap.tight img{ max-height:252px; }
+/* the .cap caps were written for <img>; an inline SVG falls through to the
+   470 px rule and takes over the column */
+.fig.cap svg.hifig,.cols .fig.cap svg.hifig{ max-height:300px; }
+.fig.cap.tight svg.hifig,.cols .fig.cap.tight svg.hifig{ max-height:232px; }
 .fig.big.cap img,.cols .fig.big.cap img{ max-height:330px; }
 html[data-portrait] .fig.cap img,
 html[data-portrait] .cols .fig.cap img{ max-height:360px; }
