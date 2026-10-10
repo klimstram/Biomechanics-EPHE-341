@@ -394,7 +394,7 @@ window.EPHE341_LECTURES = [
            'forwards from two torques you set, which is the direction you ' +
            'cannot run on a person. Hover any term in an equation and it ' +
            'lights up on the diagram.',
-    slides: 51, widgets: 11, updated: '2026-10-09',
+    slides: 51, widgets: 11, updated: '2026-10-10',
     handout: 'handout.pdf',
     live: [['a measured stride, differentiated', 'w-equil'],
            ['the same free body, with and without acceleration', 'w-newton'],
