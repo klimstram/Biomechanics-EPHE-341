@@ -556,7 +556,7 @@ function drawSil(c, kind, P, Dp, K) {
    now.  The first three angles are the measured frame the method figures are
    drawn at; `legEx` is the worked example's own shank, which is its own
    posture and not one this stride reaches. */
-var SIL_DEG = { foot: 26.8, leg: 120.1, thigh: 107.0, legEx: 42.2 };
+var SIL_DEG = { foot: 26.8, leg: 120.1, thigh: 107.0, legEx: 137.8 };
 
 function barAt(box, kind, frac) {
   var t = (SIL_DEG[kind] || SIL_DEG.foot) * Math.PI / 180;
@@ -1862,19 +1862,26 @@ D.register('swing', function (node) {
     var comT = Math.hypot(L.dPh, L.dPv) / shank;
     var footL = 0.378 * shank;
     var box = { x: 8, y: 22, w: fw - 16, h: port ? ax.H * 0.34 : ax.H - 86 };
-    /* the panel is wide and short, so the world box has to be too, or the
-       limb is drawn at half the size the space allows */
-    var WX = 0.76, WY = 0.58;
-    var k = Math.min(box.w / WX, box.h / WY);
-    var ox = box.x + (box.w - WX * k) / 2 + 0.13 * k;
-    var oy = box.y + (box.h - WY * k) / 2 + 0.12 * k;
+
+    /* The limb is laid out from its own three points rather than from a
+       hand-set world box, because the shank runs down and back while the
+       foot runs down and forward: the span is not symmetric about the knee
+       and a fixed box put the drawing off to one side. */
+    var dl = SIL_DEG.legEx * Math.PI / 180, df = SIL_DEG.foot * Math.PI / 180;
+    var wA = [Math.cos(dl) * shank, Math.sin(dl) * shank];
+    var wB = [wA[0] + Math.cos(df) * footL, wA[1] + Math.sin(df) * footL];
+    var PAD = 0.105;                   /* tissue, arrows and the labels */
+    var xs = [0, wA[0], wB[0]], ys = [0, wA[1], wB[1]];
+    var x0 = Math.min.apply(null, xs) - PAD, x1 = Math.max.apply(null, xs) + PAD;
+    var y0 = Math.min.apply(null, ys) - PAD, y1 = Math.max.apply(null, ys) + PAD;
+    var k = Math.min(box.w / (x1 - x0), box.h / (y1 - y0));
+    var ox = box.x + (box.w - (x1 - x0) * k) / 2 - x0 * k;
+    var oy = box.y + (box.h - (y1 - y0) * k) / 2 - y0 * k;
     function P(x, y) { return [ox + x * k, oy + y * k]; }
 
-    var dl = SIL_DEG.legEx * Math.PI / 180, df = SIL_DEG.foot * Math.PI / 180;
     var KNEE = P(0, 0);
-    var ANK = P(Math.cos(dl) * shank, Math.sin(dl) * shank);
-    var BALL = [ANK[0] + Math.cos(df) * footL * k,
-                ANK[1] + Math.sin(df) * footL * k];
+    var ANK = P(wA[0], wA[1]);
+    var BALL = P(wB[0], wB[1]);
     var CG = [KNEE[0] + (ANK[0] - KNEE[0]) * comT,
               KNEE[1] + (ANK[1] - KNEE[1]) * comT];
     var FCG = [ANK[0] + (BALL[0] - ANK[0]) * 0.5,
@@ -1952,7 +1959,7 @@ D.register('swing', function (node) {
       /* the horizontal label goes on the side the corner is NOT on, or it
           lands on the limb between the two joints */
       label(c, fmt(Math.abs(dh), 3) + ' m', (from[0] + to[0]) / 2,
-            from[1] + (to[1] > from[1] ? -11 : 20),
+            from[1] + (to[1] > from[1] ? -13 : 22),
             { size: 11.5, color: col, weight: 700, plate: true });
       label(c, fmt(Math.abs(dv), 3) + ' m',
             to[0] + (to[0] > from[0] ? 11 : -11), (from[1] + to[1]) / 2 + 4,
@@ -1969,8 +1976,8 @@ D.register('swing', function (node) {
 
     c.save(); c.fillStyle = K.BLUE;
     c.beginPath(); c.arc(CGa[0], CGa[1], 6, 0, 7); c.fill(); c.restore();
-    label(c, 'CofG', CGa[0] - 12, CGa[1] - 12,
-          { size: 11, align: 'right', color: K.BLUE, weight: 700, plate: true });
+    label(c, 'CofG', CGa[0] + 13, CGa[1] - 11,
+          { size: 11, align: 'left', color: K.BLUE, weight: 700, plate: true });
 
     label(c, cse.name + ' · ' + cse.src, box.x + box.w / 2, box.y - 12,
           { size: 12, weight: 700, color: K.INK });
