@@ -395,61 +395,6 @@ function eqSolve(e) {
   return { roots: [Math.min(r1, r2), Math.max(r1, r2)], disc: d };
 }
 
-/* ---------------------------------------------------------------------
-   The Biomechanics Tutor, Basic Math and Trigonometry.
-   --------------------------------------------------------------------- */
-function tutorSolve(q) {
-  var r;
-  switch (q.kind) {
-    case 'vi_sq':  return Math.sqrt(q.vf * q.vf - 2 * q.a * q.d);
-    case 't_lin':  return (q.vf - q.vi) / q.a;
-    case 'vf_imp': return q.F * q.t / q.m + q.vi;
-    case 't_imp':  return q.m * (q.vf - q.vi) / q.F;
-    case 'm_imp':  return q.F * q.t / (q.vf - q.vi);
-    case 'vi_d':   return (q.d - 0.5 * q.a * q.t * q.t) / q.t;
-    case 'y7':     return Math.sqrt((26 + Math.sqrt(2) - 4 * Math.sqrt(8)) / 12);
-    case 'x8':     return 8 / (43 - 12);
-    case 'z9':     return Math.sqrt(5 * Math.sqrt(5) / 33);
-    case 'a10':    return Math.sqrt((44 - Math.sqrt(55)) * Math.sqrt(55) + 14);
-    case 'x11':    return -12 / (2 * q.y * q.y + 1);
-    case 'y12':    return Math.sqrt(-(12 + q.x) / (2 * q.x));
-    /* right-angle cases: B = 90 deg, so b is the hypotenuse */
-    case 'rt_angA':  return Math.atan2(q.a, q.c) * DEG;
-    case 'rt_angC':  return Math.atan2(q.c, q.a) * DEG;
-    case 'rt_hyp':   return Math.sqrt(q.a * q.a + q.c * q.c);
-    case 'rt_third': return 90 - q.A;
-    case 'rt_opp':   return q.b * Math.sin(q.A * RAD);
-    case 'rt_adj':   return q.b * Math.cos(q.A * RAD);
-    case 'sine_b':   return q.c * Math.sin(q.B * RAD) / Math.sin(q.C * RAD);
-    case 'sine_A':   return 180 - q.B - q.C;
-    case 'sine_a':   return q.c * Math.sin((180 - q.B - q.C) * RAD) / Math.sin(q.C * RAD);
-    case 'cos_A':    return Math.acos(clamp((q.b * q.b + q.c * q.c - q.a * q.a) / (2 * q.b * q.c))) * DEG;
-    case 'cos_B':    return Math.acos(clamp((q.a * q.a + q.c * q.c - q.b * q.b) / (2 * q.a * q.c))) * DEG;
-    case 'cos_C':    return Math.acos(clamp((q.a * q.a + q.b * q.b - q.c * q.c) / (2 * q.a * q.b))) * DEG;
-    case 'cosine_c': return Math.sqrt(q.a * q.a + q.b * q.b - 2 * q.a * q.b * Math.cos(q.C * RAD));
-    case 'cos13_A':  r = triFromSAS(q.b, q.C, q.a); return r.A;
-    case 'cos13_B':  r = triFromSAS(q.b, q.C, q.a); return r.B;
-  }
-  return NaN;
-}
-/* The Tutor grades with a bare  min <= answer <= max  and no tolerance at
-   all, so a band whose ends are equal is an exact match and the only thing
-   that makes it answerable is that it equals the correctly rounded answer. */
-function tutorBand(q, v) {
-  var lo = Math.min(q.band[0], q.band[1]), hi = Math.max(q.band[0], q.band[1]);
-  var dp = (String(q.band[0]).split('.')[1] || '').length;
-  var k = Math.pow(10, dp);
-  var rounded = Math.round(v * k) / k;
-  var trunc = (v < 0 ? Math.ceil(v * k) : Math.floor(v * k)) / k;
-  var inb = function (x) { return x >= lo - 1e-12 && x <= hi + 1e-12; };
-  return { in: inb(v), roundedIn: inb(rounded), truncIn: inb(trunc),
-           /* a band is sound if the exact answer either rounds or truncates
-              onto it; question 15 of the Trigonometry section is the only one
-              that needs the second case */
-           sound: inb(rounded) || inb(trunc),
-           rounded: rounded, trunc: trunc, dp: dp };
-}
-
 /* ======================================================================
    The measured body, in three dimensions.
 
@@ -905,10 +850,6 @@ D.register('trigex', function (node) {
         'slide 38 shows exactly that. The dashed line is what 0.3227 m would ' +
         'measure; it is longer than every side of the triangle it is supposed to ' +
         'close.'
-      : e.n === 13
-      ? 'The Tutor’s question 13 is the same method with different numbers, ' +
-        'and its published answer, 0.158 m, is right. So the cosine law is taught ' +
-        'correctly in one place and worked wrongly in the other.'
       : 'Both sides come straight off the definitions on his slide 34, and this ' +
         'is also one of the two special triangles on slide 35 — hypotenuse 1, ' +
         'opposite ½, adjacent √3/2.';
@@ -918,8 +859,7 @@ D.register('trigex', function (node) {
 
   u.ctl.className = 'ictls';
   var row = ctlRow(u.ctl);
-  keepOut(seg(row, [[0, 'His Example 1'], [1, 'His Example 2'],
-                    [2, 'The Tutor’s Q13']], 1,
+  keepOut(seg(row, [[0, 'His Example 1'], [1, 'His Example 2']], 1,
               function (v) { S.i = +v; draw(); }));
   var rd = readout(u.ctl);
   rd.innerHTML = 'His Example 1 reproduces to the digit. <b>Example 2 does not:</b> ' +
@@ -1663,161 +1603,6 @@ D.register('topics', function (node) {
 });
 
 /* ======================================================================
-   8. TUTORQ1A — the Tutor's Basic Math and Trigonometry sections
-
-   Twenty-nine questions, every one worked.  Twenty-eight reconcile exactly
-   with the answer the Tutor accepts.
-
-   Basic Math question 6 does not, and it is not a rounding quibble.  Its
-   own printed method is Vi = (d − ½at²)/t, which with its own givens —
-   d = 100 m, t = 4 s, a = 3 m/s² — gives 19 m/s.  The band it accepts is
-   5.5 m/s, which is what that same formula gives for d = 46 m.  A student
-   who does it right is told they are wrong.
-
-   And one thing worth knowing about every band in the Tutor: it grades with
-   a bare  min ≤ answer ≤ max  and no tolerance whatever, so a band whose
-   two ends are equal is an exact match on the digits.  That works here
-   because every band is the correctly rounded answer — but it is why the
-   figure shows the rounded value as well as the exact one.
-   ====================================================================== */
-D.register('tutorq1a', function (node) {
-  var port = D.portrait();
-  var u = build(node, {});
-  if (!DA) return;
-  var Q = DA.tutor, S = { sec: 'math', i: 0 };
-
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 560 : 380,
-                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
-  var c = ax.c;
-
-  function list() { return Q.filter(function (q) { return q.s === S.sec; }); }
-
-  function method(q) {
-    switch (q.kind) {
-      case 'vi_sq': return ['Vƒ² = Vᵢ² + 2ad, so Vᵢ = √(Vƒ² − 2ad)',
-        '√(' + q.vf + '² − 2(' + q.a + ')(' + q.d + '))'];
-      case 't_lin': return ['Vƒ = Vᵢ + at, so t = (Vƒ − Vᵢ)/a',
-        '(' + q.vf + ' − ' + q.vi + ') / ' + q.a];
-      case 'vf_imp': return ['Ft = m(Vƒ − Vᵢ), so Vƒ = Ft/m + Vᵢ',
-        '(' + q.F + ')(' + q.t + ')/' + q.m + ' + ' + q.vi];
-      case 't_imp': return ['Ft = m(Vƒ − Vᵢ), so t = m(Vƒ − Vᵢ)/F',
-        q.m + '(' + q.vf + ' − ' + q.vi + ') / ' + q.F];
-      case 'm_imp': return ['Ft = m(Vƒ − Vᵢ), so m = Ft/(Vƒ − Vᵢ)',
-        '(' + q.F + ')(' + q.t + ') / (' + q.vf + ' − ' + q.vi + ')'];
-      case 'vi_d': return ['d = Vᵢt + ½at², so Vᵢ = (d − ½at²)/t',
-        '(' + q.d + ' − ½(' + q.a + ')(' + q.t + ')²) / ' + q.t];
-      case 'y7': return ['isolate the square, then take the root',
-        '√((26 + √2 − 4√8) / 12)'];
-      case 'x8': return ['the √8 on both sides cancels',
-        '8 / (43 − 12)'];
-      case 'z9': return ['multiply through by √5, divide by 33, take the root',
-        '√(5√5 / 33)'];
-      case 'a10': return ['multiply by √55, add 14, take the root',
-        '√((44 − √55)√55 + 14)'];
-      case 'x11': return ['collect the x terms: x(2y² + 1) = −12',
-        '−12 / (2(' + q.y + ')² + 1)'];
-      case 'y12': return ['isolate y² = −(12 + x)/2x, then take the root',
-        '√(−(12 + (' + q.x + ')) / (2 × ' + q.x + '))'];
-      case 'rt_angA': return ['B is the right angle, so b is the hypotenuse and a, c are the legs',
-        'A = tan⁻¹(a / c) = tan⁻¹(' + q.a + ' / ' + q.c + ')'];
-      case 'rt_angC': return ['the other acute angle', 'C = tan⁻¹(c / a)'];
-      case 'rt_hyp': return ['Pythagoras', '√(' + q.a + '² + ' + q.c + '²)'];
-      case 'rt_third': return ['the three angles sum to 180°', '180 − 90 − ' + q.A];
-      case 'rt_opp': return ['opposite = hypotenuse × sin', q.b + ' sin ' + q.A + '°'];
-      case 'rt_adj': return ['adjacent = hypotenuse × cos', q.b + ' cos ' + q.A + '°'];
-      case 'sine_b': return ['two angles and a side — the sine law',
-        q.c + ' sin ' + q.B + '° / sin ' + q.C + '°'];
-      case 'sine_A': return ['the three angles sum to 180°', '180 − ' + q.B + ' − ' + q.C];
-      case 'sine_a': return ['the sine law again, with the angle just found',
-        q.c + ' sin A / sin ' + q.C + '°'];
-      case 'cos_A': case 'cos_B': case 'cos_C':
-        return ['three sides — the cosine law, rearranged for the angle',
-          'cos⁻¹((sum of the two squares − the third) / 2 × their product)'];
-      case 'cosine_c': return ['two sides and the angle between them — the cosine law',
-        '√(' + q.a + '² + ' + q.b + '² − 2(' + q.a + ')(' + q.b +
-        ')cos ' + q.C + '°)'];
-      case 'cos13_A': case 'cos13_B':
-        return ['solve for c first, then the cosine law for the angle',
-          'cos⁻¹(…) with all three sides known'];
-    }
-    return ['', ''];
-  }
-
-  function draw() {
-    var K = C(), L = list(), q = L[Math.min(S.i, L.length - 1)];
-    var v = tutorSolve(q), B = tutorBand(q, v), m = method(q);
-    ax.clear();
-    var pw = ax.W - 56;
-    var y = 38;
-
-    label(c, (q.s === 'math' ? 'Basic Math' : 'Trigonometry') +
-             ', question ' + q.n, 28, y,
-          { size: 12, align: 'left', color: K.MUT, weight: 650 });
-    y = wrapLabel(c, q.q, 28, y + 48, pw,
-                  { size: 14.5, align: 'left', weight: 650, color: K.INK });
-
-    var yy = y + (port ? 48 : 52);
-    wrapLabel(c, m[0], 28, yy, pw, { size: 11.5, align: 'left', color: K.MUT });
-    yy = wrapLabel(c, m[1], 28, yy + (port ? 30 : 34), pw,
-                   { size: 13, align: 'left', weight: 650, color: K.INK });
-    label(c, '= ' + fmt(v, B.dp + 2) + ' ' + q.u, 28, yy + (port ? 34 : 38),
-          { size: 16.5, align: 'left', weight: 700, color: K.ACC });
-
-    var by = yy + (port ? 68 : 76);
-    var band = q.band[0] === q.band[1] ? 'only ' + q.band[0]
-             : q.band[0] + ' to ' + q.band[1];
-    label(c, 'the Tutor accepts ' + band + ' ' + q.u, 28, by,
-          { size: 12.5, align: 'left', weight: 700,
-            color: B.sound ? K.GRN : K.ACC });
-    label(c, B.roundedIn
-            ? '— which is this answer to ' + B.dp + ' decimal' +
-              (B.dp === 1 ? '' : 's') + ', so it is right'
-            : B.truncIn
-            ? '— which is this answer cut off at ' + B.dp +
-              ' decimals rather than rounded, so enter ' + B.trunc +
-              ' and not ' + B.rounded
-            : '— which is not this answer, rounded or otherwise',
-          28, by + 20, { size: 12, align: 'left', weight: 650,
-                         color: B.roundedIn ? K.GRN : B.truncIn ? K.ORG : K.ACC });
-
-    if (q.note)
-      wrapLabel(c, q.note, ax.W / 2, ax.H - 12, ax.W - 44,
-                { size: 11.5, color: K.ACC });
-    else
-      wrapLabel(c, 'The Tutor grades with a bare min ≤ answer ≤ max and no ' +
-        'tolerance at all, so a band with both ends the same is an exact match on ' +
-        'the digits — enter the rounded value it shows, not the full one.',
-        ax.W / 2, ax.H - 12, ax.W - 44, { size: 11.5, color: K.MUT });
-  }
-
-  u.ctl.className = 'ictls';
-  var row = ctlRow(u.ctl);
-  var chipRow = null;
-  function rebuild() {
-    if (chipRow) chipRow.parentNode.removeChild(chipRow);
-    chipRow = ctlRow(u.ctl);
-    keepOut(chips(chipRow, list().map(function (q, i) { return [i, String(q.n)]; }),
-                  S.i, function (v) { S.i = +v; draw(); }));
-  }
-  keepOut(seg(row, [['math', 'Basic Math'], ['trig', 'Trigonometry']], 'math',
-              function (v) { S.sec = v; S.i = 0; rebuild(); draw(); }));
-  rebuild();
-
-  var rd = readout(u.ctl);
-  rd.innerHTML = 'Twenty-nine questions and twenty-eight of them are exactly right. ' +
-    '<b>Basic Math question 6 is not</b>: its own printed method, ' +
-    'Vᵢ = (d − ½at²)/t, gives <b>19 m/s</b> from its own givens, ' +
-    'and the answer it accepts is 5.5 — what that formula gives for d = 46 m ' +
-    'rather than 100. Do it correctly and you are marked wrong. ' +
-    '<b>Trigonometry question 15</b> has a milder version of the same thing: it ' +
-    'wants 11.27° where the full calculation gives 11.28°. Both are worth ' +
-    'reporting, and worth knowing before you lose ten minutes to either.';
-
-  node._draw = draw;
-  draw();
-});
-
-/* ======================================================================
    9. METHOD — his eleven steps, on one problem, all the way down
 
    His slide 16 lists eleven steps for solving a biomechanics problem.  As a
@@ -1966,7 +1751,6 @@ D.register('method', function (node) {
 window.IA = { triFromSSS: triFromSSS, triFromSAS: triFromSAS,
               triFromAAS: triFromAAS, triRight: triRight, triPoints: triPoints,
               expoCheck: expoCheck, eqSolve: eqSolve,
-              tutorSolve: tutorSolve, tutorBand: tutorBand,
               bodyAt: bodyAt, bodyOrigin: bodyOrigin, proj: proj,
               planeQuad: planeQuad, RAD: RAD, DEG: DEG };
 D.boot();

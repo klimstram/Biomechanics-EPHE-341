@@ -939,3 +939,28 @@ html[data-portrait] .cols .fig.cap.tight img{ max-height:300px; }
   .topicgrid { grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:6px; }
   .topiclink { padding:7px 9px; }
 }
+
+
+/* ============================================================
+   DRAWN FIGURES IN THE ANATOMY SECTION
+   The plane-action plates are inline SVG, not <img>, so every
+   height cap has to be written twice -- once for img and once
+   for svg.hifig -- or the drawing falls through to the generic
+   rule and takes over its column.
+   ============================================================ */
+svg.hifig{ display:block; width:100%; height:auto; }
+.figcol svg.hifig,.cols .figcol svg.hifig{ max-height:46vh; }
+html[data-portrait] .figcol svg.hifig,
+html[data-portrait] .cols .figcol svg.hifig{ max-height:300px; }
+
+/* his slide 16: eleven numbered steps, two columns so they fit */
+ol.cols2{ column-count:2; column-gap:1.6em; }
+ol.cols2 li{ break-inside:avoid; margin-bottom:.3em; }
+html[data-portrait] ol.cols2{ column-count:1; }
+
+.small.mut{ color:var(--muted); }
+
+/* his slide 3: the course practicalities, as a left-aligned block */
+table.admin{ margin:0; width:100%; font-size:.72em; }
+table.admin th{ width:9em; text-align:left; white-space:nowrap; }
+table.admin td{ text-align:left; }
