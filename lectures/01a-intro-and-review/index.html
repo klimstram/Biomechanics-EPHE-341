@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20261025d">
+<link rel="stylesheet" href="theme.css?v=20261025e">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -53,7 +53,7 @@ The second half of this lecture is a review, and it is worth saying explicitly t
 </section>
 
 <!-- 2 -->
-<section>
+<section class="roomy">
   <h2>Introduction</h2>
   <p class="subhead">Today&rsquo;s objectives</p>
   <div class="cols a top">
@@ -84,7 +84,7 @@ The second half of this lecture is a review, and it is worth saying explicitly t
 </section>
 
 <!-- 3 -->
-<section>
+<section class="roomy">
   <h2>Introduction</h2>
   <p class="subhead">Biomechanics 341</p>
   <div class="cols a top">
@@ -113,7 +113,7 @@ The second half of this lecture is a review, and it is worth saying explicitly t
 <section>
   <h2>Introduction</h2>
   <p class="subhead">What is biomechanics?</p>
-  <div class="cols a top">
+  <div class="cols b top">
     <div>
       <div class="box accent">
         <p class="small" style="margin:0">The study of the effects of
@@ -121,187 +121,136 @@ The second half of this lecture is a review, and it is worth saying explicitly t
           movement and at rest.</p>
       </div>
       <p class="small"><strong>Bio</strong> &mdash; any biological system.</p>
-      <p class="small"><strong>Mechanics</strong> &mdash; the branch of the physical
-        sciences concerned with the state of rest or motion of bodies subjected to
-        the action of forces. Rigid body, fluid, deformable body.</p>
+      <p class="small"><strong>Mechanics</strong> &mdash; the state of rest or
+        motion of bodies subjected to forces.</p>
+      <p class="small">External forces can be <em>measured</em>. Internal ones
+        cannot, and they are the ones that decide whether a tendon tears.</p>
     </div>
-    <div>
-      <p class="small">The word to notice is <strong>internal</strong>. External
-        forces can be measured &mdash; you stand on a plate and read the number.
-        Internal ones cannot, and they are the ones that decide whether a tendon
-        tears or a hip replacement lasts.</p>
-      <div class="callout small">
-        <p style="margin-bottom:0">Almost everything this field knows about what
-          the inside of a body is doing is <em>calculated</em>, not measured. The
-          last three lectures of this course are how that calculation works.</p>
-      </div>
+    <div class="figcol"><svg class="hifig" viewBox="4 28 348 240" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A forearm holding a dumbbell. The weight of the dumbbell and the weight of the forearm are marked as measurable; the biceps force and the elbow joint force are marked as calculated." opacity=".95"><path d="M80 64 Q96 112 106 158" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" opacity=".32"/><path d="M74.0 40.0 L74.0 170.0" fill="none" stroke="var(--ink)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><path d="M74.0 170.0 L250.0 170.0" fill="none" stroke="var(--ink)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><circle cx="74.0" cy="170.0" r="5" fill="var(--muted)"/><circle cx="74.0" cy="40.0" r="5" fill="var(--muted)"/><rect x="238.0" y="158.0" width="26.0" height="24.0" rx="5" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M251.0 188.0 L251.0 236.5" fill="none" stroke="var(--brand)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M251.0 244.0 L247.1 236.5 L254.9 236.5 Z" fill="var(--brand)"/><text x="258.0" y="222.0" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--brand)">50 N</text><text x="258.0" y="237.0" text-anchor="start" font-size="10.5" font-weight="600" fill="var(--muted)">you can weigh it</text><path d="M162.0 180.0 L162.0 208.5" fill="none" stroke="var(--muted)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M162.0 216.0 L158.1 208.5 L165.9 208.5 Z" fill="var(--muted)"/><text x="162.0" y="234.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">16 N  forearm</text><text x="162.0" y="248.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">a table gives it</text><path d="M106.0 158.0 L95.1 81.4" fill="none" stroke="var(--accent)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M94.0 74.0 L98.9 80.9 L91.2 82.0 Z" fill="var(--accent)"/><text x="118.0" y="72.0" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--accent)">biceps</text><text x="118.0" y="87.0" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--accent)">≈ 350 N</text><path d="M70.0 176.0 L52.9 217.1" fill="none" stroke="var(--accent)" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><path d="M50.0 224.0 L49.3 215.6 L56.5 218.6 Z" fill="var(--accent)"/><text x="16.0" y="240.0" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--accent)">elbow</text><text x="16.0" y="255.0" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--accent)">≈ 300 N</text></svg>
+      <p class="small mut" style="text-align:center;margin:0">Two of these four
+        forces can be weighed. Two have to be calculated.</p>
     </div>
   </div>
   <aside class="notes">Define it, then immediately say why it is not obvious.
 
-The internal/external split is the thing to plant on day one, because the entire arc of the course runs along it: measure the outside, compute the inside. Lectures 19 and 20 are where that gets cashed out, and it helps enormously if they have been waiting for it since week one.</aside>
+Point at the figure rather than reading the definition. The dumbbell can be put on a scale and the forearm's weight is in a table. The biceps force and the elbow joint force are an order of magnitude bigger than the load, and neither can be measured on a living person — they are computed, by exactly the method of lecture 19.
+
+The internal/external split is the thing to plant on day one, because the whole arc of the course runs along it: measure the outside, compute the inside.</aside>
 </section>
 
 <!-- 5 -->
 <section>
   <h2>Introduction</h2>
   <p class="subhead">Qualitative and quantitative biomechanics</p>
-  <div class="cols a top">
+  <div class="cols c top">
+    <div class="figcol"><svg class="hifig" viewBox="-16 4 400 276" style="width:50%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The same running figure twice: once described in words, once with joint angles and durations measured on it." opacity=".95"><circle cx="78" cy="30" r="13" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M76.0 43.0 L72.0 56.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M72.0 56.0 L66.0 118.0" fill="none" stroke="var(--ink)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><path d="M72.0 64.0 L104.0 84.0 L92.0 114.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M70.0 64.0 L40.0 86.0 L52.0 110.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M66.0 118.0 L74.0 168.0 L78.0 212.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M78.0 214.0 L100.0 218.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M66.0 118.0 L34.0 150.0 L56.0 182.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M56.0 184.0 L74.0 192.0" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.0 222.0 L146.0 222.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="78.0" y="250.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--muted)">qualitative</text><text x="78.0" y="266.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">trunk upright · long stride · smooth</text><circle cx="308" cy="30" r="13" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M306.0 43.0 L302.0 56.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M302.0 56.0 L296.0 118.0" fill="none" stroke="var(--ink)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><path d="M302.0 64.0 L334.0 84.0 L322.0 114.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M300.0 64.0 L270.0 86.0 L282.0 110.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M296.0 118.0 L304.0 168.0 L308.0 212.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M308.0 214.0 L330.0 218.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M296.0 118.0 L264.0 150.0 L286.0 182.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M286.0 184.0 L304.0 192.0" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M244.0 222.0 L376.0 222.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M302 58 L302 128" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="4 4" fill="none"/><path d="M306.8 103.7 A46.0 46.0 0 0 1 296.4 103.7" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="324.0" y="114.0" text-anchor="start" font-size="11.5" font-weight="750" fill="var(--accent)">8°</text><path d="M316.2 145.0 A26.0 26.0 0 0 1 327.8 178.6" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round"/><text x="346.0" y="164.0" text-anchor="start" font-size="11.5" font-weight="750" fill="var(--brand)">142°</text><path d="M323.3 199.1 A20.0 20.0 0 0 1 327.4 216.8" fill="none" stroke="var(--good)" stroke-width="1.8" stroke-linecap="round"/><text x="348.0" y="212.0" text-anchor="start" font-size="11.5" font-weight="750" fill="var(--good)">96°</text><circle cx="302.0" cy="58.0" r="3.4" fill="var(--accent)"/><circle cx="304.0" cy="168.0" r="3.4" fill="var(--brand)"/><circle cx="308.0" cy="212.0" r="3.4" fill="var(--good)"/><text x="308.0" y="250.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">quantitative</text><text x="308.0" y="266.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">contact 0.22 s · 2.9 body weights</text></svg></div>
     <div>
       <p class="small"><strong>Qualitative</strong> &mdash; describing movement
-        without numbers. A coach watching a stride, a clinician watching a gait.
-        That is EPHE 201.</p>
-      <p class="small"><strong>Quantitative</strong> &mdash; putting numbers on it.
-        That is EPHE 341.</p>
-    </div>
-    <div>
-      <p class="small">Neither is the better one. A clinician has fifteen minutes and
-        needs a judgement; a researcher testing a new rehabilitation protocol needs a
-        measurement. Each answers questions the other cannot.</p>
-      <p class="small">What the quantitative approach buys is the ability to be
-        <strong>wrong in a checkable way</strong> &mdash; which is the whole reason
-        this course spends so much time on units and sanity checks.</p>
+        without numbers. A coach watching a stride. That is EPHE 201.</p>
+      <p class="small"><strong>Quantitative</strong> &mdash; putting numbers on
+        it. That is EPHE 341.</p>
+      <div class="callout small">
+        <p style="margin-bottom:0">Neither is the better one. What numbers buy
+          is the ability to be <strong>wrong in a checkable way</strong>.</p>
+      </div>
     </div>
   </div>
   <aside class="notes">His slide 5 and its speaker note. The note is good and worth reading almost verbatim: both approaches are valuable, with different ranges of application and limitations.
 
-Add the bit his slide does not say: the reason to put numbers on something is that numbers can be checked. A qualitative judgement that is wrong is hard to catch; a number that is wrong fails a units check or a sanity check.</aside>
+Same runner, twice. On the left, everything a good coach would say from the touchline. On the right, the same stride with a protractor on it. Ask the room which one tells you whether the athlete improved this week.
+
+Then add the bit his slide does not say: the reason to put numbers on something is that numbers can be checked. A qualitative judgement that is wrong is hard to catch; a number that is wrong fails a units check.</aside>
 </section>
 
 <!-- 6 -->
 <section>
   <h2>Introduction</h2>
   <p class="subhead">Statics and dynamics</p>
-  <div class="cols a top">
-    <div>
-      <p class="small"><strong>Statics</strong> &mdash; the branch of physical
-        science concerned with bodies, static or at rest, upon which
-        <strong>balanced</strong> forces act.</p>
-      <p class="small"><strong>Static equilibrium</strong> &mdash; we will be able to
-        quantify forces and torques for objects in static equilibrium.
-        <em>Lecture 19.</em></p>
-    </div>
-    <div>
-      <p class="small"><strong>Dynamics</strong> &mdash; the study of the
-        relationship between motion and the forces affecting motion. It is the
-        combined study of kinetics and kinematics. <em>Lecture 20.</em></p>
-      <div class="callout small">
-        <p style="margin-bottom:0">Constant velocity counts as statics. That
-          surprises people, and it is the single most useful thing on this slide:
-          the forces balance whenever the acceleration is zero, moving or not.</p>
-      </div>
-    </div>
+  <div class="lead">
+    <p class="small"><strong>Statics</strong> &mdash; bodies upon which
+      <strong>balanced</strong> forces act. We will quantify forces and torques
+      for objects in static equilibrium. <em>Lecture 19.</em>
+      &nbsp;&nbsp;<strong>Dynamics</strong> &mdash; the relationship between
+      motion and the forces affecting it; kinetics and kinematics together.
+      <em>Lecture 20.</em></p>
   </div>
+  <div class="figrow"><svg class="hifig" viewBox="-14 36 442 244" style="width:62%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two blocks. On the left the arrows cancel and the sum of forces is zero; on the right one arrow is longer, leaving a net force and an acceleration." opacity=".95"><rect x="54.0" y="96.0" width="56.0" height="44.0" rx="6" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.4"/><path d="M52.0 118.0 L19.5 118.0" fill="none" stroke="var(--brand)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.0 118.0 L19.5 114.1 L19.5 121.9 Z" fill="var(--brand)"/><path d="M112.0 118.0 L144.5 118.0" fill="none" stroke="var(--brand)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M152.0 118.0 L144.5 121.9 L144.5 114.1 Z" fill="var(--brand)"/><path d="M82.0 94.0 L82.0 61.5" fill="none" stroke="var(--good)" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><path d="M82.0 54.0 L85.9 61.5 L78.1 61.5 Z" fill="var(--good)"/><path d="M82.0 142.0 L82.0 174.5" fill="none" stroke="var(--good)" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><path d="M82.0 182.0 L78.1 174.5 L85.9 174.5 Z" fill="var(--good)"/><path d="M0.0 196.0 L164.0 196.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="82.0" y="220.0" text-anchor="middle" font-size="15" font-weight="750" fill="var(--ink)">ΣF = 0</text><text x="82.0" y="250.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">statics</text><text x="82.0" y="266.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">at rest, or at constant velocity</text><rect x="284.0" y="96.0" width="56.0" height="44.0" rx="6" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.4"/><path d="M282.0 118.0 L243.5 118.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M236.0 118.0 L243.5 114.1 L243.5 121.9 Z" fill="var(--brand)"/><path d="M342.0 118.0 L404.5 118.0" fill="none" stroke="var(--brand)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M412.0 118.0 L404.5 121.9 L404.5 114.1 Z" fill="var(--brand)"/><path d="M230.0 196.0 L394.0 196.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M284.0 170.0 L334.5 170.0" fill="none" stroke="var(--accent)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M342.0 170.0 L334.5 173.9 L334.5 166.1 Z" fill="var(--accent)"/><text x="314.0" y="190.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">a</text><text x="312.0" y="220.0" text-anchor="middle" font-size="15" font-weight="750" fill="var(--ink)">ΣF = ma</text><text x="312.0" y="250.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">dynamics</text><text x="312.0" y="266.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">the forces do not cancel</text></svg></div>
+  <p class="small mut" style="text-align:center">Constant velocity counts as
+    statics &mdash; the forces balance whenever the acceleration is zero,
+    moving or not.</p>
   <aside class="notes">His slide 6, kept as its own slide because the pair is an axis the whole course runs along.
 
-The constant-velocity point is worth labouring. Students hear "statics" and picture something nailed down.</aside>
+The constant-velocity point is worth labouring. Students hear "statics" and picture something nailed down. Point at the left block and say it could be sliding across the floor at two metres a second and nothing on the diagram would change.</aside>
 </section>
 
 <!-- 7 -->
 <section>
   <h2>Introduction</h2>
   <p class="subhead">What is kinematics?</p>
-  <div class="cols a top">
-    <div>
-      <div class="box accent">
-        <p class="small" style="margin:0">The area of study that examines the
-          <strong>spatial and temporal</strong> components of motion &mdash;
-          position, velocity, acceleration &mdash; <strong>without regard to
-          force</strong>.</p>
-      </div>
-      <p class="small">Measures of movement.</p>
-    </div>
-    <div>
-      <p class="small"><em>Kinesis</em>, from the Ancient Greek, is motion or
-        movement; <em>kineo</em> is to move, to put in motion.</p>
-      <p class="small">A video of a jump is kinematics. It tells you how high he
-        went and how fast he was travelling when he left the floor, and nothing at
-        all about why.</p>
-    </div>
+  <div class="lead">
+    <p class="small">The area of study that examines the <strong>spatial and
+      temporal</strong> components of motion &mdash; position, velocity,
+      acceleration &mdash; <strong>without regard to force</strong>. Measures of
+      movement. <span class="mut">(<em>Kinesis</em>, Ancient Greek, is
+      motion.)</span></p>
   </div>
+  <div class="figrow"><svg class="hifig" viewBox="-22 18 510 272" style="width:66%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A jumper at three instants with the path of the centre of mass dashed through them, a velocity arrow at take-off and an acceleration arrow in the air." opacity=".95"><path d="M-14.0 252.0 L474.0 252.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="52.0" cy="112.0" r="11" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M56.0 128.0 L60.0 176.0" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M56.0 128.0 L78.0 140.0 L92.0 158.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M60.0 176.0 L74.0 212.0 L60.0 246.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M60.0 246.0 L82.0 250.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="230.0" cy="78.0" r="11" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M230.0 96.0 L230.0 146.0" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M230.0 96.0 L252.0 56.0 L262.0 34.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M230.0 146.0 L232.0 196.0 L230.0 244.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M230.0 244.0 L252.0 250.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="398.0" cy="50.0" r="11" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M398.0 68.0 L398.0 116.0" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M398.0 68.0 L374.0 40.0 L362.0 24.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M398.0 116.0 L392.0 164.0 L400.0 212.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M400.0 212.0 L422.0 216.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 176 L230 146 L398 116" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-dasharray="5 5" opacity=".75"/><circle cx="60.0" cy="176.0" r="4.2" fill="var(--accent)"/><circle cx="230.0" cy="146.0" r="4.2" fill="var(--accent)"/><circle cx="398.0" cy="116.0" r="4.2" fill="var(--accent)"/><circle cx="-8.0" cy="40.0" r="4.2" fill="var(--accent)"/><text x="4.0" y="44.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--accent)">centre of mass</text><path d="M190.0 150.0 L190.0 99.5" fill="none" stroke="var(--brand)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M190.0 92.0 L193.9 99.5 L186.1 99.5 Z" fill="var(--brand)"/><text x="170.0" y="80.0" text-anchor="middle" font-size="12" font-weight="750" fill="var(--brand)">v = 2.9 m/s</text><path d="M444.0 92.0 L444.0 134.5" fill="none" stroke="var(--accent)" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><path d="M444.0 142.0 L440.1 134.5 L447.9 134.5 Z" fill="var(--accent)"/><text x="452.0" y="122.0" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--accent)">a</text><text x="60.0" y="276.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">crouch</text><text x="230.0" y="276.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">take-off</text><text x="400.0" y="276.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">in the air</text></svg></div>
   <aside class="notes">His slide 7.
 
-The example to use is the one they will meet in week seven: the same jump, filmed and on a force plate. The film is kinematics, the plate is kinetics, and you need both to say anything useful.</aside>
+Everything on this figure is a measurement you could make from video alone: where the centre of mass was, how fast it was going, how hard it was being slowed. Not one force appears, and that is the definition.
+
+The same jump is on the next slide with the forces added. The film is kinematics, the plate is kinetics, and you need both to say anything useful.</aside>
 </section>
 
 <!-- 8 -->
 <section>
   <h2>Introduction</h2>
   <p class="subhead">What is kinetics?</p>
-  <div class="cols a top">
-    <div>
-      <div class="box accent">
-        <p class="small" style="margin:0">The study of bodies in motion with respect
-          to <strong>mass, force and energy</strong>.</p>
-      </div>
-      <p class="small">Measures of the causes and effects of movement.</p>
-    </div>
-    <div>
-      <p class="small">Kinematics describes; kinetics explains. Roughly half this
-        course is each, and the two meet in the last three lectures, where measured
-        motion and a measured force are put together to work out what the joints
-        were doing.</p>
-    </div>
+  <div class="lead">
+    <p class="small">The study of bodies in motion with respect to
+      <strong>mass, force and energy</strong>. Measures of the
+      <strong>causes</strong> and effects of movement &mdash; the same jump,
+      with the forces that produced it.</p>
   </div>
+  <div class="figrow"><svg class="hifig" viewBox="-22 18 510 272" style="width:66%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The same three instants of the jump with the ground reaction force drawn at each: small while unweighting, large at push-off, and absent in flight where only gravity acts." opacity=".95"><path d="M-14.0 252.0 L474.0 252.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="52.0" cy="112.0" r="11" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M56.0 128.0 L60.0 176.0" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M56.0 128.0 L78.0 140.0 L92.0 158.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M60.0 176.0 L74.0 212.0 L60.0 246.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M60.0 246.0 L82.0 250.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="230.0" cy="78.0" r="11" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M230.0 96.0 L230.0 146.0" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M230.0 96.0 L252.0 56.0 L262.0 34.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M230.0 146.0 L232.0 196.0 L230.0 244.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M230.0 244.0 L252.0 250.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="398.0" cy="50.0" r="11" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M398.0 68.0 L398.0 116.0" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M398.0 68.0 L374.0 40.0 L362.0 24.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M398.0 116.0 L392.0 164.0 L400.0 212.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M400.0 212.0 L422.0 216.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M26.0 250.0 L26.0 213.5" fill="none" stroke="var(--brand)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M26.0 206.0 L29.9 213.5 L22.1 213.5 Z" fill="var(--brand)"/><text x="26.0" y="194.0" text-anchor="middle" font-size="12" font-weight="750" fill="var(--brand)">0.7 BW</text><path d="M190.0 250.0 L190.0 115.5" fill="none" stroke="var(--brand)" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M190.0 108.0 L193.9 115.5 L186.1 115.5 Z" fill="var(--brand)"/><text x="190.0" y="96.0" text-anchor="middle" font-size="12" font-weight="750" fill="var(--brand)">2.4 BW</text><path d="M444.0 92.0 L444.0 134.5" fill="none" stroke="var(--accent)" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><path d="M444.0 142.0 L440.1 134.5 L447.9 134.5 Z" fill="var(--accent)"/><text x="452.0" y="122.0" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--accent)">mg</text><text x="400.0" y="232.0" text-anchor="middle" font-size="11" font-weight="600" fill="var(--muted)">no contact,</text><text x="400.0" y="245.0" text-anchor="middle" font-size="11" font-weight="600" fill="var(--muted)">so no ground force</text><text x="60.0" y="276.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">crouch</text><text x="230.0" y="276.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">take-off</text><text x="400.0" y="276.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">in the air</text></svg></div>
   <aside class="notes">His slide 8.
 
-The kinematics/kinetics distinction is the one they will get wrong on the midterm, so land it with an example rather than a definition.</aside>
+Same three instants as the slide before. Kinematics describes, kinetics explains, and the kinematics/kinetics distinction is the one they will get wrong on the midterm — so land it by flipping back and forth between these two figures rather than by reading two definitions.
+
+Roughly half this course is each, and the two meet in the last three lectures, where measured motion and a measured force are put together to work out what the joints were doing.</aside>
 </section>
 
 <!-- 9 -->
 <section>
   <h2>Introduction</h2>
   <p class="subhead">Quantitative biomechanics &mdash; applications</p>
-  <div class="cols a top">
-    <div>
-      <p class="small">To measure or predict internal and external forces in a
-        variety of settings. For example:</p>
-      <ul class="small">
-        <li><strong>Occupational and industrial</strong> &mdash; ergonomics.</li>
-        <li><strong>Clinical</strong> &mdash; assess rehabilitation methods.</li>
-        <li><strong>Sport</strong> &mdash; assess performance techniques.</li>
-      </ul>
-    </div>
-    <div>
-      <div class="callout small">
-        <p style="margin-bottom:0">All three are the same question asked by
-          different people: <em>what is this doing to the inside of the body, and
-          would a change help?</em></p>
-      </div>
-    </div>
+  <div class="lead">
+    <p class="small">To measure or predict internal and external forces in a
+      variety of settings &mdash; all three below are the same question asked by
+      different people: <em>what is this doing to the inside of the body, and
+      would a change help?</em></p>
   </div>
+  <div class="figrow"><svg class="hifig" viewBox="-16 24 540 258" style="width:78%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three scenes: a person lifting a box, a knee with a brace and a moment arrowed at it, and a runner with a ground force arrow." opacity=".95"><circle cx="52" cy="40" r="12" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M58.0 54.0 L74.0 112.0" fill="none" stroke="var(--ink)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><path d="M62.0 66.0 L44.0 110.0 L40.0 148.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M74.0 112.0 L86.0 164.0 L80.0 214.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M80.0 216.0 L104.0 220.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="20.0" y="148.0" width="42.0" height="36.0" rx="5" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M41.0 190.0 L41.0 206.5" fill="none" stroke="var(--muted)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M41.0 214.0 L37.1 206.5 L44.9 206.5 Z" fill="var(--muted)"/><path d="M0.0 224.0 L140.0 224.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="66.0" y="250.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">occupational</text><text x="66.0" y="266.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">how much is too much?</text><path d="M214.0 44.0 L226.0 124.0" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M226.0 124.0 L220.0 198.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M220.0 200.0 L246.0 204.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="226.0" cy="124.0" r="4.5" fill="var(--muted)"/><rect x="206.0" y="108.0" width="38.0" height="10.0" rx="4" fill="var(--chip)" stroke="var(--good)" stroke-width="2.0"/><rect x="204.0" y="130.0" width="38.0" height="10.0" rx="4" fill="var(--chip)" stroke="var(--good)" stroke-width="2.0"/><path d="M213.3 155.5 A34.0 34.0 0 0 1 193.3 114.6" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/><path d="M194.7 109.8 L196.0 116.4 L190.1 114.7 Z" fill="var(--accent)"/><text x="180.0" y="108.0" text-anchor="end" font-size="11" font-weight="700" fill="var(--accent)">moment</text><text x="254.0" y="156.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--good)">brace</text><path d="M170.0 224.0 L310.0 224.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="236.0" y="250.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">clinical</text><text x="236.0" y="266.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">did the brace help?</text><circle cx="418" cy="30" r="13" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M416.0 43.0 L412.0 56.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M412.0 56.0 L406.0 118.0" fill="none" stroke="var(--ink)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><path d="M412.0 64.0 L444.0 84.0 L432.0 114.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M410.0 64.0 L380.0 86.0 L392.0 110.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M406.0 118.0 L414.0 168.0 L418.0 212.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M418.0 214.0 L440.0 218.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M406.0 118.0 L374.0 150.0 L396.0 182.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M396.0 184.0 L414.0 192.0" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M354.0 222.0 L486.0 222.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M420.0 226.0 L401.2 186.8" fill="none" stroke="var(--brand)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M398.0 180.0 L404.8 185.1 L397.7 188.4 Z" fill="var(--brand)"/><text x="430.0" y="196.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--brand)">2.9 BW</text><text x="418.0" y="250.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">sport</text><text x="418.0" y="266.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">is this technique faster?</text></svg></div>
   <aside class="notes">His slide 9.
 
-Pick whichever of the three the room cares about and give one concrete number — a lifting limit, a brace that changed a knee moment, a technique change worth a few per cent.</aside>
+Pick whichever of the three the room cares about and give one concrete number — a lifting limit, a brace that changed a knee moment by fifteen per cent, a technique change worth a few per cent of sprint time.</aside>
 </section>
 
 <!-- 10 -->
 <section>
   <h2>Introduction</h2>
   <p class="subhead">Quantitative biomechanics techniques</p>
-  <div class="cols a top">
-    <div>
-      <p class="small">We will be discussing and using measurement techniques in
-        biomechanics.</p>
-      <ul class="small">
-        <li>Force plates and force transducers</li>
-        <li>Motion capture, in two and three dimensions</li>
-        <li>Electromyography</li>
-        <li>Accelerometers and gyroscopes</li>
-      </ul>
-    </div>
-    <div>
-      <p class="small">Each one is a lecture of its own later in the term, and each
-        one appears in this deck series on <strong>real recordings</strong> rather
-        than on diagrams &mdash; a measured walking stride, a measured jump, a
-        measured sprint.</p>
-      <div class="callout small">
-        <p style="margin-bottom:0">When a figure in this course is a simulation
-          rather than a recording, it says so on the figure.</p>
-      </div>
-    </div>
+  <div class="lead">
+    <p class="small">We will be discussing and using each of these, and each one
+      gets a lecture of its own later in the term.</p>
   </div>
-  <aside class="notes">His slide 10 is a picture of the equipment. The promise about real data matters: students arrive expecting textbook diagrams of frictionless blocks. Tell them the walking stride they will see in week two is a real person.</aside>
+  <div class="figrow"><svg class="hifig" viewBox="-18 16 580 152" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four instruments: a force plate with a force arrow, a camera sighting three markers on a limb, two electrodes on a muscle with a burst of signal, and a small sensor with three axes." opacity=".95"><rect x="8.0" y="96.0" width="104.0" height="16.0" rx="3" fill="var(--chip)" stroke="var(--muted)" stroke-width="2.0"/><path d="M60.0 94.0 L60.0 39.5" fill="none" stroke="var(--brand)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M60.0 32.0 L63.9 39.5 L56.1 39.5 Z" fill="var(--brand)"/><text x="60.0" y="140.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">force plate</text><text x="60.0" y="156.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">the force itself</text><rect x="146.0" y="26.0" width="36.0" height="26.0" rx="4" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M182 32 L196 26 L196 52 L182 46 Z" fill="var(--ink)"/><path d="M212.0 64.0 L224.0 94.0 L210.0 118.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="212.0" cy="64.0" r="4.5" fill="var(--accent)"/><circle cx="224.0" cy="94.0" r="4.5" fill="var(--accent)"/><circle cx="210.0" cy="118.0" r="4.5" fill="var(--accent)"/><path d="M196 40 L212 64 M196 40 L224 94 M196 40 L210 118" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 4" fill="none" opacity=".8"/><text x="200.0" y="140.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">motion capture</text><text x="200.0" y="156.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">where the body is</text><path d="M300 34 Q314 70 300 110" fill="none" stroke="var(--accent)" stroke-width="13" stroke-linecap="round" opacity=".32"/><rect x="302.0" y="58.0" width="14.0" height="12.0" rx="3" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.8"/><rect x="302.0" y="76.0" width="14.0" height="12.0" rx="3" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.8"/><path d="M322.0 72.0 L334.0 72.0 L338.0 54.0 L342.0 92.0 L346.0 60.0 L350.0 86.0 L354.0 72.0 L392.0 72.0" fill="none" stroke="var(--good)" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round"/><text x="340.0" y="140.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">electromyography</text><text x="340.0" y="156.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">what muscles do</text><rect x="470.0" y="58.0" width="34.0" height="34.0" rx="5" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M487.0 75.0 L487.0 34.5" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M487.0 28.0 L490.4 34.5 L483.6 34.5 Z" fill="var(--brand)"/><path d="M487.0 75.0 L525.5 75.0" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M532.0 75.0 L525.5 78.4 L525.5 71.6 Z" fill="var(--accent)"/><path d="M487.0 75.0 L464.6 97.4" fill="none" stroke="var(--good)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M460.0 102.0 L462.2 95.0 L467.0 99.8 Z" fill="var(--good)"/><text x="487.0" y="140.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">accelerometers</text><text x="487.0" y="156.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">motion anywhere</text></svg></div>
+  <p class="small mut" style="text-align:center">Every one of them appears in
+    this deck series on a <strong>real recording</strong> &mdash; a measured
+    stride, a measured jump. When a figure is a simulation, it says so.</p>
+  <aside class="notes">His slide 10 is a photograph of the equipment; this is the same four things with what each one actually gives you written under it.
+
+The promise about real data matters: students arrive expecting textbook diagrams of frictionless blocks. Tell them the walking stride they will see in week two is a real person.</aside>
 </section>
 
 <!-- 11 -->
@@ -325,7 +274,7 @@ Spend a minute on the shape of it rather than the contents: the left column is m
 </section>
 
 <!-- 13 -->
-<section>
+<section class="roomy">
   <h2>How This Course Works</h2>
   <p class="subhead">The optional text</p>
   <div class="cols a top">
@@ -352,7 +301,7 @@ Spend a minute on the shape of it rather than the contents: the left column is m
 </section>
 
 <!-- 14 -->
-<section>
+<section class="roomy">
   <h2>How This Course Works</h2>
   <p class="subhead">Evaluation</p>
   <div class="cols a top">
@@ -377,7 +326,7 @@ Spend a minute on the shape of it rather than the contents: the left column is m
 </section>
 
 <!-- 15 -->
-<section>
+<section class="roomy">
   <h2>How This Course Works</h2>
   <p class="subhead">Problem sets</p>
   <div class="cols a top">
@@ -400,7 +349,7 @@ Spend a minute on the shape of it rather than the contents: the left column is m
 </section>
 
 <!-- 16 -->
-<section>
+<section class="roomy">
   <h2>How This Course Works</h2>
   <p class="subhead">The Biomechanics Tutor</p>
   <div class="cols a top">
@@ -427,7 +376,7 @@ The no-tolerance warning is real and worth giving on day one, because the first 
 </section>
 
 <!-- 17 -->
-<section>
+<section class="roomy">
   <h2>How This Course Works</h2>
   <p class="subhead">Basic problem solving in biomechanics</p>
   <ol class="small cols2">
@@ -462,7 +411,7 @@ Step 9 is the one to insist on. Every term, marks are lost to answers that could
 </section>
 
 <!-- 19 -->
-<section>
+<section class="roomy">
   <h2>How This Course Works</h2>
   <p class="subhead">Background material (homework)</p>
   <div class="cols a top">
@@ -493,7 +442,7 @@ Say the callout out loud; it is the single most useful sentence in the lecture. 
 </section>
 
 <!-- 20 -->
-<section>
+<section class="roomy">
   <h2>How This Course Works</h2>
   <p class="subhead">Before next class</p>
   <div class="box accent">
@@ -518,7 +467,7 @@ Say the callout out loud; it is the single most useful sentence in the lecture. 
 </section>
 
 <!-- 22 -->
-<section>
+<section class="roomy">
   <h2>Basic Math</h2>
   <p class="subhead">What is reviewed here</p>
   <div class="cols a top">
@@ -544,7 +493,7 @@ Say the callout out loud; it is the single most useful sentence in the lecture. 
 </section>
 
 <!-- 23 -->
-<section>
+<section class="roomy">
   <h2>Basic Math</h2>
   <p class="subhead">Properties of real numbers</p>
   <div class="cols a top">
@@ -566,7 +515,7 @@ Say the callout out loud; it is the single most useful sentence in the lecture. 
 </section>
 
 <!-- 24 -->
-<section>
+<section class="roomy">
   <h2>Basic Math</h2>
   <p class="subhead">Commutative properties</p>
   <div class="cols a top">
@@ -595,7 +544,7 @@ The subtraction point is the one worth adding to his slide, and it costs ten sec
 </section>
 
 <!-- 25 -->
-<section>
+<section class="roomy">
   <h2>Basic Math</h2>
   <p class="subhead">Associative properties</p>
   <div class="cols a top">
@@ -619,7 +568,7 @@ The subtraction point is the one worth adding to his slide, and it costs ten sec
 </section>
 
 <!-- 26 -->
-<section>
+<section class="roomy">
   <h2>Basic Math</h2>
   <p class="subhead">Distributive property</p>
   <div class="cols a top">
@@ -643,7 +592,7 @@ The subtraction point is the one worth adding to his slide, and it costs ten sec
 </section>
 
 <!-- 27 -->
-<section>
+<section class="roomy">
   <h2>Basic Math</h2>
   <p class="subhead">Theorems, and the laws of exponents</p>
   <div class="cols a top">
@@ -686,7 +635,7 @@ And say plainly: all twenty-four are right. His review content is sound. There a
 </section>
 
 <!-- 29 -->
-<section>
+<section class="roomy">
   <h2>Basic Math</h2>
   <p class="subhead">Solving equations for one unknown</p>
   <div class="cols a top">
@@ -715,29 +664,22 @@ And say plainly: all twenty-four are right. His review content is sound. There a
 <section>
   <h2>Basic Math</h2>
   <p class="subhead">Solving equations for multiple unknowns</p>
-  <div class="cols a top">
+  <div class="cols c top">
     <div>
-      <p class="small">When you have an equation with two or more variables of
-        unknown value, you need <strong>a number of equations equal to the number
-        of unknown values</strong>, each containing the variables.</p>
-      <ol class="small">
-        <li>Isolate one variable by manipulating the equation.</li>
-        <li>Substitute the term in place of the isolated variable into a second
-          equation.</li>
-        <li>Solve for the other unknown value.</li>
-        <li>Back-substitute the value of the second variable into the first equation
-          to solve for the first variable.</li>
-      </ol>
-    </div>
-    <div>
-      <p class="small"><strong>Example:</strong> 1) x + y = 3 &nbsp; 2) 2x + y = 4,
-        find x and y</p>
+      <p class="small">You need <strong>a number of equations equal to the
+        number of unknown values</strong>, each containing the variables.</p>
+      <p class="small"><strong>Example:</strong> 1) x + y = 3 &nbsp;
+        2) 2x + y = 4, find x and y</p>
       <p class="eq small">1. isolate &nbsp; x = 3 &minus; y</p>
       <p class="eq small">2. substitute into 2) &nbsp; 2(3 &minus; y) + y = 4</p>
       <p class="eq small">3. solve &nbsp; 6 &minus; 2y + y = 4 &nbsp;&rarr;&nbsp;
         y = 2</p>
       <p class="eq">4. back-substitute &nbsp; x + 2 = 3 &nbsp;&rarr;&nbsp;
         <strong>x = 1</strong></p>
+    </div>
+    <div class="figcol"><svg class="hifig" viewBox="-18 -8 330 250" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The lines x plus y equals 3 and 2x plus y equals 4 drawn on axes, crossing at the point x equals 1, y equals 2." opacity=".95"><path d="M40.0 212.0 L203.0 212.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M210.0 212.0 L203.0 215.6 L203.0 208.4 Z" fill="var(--muted)"/><path d="M56.0 228.0 L56.0 19.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M56.0 12.0 L59.6 19.0 L52.4 19.0 Z" fill="var(--muted)"/><text x="218.0" y="217.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">x</text><text x="50.0" y="4.0" text-anchor="end" font-size="12" font-weight="700" fill="var(--muted)">y</text><path d="M102.0 208.0 L102.0 216.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="102.0" y="232.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">1</text><path d="M148.0 208.0 L148.0 216.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="148.0" y="232.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">2</text><path d="M194.0 208.0 L194.0 216.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="194.0" y="232.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">3</text><path d="M52.0 166.0 L60.0 166.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="44.0" y="170.0" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--muted)">1</text><path d="M52.0 120.0 L60.0 120.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="44.0" y="124.0" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--muted)">2</text><path d="M52.0 74.0 L60.0 74.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="44.0" y="78.0" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--muted)">3</text><path d="M52.0 28.0 L60.0 28.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="44.0" y="32.0" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--muted)">4</text><path d="M56.0 74.0 L196.3 214.3" fill="none" stroke="var(--brand)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><text x="203.2" y="184.4" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--brand)">x + y = 3</text><path d="M56.0 28.0 L150.3 216.6" fill="none" stroke="var(--good)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><text x="79.9" y="6.8" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--good)">2x + y = 4</text><circle cx="102.0" cy="120.0" r="6.5" fill="var(--accent)"/><text x="113.0" y="98.8" text-anchor="start" font-size="13" font-weight="750" fill="var(--accent)">x = 1,  y = 2</text></svg>
+      <p class="small mut" style="text-align:center;margin:0">two lines, one
+        crossing &mdash; that is what solving them together means</p>
     </div>
   </div>
   <aside class="notes">His slide 29, his example.
@@ -749,25 +691,23 @@ This is the shape of every statics problem in lecture 19: three equations, three
 <section>
   <h2>Basic Math</h2>
   <p class="subhead">Solving quadratic equations</p>
-  <div class="cols a top">
+  <div class="cols c top">
     <div>
-      <p class="small">When you have an equation in the form
-        <em>ax</em>&sup2; + <em>bx</em> + <em>c</em> = 0, where a, b and c are real
-        numbers, it is known as a <strong>quadratic equation</strong>, and once
-        solved will yield <strong>two values for x</strong>.</p>
-      <p class="small">This becomes clear if you graph a quadratic equation: the
-        curve crosses the x-axis twice.</p>
+      <p class="small">An equation of the form
+        <em>ax</em>&sup2; + <em>bx</em> + <em>c</em> = 0 is a
+        <strong>quadratic</strong>, and once solved yields <strong>two values
+        for x</strong>.</p>
       <p class="eq">x = (&minus;b &plusmn; &radic;(b&sup2; &minus; 4ac)) / 2a</p>
-    </div>
-    <div>
-      <p class="small">His worked case is y(f) = &minus;2x&sup2; + 5x &minus; 2,
-        which crosses the axis at x = &frac12; and x = 2.</p>
       <div class="callout small">
         <p style="margin-bottom:0">Quadratics turn up the moment anything is
           thrown: a projectile is at a given height <strong>twice</strong>, once
           going up and once coming down, and the two roots are those two times.
           That is why you cannot take the positive root and go home.</p>
       </div>
+    </div>
+    <div class="figcol"><svg class="hifig" viewBox="-4 44 322 210" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The parabola y equals minus two x squared plus five x minus two, crossing the x axis at one half and at two." opacity=".95"><path d="M34.0 176.0 L294.1 176.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M301.1 176.0 L294.1 179.6 L294.1 172.4 Z" fill="var(--muted)"/><path d="M56.0 234.0 L56.0 71.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M56.0 64.0 L59.6 71.0 L52.4 71.0 Z" fill="var(--muted)"/><text x="309.7" y="181.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">x</text><path d="M34.5 358.2 L38.8 342.3 L43.1 326.9 L47.4 312.1 L51.7 297.8 L56.0 284.0 L60.3 270.8 L64.6 258.1 L68.9 245.9 L73.2 234.3 L77.5 223.2 L81.8 212.7 L86.1 202.7 L90.4 193.3 L94.7 184.4 L99.0 176.0 L103.3 168.2 L107.6 160.9 L111.9 154.1 L116.2 147.9 L120.5 142.2 L124.8 137.1 L129.1 132.5 L133.4 128.5 L137.7 125.0 L142.0 122.0 L146.3 119.6 L150.6 117.7 L154.9 116.3 L159.2 115.5 L163.5 115.2 L167.8 115.5 L172.1 116.3 L176.4 117.7 L180.7 119.6 L185.0 122.0 L189.3 125.0 L193.6 128.5 L197.9 132.5 L202.2 137.1 L206.5 142.2 L210.8 147.9 L215.1 154.1 L219.4 160.9 L223.7 168.2 L228.0 176.0 L232.3 184.4 L236.6 193.3 L240.9 202.7 L245.2 212.7 L249.5 223.2 L253.8 234.3 L258.1 245.9 L262.4 258.1 L266.7 270.8 L271.0 284.0 L275.3 297.8 L279.6 312.1 L283.9 326.9" fill="none" stroke="var(--brand)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="99.0" cy="176.0" r="6.5" fill="var(--accent)"/><circle cx="228.0" cy="176.0" r="6.5" fill="var(--accent)"/><text x="79.0" y="202.0" text-anchor="end" font-size="13" font-weight="750" fill="var(--accent)">x = ½</text><text x="248.0" y="202.0" text-anchor="start" font-size="13" font-weight="750" fill="var(--accent)">x = 2</text><text x="163.5" y="99.2" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--brand)">y = −2x² + 5x − 2</text><text x="163.5" y="99.2" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--muted)"></text></svg>
+      <p class="small mut" style="text-align:center;margin:0">his worked case,
+        drawn: it crosses at &frac12; and at 2</p>
     </div>
   </div>
   <aside class="notes">His slide 30.
@@ -815,7 +755,10 @@ Do not make this a gotcha. Make it the lesson: he drew the answer, and the drawi
     <li>When two lines intersect, the sum of the angles along one line created by
       the intersection will equal <strong>180&deg;</strong>.</li>
   </ol>
-  <aside class="notes">His slide 32, laws 1 to 5, his numbering. All five are correct.</aside>
+  <div class="figrow"><svg class="hifig" viewBox="-4 16 648 172" style="width:94%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Five small diagrams: perpendicular lines, parallel lines, the opposite angles at a crossing, the four angles summing to 360 degrees and two angles on one line summing to 180." opacity=".95"><circle cx="14.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="14.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">1</text><path d="M16.0 104.0 L110.0 104.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M62.0 56.0 L62.0 150.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="66.0" y="92.0" width="12.0" height="12.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.6"/><text x="92.0" y="82.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--muted)">90°</text><text x="62.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">perpendicular</text><circle cx="142.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="142.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">2</text><path d="M144.0 86.0 L238.0 86.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M144.0 122.0 L238.0 122.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><text x="190.0" y="154.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">they never meet</text><text x="190.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">parallel</text><circle cx="270.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="270.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">3</text><path d="M274.0 60.0 L362.0 148.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M274.0 148.0 L362.0 60.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M341.0 91.8 A26.0 26.0 0 0 1 341.0 116.2" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><path d="M295.0 116.2 A26.0 26.0 0 0 1 295.0 91.8" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><text x="352.0" y="108.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">α</text><text x="284.0" y="108.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">α</text><text x="318.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">opposite angles match</text><circle cx="398.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="398.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">4</text><path d="M410.0 72.0 L482.0 136.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M410.0 136.0 L482.0 72.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M461.6 95.0 A18.0 18.0 0 0 1 461.6 113.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M455.0 119.6 A18.0 18.0 0 0 1 437.0 119.6" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M430.4 113.0 A18.0 18.0 0 0 1 430.4 95.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M437.0 88.4 A18.0 18.0 0 0 1 455.0 88.4" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="446.0" y="154.0" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--accent)">all four = 360°</text><text x="446.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">right round</text><circle cx="526.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="526.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">5</text><path d="M526.0 122.0 L622.0 122.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M574.0 122.0 L612.0 60.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M548.0 122.0 A26.0 26.0 0 0 1 560.2 100.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M591.0 94.9 A32.0 32.0 0 0 1 606.0 122.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="574.0" y="154.0" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--accent)">both = 180°</text><text x="574.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">along one line</text></svg></div>
+  <aside class="notes">His slide 32, laws 1 to 5, his numbering. All five are correct.
+
+Read them off the pictures rather than off the list. Numbers three, four and five are all the same crossing drawn three ways, and saying that out loud saves them memorising three rules.</aside>
 </section>
 
 <!-- 35 -->
@@ -830,11 +773,10 @@ Do not make this a gotcha. Make it the lesson: he drew the answer, and the drawi
     <li>The sum of the interior angles of a triangle will always equal
       <strong>180&deg;</strong>.</li>
   </ol>
-  <div class="box">
-    <p class="small" style="margin:0">The Z rule and the 180&deg; rule between them
-      are how you find an angle you were never given &mdash; which is most of what
-      free body diagrams ask you to do.</p>
-  </div>
+  <div class="figrow"><svg class="hifig" viewBox="-4 16 600 206" style="width:80%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three diagrams: a transversal across two parallel lines making a Z with two equal angles, three lines crossing to enclose a triangle, and a triangle whose three interior angles sum to 180." opacity=".95"><circle cx="16.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="16.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">6</text><path d="M20.0 72.0 L160.0 72.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.0 140.0 L160.0 140.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M132.0 48.0 L44.0 164.0" fill="none" stroke="var(--brand)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M138.0 72.0 A24.0 24.0 0 0 1 127.4 91.9" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><path d="M38.0 140.0 A24.0 24.0 0 0 1 48.6 120.1" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><text x="148.0" y="96.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">θ</text><text x="34.0" y="128.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">θ</text><text x="90.0" y="192.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">a Z, and the two angles match</text><circle cx="212.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="212.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">7</text><path d="M210.0 160.0 L372.0 160.0" fill="none" stroke="var(--muted)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M216.0 176.0 L314.0 44.0" fill="none" stroke="var(--muted)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M366.0 176.0 L268.0 44.0" fill="none" stroke="var(--muted)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M234.0 160 L348.0 160 L291.0 90.0 Z" fill="var(--brand)" opacity=".3"/><text x="291.0" y="192.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">three lines, one triangle</text><circle cx="408.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="408.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">8</text><path d="M426.0 160.0 L562.0 160.0 L488.0 54.0 L426.0 160.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M440.8 136.3 A28.0 28.0 0 0 1 454.0 160.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M534.0 160.0 A28.0 28.0 0 0 1 545.5 137.3" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M501.0 76.5 A26.0 26.0 0 0 1 473.5 75.6" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="494.0" y="192.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--accent)">α + β + γ = 180°, always</text></svg></div>
+  <p class="small mut" style="text-align:center">The Z rule and the 180&deg;
+    rule between them are how you find an angle you were never given &mdash;
+    which is most of what free body diagrams ask you to do.</p>
   <aside class="notes">His slide 33, laws 6 to 8.
 
 Dwell on the Z. When a limb is at an angle and a force is vertical, the angle you need is almost never the one marked on the figure; it is a corresponding angle two steps away. Students who know the Z pattern find it in seconds and students who do not guess.</aside>
@@ -851,14 +793,12 @@ Dwell on the Z. When a limb is at an angle and a force is vertical, the angle yo
       <p class="eq">tan&theta; = opposite / adjacent</p>
       <p class="small"><strong>Pythagorean theorem</strong></p>
       <p class="eq">hypotenuse&sup2; = adjacent&sup2; + opposite&sup2;</p>
+      <p class="small mut">Which side is &ldquo;opposite&rdquo; and which is
+        &ldquo;adjacent&rdquo; is decided by <strong>where &theta; is</strong>,
+        not by the shape of the triangle. The graphs of all three, for every
+        &theta; from 0&deg; to 360&deg;, are on the next slide.</p>
     </div>
-    <div>
-      <p class="small">Below is a graphical representation of cosine, sine and
-        tangent for values of &theta; from 0&deg; to 360&deg;
-        (&pi; = 180&deg;). These graphs can be memorised and used to estimate when
-        a calculator is not available. Notice that sine and cosine oscillate
-        between 1 and &minus;1.</p>
-    </div>
+    <div class="figcol"><svg class="hifig" viewBox="20 40 340 266" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A right angle triangle with the angle theta marked at one corner and the three sides labelled adjacent, opposite and hypotenuse." opacity=".95"><path d="M40 196 L232 196 L232 62 Z" fill="var(--brand)" opacity=".28"/><path d="M40.0 196.0 L232.0 196.0 L232.0 62.0 L40.0 196.0" fill="none" stroke="var(--ink)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="216.0" y="180.0" width="16.0" height="16.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.6"/><path d="M76.0 170.8 A44.0 44.0 0 0 1 84.0 196.0" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><text x="96.0" y="186.0" text-anchor="middle" font-size="14" font-weight="750" fill="var(--accent)">θ</text><text x="136.0" y="216.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)">adjacent</text><text x="244.0" y="134.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">opposite</text><text x="116.0" y="112.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">hypotenuse</text><text x="40.0" y="254.0" text-anchor="start" font-size="12" font-weight="650" fill="var(--muted)">cosθ = adj / hyp</text><text x="40.0" y="272.0" text-anchor="start" font-size="12" font-weight="650" fill="var(--muted)">sinθ = opp / hyp</text><text x="40.0" y="290.0" text-anchor="start" font-size="12" font-weight="650" fill="var(--muted)">tanθ = opp / adj</text></svg></div>
   </div>
   <aside class="notes">His slide 34, his three definitions and his note about the graphs.
 
@@ -879,7 +819,7 @@ Then press the special angles. His slide 35 is a table of five rows to memorise;
 <section>
   <h2>Trigonometry</h2>
   <p class="subhead">Special right angle triangle cases</p>
-  <div class="cols a top">
+  <div class="cols b top">
     <div>
       <p class="small">From the trigonometric functions and graphs for a right angle
         triangle we can develop some special cases that can be memorised to help
@@ -893,17 +833,10 @@ Then press the special angles. His slide 35 is a table of five rows to memorise;
         <tr><td>90&deg;</td><td>1</td><td>0</td><td>&mdash;</td></tr>
       </table>
     </div>
-    <div>
-      <p class="small">The general triangle can be used to solve for any unknown
-        side if any side and angle is known. From the graphs of sine, cosine and
-        tangent we can determine some important values for specific values of
-        &theta;, and these values can be used to create special triangles that can
-        be memorised.</p>
-      <div class="callout small">
-        <p style="margin-bottom:0">The 30&ndash;60&ndash;90 triangle has sides
-          1, &frac12; and &radic;3/2. The 45&ndash;45&ndash;90 triangle has sides
-          1, &radic;2/2 and &radic;2/2. His Example 1 is the first of these.</p>
-      </div>
+    <div class="figcol"><svg class="hifig" viewBox="12 88 470 188" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The 30-60-90 and 45-45-90 triangles drawn to scale, both with a hypotenuse of one, with every side length written on it." opacity=".95"><path d="M30.0 212.0 L159.9 212.0 L159.9 137.0 Z" fill="var(--brand)" opacity=".28"/><path d="M30.0 212.0 L159.9 212.0 L159.9 137.0 L30.0 212.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="144.9" y="197.0" width="15.0" height="15.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="56.0" y="204.0" text-anchor="start" font-size="12" font-weight="750" fill="var(--accent)">30°</text><text x="133.9" y="167.0" text-anchor="end" font-size="12" font-weight="750" fill="var(--accent)">60°</text><text x="95.0" y="232.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)">√3/2</text><text x="169.9" y="174.5" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">1/2</text><text x="85.0" y="164.5" text-anchor="middle" font-size="13" font-weight="750" fill="var(--ink)">1</text><text x="95.0" y="254.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">30 · 60 · 90</text><path d="M300.0 212.0 L406.1 212.0 L406.1 105.9 Z" fill="var(--good)" opacity=".28"/><path d="M300.0 212.0 L406.1 212.0 L406.1 105.9 L300.0 212.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="391.1" y="197.0" width="15.0" height="15.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="326.0" y="202.0" text-anchor="start" font-size="12" font-weight="750" fill="var(--accent)">45°</text><text x="378.1" y="137.9" text-anchor="end" font-size="12" font-weight="750" fill="var(--accent)">45°</text><text x="353.0" y="232.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)">√2/2</text><text x="416.1" y="159.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">√2/2</text><text x="341.0" y="149.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--ink)">1</text><text x="353.0" y="254.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">45 · 45 · 90</text></svg>
+      <p class="small mut" style="text-align:center;margin:0">drawn to scale,
+        both with a hypotenuse of 1 &mdash; his Example 1 is the first of
+        them</p>
     </div>
   </div>
   <aside class="notes">His slide 35, his table, his two special triangles.
@@ -927,15 +860,12 @@ Every value in the table is right — the unit-circle figure checks all five row
       <p class="small"><strong>Sine law</strong></p>
       <p class="eq">a/sin&alpha; = b/sin&beta; = c/sin&gamma;</p>
     </div>
-    <div>
-      <p class="small">These functions are true for all triangles. They are best
-        memorised and used at all times when attempting to solve for unknown values
-        of a triangle.</p>
+    <div class="figcol"><svg class="hifig" viewBox="14 28 318 252" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A triangle with no right angle, corners A B and C, angles alpha beta and gamma, and each side lettered for the angle opposite it." opacity=".95"><path d="M40 212 L280 182 L176 58 Z" fill="var(--violet)" opacity=".26"/><path d="M40.0 212.0 L280.0 182.0 L176.0 58.0 L40.0 212.0" fill="none" stroke="var(--ink)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M72.2 185.0 A42.0 42.0 0 0 1 81.7 206.9" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><path d="M238.6 174.7 A42.0 42.0 0 0 1 256.5 147.2" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><path d="M200.4 87.1 A38.0 38.0 0 0 1 151.6 87.1" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><text x="90.0" y="200.0" text-anchor="start" font-size="14" font-weight="750" fill="var(--accent)">α</text><text x="230.0" y="170.0" text-anchor="end" font-size="14" font-weight="750" fill="var(--accent)">β</text><text x="176.0" y="118.0" text-anchor="middle" font-size="14" font-weight="750" fill="var(--accent)">γ</text><circle cx="40.0" cy="212.0" r="4" fill="var(--ink)"/><circle cx="280.0" cy="182.0" r="4" fill="var(--ink)"/><circle cx="176.0" cy="58.0" r="4" fill="var(--ink)"/><text x="32.0" y="220.0" text-anchor="end" font-size="12.5" font-weight="750" fill="var(--ink)">A</text><text x="290.0" y="190.0" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--ink)">B</text><text x="176.0" y="46.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">C</text><text x="160.0" y="230.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--muted)">c</text><text x="246.0" y="120.0" text-anchor="start" font-size="13" font-weight="750" fill="var(--muted)">a</text><text x="90.0" y="135.0" text-anchor="end" font-size="13" font-weight="750" fill="var(--muted)">b</text><text x="160.0" y="262.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--muted)">each side is named for the angle facing it</text></svg>
       <div class="box accent">
-        <p class="small" style="margin:0">Which one you use is decided by
-          <strong>what you were given</strong>, not by what you want. Two angles and
-          a side &rarr; the sine law. Two sides and the angle between them &rarr;
-          the cosine law.</p>
+        <p class="small" style="margin:0">Which law you use is decided by
+          <strong>what you were given</strong>. Two angles and a side &rarr; the
+          sine law. Two sides and the angle between them &rarr; the cosine
+          law.</p>
       </div>
     </div>
   </div>
@@ -959,7 +889,7 @@ Then press Make it right-angled. The cosine law's last term is 2ab·cos 90°, wh
 </section>
 
 <!-- 41 -->
-<section>
+<section class="roomy">
   <h2>Trigonometry</h2>
   <p class="subhead">Example 1: right angle triangle &middot; Example 2: non-right</p>
   <div class="cols a top">
@@ -1007,35 +937,24 @@ Teach it with the picture, not the arithmetic. Drawn to scale, the answer is vis
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">Planes and axis system</p>
-  <div class="cols a top">
-    <div>
-      <p class="small">The planes and axis system will be necessary for describing
-        movement in <strong>2D and 3D</strong>.</p>
-      <table>
-        <tr><th>Plane</th><th>Axis</th></tr>
-        <tr><td>Sagittal</td><td>Transverse</td></tr>
-        <tr><td>Frontal</td><td>Anteroposterior (AP)</td></tr>
-        <tr><td>Transverse</td><td>Longitudinal</td></tr>
-      </table>
-    </div>
-    <div>
-      <p class="small"><strong>Sagittal</strong> &mdash; divides the body into left
-        and right. Most of walking happens here, which is why most of this course
-        is two-dimensional.</p>
-      <p class="small"><strong>Frontal</strong> &mdash; divides front from back.</p>
-      <p class="small"><strong>Transverse</strong> &mdash; divides top from
-        bottom.</p>
-    </div>
+  <div class="lead">
+    <p class="small">The planes and axis system will be necessary for describing
+      movement in <strong>2D and 3D</strong>.
+      <strong>Sagittal</strong> divides left from right &mdash; most of walking
+      happens here, which is why most of this course is two-dimensional.
+      <strong>Frontal</strong> divides front from back.
+      <strong>Transverse</strong> divides top from bottom.</p>
   </div>
-  <p class="small mut">The diagrams and description that follow are on McGinnis
-    pp. 158&ndash;171.</p>
+  <div class="figrow"><svg class="hifig" viewBox="-8 10 614 272" style="width:74%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three small bodies, each with one anatomical plane shaded on it and the axis it turns about drawn through: left to right for the sagittal plane, front to back for the frontal, up and down for the transverse." opacity=".95"><rect x="70" y="36" width="22" height="178" rx="4" fill="var(--brand)" opacity=".3"/><rect x="70.0" y="36.0" width="22.0" height="178.0" rx="4" fill="none" stroke="var(--brand)" stroke-width="1.6"/><circle cx="81.0" cy="58.0" r="9.5" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.9"/><path d="M81.0 68.0 L81.0 76.0" fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M64.0 78.0 L98.0 78.0" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M81.0 76.0 L81.0 122.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M71.0 122.0 L91.0 122.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M72.0 124.0 L71.0 194.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M90.0 124.0 L91.0 194.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M59.0 78.0 L55.0 124.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M103.0 78.0 L107.0 124.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M26.0 118.0 L133.0 118.0" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M140.0 118.0 L133.0 121.6 L133.0 114.4 Z" fill="var(--accent)"/><path d="M136.0 118.0 L29.0 118.0" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M22.0 118.0 L29.0 114.4 L29.0 121.6 Z" fill="var(--accent)"/><text x="81.0" y="250.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--brand)">sagittal plane</text><text x="81.0" y="268.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">about a left–right axis</text><rect x="236" y="36" width="130" height="178" rx="5" fill="var(--good)" opacity=".16"/><rect x="236.0" y="36.0" width="130.0" height="178.0" rx="5" fill="none" stroke="var(--good)" stroke-width="1.6"/><circle cx="301.0" cy="58.0" r="9.5" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.9"/><path d="M301.0 68.0 L301.0 76.0" fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M284.0 78.0 L318.0 78.0" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M301.0 76.0 L301.0 122.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M291.0 122.0 L311.0 122.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M292.0 124.0 L291.0 194.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M310.0 124.0 L311.0 194.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M279.0 78.0 L275.0 124.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M323.0 78.0 L327.0 124.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="301" cy="118" r="13" fill="var(--chip)" stroke="var(--accent)" stroke-width="2.4"/><circle cx="301.0" cy="118.0" r="4.2" fill="var(--accent)"/><text x="301.0" y="250.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--good)">frontal plane</text><text x="301.0" y="268.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">about a front–back axis</text><circle cx="521.0" cy="58.0" r="9.5" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.9"/><path d="M521.0 68.0 L521.0 76.0" fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M504.0 78.0 L538.0 78.0" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M521.0 76.0 L521.0 122.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M511.0 122.0 L531.0 122.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M512.0 124.0 L511.0 194.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M530.0 124.0 L531.0 194.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M499.0 78.0 L495.0 124.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M543.0 78.0 L547.0 124.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="521" cy="122" rx="78" ry="17" fill="var(--violet)" opacity=".26"/><ellipse cx="521" cy="122" rx="78" ry="17" fill="none" stroke="var(--violet)" stroke-width="1.8"/><path d="M521.0 36.0 L521.0 27.0" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M521.0 20.0 L524.6 27.0 L517.4 27.0 Z" fill="var(--accent)"/><path d="M521.0 20.0 L521.0 210.0" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round"/><path d="M521.0 196.0 L521.0 205.0" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M521.0 212.0 L517.4 205.0 L524.6 205.0 Z" fill="var(--accent)"/><text x="521.0" y="250.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--violet)">transverse plane</text><text x="521.0" y="268.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">about an up–down axis</text></svg></div>
+  <p class="small mut" style="text-align:center">Each plane turns about the axis
+    <strong>perpendicular</strong> to it. McGinnis pp. 158&ndash;171.</p>
   <aside class="notes">His slide 39, including his Table 6.1 and his pointer to the text.
 
 Flag why the sagittal plane gets all the attention: walking, running, jumping and lifting are all overwhelmingly sagittal, which is what makes two-dimensional analysis useful rather than lazy.</aside>
 </section>
 
 <!-- 45 -->
-<section>
+<section class="roomy">
   <h2>Planes and Axes</h2>
   <p class="subhead">Axis system</p>
   <div class="cols a top">
@@ -1065,7 +984,7 @@ The plane/axis duality is the thing students find slippery, and the callout is t
 </section>
 
 <!-- 46 -->
-<section>
+<section class="roomy">
   <h2>Planes and Axes</h2>
   <p class="subhead">The three axes, one at a time</p>
   <div class="cols a top">
@@ -1116,24 +1035,16 @@ The body is a real walking capture, the same person the Forces deck uses.</aside
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">Joint axes move with the limb</p>
-  <div class="cols a top">
-    <div>
-      <p class="small">Joint axes will move when the limbs are in a different
-        anatomical location.</p>
-      <p class="small">It is important to have a basic understanding of anatomy to
-        know how to determine the movement of body and limb with respect to joint
-        axes and anatomical planes.</p>
-    </div>
-    <div>
-      <div class="callout small">
-        <p style="margin-bottom:0">Imagining a <strong>wheel</strong> helps: the
-          plane of the movement is the plane of the wheel, and the axis is the
-          hub. Raise your arm out to the side and the elbow&rsquo;s wheel has
-          turned with it &mdash; the same joint, the same flexion, a different
-          plane.</p>
-      </div>
-    </div>
+  <div class="lead">
+    <p class="small">Joint axes will move when the limbs are in a different
+      anatomical location. It is important to have a basic understanding of
+      anatomy to know how to determine the movement of body and limb with
+      respect to joint axes and anatomical planes.</p>
   </div>
+  <div class="figrow"><svg class="hifig" viewBox="-16 58 610 250" style="width:88%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The same elbow twice. With the arm hanging, the wheel of the elbow stands in the sagittal plane; with the arm raised out to the side, the same wheel now lies in the transverse plane." opacity=".95"><circle cx="96.0" cy="92.0" r="9.5" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.9"/><path d="M96.0 102.0 L96.0 110.0" fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M79.0 112.0 L113.0 112.0" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M96.0 110.0 L96.0 156.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M86.0 156.0 L106.0 156.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M87.0 158.0 L86.0 228.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M105.0 158.0 L106.0 228.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M74.0 112.0 L70.0 158.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M118.0 112.0 L122.0 158.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M118.0 112.0 L128.0 158.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M128.0 158.0 L134.0 206.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128.0" cy="158.0" r="4.5" fill="var(--muted)"/><ellipse cx="128.0" cy="158.0" rx="12.0" ry="40.0" fill="var(--brand)" opacity=".2"/><ellipse cx="128.0" cy="158.0" rx="12.0" ry="40.0" fill="none" stroke="var(--brand)" stroke-width="2.2" stroke-dasharray="5 4"/><path d="M96.0 158.0 L160.0 158.0" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128.0" cy="158.0" r="4.0" fill="var(--accent)"/><text x="110.0" y="266.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">arm at the side</text><text x="110.0" y="284.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">the elbow turns in the sagittal plane</text><circle cx="400.0" cy="92.0" r="9.5" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.9"/><path d="M400.0 102.0 L400.0 110.0" fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M383.0 112.0 L417.0 112.0" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M400.0 110.0 L400.0 156.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M390.0 156.0 L410.0 156.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M391.0 158.0 L390.0 228.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M409.0 158.0 L410.0 228.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M378.0 112.0 L374.0 158.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M422.0 112.0 L470.0 108.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M470.0 108.0 L516.0 112.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="470.0" cy="108.0" r="4.5" fill="var(--muted)"/><ellipse cx="470.0" cy="108.0" rx="40.0" ry="12.0" fill="var(--violet)" opacity=".2"/><ellipse cx="470.0" cy="108.0" rx="40.0" ry="12.0" fill="none" stroke="var(--violet)" stroke-width="2.2" stroke-dasharray="5 4"/><path d="M470.0 70.0 L470.0 146.0" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="470.0" cy="108.0" r="4.0" fill="var(--accent)"/><text x="438.0" y="266.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">arm out to the side</text><text x="438.0" y="284.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">the same elbow, now transverse</text><text x="276.0" y="166.0" text-anchor="middle" font-size="26" font-weight="700" fill="var(--muted)">→</text></svg></div>
+  <p class="small mut" style="text-align:center">The plane of the movement is
+    the plane of the <strong>wheel</strong>, and the axis is the
+    <strong>hub</strong>.</p>
   <aside class="notes">His slide 47, and the bicycle-wheel analogy his figure uses.
 
 Do it with your own arm in front of them. Flex the elbow with the arm hanging: sagittal. Abduct the shoulder to 90 degrees and flex the elbow again: the same joint action, now in the transverse plane. The axis went with the limb.</aside>
@@ -1145,22 +1056,20 @@ Do it with your own arm in front of them. Flex the elbow with the arm hanging: s
   <p class="subhead">And most real movement is in none of them</p>
   <div class="cols a top">
     <div>
-      <p class="small">While it is important to know the basic anatomical planes,
-        when someone moves, movement may occur in a <strong>different plane</strong>
-        about a <strong>different axis</strong>.</p>
-    </div>
-    <div>
-      <p class="small">A golf swing is the standard example: the club travels in a
-        plane that is neither sagittal nor frontal nor transverse, tilted somewhere
-        between them, and the shoulders rotate about an axis perpendicular to
-        <em>that</em> plane.</p>
+      <p class="small">While it is important to know the basic anatomical
+        planes, when someone moves, movement may occur in a <strong>different
+        plane</strong> about a <strong>different axis</strong>.</p>
+      <p class="small">A golf swing is the standard example: the club travels in
+        a plane tilted between all three, and the shoulders rotate about an axis
+        perpendicular to <em>that</em> plane.</p>
       <div class="box accent">
         <p class="small" style="margin:0">The three cardinal planes are a
-          <strong>vocabulary</strong>, not a claim about what bodies do. Naming a
-          diagonal movement means naming its components in the three planes you
-          already have words for.</p>
+          <strong>vocabulary</strong>, not a claim about what bodies do. Naming
+          a diagonal movement means naming its components in the three planes
+          you already have words for.</p>
       </div>
     </div>
+    <div class="figcol"><svg class="hifig" viewBox="6 26 268 296" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A standing body with the sagittal and transverse planes faint on it and a bold tilted disc through the shoulders standing for the plane a golf swing actually travels in." opacity=".95"><rect x="128" y="44" width="20" height="196" rx="4" fill="var(--brand)" opacity=".18"/><ellipse cx="138" cy="140" rx="74" ry="16" fill="var(--violet)" opacity=".16"/><ellipse cx="138" cy="130" rx="104" ry="30" fill="var(--accent)" opacity=".2" transform="rotate(-38 138 130)"/><circle cx="138.0" cy="96.0" r="9.5" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.9"/><path d="M138.0 106.0 L138.0 114.0" fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M121.0 116.0 L155.0 116.0" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M138.0 114.0 L138.0 160.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M128.0 160.0 L148.0 160.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M129.0 162.0 L128.0 232.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M147.0 162.0 L148.0 232.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M116.0 116.0 L112.0 162.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M160.0 116.0 L164.0 162.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><text x="60.0" y="54.0" text-anchor="middle" font-size="10.5" font-weight="650" fill="var(--brand)">sagittal</text><text x="228.0" y="136.0" text-anchor="start" font-size="10.5" font-weight="650" fill="var(--violet)">transverse</text><ellipse cx="138" cy="130" rx="104" ry="30" fill="none" stroke="var(--accent)" stroke-width="2.6" transform="rotate(-38 138 130)"/><text x="138.0" y="290.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--accent)">a golf swing is in none of the three</text><text x="138.0" y="308.0" text-anchor="middle" font-size="11" font-weight="600" fill="var(--muted)">so it is named by its parts in all three</text></svg></div>
   </div>
   <aside class="notes">His slide 48.
 
@@ -1176,19 +1085,12 @@ This is the slide that stops the planes feeling like a tidy lie. Nothing outside
       <p class="small">Viewing joint movement from different planes will give you a
         different perspective of the movement.</p>
     </div>
-    <div>
-      <p class="small">A shoulder abduction filmed from the front is a clean arc.
-        The same abduction filmed from the side is a limb that barely moves. Neither
-        camera is lying; each one is projecting a three-dimensional movement onto
-        its own plane.</p>
-      <div class="callout small">
-        <p style="margin-bottom:0">This is the reason every two-dimensional
-          analysis in this course states which plane it is in &mdash; and the
-          reason the last three lectures keep asking how much of the movement
-          actually stayed in that plane.</p>
-      </div>
-    </div>
+    <div class="figcol"><svg class="hifig" viewBox="2 30 500 258" style="width:64%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The same shoulder abduction filmed twice: from the front it is a ninety degree arc, from the side the arm barely appears to move." opacity=".95"><circle cx="96.0" cy="76.0" r="9.5" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.9"/><path d="M96.0 86.0 L96.0 94.0" fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M79.0 96.0 L113.0 96.0" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M96.0 94.0 L96.0 140.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M86.0 140.0 L106.0 140.0" fill="none" stroke="var(--ink)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M87.0 142.0 L86.0 212.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M105.0 142.0 L106.0 212.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M113.0 96.0 L117.0 142.0" fill="none" stroke="var(--ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M79.0 96.0 L75.0 142.0" fill="none" stroke="var(--muted)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><path d="M79.0 96.0 L33.0 94.0" fill="none" stroke="var(--accent)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M73.6 147.7 A52.0 52.0 0 0 1 27.1 99.6" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/><path d="M26.8 94.6 L30.3 100.4 L24.1 100.8 Z" fill="var(--accent)"/><text x="90.0" y="252.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">filmed from the front</text><text x="90.0" y="270.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">a clean 90° arc</text><circle cx="386.0" cy="76.0" r="9.5" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.9"/><path d="M386.0 86.0 L386.0 94.0" fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M386.0 94.0 L385.0 140.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M385.0 140.0 L384.0 212.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M384.0 212.0 L402.0 214.0" fill="none" stroke="var(--ink)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M386.0 96.0 L382.0 142.0" fill="none" stroke="var(--muted)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><path d="M386.0 96.0 L368.0 92.0" fill="none" stroke="var(--accent)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M381.2 141.7 A46.0 46.0 0 0 1 361.6 135.0" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/><path d="M357.4 132.4 L364.1 132.9 L360.8 138.2 Z" fill="var(--accent)"/><text x="386.0" y="252.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--ink)">filmed from the side</text><text x="386.0" y="270.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">the arm hardly moves at all</text><path d="M238.0 70.0 L238.0 240.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   </div>
+  <p class="small mut" style="text-align:center">Neither camera is lying; each
+    is projecting a three-dimensional movement onto its own plane. That is why
+    every two-dimensional analysis in this course states which plane it is
+    in.</p>
   <aside class="notes">His slide 49.
 
 Connect it forwards. In lecture 20 there is a measured jump where the ground force leaves the sagittal plane by a third of a degree, which is what makes a planar analysis honest for that movement. Say that the question gets asked properly later; this is where it gets raised.</aside>
@@ -1198,22 +1100,17 @@ Connect it forwards. In lecture 20 there is a measured jump where the ground for
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">Sagittal plane joint actions</p>
-  <div class="cols b top">
-    <div class="figcol"><svg class="hifig" viewBox="50 6 224 248" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A standing body seen from the side, with flexion and extension arrowed at the shoulder, hip, knee and ankle" opacity=".92"><circle cx="150" cy="34" r="15" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M150.0 49.0 L149.0 64.0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M149.0 64.0 L151.0 100.0 L150.0 132.0" fill="none" stroke="var(--ink)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><path d="M152.0 69.0 L158.0 100.0 L160.0 126.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M150.0 132.0 L148.0 180.0" fill="none" stroke="var(--ink)" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M148.0 180.0 L147.0 224.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M147.0 226.0 L172.0 228.0" fill="none" stroke="var(--ink)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="150.0" cy="68.0" r="3.0" fill="var(--muted)"/><circle cx="152.0" cy="101.0" r="3.0" fill="var(--muted)"/><circle cx="150.0" cy="132.0" r="3.0" fill="var(--muted)"/><circle cx="148.0" cy="180.0" r="3.0" fill="var(--muted)"/><circle cx="147.0" cy="227.0" r="3.0" fill="var(--muted)"/><path d="M102.0 236.0 L204.0 236.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M165.9 42.6 A30.0 30.0 0 0 1 170.1 90.3" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><path d="M166.4 93.6 L168.7 87.3 L172.9 91.9 Z" fill="var(--accent)"/><text x="190.0" y="52.0" text-anchor="start" font-size="10" font-weight="650" fill="var(--accent)">shoulder flexion</text><path d="M166.6 110.7 A27.0 27.0 0 0 1 170.1 150.1" fill="none" stroke="var(--brand)" stroke-width="2.0" stroke-linecap="round"/><path d="M166.7 153.8 L168.4 147.2 L173.0 151.4 Z" fill="var(--brand)"/><text x="180.0" y="118.0" text-anchor="start" font-size="10" font-weight="650" fill="var(--brand)">hip flexion</text><path d="M171.6 184.2 A24.0 24.0 0 0 1 133.2 198.9" fill="none" stroke="var(--good)" stroke-width="1.9" stroke-linecap="round"/><path d="M129.3 195.8 L135.9 197.1 L132.1 202.0 Z" fill="var(--good)"/><text x="118.0" y="194.0" text-anchor="end" font-size="10" font-weight="650" fill="var(--good)">knee flexion</text><path d="M166.2 215.1 A18.0 18.0 0 0 1 161.1 237.2" fill="none" stroke="var(--violet)" stroke-width="1.9" stroke-linecap="round"/><path d="M157.1 240.3 L160.0 234.1 L163.8 239.0 Z" fill="var(--violet)"/><text x="172.0" y="208.0" text-anchor="start" font-size="9.5" font-weight="650" fill="var(--violet)">dorsi / plantar</text></svg></div>
-    <div>
+  <div class="lead">
       <p class="small">Movement in the <strong>sagittal</strong> plane, about a
-        <strong>transverse</strong> (left&ndash;right) axis:</p>
-      <ul class="small">
-        <li>flexion</li>
-        <li>extension</li>
-        <li>hyperextension</li>
-        <li>plantar flexion</li>
-        <li>dorsiflexion</li>
-      </ul>
+        <strong>transverse</strong> (left&ndash;right) axis &mdash;
+        <strong>flexion</strong>, <strong>extension</strong>,
+        <strong>hyperextension</strong>, and at the ankle
+        <strong>dorsiflexion</strong> and <strong>plantar flexion</strong>.</p>
       <p class="small mut">At the wrist, elbow, shoulder, hip, knee, trunk, neck
-        and ankle.</p>
-    </div>
+        and ankle. Flexion closes the angle at a joint, extension opens it, and
+        hyperextension carries it past the anatomical position.</p>
   </div>
+  <div class="figrow"><svg class="hifig" viewBox="-10 2 486 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three panels, each showing a limb in two positions with the movement named" opacity=".95"><g transform="translate(0.0 0.0)"><g transform="translate(0.0 0.0)"><circle cx="64" cy="22" r="11" fill="var(--chip)" stroke="var(--ink)" stroke-width="2"/><path d="M64.0 33.0 L64.0 42.0" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M64.0 42.0 L63.0 68.0 L62.0 92.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M64.0 46.0 L66.0 68.0 L67.0 88.0" fill="none" stroke="var(--muted)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><path d="M64.0 46.0 L84.0 32.0 L100.0 20.0" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M78.1 72.5 A30.0 30.0 0 0 0 93.1 38.7" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M91.9 33.9 L96.4 39.0 L90.3 40.5 Z" fill="var(--accent)"/><circle cx="64.0" cy="46.0" r="2.8" fill="var(--ink)"/><text x="104.0" y="14.0" text-anchor="end" font-size="9.5" font-weight="650" fill="var(--accent)">flexion</text><text x="64.0" y="112.0" text-anchor="middle" font-size="9.5" font-weight="650" fill="var(--muted)">shoulder</text><text x="64.0" y="146.0" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)">shoulder</text></g></g><g transform="translate(146.0 0.0)"><g transform="translate(0.0 0.0)"><circle cx="64" cy="22" r="11" fill="var(--chip)" stroke="var(--ink)" stroke-width="2"/><path d="M64.0 33.0 L64.0 42.0" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M64.0 42.0 L63.0 68.0 L62.0 92.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M62.0 92.0 L61.0 118.0 L60.0 140.0" fill="none" stroke="var(--muted)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><path d="M62.0 92.0 L92.0 100.0" fill="none" stroke="var(--brand)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M92.0 100.0 L86.0 128.0" fill="none" stroke="var(--good)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M65.6 117.7 A26.0 26.0 0 0 0 87.6 96.5" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round"/><path d="M88.5 91.6 L90.5 98.0 L84.4 97.0 Z" fill="var(--brand)"/><path d="M111.6 104.2 A20.0 20.0 0 0 1 96.2 119.6" fill="none" stroke="var(--good)" stroke-width="1.8" stroke-linecap="round"/><path d="M91.3 120.6 L96.5 116.3 L97.8 122.4 Z" fill="var(--good)"/><circle cx="62.0" cy="92.0" r="2.8" fill="var(--ink)"/><circle cx="92.0" cy="100.0" r="2.8" fill="var(--ink)"/><text x="108.0" y="92.0" text-anchor="start" font-size="9.5" font-weight="650" fill="var(--brand)">hip</text><text x="110.0" y="118.0" text-anchor="start" font-size="9.5" font-weight="650" fill="var(--good)">knee</text><text x="64.0" y="146.0" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)">hip and knee</text></g></g><g transform="translate(292.0 0.0)"><g transform="translate(0.0 0.0)"><path d="M60.0 18.0 L58.0 86.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M58.0 92.0 L92.0 94.0" fill="none" stroke="var(--muted)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><path d="M58.0 92.0 L88.0 76.0" fill="none" stroke="var(--violet)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M58.0 92.0 L86.0 112.0" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M93.3 73.2 A40.0 40.0 0 0 1 90.4 115.5" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/><path d="M87.4 119.6 L88.4 112.9 L93.5 116.5 Z" fill="var(--muted)"/><circle cx="58.0" cy="92.0" r="2.8" fill="var(--ink)"/><text x="94.0" y="70.0" text-anchor="start" font-size="9.5" font-weight="650" fill="var(--violet)">dorsiflexion</text><text x="92.0" y="122.0" text-anchor="start" font-size="9.5" font-weight="650" fill="var(--accent)">plantar flexion</text><text x="64.0" y="146.0" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)">ankle</text></g></g></svg></div>
   <aside class="notes">His slides 50 to 54, which are five plates of the same list.
 
 Have them do each one as you name it. Flexion and extension are the pair they already know; hyperextension is the one they will argue about, and it is worth saying that it means movement past the anatomical position rather than anything pathological.
@@ -1225,21 +1122,20 @@ The ankle gets its own two words because it is the one joint where "flexion" is 
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">Frontal plane joint actions</p>
-  <div class="cols b top">
-    <div class="figcol"><svg class="hifig" viewBox="12 6 262 248" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A standing body seen from the front, with abduction and adduction arrowed at the shoulder and hip and lateral flexion at the trunk" opacity=".92"><circle cx="150" cy="34" r="15" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M150.0 49.0 L150.0 64.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M126.0 68.0 L174.0 68.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M150.0 64.0 L150.0 128.0" fill="none" stroke="var(--ink)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M136.0 128.0 L164.0 128.0" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M126.0 68.0 L121.0 100.0 L119.0 126.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M137.0 130.0 L135.0 180.0" fill="none" stroke="var(--ink)" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M135.0 180.0 L134.0 224.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M134.0 226.0 L134.0 230.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="126.0" cy="68.0" r="3.0" fill="var(--muted)"/><circle cx="137.0" cy="130.0" r="3.0" fill="var(--muted)"/><circle cx="135.0" cy="180.0" r="3.0" fill="var(--muted)"/><path d="M174.0 68.0 L179.0 100.0 L181.0 126.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M163.0 130.0 L165.0 180.0" fill="none" stroke="var(--ink)" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M165.0 180.0 L166.0 224.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M166.0 226.0 L166.0 230.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="174.0" cy="68.0" r="3.0" fill="var(--muted)"/><circle cx="163.0" cy="130.0" r="3.0" fill="var(--muted)"/><circle cx="165.0" cy="180.0" r="3.0" fill="var(--muted)"/><path d="M102.0 236.0 L204.0 236.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M92.1 70.4 A34.0 34.0 0 0 1 114.4 36.1" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><path d="M119.1 34.3 L114.5 39.3 L112.4 33.5 Z" fill="var(--accent)"/><text x="106.0" y="48.0" text-anchor="end" font-size="10" font-weight="650" fill="var(--accent)">shoulder abduction</text><path d="M111.0 145.0 A30.0 30.0 0 0 1 110.5 115.9" fill="none" stroke="var(--brand)" stroke-width="1.9" stroke-linecap="round"/><path d="M112.9 111.5 L112.8 118.3 L107.3 115.3 Z" fill="var(--brand)"/><text x="104.0" y="118.0" text-anchor="end" font-size="10" font-weight="650" fill="var(--brand)">hip abduction</text><path d="M134.3 28.8 A46.0 46.0 0 0 1 165.7 28.8" fill="none" stroke="var(--good)" stroke-width="1.9" stroke-linecap="round"/><path d="M170.4 30.5 L163.7 31.3 L165.9 25.5 Z" fill="var(--good)"/><text x="198.0" y="40.0" text-anchor="start" font-size="10" font-weight="650" fill="var(--good)">lateral flexion</text></svg></div>
-    <div>
+  <div class="lead">
       <p class="small">Movement in the <strong>frontal</strong> plane, about an
-        <strong>anteroposterior</strong> (front&ndash;back) axis:</p>
-      <ul class="small">
-        <li>abduction and adduction</li>
-        <li>ulnar and radial deviation</li>
-        <li>inversion and eversion</li>
-        <li>elevation and depression</li>
-        <li>upward and downward rotation</li>
-        <li>lateral flexion to the left and right</li>
-      </ul>
-    </div>
+        <strong>anteroposterior</strong> (front&ndash;back) axis &mdash;
+        <strong>abduction</strong> away from the midline and
+        <strong>adduction</strong> back to it.</p>
+      <p class="small mut">The same idea has its own name at several joints:
+        <strong>ulnar</strong> and <strong>radial deviation</strong> at the
+        wrist, <strong>inversion</strong> and <strong>eversion</strong> at the
+        foot, <strong>elevation</strong> and <strong>depression</strong> and
+        <strong>upward</strong> and <strong>downward rotation</strong> at the
+        shoulder girdle, and <strong>lateral flexion</strong> of the trunk and
+        neck.</p>
   </div>
+  <div class="figrow"><svg class="hifig" viewBox="-62 2 510 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three panels, each showing a limb in two positions with the movement named" opacity=".95"><g transform="translate(0.0 0.0)"><g transform="translate(0.0 0.0)"><circle cx="64" cy="22" r="11" fill="var(--chip)" stroke="var(--ink)" stroke-width="2"/><path d="M64.0 33.0 L64.0 42.0" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M46.0 44.0 L82.0 44.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M64.0 42.0 L64.0 92.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M54.0 92.0 L74.0 92.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M46.0 46.0 L42.0 70.0 L40.0 90.0" fill="none" stroke="var(--muted)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><path d="M46.0 46.0 L26.0 36.0 L10.0 28.0" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M32.9 70.7 A28.0 28.0 0 0 1 18.0 45.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M18.2 40.0 L21.1 46.1 L14.9 45.9 Z" fill="var(--accent)"/><circle cx="46.0" cy="46.0" r="2.8" fill="var(--ink)"/><text x="6.0" y="20.0" text-anchor="start" font-size="9.5" font-weight="650" fill="var(--accent)">abduction</text><text x="64.0" y="146.0" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)">shoulder</text></g></g><g transform="translate(146.0 0.0)"><g transform="translate(0.0 0.0)"><circle cx="64" cy="22" r="11" fill="var(--chip)" stroke="var(--ink)" stroke-width="2"/><path d="M64.0 33.0 L64.0 42.0" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M46.0 44.0 L82.0 44.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M64.0 42.0 L64.0 92.0" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M54.0 92.0 L74.0 92.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M54.0 92.0 L52.0 118.0 L51.0 140.0" fill="none" stroke="var(--muted)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><path d="M54.0 92.0 L30.0 112.0 L16.0 124.0" fill="none" stroke="var(--brand)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M50.9 121.8 A30.0 30.0 0 0 1 30.4 110.5" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round"/><path d="M27.3 106.5 L33.4 109.3 L28.5 113.2 Z" fill="var(--brand)"/><circle cx="54.0" cy="92.0" r="2.8" fill="var(--ink)"/><text x="2.0" y="112.0" text-anchor="start" font-size="9.5" font-weight="650" fill="var(--brand)">abduction</text><text x="64.0" y="146.0" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)">hip</text></g></g><g transform="translate(292.0 0.0)"><g transform="translate(0.0 0.0)"><circle cx="64" cy="22" r="11" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.3"/><path d="M64.0 90.0 L64.0 44.0" fill="none" stroke="var(--muted)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><path d="M64.0 44.0 L64.0 33.0" fill="none" stroke="var(--muted)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><path d="M64.0 90.0 L82.0 48.0" fill="none" stroke="var(--good)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M82.0 48.0 L87.0 37.0" fill="none" stroke="var(--good)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="90" cy="27" r="11" fill="var(--chip)" stroke="var(--good)" stroke-width="2"/><path d="M54.0 90.0 L74.0 90.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M59.0 18.2 A72.0 72.0 0 0 1 91.0 23.2" fill="none" stroke="var(--good)" stroke-width="1.9" stroke-linecap="round"/><path d="M95.6 25.1 L88.9 25.7 L91.2 20.0 Z" fill="var(--good)"/><circle cx="64.0" cy="90.0" r="2.8" fill="var(--ink)"/><text x="34.0" y="26.0" text-anchor="end" font-size="9.5" font-weight="650" fill="var(--good)">lean to the right</text><text x="64.0" y="146.0" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)">trunk</text></g></g></svg></div>
   <aside class="notes">His slides 55 and 56.
 
 Abduction and adduction are the headline pair; the other four rows are the joints that have their own names for the same idea. Ulnar and radial deviation is the wrist, inversion and eversion the foot, elevation and depression the shoulder girdle.</aside>
@@ -1249,19 +1145,19 @@ Abduction and adduction are the headline pair; the other four rows are the joint
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">Transverse plane joint actions</p>
-  <div class="cols b top">
-    <div class="figcol"><svg class="hifig" viewBox="36 6 276 248" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A standing body seen from the front, with rotation about the long axis arrowed at the head, the shoulder and the hip" opacity=".92"><circle cx="150" cy="34" r="15" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.2"/><path d="M150.0 49.0 L150.0 64.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M126.0 68.0 L174.0 68.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M150.0 64.0 L150.0 128.0" fill="none" stroke="var(--ink)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M136.0 128.0 L164.0 128.0" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M126.0 68.0 L121.0 100.0 L119.0 126.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M137.0 130.0 L135.0 180.0" fill="none" stroke="var(--ink)" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M135.0 180.0 L134.0 224.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M134.0 226.0 L134.0 230.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="126.0" cy="68.0" r="3.0" fill="var(--muted)"/><circle cx="137.0" cy="130.0" r="3.0" fill="var(--muted)"/><circle cx="135.0" cy="180.0" r="3.0" fill="var(--muted)"/><path d="M174.0 68.0 L179.0 100.0 L181.0 126.0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M163.0 130.0 L165.0 180.0" fill="none" stroke="var(--ink)" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M165.0 180.0 L166.0 224.0" fill="none" stroke="var(--ink)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M166.0 226.0 L166.0 230.0" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="174.0" cy="68.0" r="3.0" fill="var(--muted)"/><circle cx="163.0" cy="130.0" r="3.0" fill="var(--muted)"/><circle cx="165.0" cy="180.0" r="3.0" fill="var(--muted)"/><path d="M102.0 236.0 L204.0 236.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="174" cy="100" rx="22" ry="7" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 3"/><path d="M153.3 92.5 A22.0 22.0 0 0 1 194.7 92.5" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><path d="M196.4 97.2 L191.4 92.6 L197.2 90.5 Z" fill="var(--accent)"/><text x="214.0" y="92.0" text-anchor="start" font-size="9.5" font-weight="650" fill="var(--accent)">internal / external</text><text x="214.0" y="104.0" text-anchor="start" font-size="9.5" font-weight="650" fill="var(--accent)">rotation</text><ellipse cx="150" cy="40" rx="20" ry="7" fill="none" stroke="var(--good)" stroke-width="2" stroke-dasharray="4 3"/><path d="M131.2 33.2 A20.0 20.0 0 0 1 168.8 33.2" fill="none" stroke="var(--good)" stroke-width="2.0" stroke-linecap="round"/><path d="M170.5 37.9 L165.5 33.3 L171.4 31.2 Z" fill="var(--good)"/><text x="126.0" y="18.0" text-anchor="end" font-size="9.5" font-weight="650" fill="var(--good)">rotation to the left</text><ellipse cx="166" cy="180" rx="18" ry="6" fill="none" stroke="var(--brand)" stroke-width="2" stroke-dasharray="4 3"/><path d="M149.1 173.8 A18.0 18.0 0 0 1 182.9 173.8" fill="none" stroke="var(--brand)" stroke-width="2.0" stroke-linecap="round"/><path d="M184.6 178.5 L179.7 174.0 L185.5 171.8 Z" fill="var(--brand)"/><text x="190.0" y="176.0" text-anchor="start" font-size="9.5" font-weight="650" fill="var(--brand)">medial / lateral</text><text x="190.0" y="188.0" text-anchor="start" font-size="9.5" font-weight="650" fill="var(--brand)">rotation</text></svg></div>
-    <div>
+  <div class="lead">
       <p class="small">Movement in the <strong>transverse</strong> plane, about a
-        <strong>longitudinal</strong> (up&ndash;down) axis:</p>
-      <ul class="small">
-        <li>internal and external rotation</li>
-        <li>pronation and supination</li>
-        <li>horizontal abduction and adduction</li>
-        <li>rotation to the right and to the left</li>
-      </ul>
-    </div>
+        <strong>longitudinal</strong> (up&ndash;down) axis &mdash; everything
+        that <em>twists</em> rather than swings.</p>
+      <p class="small mut"><strong>Internal</strong> and <strong>external
+        rotation</strong> at the shoulder and hip, <strong>pronation</strong>
+        and <strong>supination</strong> of the forearm,
+        <strong>horizontal abduction</strong> and <strong>adduction</strong>
+        once the shoulder is already raised to 90&deg;, and
+        <strong>rotation</strong> of the trunk and neck to the right and
+        left.</p>
   </div>
+  <div class="figrow"><svg class="hifig" viewBox="-10 2 460 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three panels, each showing a limb in two positions with the movement named" opacity=".95"><g transform="translate(0.0 0.0)"><g transform="translate(0.0 0.0)"><circle cx="64" cy="74" r="26" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.4"/><circle cx="64.0" cy="74.0" r="2.6" fill="var(--ink)"/><text x="64.0" y="13.0" text-anchor="middle" font-size="9" font-weight="600" fill="var(--muted)">seen along the arm</text><path d="M64.0 74.0 L64.0 118.0" fill="none" stroke="var(--muted)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><path d="M64.0 74.0 L102.0 96.0" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M64.0 118.0 A44.0 44.0 0 0 0 102.1 96.0" fill="none" stroke="var(--accent)" stroke-width="1.9" stroke-linecap="round"/><path d="M104.6 91.7 L104.3 98.4 L98.9 95.3 Z" fill="var(--accent)"/><text x="30.0" y="124.0" text-anchor="middle" font-size="9.5" font-weight="650" fill="var(--muted)">external</text><text x="104.0" y="118.0" text-anchor="middle" font-size="9.5" font-weight="650" fill="var(--accent)">internal</text><text x="64.0" y="146.0" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)">shoulder</text></g></g><g transform="translate(146.0 0.0)"><g transform="translate(0.0 0.0)"><circle cx="64" cy="74" r="22" fill="var(--chip)" stroke="var(--ink)" stroke-width="2.4"/><circle cx="64.0" cy="74.0" r="2.6" fill="var(--ink)"/><text x="64.0" y="13.0" text-anchor="middle" font-size="9" font-weight="600" fill="var(--muted)">seen along the forearm</text><path d="M36.0 74.0 L92.0 74.0" fill="none" stroke="var(--muted)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><circle cx="34" cy="74" r="3.5" fill="var(--muted)" opacity="0.3"/><path d="M42.0 52.0 L86.0 96.0" fill="none" stroke="var(--brand)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="40" cy="50" r="3.5" fill="var(--brand)"/><path d="M24.0 74.0 A40.0 40.0 0 0 1 35.7 45.7" fill="none" stroke="var(--brand)" stroke-width="1.9" stroke-linecap="round"/><path d="M39.3 42.2 L37.2 48.6 L32.8 44.2 Z" fill="var(--brand)"/><text x="24.0" y="112.0" text-anchor="middle" font-size="9.5" font-weight="650" fill="var(--muted)">palm up</text><text x="102.0" y="112.0" text-anchor="middle" font-size="9.5" font-weight="650" fill="var(--brand)">palm down</text><text x="64.0" y="146.0" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)">forearm</text></g></g><g transform="translate(292.0 0.0)"><g transform="translate(0.0 0.0)"><circle cx="64" cy="60" r="13" fill="var(--chip)" stroke="var(--ink)" stroke-width="2"/><path d="M28.0 60.0 L100.0 60.0" fill="none" stroke="var(--muted)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/><path d="M32.0 44.0 L96.0 76.0" fill="none" stroke="var(--good)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M24.0 60.0 A40.0 40.0 0 0 1 28.0 42.5" fill="none" stroke="var(--good)" stroke-width="1.9" stroke-linecap="round"/><path d="M30.2 38.0 L30.4 44.7 L24.8 42.0 Z" fill="var(--good)"/><path d="M104.0 60.0 A40.0 40.0 0 0 1 100.0 77.5" fill="none" stroke="var(--good)" stroke-width="1.9" stroke-linecap="round"/><path d="M97.8 82.0 L97.6 75.3 L103.2 78.0 Z" fill="var(--good)"/><circle cx="64.0" cy="60.0" r="2.8" fill="var(--ink)"/><text x="64.0" y="13.0" text-anchor="middle" font-size="9" font-weight="600" fill="var(--muted)">seen from above</text><text x="64.0" y="146.0" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)">trunk</text></g></g></svg></div>
   <aside class="notes">His slides 57 and 58.
 
 Pronation and supination of the forearm is the one worth demonstrating, because the axis runs down the forearm itself rather than through a joint you can point at.
@@ -1270,7 +1166,7 @@ Horizontal abduction and adduction is the odd one: it only exists once the shoul
 </section>
 
 <!-- 54 -->
-<section>
+<section class="roomy">
   <h2>Planes and Axes</h2>
   <p class="subhead">Joint actions and their planes and axes</p>
   <table>
@@ -1296,7 +1192,7 @@ This is the slide to photograph. Everything in the anatomy section is one row of
 </section>
 
 <!-- 55 -->
-<section>
+<section class="roomy">
   <h2>Planes and Axes</h2>
   <p class="subhead">What to take away</p>
   <div class="cols a top">
@@ -1327,7 +1223,7 @@ If you say one of them twice, say the last. Both mistakes in fifty-nine slides �
 </section>
 
 <!-- 56 -->
-<section>
+<section class="roomy">
   <h2>Planes and Axes</h2>
   <p class="subhead">Next</p>
   <div class="cols a top">
@@ -1357,8 +1253,8 @@ And repeat the homework, because the gap between this lecture and the second one
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20261025d"></script>
-<script src="mobile.js?v=20261025d"></script>
+<script src="annotate.js?v=20261025e"></script>
+<script src="mobile.js?v=20261025e"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -1380,10 +1276,10 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="in1adata.js?v=20261025d"></script>
-<script src="deck-core.js?v=20261025d"></script>
-<script src="in1a.js?v=20261025d"></script>
-<script src="deck-tools.js?v=20261025d"></script>
-<script src="fit.js?v=20261025d"></script>
+<script src="in1adata.js?v=20261025e"></script>
+<script src="deck-core.js?v=20261025e"></script>
+<script src="in1a.js?v=20261025e"></script>
+<script src="deck-tools.js?v=20261025e"></script>
+<script src="fit.js?v=20261025e"></script>
 </body>
 </html>

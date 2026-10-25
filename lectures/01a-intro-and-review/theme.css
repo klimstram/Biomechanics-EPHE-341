@@ -964,3 +964,37 @@ html[data-portrait] ol.cols2{ column-count:1; }
 table.admin{ margin:0; width:100%; font-size:.72em; }
 table.admin th{ width:9em; text-align:left; white-space:nowrap; }
 table.admin td{ text-align:left; }
+
+/* a full-width row of movement panels under the main figure */
+.figrow{ margin-top:.55em; text-align:center; }
+.figrow svg.hifig{ display:inline-block; width:100%; height:auto;
+                   max-width:100%; vertical-align:top; }
+html[data-portrait] .figrow svg.hifig{ width:100% !important; }
+/* a figure sharing a row with text: cap it so the text keeps its column */
+.cols .figcol svg.hifig,.figcol svg.hifig{
+  width:100% !important; height:auto; max-height:52vh; }
+html[data-portrait] .cols .figcol svg.hifig{ max-height:300px; }
+.lead{ max-width:62em; }
+.lead p{ margin-bottom:.35em; }
+
+
+/* ------------------------------------------------------------------
+   A SECOND TYPE SCALE FOR THE SLIDES THAT ARE ONLY WORDS
+
+   Marked by mkindex.py: any slide with no figure, no widget and no
+   section title.  Those carry a fraction of what a figure slide carries,
+   and at the shared body size they leave the bottom half of the frame
+   empty, which is what makes a deck look like a document.  One step
+   larger, with the lists breathing, fills the frame without touching
+   anything that already fits.
+   ------------------------------------------------------------------ */
+.reveal .slides section.roomy{ font-size:1.16em; }
+.reveal .slides section.roomy .cols{ gap:1.5em; margin-top:.5em; }
+.reveal .slides section.roomy ul li,
+.reveal .slides section.roomy ol li{ margin-bottom:.45em; }
+.reveal .slides section.roomy table{ margin-top:.45em; }
+.reveal .slides section.roomy table td,
+.reveal .slides section.roomy table th{ padding-top:.4em; padding-bottom:.4em; }
+.reveal .slides section.roomy .box,
+.reveal .slides section.roomy .callout{ padding:.78em 1em; }
+html[data-portrait] .reveal .slides section.roomy{ font-size:1em; }
