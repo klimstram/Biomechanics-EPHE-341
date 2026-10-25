@@ -332,6 +332,24 @@ function wrapLabel(c, txt, x, y, maxW, o) {
 
    o = { pc, on, series: [{v, col, lab, dash}], k, title, unit, fmt }
    --------------------------------------------------------------------- */
+/* A floor the eye can find.  A single light rule reads as a grid line, not
+   as the ground, and three of the free-body figures were being read as
+   limbs floating in space because of it: a solid line with short hatching
+   under it is unambiguous.  `y` is the pixel row of the floor. */
+function floorLine(c, K, box, y) {
+  if (!(y > box.y + 2) || !(y < box.y + box.h - 2)) return false;
+  c.save();
+  c.strokeStyle = K.MUT; c.lineWidth = 2; c.globalAlpha = 0.65;
+  c.beginPath(); c.moveTo(box.x, y + 0.5);
+  c.lineTo(box.x + box.w, y + 0.5); c.stroke();
+  c.lineWidth = 1.4; c.globalAlpha = 0.4;
+  for (var x = box.x + 6; x < box.x + box.w; x += 13) {
+    c.beginPath(); c.moveTo(x, y + 1); c.lineTo(x - 7, y + 9); c.stroke();
+  }
+  c.restore();
+  return true;
+}
+
 function strip(c, K, box, o) {
   var pc = o.pc, ser = o.series, n = pc.length, i, s;
   var lo = Infinity, hi = -Infinity;
@@ -1365,20 +1383,23 @@ D.register('fbd20', function (node) {
        to keep it in view */
     var sc = new Scene(c, box).fit(cx - 0.17, cy - 0.135, cx + 0.17, cy + 0.125, 8);
 
-    /* the floor, when it is still in view */
-    if (sc.Y(0) > box.y + 4 && sc.Y(0) < box.y + box.h - 4) {
-      c.save(); c.strokeStyle = K.GRID; c.lineWidth = 2;
-      c.beginPath(); c.moveTo(box.x, sc.Y(0)); c.lineTo(box.x + box.w, sc.Y(0));
-      c.stroke(); c.restore();
-    }
+    /* The floor, while the plate has the foot.  It is not drawn in swing:
+       the outline runs on past the metatarsal marker to the tip of the toe,
+       which is extrapolated, and at a plantarflexed swing angle that tip
+       lands below a floor the foot is nowhere near. */
+    if (w.on) floorLine(c, K, box, sc.Y(0));
 
-    /* the foot: heel to metatarsals, with the ankle on its stalk */
-    c.save(); c.strokeStyle = K.INK; c.lineWidth = 12; c.lineCap = 'round';
-    c.beginPath(); c.moveTo(sc.X(H[0]), sc.Y(H[1]));
-    c.lineTo(sc.X(M[0]), sc.Y(M[1])); c.stroke();
-    c.lineWidth = 7;
+    /* The foot, as a foot.  It was two thick bars -- a sole and a stalk up
+       to the ankle -- which reads as a bent stick rather than a segment,
+       and at heel-off it looks as though it is not attached to anything.
+       The outline is the same one the method slides draw, laid on the
+       measured ankle and metatarsal markers. */
+    drawSil(c, 'foot', [sc.X(A[0]), sc.Y(A[1])],
+            [sc.X(M[0]), sc.Y(M[1])], K);
+    c.save(); c.strokeStyle = K.INK; c.lineWidth = 5; c.lineCap = 'round';
+    c.globalAlpha = 0.9;
     c.beginPath(); c.moveTo(sc.X(A[0]), sc.Y(A[1]));
-    c.lineTo(sc.X(H[0]), sc.Y(H[1])); c.stroke();
+    c.lineTo(sc.X(M[0]), sc.Y(M[1])); c.stroke();
     c.restore();
     pin(c, sc.X(A[0]), sc.Y(A[1]), 7);
     label(c, 'ankle', sc.X(A[0]) - 40, sc.Y(A[1]) + 6,
@@ -1590,16 +1611,19 @@ D.register('uphill', function (node) {
        absolute, because the knee only moves between 41 and 47 cm */
     var sc = new Scene(c, box).fit(cx - 0.25, -0.125, cx + 0.25, 0.595, 8);
 
-    var GAP = 0.045;                 /* how far the two bodies are pulled apart */
+    var GAP = 0.060;                 /* how far the two bodies are pulled apart */
 
     /* ---- the foot, pushed down and away ---- */
+    /* the floor travels with the foot: this free body is drawn GAP below
+       where it really is, and a floor left at its true height would have
+       the foot buried in it */
+    if (w.on) floorLine(c, K, box, sc.Y(-GAP));
+    drawSil(c, 'foot', [sc.X(A[0]), sc.Y(A[1] - GAP)],
+            [sc.X(M[0]), sc.Y(M[1] - GAP)], K);
     c.save(); c.globalAlpha = 0.95;
-    c.strokeStyle = K.INK; c.lineWidth = 11; c.lineCap = 'round';
-    c.beginPath(); c.moveTo(sc.X(H[0]), sc.Y(H[1] - GAP));
-    c.lineTo(sc.X(M[0]), sc.Y(M[1] - GAP)); c.stroke();
-    c.lineWidth = 6;
+    c.strokeStyle = K.INK; c.lineWidth = 5; c.lineCap = 'round';
     c.beginPath(); c.moveTo(sc.X(A[0]), sc.Y(A[1] - GAP));
-    c.lineTo(sc.X(H[0]), sc.Y(H[1] - GAP)); c.stroke();
+    c.lineTo(sc.X(M[0]), sc.Y(M[1] - GAP)); c.stroke();
     c.restore();
     /* what the shank does to the foot */
     force(c, sc, A[0], A[1] - GAP, w.Fa[0] * FS, w.Fa[1] * FS, 1, K.ACC, '',
@@ -1615,7 +1639,18 @@ D.register('uphill', function (node) {
             '', { width: 2.6 });
 
     /* ---- the shank, lifted ---- */
-    c.save(); c.strokeStyle = K.INK; c.lineWidth = 12; c.lineCap = 'round';
+    /* the two bodies are one limb pulled apart, and nothing said so: the
+       pair was being read as a shank and a foot that do not meet */
+    c.save(); c.strokeStyle = K.MUT; c.lineWidth = 1.4; c.globalAlpha = 0.75;
+    c.setLineDash([3, 4]);
+    c.beginPath(); c.moveTo(sc.X(A[0]), sc.Y(A[1] + GAP));
+    c.lineTo(sc.X(A[0]), sc.Y(A[1] - GAP)); c.stroke(); c.restore();
+    label(c, 'one ankle, drawn twice', sc.X(A[0]) - 12, sc.Y(A[1]) + 4,
+          { size: 10.5, align: 'right', color: K.MUT, weight: 650,
+            plate: true });
+    drawSil(c, 'leg', [sc.X(Kn[0]), sc.Y(Kn[1] + GAP)],
+            [sc.X(A[0]), sc.Y(A[1] + GAP)], K);
+    c.save(); c.strokeStyle = K.INK; c.lineWidth = 5; c.lineCap = 'round';
     c.beginPath(); c.moveTo(sc.X(Kn[0]), sc.Y(Kn[1] + GAP));
     c.lineTo(sc.X(A[0]), sc.Y(A[1] + GAP)); c.stroke(); c.restore();
     pin(c, sc.X(Kn[0]), sc.Y(Kn[1] + GAP), 7);
@@ -2408,15 +2443,19 @@ D.register('walk20', function (node) {
     var top = port ? box.y + box.h + 44 : 34;
     var gh = port ? (ax.H - top - 130) / 2 : (ax.H - 196) / 2;
     var specs = S.q === 'moment'
-      ? [['the ankle \u2014 N\u00b7m per kg', K.ACC, W.full.Ma, W.pub.ank, w.Ma,
+      ? [['the ankle \u2014 resultant moment, N\u00b7m per kg',
+          K.ACC, W.full.Ma, W.pub.ank, w.Ma,
           'peak: ours ' + fmt(H.ank_pk, 2) + ', theirs ' + fmt(H.ank_pub, 2) +
           ' \u00b7 r = ' + fmt(H.ank_r, 3)],
-         ['the knee \u2014 N\u00b7m per kg', K.GRN, W.full.Mk, W.pub.knee, w.Mk,
+         ['the knee \u2014 resultant moment, N\u00b7m per kg',
+          K.GRN, W.full.Mk, W.pub.knee, w.Mk,
           'peak: ours ' + fmt(H.kne_pk, 2) + ', theirs ' + fmt(H.kne_pub, 2) +
           ' \u00b7 r = ' + fmt(H.kne_r, 3)]]
-      : [['the ankle \u2014 body weights', K.ACC, FBW.ank, null, FBW.ank[w.k],
+      : [['the ankle \u2014 resultant force, body weights',
+          K.ACC, FBW.ank, null, FBW.ank[w.k],
           'peak: ' + fmt(FPK.ank, 2) + ' BW'],
-         ['the knee \u2014 body weights', K.GRN, FBW.kne, null, FBW.kne[w.k],
+         ['the knee \u2014 resultant force, body weights',
+          K.GRN, FBW.kne, null, FBW.kne[w.k],
           'peak: ' + fmt(FPK.kne, 2) + ' BW']];
     specs.forEach(function (z, gi) {
       var gy = top + gi * (gh + 54);
@@ -3463,10 +3502,10 @@ D.register('jump', function (node) {
     var rows = [
       ['at ' + fmt((k - J.onset) / J.rate, 2) + ' s — ' + ph,
        fmt(J.grf.tot[k] / J.bw, 2) + ' body weights, both feet together', K.INK],
-      ['the ankle, knee and hip moments',
+      ['the resultant moment at each joint',
        num(J.M.ankle[k], 0) + ' · ' + num(J.M.knee[k], 0) + ' · ' +
        num(J.M.hip[k], 0) + ' N·m', K.ACC],
-      ['the force the joints carry',
+      ['the resultant force at each joint',
        fmt(J.F.ankle[k], 0) + ' · ' + fmt(J.F.knee[k], 0) + ' · ' +
        fmt(J.F.hip[k], 0) + ' N', K.BLUE]
     ];
@@ -3485,8 +3524,9 @@ D.register('jump', function (node) {
       x0: '0 s', x1: fmt((J.n - 1) / J.rate, 2) + ' s',
       ax: function (v) { return fmt(v, 0); },
       title: S.q === 'moment'
-        ? 'Extensor moment at each joint, through the whole jump'
-        : 'The force carried across each joint, through the whole jump',
+        ? 'Resultant moment at each joint, extensor positive'
+        : 'Resultant force at each joint \u2014 everything crossing the cut, '
+          + 'added into one',
       unit: S.q === 'moment' ? 'N\u00b7m' : 'N',
       fmt: function (v) { return fmt(v, 0); },
       series: S.q === 'moment'
