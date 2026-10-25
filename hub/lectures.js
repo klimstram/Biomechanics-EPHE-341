@@ -396,7 +396,7 @@ window.EPHE341_LECTURES = [
            'simulated forwards from torques you set \u2014 and then both legs on a ' +
            'crank, where the cadence is the answer rather than the input. Hover any ' +
            'term in an equation and it lights up on the diagram.',
-    slides: 54, widgets: 12, updated: '2026-10-24',
+    slides: 54, widgets: 12, updated: '2026-10-25',
     handout: 'handout.pdf',
     live: [['a measured stride, differentiated', 'w-equil'],
            ['the same free body, with and without acceleration', 'w-newton'],
