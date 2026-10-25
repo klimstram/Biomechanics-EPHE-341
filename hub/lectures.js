@@ -390,11 +390,13 @@ window.EPHE341_LECTURES = [
            'the ground and work upward; the four moments that act on every segment ' +
            'and add to I\u03b1; the worked example line by line; and the whole method ' +
            'run on a measured stride and marked against the joint moments the people ' +
-           'who recorded it published. A two-segment leg is also simulated ' +
-           'forwards from torques you set \u2014 and then both legs on a crank, ' +
-           'where the cadence is the answer rather than the input. Hover any ' +
+           'who recorded it published, and then on a measured vertical jump, where ' +
+           'the knee, hip and ankle peak in that order and the figure turns so you ' +
+           'can see how little of it leaves the plane. A two-segment leg is also ' +
+           'simulated forwards from torques you set \u2014 and then both legs on a ' +
+           'crank, where the cadence is the answer rather than the input. Hover any ' +
            'term in an equation and it lights up on the diagram.',
-    slides: 51, widgets: 11, updated: '2026-10-10',
+    slides: 54, widgets: 12, updated: '2026-10-24',
     handout: 'handout.pdf',
     live: [['a measured stride, differentiated', 'w-equil'],
            ['the same free body, with and without acceleration', 'w-newton'],
@@ -406,6 +408,7 @@ window.EPHE341_LECTURES = [
            ['handing the ankle to the knee', 'w-uphill'],
            ['the worked example, every line', 'w-swing'],
            ['the method, against a published answer', 'w-walk20'],
+           ['the same method on a measured jump, in 2D and 3D', 'w-jump'],
            ['when do you need the dynamics?', 'w-dynstat']] },
 
   /* ---- still PowerPoint ---- */

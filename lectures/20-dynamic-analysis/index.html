@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20261010b">
+<link rel="stylesheet" href="theme.css?v=20261024a">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -1423,6 +1423,100 @@ So the rule is not "dynamics always matters". It is: the inertial terms matter w
 
 <!-- 50 -->
 <section>
+  <h2>On Real Data</h2>
+  <p class="subhead">A different movement, the same three equations</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">Walking is the easy case: slow, cyclic, one foot on the
+        plate at a time. So here is the method on something else entirely &mdash;
+        a <strong>countermovement jump</strong>, measured in this building.</p>
+      <p class="small">A 60.7 kg subject, 83 markers at 90 Hz, two force plates at
+        450 Hz with <strong>one foot on each</strong>, so the two records together
+        are the whole body. He dips, drives up, is in the air for
+        <strong>0.456 s</strong> &mdash; a 25.5 cm jump &mdash; and lands.</p>
+      <p class="small">Nothing in the method changes. The right leg is solved foot,
+        then shank, then thigh, at every one of the ninety-one frames.</p>
+    </div>
+    <div>
+      <div class="box">
+        <p class="small"><strong>Two things had to be fixed before any of it
+          meant anything</strong>, and neither is in the paper.</p>
+        <p class="small"><strong>1. The plate runs 0.1333 s behind the markers.</strong>
+          Different in every trial of this dataset. Found by cross-correlating the
+          marker centre of mass against (<em>F</em><sub>z</sub> &minus; BW)/<em>m</em>:
+          r = 0.997 at twelve frames, 0.4 at zero.</p>
+        <p class="small"><strong>2. The centre of pressure is rotated ninety
+          degrees.</strong> The file adds the plate centre on the wrong axes. Put
+          back, it lands under each foot and walks heel to toe through the push-off
+          &mdash; which is how you know it is right.</p>
+      </div>
+      <p class="small callout">An inverse dynamics answer is only as good as the
+        registration underneath it, and the registration is never in the data.</p>
+    </div>
+  </div>
+  <aside class="notes">This is the slide where the lecture admits what the work actually is.
+
+The method is four lines of algebra that you have now seen three times. The reason inverse dynamics is a skill is everything upstream of it: knowing that the two instruments are on different clocks, knowing how to find the offset without being told, and knowing that a centre of pressure which does not sit under the foot is a frame error and not a measurement.
+
+Both of these were found by checking, not by reading. The lag came out of a cross-correlation whose peak is sharp. The rotation came out of plotting the centre of pressure against the foot markers and seeing it sit 270 mm away in different directions on the two plates — which is the signature of a rotation, not an offset.
+
+Ask them what they would have done if the centre of pressure had been 20 mm out instead of 270. The answer is that they would never have noticed, and every moment on the next slide would have been quietly wrong.</aside>
+</section>
+
+<!-- 51 -->
+<section id="w-jump">
+  <h2>On Real Data</h2>
+  <p class="subhead">The jump, joint by joint</p>
+  <div class="iplot wide" data-widget="jump"></div>
+  <aside class="notes">Scrub slowly through the push-off and watch the order the three curves peak in.
+
+The knee goes first, 0.28 s before take-off, at 151 N·m. The hip follows 50 ms later at 62. The ankle is last, 0.07 s before take-off, at 84 N·m. That is the proximal-to-distal sequence, and it is one of the most reproduced findings in the whole of sport biomechanics — it falls straight out of the method with no extra assumption.
+
+Compare with the walk two slides back. The knee there peaked at 0.73 N·m/kg; here it is 2.48. Same person-sized body, same three equations, three and a half times the moment.
+
+Then press "Turn it round" and drag. Two things to point at: through the push-off the ground force leans at most four and a half degrees away from vertical, and that lean is fore-aft — inside the plane. What actually leaves the plane is a third of a degree; the mediolateral force never gets past 5 N. That is the licence to work in two dimensions, and it is specific to this movement.</aside>
+</section>
+
+<!-- 52 -->
+<section>
+  <h2>On Real Data</h2>
+  <p class="subhead">What the jump shows that the walk did not</p>
+  <div class="cols a top">
+    <div>
+      <ul class="small">
+        <li><strong>The joints peak in order.</strong> Knee at 151 N&middot;m, 0.28 s
+          before take-off; hip at 62, 50 ms later; ankle at 84, with 0.07 s to go.
+          Proximal to distal, and nobody put it there &mdash; it comes out of the
+          three equations.</li>
+        <li><strong>The size is different, the method is not.</strong> 2.48
+          N&middot;m/kg at the knee against 0.73 in the walk.</li>
+        <li><strong>Landing is not the mirror of take-off.</strong> The knee comes
+          back to 118 N&middot;m but the hip goes to 70, higher than it ever reached
+          on the way up.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box">
+        <p class="small"><strong>And a check the walk could not give us.</strong>
+          The leg chain never touches a marker above the hip. So take the hip force
+          it produces, double it for two legs, and compare it against what the
+          trunk, head and arms independently need:</p>
+        <p class="eq">r = 0.992 &middot; peaks 979 N against 901 N</p>
+        <p class="small">The gap is 8 % of peak, vertically. Horizontally the forces
+          are under 100 N and the agreement is poor &mdash; which is the honest
+          half of the result, and the reason the slide says <em>vertically</em>.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The check on the right is the one worth dwelling on, because it is the only validation in this lecture that does not involve trusting somebody else's published numbers.
+
+Everything in the leg chain — the plate, the foot, the shank, the thigh — produces one number at the top: the force the pelvis has to apply to the thigh. The trunk, head and arms are an entirely separate set of markers with their own Winter fractions. If the method is working, the force the legs supply and the force the upper body needs are the same force, and they are, to 8 % of peak with r = 0.992.
+
+Say plainly that the horizontal agreement is poor. Those forces are under 100 newtons against 900 vertically, and a double-differentiated marker signal has nothing like the resolution to catch them. Reporting the vertical and hiding the horizontal would be the dishonest version of this slide.</aside>
+</section>
+
+<!-- 53 -->
+<section>
   <h2>Dynamic Analysis</h2>
   <p class="subhead">What to take away</p>
   <div class="cols a top">
@@ -1454,7 +1548,7 @@ So the rule is not "dynamics always matters". It is: the inertial terms matter w
 If you only have time to say one thing, say the last one. It is the difference between a student who can do the arithmetic and one who can read a paper.</aside>
 </section>
 
-<!-- 51 -->
+<!-- 54 -->
 <section>
   <h2>Dynamic Analysis</h2>
   <p class="subhead">Where this goes next</p>
@@ -1490,8 +1584,8 @@ And close on the limitation, because it is the honest end of the arc: this metho
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20261010b"></script>
-<script src="mobile.js?v=20261010b"></script>
+<script src="annotate.js?v=20261024a"></script>
+<script src="mobile.js?v=20261024a"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -1513,10 +1607,11 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="dy20data.js?v=20261010b"></script>
-<script src="deck-core.js?v=20261010b"></script>
-<script src="dy20.js?v=20261010b"></script>
-<script src="deck-tools.js?v=20261010b"></script>
-<script src="fit.js?v=20261010b"></script>
+<script src="dy20data.js?v=20261024a"></script>
+<script src="dy20jump.js?v=20261024a"></script>
+<script src="deck-core.js?v=20261024a"></script>
+<script src="dy20.js?v=20261024a"></script>
+<script src="deck-tools.js?v=20261024a"></script>
+<script src="fit.js?v=20261024a"></script>
 </body>
 </html>

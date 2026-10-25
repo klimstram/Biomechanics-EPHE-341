@@ -359,7 +359,7 @@ function strip(c, K, box, o) {
     if (a >= 0) {
       c.save(); c.fillStyle = K.FILL; c.globalAlpha = 0.5;
       c.fillRect(X(pc[a]), T, X(pc[b]) - X(pc[a]), B - T); c.restore();
-      label(c, 'stance', (X(pc[a]) + X(pc[b])) / 2, B + 14,
+      label(c, o.onLabel || 'stance', (X(pc[a]) + X(pc[b])) / 2, B + 14,
             { size: 10, color: K.MUT, weight: 650 });
     }
   }
@@ -371,11 +371,15 @@ function strip(c, K, box, o) {
   c.setLineDash([4, 4]);
   c.beginPath(); c.moveTo(L, Y(0) + .5); c.lineTo(R, Y(0) + .5); c.stroke();
   c.restore();
-  label(c, fmt(hi - pad, 2), L - 7, T + 9, { size: 10, align: 'right', color: K.MUT });
-  label(c, fmt(lo + pad, 2), L - 7, B, { size: 10, align: 'right', color: K.MUT });
+  var af = o.ax || function (v) { return fmt(v, 2); };
+  label(c, af(hi - pad), L - 7, T + 9, { size: 10, align: 'right', color: K.MUT });
+  label(c, af(lo + pad), L - 7, B, { size: 10, align: 'right', color: K.MUT });
   label(c, '0', L - 7, Y(0) + 4, { size: 10, align: 'right', color: K.MUT });
-  label(c, '0', L, B + 14, { size: 10, color: K.MUT });
-  label(c, '100 %', R, B + 14, { size: 10, align: 'right', color: K.MUT });
+  /* the axis is a percentage of a gait cycle unless the caller says what
+     else it is -- the jump's is seconds */
+  label(c, o.x0 || '0', L, B + 14, { size: 10, color: K.MUT });
+  label(c, o.x1 || '100 %', R, B + 14,
+        { size: 10, align: 'right', color: K.MUT });
 
   label(c, o.title, box.x, box.y + 10,
         { size: 12, align: 'left', weight: 700, color: K.INK });
@@ -1803,48 +1807,132 @@ D.register('swing', function (node) {
   function draw() {
     var K = C(), cse = cased(), r = dyn(cse), ST = steps(cse, r)[S.step];
     ax.clear();
-    var fw = port ? ax.W : ax.W * 0.37;
+    var fw = port ? ax.W : ax.W * 0.43;
 
-    /* ----------------------- the two segments ------------------------ */
-    var l = cse.leg, f = cse.foot;
-    var kn = [l.dPh, l.dPv], an = [-l.dDh, -l.dDv];
-    var box = { x: 8, y: 30, w: fw - 16, h: port ? ax.H * 0.30 : ax.H - 150 };
-    var ext = Math.max(Math.abs(kn[0]), Math.abs(an[0])) + 0.12;
-    var sc = new Scene(c, box).fit(-ext, -ext * 1.15, ext, ext * 0.95, 8);
-    c.save(); c.beginPath(); c.rect(box.x, box.y, box.w, box.h); c.clip();
-    /* shank */
-    c.save(); c.strokeStyle = S.step >= 2 ? K.INK : K.GRID; c.lineWidth = 12;
-    c.lineCap = 'round';
-    c.beginPath(); c.moveTo(sc.X(kn[0]), sc.Y(kn[1]));
-    c.lineTo(sc.X(an[0]), sc.Y(an[1])); c.stroke(); c.restore();
-    /* foot, hung off the ankle */
-    var fa = [an[0] - f.dPh * 2.2, an[1] + f.dPv * 2.2];
-    c.save(); c.strokeStyle = S.step <= 1 ? K.INK : K.GRID; c.lineWidth = 9;
-    c.lineCap = 'round';
-    c.beginPath(); c.moveTo(sc.X(an[0]), sc.Y(an[1]));
-    c.lineTo(sc.X(an[0] + 0.16), sc.Y(an[1] - 0.07)); c.stroke(); c.restore();
-    pin(c, sc.X(kn[0]), sc.Y(kn[1]), 7);
-    pin(c, sc.X(an[0]), sc.Y(an[1]), 7);
-    c.save(); c.fillStyle = K.VIO;
-    c.beginPath(); c.arc(sc.X(0), sc.Y(0), 5.5, 0, 7); c.fill(); c.restore();
-    label(c, 'knee', sc.X(kn[0]) + 12, sc.Y(kn[1]) - 4,
-          { size: 11, align: 'left', weight: 700, plate: true });
-    label(c, 'ankle', sc.X(an[0]) - 12, sc.Y(an[1]),
-          { size: 11, align: 'right', weight: 700, plate: true });
-    label(c, 'CoM', sc.X(0) + 12, sc.Y(0) + 15,
-          { size: 10.5, align: 'left', color: K.VIO, weight: 650, plate: true });
-    /* the two moment arms, as the slides draw them */
-    [[kn, K.GRN, l.dPv, l.dPh], [an, K.BLUE, l.dDv, l.dDh]].forEach(function (z) {
-      c.save(); c.strokeStyle = z[1]; c.lineWidth = 1.5; c.setLineDash([4, 4]);
-      c.beginPath();
-      c.moveTo(sc.X(0), sc.Y(0)); c.lineTo(sc.X(z[0][0]), sc.Y(0));
-      c.lineTo(sc.X(z[0][0]), sc.Y(z[0][1])); c.stroke(); c.restore();
-      label(c, fmt(z[3], 3), (sc.X(0) + sc.X(z[0][0])) / 2, sc.Y(0) + 12,
-            { size: 10, color: z[1], weight: 650, plate: true });
-      label(c, fmt(z[2], 3), sc.X(z[0][0]) + 16, (sc.Y(0) + sc.Y(z[0][1])) / 2,
-            { size: 10, color: z[1], weight: 650, plate: true });
-    });
-    c.restore();
+    /* ----------------------- the two segments ------------------------
+       Drawn the way slides 37 to 44 draw them, because this widget sits
+       straight after them: the same orientation (knee upper left, ankle
+       lower right), the same silhouettes with their skeletons, the same
+       colours -- blue at the knee, orange at the ankle, green for weight,
+       dashed grey for the inertial terms -- and the moment arms as
+       right-angle pairs in violet and orange.  It used to be a bare stick
+       with 10 px numbers on it, mirrored, which made the slide before it
+       and the slide itself look like two different problems. */
+    var L = cse.leg, F = cse.foot;
+    var shank = Math.hypot(L.dPh + L.dDh, L.dPv + L.dDv);
+    var comT = Math.hypot(L.dPh, L.dPv) / shank;
+    var footL = 0.378 * shank;
+    var box = { x: 8, y: 22, w: fw - 16, h: port ? ax.H * 0.34 : ax.H - 86 };
+    /* the panel is wide and short, so the world box has to be too, or the
+       limb is drawn at half the size the space allows */
+    var WX = 0.76, WY = 0.58;
+    var k = Math.min(box.w / WX, box.h / WY);
+    var ox = box.x + (box.w - WX * k) / 2 + 0.13 * k;
+    var oy = box.y + (box.h - WY * k) / 2 + 0.12 * k;
+    function P(x, y) { return [ox + x * k, oy + y * k]; }
+
+    var dl = SIL_DEG.legEx * Math.PI / 180, df = SIL_DEG.foot * Math.PI / 180;
+    var KNEE = P(0, 0);
+    var ANK = P(Math.cos(dl) * shank, Math.sin(dl) * shank);
+    var BALL = [ANK[0] + Math.cos(df) * footL * k,
+                ANK[1] + Math.sin(df) * footL * k];
+    var CG = [KNEE[0] + (ANK[0] - KNEE[0]) * comT,
+              KNEE[1] + (ANK[1] - KNEE[1]) * comT];
+    var FCG = [ANK[0] + (BALL[0] - ANK[0]) * 0.5,
+               ANK[1] + (BALL[1] - ANK[1]) * 0.5];
+    var onFoot = S.step <= 1;
+    var CGa = onFoot ? FCG : CG;
+
+    function seg(kind, A, B, live) {
+      c.save(); c.globalAlpha = live ? 1 : 0.28;
+      drawSil(c, kind, A, B, K);
+      c.strokeStyle = K.INK; c.lineWidth = live ? 6.5 : 5; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(A[0], A[1]); c.lineTo(B[0], B[1]); c.stroke();
+      c.fillStyle = K.INK;
+      [A, B].forEach(function (q) { c.fillRect(q[0] - 6, q[1] - 6, 12, 12); });
+      c.restore();
+    }
+    seg('leg', KNEE, ANK, !onFoot);
+    seg('foot', ANK, BALL, onFoot);
+
+    label(c, 'knee', KNEE[0] - 14, KNEE[1] + 2,
+          { size: 11.5, align: 'right', color: K.MUT, weight: 700,
+            plate: true });
+    label(c, 'ankle', ANK[0] - 24, ANK[1] + 34,
+          { size: 11.5, align: 'right', color: K.MUT, weight: 700,
+            plate: true });
+
+    /* --------------------------- the forces --------------------------
+       One scale for everything drawn, set by the biggest arrow, so swing
+       and stance both read even though stance is forty times larger. */
+    var g = cse.grf, on = Math.hypot(g[0], g[1]) > 1;
+    var FA = [r.Fax, r.Fay], FK = [r.Fkx, r.Fky];
+    var mgF = (onFoot ? F.m : L.m) * 9.81;
+    var maF = onFoot ? [F.m * F.ax, F.m * F.ay] : [L.m * L.ax, L.m * L.ay];
+    var big = Math.max(mgF, Math.hypot(FA[0], FA[1]), Math.hypot(FK[0], FK[1]),
+                       Math.hypot(maF[0], maF[1]), Math.hypot(g[0], g[1]), 1);
+    var FS = 56 / big;
+
+    function force(at, vec, col, name, side) {
+      if (Math.hypot(vec[0], vec[1]) * FS < 7) return;
+      var tx = at[0] + vec[0] * FS, ty = at[1] - vec[1] * FS;
+      arrow(c, at[0], at[1], tx, ty, { color: col, width: 2.8, head: 9 });
+      label(c, name, tx + (side === 'end' ? -8 : 8), ty + (vec[1] > 0 ? -8 : 16),
+            { size: 11.5, align: side || 'start', color: col, weight: 700,
+              plate: true });
+    }
+    function dashed(at, vec, col, name) {
+      if (Math.hypot(vec[0], vec[1]) * FS < 7) return;
+      var tx = at[0] + vec[0] * FS, ty = at[1] - vec[1] * FS;
+      arrow(c, at[0], at[1], tx, ty,
+            { color: col, width: 2.2, head: 8, dash: [6, 4] });
+      label(c, name, tx + 8, ty + (vec[1] > 0 ? -8 : 16),
+            { size: 11, align: 'start', color: col, weight: 650, plate: true });
+    }
+
+    if (onFoot) {
+      force(ANK, FA, K.ACC, 'F ankle', 'start');
+      if (on) force(BALL, g, K.ORG, 'GRF');
+      force(FCG, [0, -mgF], K.GRN, 'mg', 'end');
+      dashed(FCG, maF, K.MUT, 'ma');
+    } else {
+      force(ANK, [-FA[0], -FA[1]], K.ACC, 'F ankle', 'start');
+      force(KNEE, FK, K.BLUE, 'F knee');
+      force(CG, [0, -mgF], K.GRN, 'mg', 'end');
+      dashed(CG, maF, K.MUT, 'ma');
+    }
+
+    /* ------------------------- the moment arms -----------------------
+       The same right-angle pairs the slides draw, in the same two colours:
+       violet from the joint we are solving for, orange from the far end. */
+    function arm(from, to, col, dh, dv) {
+      c.save(); c.strokeStyle = col; c.lineWidth = 1.6;
+      c.setLineDash([5, 4]); c.globalAlpha = 0.9;
+      c.beginPath(); c.moveTo(from[0], from[1]); c.lineTo(to[0], from[1]);
+      c.lineTo(to[0], to[1]); c.stroke(); c.restore();
+      /* the horizontal label goes on the side the corner is NOT on, or it
+          lands on the limb between the two joints */
+      label(c, fmt(Math.abs(dh), 3) + ' m', (from[0] + to[0]) / 2,
+            from[1] + (to[1] > from[1] ? -11 : 20),
+            { size: 11.5, color: col, weight: 700, plate: true });
+      label(c, fmt(Math.abs(dv), 3) + ' m',
+            to[0] + (to[0] > from[0] ? 11 : -11), (from[1] + to[1]) / 2 + 4,
+            { size: 11.5, align: to[0] > from[0] ? 'start' : 'end',
+              color: col, weight: 700, plate: true });
+    }
+    if (S.step === 1) {
+      arm(FCG, ANK, K.VIO, F.dPh, F.dPv);
+      if (on && F.dDh != null) arm(FCG, BALL, K.ACC, F.dDh, F.dDv);
+    } else if (S.step === 3) {
+      arm(CG, KNEE, K.VIO, L.dPh, L.dPv);
+      arm(CG, ANK, K.ACC, L.dDh, L.dDv);
+    }
+
+    c.save(); c.fillStyle = K.BLUE;
+    c.beginPath(); c.arc(CGa[0], CGa[1], 6, 0, 7); c.fill(); c.restore();
+    label(c, 'CofG', CGa[0] - 12, CGa[1] - 12,
+          { size: 11, align: 'right', color: K.BLUE, weight: 700, plate: true });
+
     label(c, cse.name + ' · ' + cse.src, box.x + box.w / 2, box.y - 12,
           { size: 12, weight: 700, color: K.INK });
 
@@ -2290,20 +2378,20 @@ D.register('walk20', function (node) {
       c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1;
       c.beginPath(); c.moveTo(a2.X(0), a2.Y(0)); c.lineTo(a2.X(100), a2.Y(0));
       c.stroke(); c.restore();
-      var mine = W.pc.map(function (p, i) { return [p, z[3][i]]; });
+      var ours = W.pc.map(function (p, i) { return [p, z[3][i]]; });
       var pub = W.pc.map(function (p, i) { return [p, z[4][i]]; });
-      if (S.show !== 'mine')
+      if (S.show !== 'ours')
         a2.poly(pub, { color: K.MUT, width: 2.4, dash: [6, 4] });
       if (S.show !== 'pub')
-        a2.poly(mine, { color: z[2], width: 2.8 });
+        a2.poly(ours, { color: z[2], width: 2.8 });
       a2.dots([[w.pc, gi ? w.Mk : w.Ma]], { color: z[2], r: 5 });
       c.save(); c.strokeStyle = K.INK; c.lineWidth = 1.2; c.globalAlpha = .55;
       c.beginPath(); c.moveTo(a2.X(w.pc), a2.Y(lo)); c.lineTo(a2.X(w.pc), a2.Y(hi));
       c.stroke(); c.restore();
       label(c, z[1] + ' — N·m per kg', (a2.pl + ax.W - a2.pr) / 2, gy - 12,
             { size: 12.5, weight: 700, color: z[2] });
-      label(c, 'mine ' + fmt(z[5], 2) + ' · theirs ' + fmt(z[6], 2) + ' · r = ' +
-               fmt(gi ? H.kne_r : H.ank_r, 3),
+      label(c, 'peak: ours ' + fmt(z[5], 2) + ', theirs ' + fmt(z[6], 2) +
+               ' · r = ' + fmt(gi ? H.kne_r : H.ank_r, 3),
             ax.W - 26, gy + 10,
             { size: 11, align: 'right', color: K.MUT, weight: 650, plate: true });
       if (gi) label(c, 'per cent of the gait cycle',
@@ -2311,11 +2399,31 @@ D.register('walk20', function (node) {
                     { size: 11.5, weight: 700 });
     });
 
-    wrapLabel(c, 'Shaded: the plate is under this foot · dashed: what the ' +
-      'authors published for this same stride · solid: the same stride put ' +
-      'through the method from the worked example · the plate record opens 0.4 BW into ' +
-      'loading, so the first two frames are an artefact, not mechanics',
-      ax.W / 2, ax.H - 10, ax.W - 26, { size: 11, color: K.MUT });
+    /* A key under the plots, not a sentence in the footnote: "mine" and
+       "theirs" mean nothing to somebody meeting this slide for the first
+       time, and the names have to sit next to the lines they name. */
+    (function () {
+      var keys = [['what we worked out — the method from slide 18', K.ACC, null],
+                  ['what they published — Lencioni et al.', K.MUT, [6, 4]]];
+      var fs = 11.5, gap = 30, wds = [];
+      c.save(); c.font = '650 ' + fs + 'px ui-sans-serif,system-ui,sans-serif';
+      keys.forEach(function (e) { wds.push(34 + c.measureText(e[0]).width); });
+      c.restore();
+      var tot = wds[0] + wds[1] + gap, x = ax.W / 2 - tot / 2, y = ax.H - 30;
+      keys.forEach(function (e, i) {
+        c.save(); c.strokeStyle = e[1]; c.lineWidth = e[2] ? 2.4 : 2.8;
+        if (e[2]) c.setLineDash(e[2]);
+        c.beginPath(); c.moveTo(x, y); c.lineTo(x + 26, y); c.stroke();
+        c.restore();
+        label(c, e[0], x + 34, y + 4,
+              { size: fs, align: 'left', color: K.MUT, weight: 650 });
+        x += wds[i] + gap;
+      });
+    })();
+    wrapLabel(c, 'Shaded: the plate is under this foot · the plate record ' +
+      'opens 0.4 BW into loading, so the first two frames are an artefact, ' +
+      'not mechanics',
+      ax.W / 2, ax.H - 8, ax.W - 26, { size: 11, color: K.MUT });
   }
 
   u.ctl.className = 'ictls g2';
@@ -2324,10 +2432,11 @@ D.register('walk20', function (node) {
                   function (v) { S.k = Math.round(v); draw(); });
   sk.quiet(S.k);
   var row = ctlRow(u.ctl);
-  keepOut(seg(row, [['both', 'Both'], ['mine', 'Mine only'],
-                    ['pub', 'Theirs only']], 'both',
+  keepOut(seg(row, [['both', 'Both'],
+                    ['ours', 'What we worked out'],
+                    ['pub', 'What they published']], 'both',
               function (v) { S.show = v; draw(); }));
-  var pb = playBtn(u.ctl, '▶ Walk');
+  var pb = playBtn(row, '▶ Walk');
   pb.setAttribute('data-unsafe', '1');
   pb.addEventListener('click', function () {
     if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; return; }
@@ -2338,7 +2447,7 @@ D.register('walk20', function (node) {
 
   var rd = readout(u.ctl);
   rd.innerHTML = 'One stride, two answers. The shapes match — r = 0.99 at the ' +
-    'ankle — and both peaks land on the same instant, while mine run 15 % high ' +
+    'ankle — and both peaks land on the same instant, while ours run 15 % high ' +
     'at the ankle and 37 % at the knee. No time shift, no centre-of-pressure ' +
     'correction and no single joint-centre nudge closes that gap without making ' +
     'early stance worse: it is the difference between two defensible models of ' +
@@ -3045,6 +3154,301 @@ D.register('sim', function (node) {
 
   node._draw = draw;
   reset('hang');
+});
+
+/* ======================================================================
+   13. JUMP — the same method, on a vertical jump
+
+   One trial: SUSU-46, 60.7 kg, markers at 90 Hz and both force plates, one
+   foot under each.  The right leg is solved exactly as slide 18 says --
+   foot, then shank, then thigh -- at every frame of the countermovement,
+   the push-off, the flight and the landing.
+
+   Two views of the same instant.  The sagittal one is where the method
+   lives.  The solid one is there to answer the question the method begs:
+   how much of this movement is actually in that plane?  For this jump the
+   answer is nearly all of it.  Through the push-off the force leans at
+   most 4.5 degrees away from vertical, and that lean is fore-aft, inside
+   the plane; what leaves the plane is a third of a degree, a sideways
+   force that never gets past 5 N.  That is what makes two dimensions
+   honest here, and what would stop being true the moment he landed on
+   one foot and cut.
+   ====================================================================== */
+D.register('jump', function (node) {
+  var port = D.portrait();
+  var u = build(node, {});
+  var J = window.DY20JUMP;
+  if (!J) return;
+  var S = { k: Math.round((J.onset + J.takeoff) / 2), view: 'side',
+            az: 0.62, el: 0.26 }, timer = null;
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1340, h: port ? 820 : 304,
+                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
+  var c = ax.c;
+
+  /* the band the strip shades is the flight -- the one contiguous stretch
+     of this trial with no floor under him */
+  var AIR = [];
+  for (var i = 0; i < J.n; i++) AIR.push(i >= J.takeoff && i < J.land);
+
+  /* the ground force is drawn to scale: one body weight is this many
+     millimetres of the lab, so the arrow is read against the man */
+  var FSC = 620 / J.bw;
+
+  /* the trial's own extent, so the figure does not jump about as it plays */
+  var EX = (function () {
+    var lo = [1e9, 1e9, 1e9], hi = [-1e9, -1e9, -1e9];
+    J.joints.forEach(function (nm) {
+      for (var a = 0; a < 3; a++) {
+        var v = J.sk[nm][a];
+        for (var q = 0; q < v.length; q++) {
+          if (v[q] < lo[a]) lo[a] = v[q];
+          if (v[q] > hi[a]) hi[a] = v[q];
+        }
+      }
+    });
+    return { lo: lo, hi: hi };
+  })();
+
+  function at(nm, k) {
+    return [J.sk[nm][0][k], J.sk[nm][1][k], J.sk[nm][2][k]];
+  }
+
+  /* ----------------------------------------------------------- drawing */
+  function figure(K, box) {
+    var k = S.k, solid = S.view === 'solid';
+    var ca = Math.cos(S.az), sa = Math.sin(S.az);
+    var ce = Math.cos(S.el), se = Math.sin(S.el);
+
+    /* side on, this is just (forward, up); rotated, it is the same point
+       turned about the vertical and then tipped */
+    function proj(p) {
+      if (!solid) return [p[0], p[2]];
+      var x = p[0] * ca + p[1] * sa;
+      var y = -p[0] * sa + p[1] * ca;
+      return [x, p[2] * ce - y * se];
+    }
+    var xs = [], ys = [];
+    [[EX.lo[0], EX.lo[1], EX.lo[2]], [EX.hi[0], EX.hi[1], EX.hi[2]],
+     [EX.lo[0], EX.hi[1], EX.hi[2]], [EX.hi[0], EX.lo[1], EX.lo[2]],
+     [EX.lo[0], EX.lo[1], EX.hi[2]], [EX.hi[0], EX.hi[1], EX.lo[2]]
+    ].forEach(function (p) { var q = proj(p); xs.push(q[0]); ys.push(q[1]); });
+    var w = Math.max.apply(null, xs) - Math.min.apply(null, xs) + 240;
+    /* the extra is headroom: the skull sits above the highest marker, and
+       at the top of the flight that is the highest thing in the trial */
+    var h = Math.max.apply(null, ys) - Math.min.apply(null, ys) + 230;
+    var TBAND = 26;                       /* the line of type along the top */
+    var sk = Math.min(box.w / w, (box.h - TBAND) / h);
+    var cx = box.x + box.w / 2, cy = box.y + box.h;
+    function W(p) {
+      var q = proj(p);
+      return [cx + (q[0] - (EX.lo[0] + EX.hi[0]) / 2) * sk,
+              cy - 24 - q[1] * sk];
+    }
+
+    /* the floor */
+    c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1.6;
+    if (solid) {
+      for (var g = -600; g <= 600; g += 300) {
+        var p1 = W([-700, g, 0]), p2 = W([900, g, 0]);
+        c.beginPath(); c.moveTo(p1[0], p1[1]); c.lineTo(p2[0], p2[1]); c.stroke();
+        p1 = W([g <= 600 ? g : 600, -700, 0]); p2 = W([g, 700, 0]);
+        c.beginPath(); c.moveTo(p1[0], p1[1]); c.lineTo(p2[0], p2[1]); c.stroke();
+      }
+    } else {
+      var a0 = W([-700, 0, 0]), a1 = W([900, 0, 0]);
+      c.lineWidth = 2;
+      c.beginPath(); c.moveTo(a0[0], a0[1]); c.lineTo(a1[0], a1[1]); c.stroke();
+    }
+    c.restore();
+
+    /* the right leg carries the silhouettes; the rest is a stick, and in
+       the side view the left limb is ghosted because it is behind */
+    var RH = W(at('Rhip', k)), RK = W(at('Rknee', k)),
+        RA = W(at('Rankle', k)), RM = W(at('Rmt', k));
+    if (!solid) {
+      c.save(); c.globalAlpha = 0.9;
+      drawSil(c, 'thigh', RH, RK, K);
+      drawSil(c, 'leg', RK, RA, K);
+      drawSil(c, 'foot', RA, RM, K);
+      c.restore();
+    }
+    c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
+    J.links.forEach(function (ln) {
+      var a = J.joints[ln[0]], b = J.joints[ln[1]];
+      var far = (a.charAt(0) === 'L' || b.charAt(0) === 'L');
+      var leg = /hip|knee|ankle|heel|mt/.test(a) && a.charAt(0) === 'R';
+      c.globalAlpha = (!solid && far) ? 0.26 : 1;
+      c.strokeStyle = K.INK;
+      c.lineWidth = leg ? 6.5 : 4.5;
+      var p = W(at(a, k)), q = W(at(b, k));
+      c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(q[0], q[1]); c.stroke();
+    });
+    c.globalAlpha = 1; c.fillStyle = K.INK;
+    [RH, RK, RA].forEach(function (p) {
+      c.fillRect(p[0] - 5, p[1] - 5, 10, 10);
+    });
+    var hd = W(at('head', k));
+    c.beginPath(); c.arc(hd[0], hd[1] - 12, 9, 0, 7); c.fill();
+    c.restore();
+
+    /* the three answers, drawn where they act.  They are planar numbers,
+       so they are only honest in the planar view */
+    if (!solid)
+    [[RA, J.M.ankle[k], K.ACC, 'ankle'], [RK, J.M.knee[k], K.GRN, 'knee'],
+     [RH, J.M.hip[k], K.BLUE, 'hip']].forEach(function (z) {
+      var m = z[1];
+      if (Math.abs(m) < 4) return;
+      spin(c, z[0][0], z[0][1], 12 + Math.min(13, Math.abs(m) * 0.075),
+           m > 0, { color: z[2], width: 2.8 });
+    });
+
+    /* the ground force on the right foot, from the centre of pressure */
+    var fy = J.grf.fy[k];
+    if (fy > 20) {
+      var cp = W([J.grf.cx[k], J.grf.cy[k], 0]);
+      var tip = W([J.grf.cx[k] + J.grf.fx[k] * FSC,
+                   J.grf.cy[k] + J.grf.fml[k] * FSC,
+                   J.grf.fy[k] * FSC]);
+      /* turned round, the question is how much of this force the planar
+         method throws away -- so the same force with its sideways part
+         taken out is drawn dashed beside the real one, and the gap
+         between them is written out */
+      if (solid) {
+        var pl = W([J.grf.cx[k] + J.grf.fx[k] * FSC, J.grf.cy[k],
+                    J.grf.fy[k] * FSC]);
+        c.save(); c.strokeStyle = K.MUT; c.lineWidth = 1.4;
+        c.setLineDash([4, 4]);
+        c.beginPath(); c.moveTo(cp[0], cp[1]); c.lineTo(pl[0], pl[1]); c.stroke();
+        c.restore();
+      }
+      arrow(c, cp[0], cp[1], tip[0], tip[1],
+            { color: K.ORG, width: 3.4, head: 11 });
+      /* beside the head of the arrow, on whichever side has the room */
+      var rt = tip[0] + 64 < box.x + box.w;
+      label(c, fmt(fy / J.bw, 2) + ' BW', tip[0] + (rt ? 11 : -11), tip[1] + 4,
+            { size: 12, align: rt ? 'left' : 'right', color: K.ORG,
+              weight: 700, plate: true });
+      if (solid) {
+        var off = Math.atan2(Math.abs(J.grf.fml[k]),
+                             Math.hypot(J.grf.fx[k], fy)) * 180 / Math.PI;
+        label(c, fmt(off, 1) + '° out of the plane, ' +
+                 fmt(Math.abs(J.grf.fml[k]), 0) + ' N sideways',
+              Math.max(box.x + 96, Math.min(box.x + box.w - 96, tip[0])),
+              tip[1] - 16,
+              { size: 11, color: K.MUT, weight: 650, plate: true });
+      }
+    }
+
+    label(c, (solid ? 'turn it: drag — is any of this out of the plane?'
+                    : 'from the side — the right leg, in the plane the method works in'),
+          box.x + box.w / 2, box.y + 12,
+          { size: 11.5, color: K.MUT, weight: 650 });
+  }
+
+  function draw() {
+    var K = C(), k = S.k;
+    ax.clear();
+    var gH = port ? 150 : 128;
+    var gTop = port ? ax.H - 2 * gH - 10 : ax.H - gH - 6;
+    var box = { x: 8, y: 8, w: port ? ax.W - 16 : ax.W * 0.33,
+                h: port ? 320 : ax.H - 16 };
+    figure(K, box);
+
+    var px = port ? 16 : box.x + box.w + 24;
+    var pw = port ? ax.W - 32 : ax.W - px - 18;
+    var py = port ? box.y + box.h + 26 : 22;
+    var ph = k < J.onset ? 'standing still'
+           : k < J.takeoff ? (J.grf.tot[k] < J.bw ? 'the countermovement — unweighting'
+                              : 'driving up')
+           : k < J.land ? 'in the air' : 'landing';
+    var rows = [
+      ['at ' + fmt((k - J.onset) / J.rate, 2) + ' s — ' + ph,
+       fmt(J.grf.tot[k] / J.bw, 2) + ' body weights, both feet together', K.INK],
+      ['the ankle, knee and hip moments',
+       num(J.M.ankle[k], 0) + ' · ' + num(J.M.knee[k], 0) + ' · ' +
+       num(J.M.hip[k], 0) + ' N·m', K.ACC],
+      ['the force the joints carry',
+       fmt(J.F.ankle[k], 0) + ' · ' + fmt(J.F.knee[k], 0) + ' · ' +
+       fmt(J.F.hip[k], 0) + ' N', K.BLUE]
+    ];
+    rows.forEach(function (r, i) {
+      var yy = py + i * (port ? 62 : 54);
+      label(c, r[0], px, yy, { size: 12, align: 'left', weight: 650,
+                               color: K.MUT });
+      label(c, r[1], px, yy + 23, { size: 16, align: 'left', weight: 700,
+                                    color: r[2] });
+    });
+
+    var pc = [];
+    for (var q = 0; q < J.n; q++) pc.push(q / (J.n - 1) * 100);
+    strip(c, K, { x: px - 4, y: gTop, w: pw + 4, h: gH }, {
+      pc: pc, on: AIR, k: k, onLabel: 'in the air',
+      x0: '0 s', x1: fmt((J.n - 1) / J.rate, 2) + ' s',
+      ax: function (v) { return fmt(v, 0); },
+      title: 'Extensor moment at each joint, through the whole jump',
+      unit: 'N·m', fmt: function (v) { return fmt(v, 0); },
+      series: [{ v: J.M.hip, col: K.BLUE, lab: 'hip' },
+               { v: J.M.knee, col: K.GRN, lab: 'knee' },
+               { v: J.M.ankle, col: K.ACC, lab: 'ankle' }]
+    });
+  }
+
+  /* ---------------------------------------------------------- controls */
+  u.ctl.className = 'ictls g2';
+  var sk = slider(u.ctl, 'Where in the jump', 0, J.n - 1, 1, S.k,
+                  function (v) { return fmt((v - J.onset) / J.rate, 2) + ' s'; },
+                  function (v) { S.k = Math.round(v); draw(); });
+  sk.quiet(S.k);
+  var row = ctlRow(u.ctl);
+  keepOut(seg(row, [['side', 'From the side'], ['solid', 'Turn it round']],
+               'side', function (v) { S.view = v; draw(); }));
+  var pb = playBtn(row, '▶ Jump');
+  pb.setAttribute('data-unsafe', '1');
+  pb.addEventListener('click', function () {
+    if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Jump'; return; }
+    pb.textContent = '❚❚ Pause';
+    timer = setInterval(function () {
+      S.k = (S.k + 1) % J.n; sk.quiet(S.k); draw();
+    }, 55);
+  });
+  node._stop = function () {
+    if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Jump'; }
+  };
+
+  /* drag to turn the solid view */
+  (function () {
+    var down = null;
+    function xy(e) {
+      var t = e.touches ? e.touches[0] : e;
+      return [t.clientX, t.clientY];
+    }
+    u.cv.addEventListener('pointerdown', function (e) {
+      if (S.view !== 'solid') return;
+      down = xy(e); u.cv.setPointerCapture(e.pointerId);
+    });
+    u.cv.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var p = xy(e);
+      S.az += (p[0] - down[0]) * 0.011;
+      S.el = Math.max(-0.5, Math.min(1.1, S.el - (p[1] - down[1]) * 0.006));
+      down = p; draw();
+    });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) {
+      u.cv.addEventListener(ev, function () { down = null; });
+    });
+  })();
+
+  var rd = readout(u.ctl);
+  rd.innerHTML = 'One jump, the same three equations, ninety-one times. The ' +
+    'order the joints peak in is the thing to watch: <b>knee first, then ' +
+    'hip, then ankle</b>, over about two tenths of a second. Turn the figure ' +
+    'and you can see why two dimensions is allowed here &mdash; the force ' +
+    'leans fore-aft, but what leaves the sagittal plane is a third of a ' +
+    'degree. Land on one foot and cut, and it would not be.';
+
+  node._draw = draw;
+  draw();
 });
 
 /* ======================================================================
