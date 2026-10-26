@@ -1601,6 +1601,162 @@ D.register('topics', function (node) {
 
   node._draw = function () {};
 });
+/* ======================================================================
+   8. JOINTS — pick an action, move the body through it
+
+   Marc: "you could create a widget that moves this manequin in the
+   positions that you set with buttons."
+
+   His slides 50 to 58 are nine plates of a figure in two positions with an
+   arrow between them, and a plate cannot be asked what happens in between.
+   This can: choose a joint action and drag the figure through its whole
+   range, in the plane that action happens in.
+
+   The figure is a rigged character posed from the joint angles, rendered
+   ahead of time into one horizontal strip per action — fifty thousand
+   triangles and a skin solve per frame is not something to do in a slide's
+   JavaScript.  Every angle on the strips was checked against a measured
+   displacement before it was drawn, because five of the twelve were the
+   wrong way round when they were checked by eye: the figure faces the
+   camera's right in a side view, and reading it the other way inverts the
+   verdict on every sagittal action at once.
+
+   The ranges are normal active range of motion, so the ends of the slider
+   are the ends of the joint — the hip stops at 85 degrees because that is
+   a straight-leg raise, not because the picture ran out.
+   ====================================================================== */
+D.register('joints', function (node) {
+  var port = D.portrait();
+  var u = build(node, {});
+  if (!DA || !DA.joints || !DA.joints.length) return;
+  var J = DA.joints;
+
+  /* --------------------------------------------------- what is on screen */
+  var cur = J[0], frame = 0, playing = false, dir = 1, raf = 0;
+  var imgs = {}, ready = {};
+
+  function load(m, then) {
+    if (imgs[m.key]) { then && then(); return; }
+    var im = new Image();
+    im.onload = function () { ready[m.key] = 1; then && then(); draw(); };
+    im.src = m.file;
+    imgs[m.key] = im;
+  }
+
+  /* the stage is an image, not a plot: let it have the whole box */
+  var cv = u.cv;
+  var ctx = cv.getContext('2d');
+  var box = el('div', 'jointstage');
+  u.stage.innerHTML = '';
+  u.stage.appendChild(cv);
+
+  function draw() {
+    var dpr = window.devicePixelRatio || 1;
+    var W = u.stage.clientWidth || 600;
+    /* the slide gives the stage about 430 units once the heading, the three
+       control rows and the readout have taken theirs; asking for more just
+       makes fit.js shrink the whole slide */
+    var H = port ? Math.round(W * 1.2)
+                 : Math.max(300, Math.min(430, Math.round(W * 0.40)));
+    cv.width = W * dpr; cv.height = H * dpr;
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+
+    var im = imgs[cur.key];
+    if (!im || !ready[cur.key]) {
+      label(ctx, 'drawing…', W / 2, H / 2, { color: C().MUT, size: 13 });
+      return;
+    }
+    var k = Math.min(W * 0.62 / cur.w, (H - 52) / cur.h);
+    var dw = cur.w * k, dh = cur.h * k;
+    var dx = (W - dw) / 2, dy = 4;
+    ctx.drawImage(im, cur.w * frame, 0, cur.w, cur.h, dx, dy, dw, dh);
+
+    /* the angle, under the figure, in his own vocabulary */
+    var a = cur.angles[frame];
+    var nm = cur.label.split('↔');
+    var which = a < 0 ? nm[0] : a > 0 ? nm[1] : 'anatomical position';
+    var yy = dy + dh + 14;
+    label(ctx, cur.joint + ' · ' + which.trim(), W / 2, yy,
+          { size: port ? 15 : 18, weight: 750 });
+    label(ctx, (a === 0 ? '0' : minus(String(Math.abs(a)))) + '°',
+          W / 2, yy + 22, { size: port ? 14 : 17, color: C().ACC,
+                            weight: 750 });
+  }
+
+  /* ------------------------------------------------------------ controls */
+  var planes = [['sagittal', 'Sagittal'], ['frontal', 'Frontal'],
+                ['transverse', 'Transverse']];
+  var plane = 'sagittal';
+  var r1 = ctlRow(u.ctl);
+  keepOut(seg(r1, planes, plane, function (p) { plane = p; fillChips(); }));
+
+  var r2 = ctlRow(u.ctl);
+  var chipHost = el('div', '');
+  r2.appendChild(chipHost);
+
+  var r3 = ctlRow(u.ctl);
+  var sl = slider(r3, 'through the range', 0, J[0].n - 1, 1, 0,
+                  function (v) { return cur.angles[v] + '°'; },
+                  function (v) { frame = Math.round(v); draw(); });
+  var play = playBtn(r3, '▶ Move');
+
+  var rd = readout(u.ctl);
+
+  function fillChips() {
+    chipHost.innerHTML = '';
+    var items = J.filter(function (m) { return m.plane === plane; })
+                 .map(function (m) { return [m.key, m.joint]; });
+    keepOut(chips(chipHost, items, items[0][0], function (k) { pick(k); }));
+    pick(items[0][0]);
+  }
+
+  function pick(k) {
+    for (var i = 0; i < J.length; i++) if (J[i].key === k) cur = J[i];
+    sl.input.max = cur.n - 1;
+    frame = cur.zero;
+    sl.set(frame);
+    rd.innerHTML = '<strong>' + cur.joint + '</strong> — ' +
+      cur.label + '. Normal range ' + minus(cur.lo + '°') + ' to ' +
+      minus(cur.hi + '°') + ', seen ' +
+      ({ right: 'from the side', front: 'from the front',
+         above: 'from above' }[cur.view]) + '.';
+    load(cur, draw);
+    draw();
+  }
+
+  play.addEventListener('click', function () {
+    playing = !playing;
+    play.innerHTML = playing ? '⏸ Pause' : '▶ Move';
+    if (playing) step();
+  });
+
+  var last = 0;
+  function step(t) {
+    if (!playing) return;
+    if (!last || t - last > 95) {
+      last = t || 0;
+      frame += dir;
+      if (frame >= cur.n - 1) { frame = cur.n - 1; dir = -1; }
+      else if (frame <= 0) { frame = 0; dir = 1; }
+      sl.quiet(frame);
+      draw();
+    }
+    raf = requestAnimationFrame(step);
+  }
+
+  window.addEventListener('resize', draw);
+  fillChips();
+
+  /* preload the rest quietly once the first one is up, so pressing a chip
+     never shows "drawing..." in front of a room */
+  setTimeout(function () {
+    J.forEach(function (m) { load(m); });
+  }, 400);
+
+  return { stop: function () { playing = false; cancelAnimationFrame(raf); } };
+});
 
 /* ======================================================================
    9. METHOD — his eleven steps, on one problem, all the way down

@@ -27,12 +27,13 @@ window.EPHE341_LECTURES = [
     path: 'lectures/01a-intro-and-review',
     blurb: 'What biomechanics is, how the course runs, and the mathematics and anatomy the ' +
            'rest of the term assumes.',
-    slides: 56, widgets: 8, updated: '2026-10-25',
+    slides: 57, widgets: 9, updated: '2026-10-26',
     handout: 'handout.pdf',
     live: [['the whole course, as a map', 'w-topics'],
            ['twenty-four identities, checked', 'w-exponents'],
            ['one triangle, all three relations', 'w-triangle'],
-           ['the planes, on somebody walking', 'w-axes3']] },
+           ['the planes, on somebody walking', 'w-axes3'],
+           ['every joint action, moved', 'w-joints']] },
 
   { n: '2', title: 'Sensors and data acquisition',
     path: 'lectures/02-sensors-and-data-acquisition',
