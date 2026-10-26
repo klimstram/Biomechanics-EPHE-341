@@ -970,6 +970,10 @@ table.admin td{ text-align:left; }
 .figrow svg.hifig{ display:inline-block; width:100%; height:auto;
                    max-width:100%; vertical-align:top; }
 html[data-portrait] .figrow svg.hifig{ width:100% !important; }
+/* the three argument plates on 48 to 50 are nearer square than the joint
+   rows, so at a full slide's width they run off the bottom of the frame */
+.figrow svg.hifig.tall{ max-height:52vh; }
+html[data-portrait] .figrow svg.hifig.tall{ max-height:none; }
 /* a figure sharing a row with text: cap it so the text keeps its column */
 .cols .figcol svg.hifig,.figcol svg.hifig{
   width:100% !important; height:auto; max-height:52vh; }

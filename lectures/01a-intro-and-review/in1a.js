@@ -1903,6 +1903,480 @@ D.register('method', function (node) {
   node._draw = draw;
   draw();
 });
+/* ======================================================================
+   10 and 11.  ONE MEASURED JUMP, TWICE — his slides 7 and 8
+
+   Marc: "can't you use some motion capture and force data that we have and
+   make an animation that plays that shows either the kinematics on one
+   slide and the forces on the other?"
+
+   So: the same trial, the same clock, the same figure, on both slides.
+   Slide 7 plays it with the markers only — the path of the centre of mass,
+   its height, its velocity and its acceleration, and nothing else, because
+   his definition of kinematics is "without regard to force".  Slide 8 plays
+   the same two and a quarter seconds with the force plates switched on.
+
+   The centre of mass is computed from the markers with Winter's segment
+   table, NOT by integrating the plate.  That is the whole point: taking it
+   from the plate would make slide 7 a kinetics slide wearing a disguise,
+   and it would turn slide 8's agreement into a tautology.  Computed the
+   long way, the acceleration the markers give and the acceleration
+   (F − mg)/m the plates give agree at r = 0.998 over the push, and the
+   markers alone put gravity at 9.72 m/s² in flight.  Both numbers are
+   printed by mkjump.js and quoted on the slide.
+
+   SUSU-46, a single vertical jump: 83 markers at 90 Hz over two plates at
+   450 Hz, resampled to 40 Hz.  It is the trial lecture 20 solves, so the
+   first lecture and the last one are looking at the same jump.
+   ====================================================================== */
+
+/* ------------------------------------------------- the shared machinery */
+/* the phases are found in the data rather than guessed at as offsets: the
+   bottom of the countermovement is where the centre of mass is lowest, and
+   a chip called "dip" that lands on a figure still standing upright is
+   worse than no chip at all */
+function jumpPhases(J) {
+  var z = J.com[1], low = J.onset, i;
+  for (i = J.onset; i < J.takeoff; i++) if (z[i] < z[low]) low = i;
+  return [['stand', 0], ['dip', low],
+          ['push', Math.round((low + J.takeoff) / 2)],
+          ['take-off', J.takeoff], ['flight', J.takeoff + 8],
+          ['land', J.land + 3]];
+}
+
+/* position, velocity and acceleration of the centre of mass, in metres and
+   seconds, differenced from the measured positions rather than stored */
+function jumpCom(J) {
+  var n = J.n, dt = 1 / J.rate, S = (J.comScale || 1) * 1000;
+  var z = J.com[1], x = J.com[0];
+  var h = [], v = [], a = [], i;
+  for (i = 0; i < n; i++) h.push(z[i] / S);
+  for (i = 0; i < n; i++) {
+    var lo = Math.max(0, i - 1), hi = Math.min(n - 1, i + 1);
+    v.push((z[hi] - z[lo]) / S / ((hi - lo) * dt));
+  }
+  for (i = 0; i < n; i++) {
+    var p = z[Math.max(0, i - 1)], q = z[i], r = z[Math.min(n - 1, i + 1)];
+    a.push((p - 2 * q + r) / S / (dt * dt));
+  }
+  return { h: h, v: v, a: a, mm: function (c, i) { return J.com[c][i] / (J.comScale || 1); } };
+}
+
+/* one mapping from the laboratory to the canvas, fixed over the whole
+   trial: scaling each frame to its own bounding box would hold the figure
+   still and the point of the slide is that it goes up */
+function jumpView(J, x0, y0, w, h, anchor) {
+  var zmax = 0, i, NJ = J.j.length;
+  for (i = 0; i < J.P.length; i += 2) if (J.P[i + 1] > zmax) zmax = J.P[i + 1];
+  zmax = Math.max(zmax, Math.max.apply(null, J.com[1]) / (J.comScale || 1)) + 90;
+  var k = Math.min(w / 760, (h - 10) / zmax);
+  var fy = y0 + h - 4;
+  return {
+    k: k, NJ: NJ,
+    X: function (mm) { return x0 + w * (anchor == null ? 0.5 : anchor)
+                              + (mm - 110) * k; },
+    Y: function (mm) { return fy - (mm - J.floor) * k; },
+    floorY: fy
+  };
+}
+
+function jumpBody(c, J, V, f, o) {
+  o = o || {};
+  var NJ = V.NJ, K = C(), i;
+  function px(j) {
+    return [V.X(J.P[(f * NJ + j) * 2]), V.Y(J.P[(f * NJ + j) * 2 + 1])];
+  }
+  c.save();
+  c.globalAlpha = o.alpha == null ? 1 : o.alpha;
+  c.strokeStyle = o.color || K.INK;
+  c.lineWidth = o.width || 3.2;
+  c.lineCap = 'round';
+  c.beginPath();
+  for (i = 0; i < J.links.length; i++) {
+    var a = px(J.links[i][0]), b = px(J.links[i][1]);
+    c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]);
+  }
+  c.stroke();
+  /* the head marker sits on top of the skull, so the neck-to-marker
+     distance is most of a head rather than a radius */
+  var hd = px(0), nk = px(1);
+  var rr = Math.max(3, Math.hypot(hd[0] - nk[0], hd[1] - nk[1]) * 0.29);
+  c.fillStyle = o.color || K.INK;
+  c.beginPath(); c.arc(hd[0], hd[1], rr, 0, 7); c.fill();
+  c.restore();
+}
+
+function jumpFloor(c, V, x0, w) {
+  var K = C();
+  c.save();
+  c.strokeStyle = K.MUT; c.globalAlpha = .55; c.lineWidth = 2;
+  c.beginPath(); c.moveTo(x0, V.floorY); c.lineTo(x0 + w, V.floorY); c.stroke();
+  c.restore();
+}
+
+/* a small time plot that every one of these slides shares, with the
+   playhead where the figure is */
+function jumpPlot(c, box, t, y, f, o) {
+  var K = C(), i;
+  var lo = o.lo, hi = o.hi, n = y.length;
+  var X = function (i) { return box.x + box.w * i / (n - 1); };
+  var Y = function (v) { return box.y + box.h * (1 - (v - lo) / (hi - lo)); };
+  c.save();
+  c.strokeStyle = K.GRID; c.lineWidth = 1;
+  c.strokeRect(box.x, box.y, box.w, box.h);
+  if (o.zero != null && o.zero > lo && o.zero < hi) {
+    c.strokeStyle = K.MUT; c.globalAlpha = .45; c.setLineDash([4, 4]);
+    c.beginPath(); c.moveTo(box.x, Y(o.zero)); c.lineTo(box.x + box.w, Y(o.zero));
+    c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
+  }
+  if (o.fill) {
+    c.fillStyle = o.fill;
+    c.beginPath(); c.moveTo(X(0), Y(o.zero == null ? lo : o.zero));
+    for (i = 0; i < n; i++) c.lineTo(X(i), Y(y[i]));
+    c.lineTo(X(n - 1), Y(o.zero == null ? lo : o.zero));
+    c.closePath(); c.fill();
+  }
+  c.strokeStyle = o.color || K.INK; c.lineWidth = 2.2; c.lineJoin = 'round';
+  c.beginPath();
+  for (i = 0; i < n; i++) (i ? c.lineTo : c.moveTo).call(c, X(i), Y(y[i]));
+  c.stroke();
+  /* the playhead */
+  c.strokeStyle = K.ACC; c.lineWidth = 1.6; c.globalAlpha = .75;
+  c.beginPath(); c.moveTo(X(f), box.y); c.lineTo(X(f), box.y + box.h); c.stroke();
+  c.globalAlpha = 1;
+  c.fillStyle = o.color || K.INK;
+  c.beginPath(); c.arc(X(f), Y(y[f]), 4, 0, 7); c.fill();
+  c.restore();
+  /* a plot with no scale on it is a picture, not a measurement */
+  label(c, minus(fmt(hi, o.dp == null ? 2 : o.dp)), box.x - 6, box.y + 7,
+        { align: 'right', size: 11.5, color: K.MUT, weight: 600 });
+  label(c, minus(fmt(lo, o.dp == null ? 2 : o.dp)), box.x - 6,
+        box.y + box.h - 7,
+        { align: 'right', size: 11.5, color: K.MUT, weight: 600 });
+  if (o.time) {
+    label(c, '0 s', box.x, box.y + box.h + 12,
+          { align: 'left', size: 11.5, color: K.MUT, weight: 600 });
+    label(c, fmt(t[t.length - 1], 2) + ' s', box.x + box.w,
+          box.y + box.h + 12,
+          { align: 'right', size: 11.5, color: K.MUT, weight: 600 });
+  }
+  label(c, o.title, box.x, box.y - 9, { align: 'left', size: o.size || 13,
+                                        color: K.MUT, weight: 700 });
+  label(c, minus(fmt(y[f], o.dp == null ? 2 : o.dp)) + (o.unit || ''),
+        box.x + box.w, box.y - 9,
+        { align: 'right', size: o.size || 13, color: o.color || K.INK,
+          weight: 750 });
+}
+
+/* the play, scrub and phase controls, which are the same on both slides */
+function jumpControls(u, J, state, redraw) {
+  var ph = jumpPhases(J);
+  var r1 = ctlRow(u.ctl);
+  keepOut(chips(r1, ph.map(function (p) { return [String(p[1]), p[0]]; }),
+                '0', function (k) {
+                  state.f = +k; state.playing = false;
+                  state.play.innerHTML = '▶ Play';
+                  state.sl.set(state.f); redraw();
+                }));
+  var r2 = ctlRow(u.ctl);
+  state.sl = slider(r2, 'frame', 0, J.n - 1, 1, 0,
+                    function (v) {
+                      return fmt(v / J.rate, 2) + ' s';
+                    },
+                    function (v) { state.f = Math.round(v); redraw(); });
+  state.play = playBtn(r2, '▶ Play');
+  state.play.addEventListener('click', function () {
+    state.playing = !state.playing;
+    state.play.innerHTML = state.playing ? '⏸ Pause' : '▶ Play';
+    if (state.playing) {
+      if (state.f >= J.n - 1) state.f = 0;
+      state.last = 0;
+      state.raf = requestAnimationFrame(state.step);
+    }
+  });
+  state.step = function (t) {
+    if (!state.playing) return;
+    if (!state.last || t - state.last > 1000 / 22) {
+      state.last = t || 0;
+      state.f++;
+      if (state.f >= J.n - 1) {
+        state.f = J.n - 1; state.playing = false;
+        state.play.innerHTML = '▶ Play';
+      }
+      state.sl.quiet(state.f); redraw();
+    }
+    state.raf = requestAnimationFrame(state.step);
+  };
+}
+
+/* fit.js zooms the whole slide body AFTER the widgets have drawn, and
+   inside a zoomed element clientWidth is reported in the zoomed element's
+   own units -- so the stage is 1280 units wide when the widget first draws
+   and 1721 a moment later.  Drawing once left a canvas two thirds of the
+   width it was given, which is why the plots ran off the right of it.  So
+   redraw whenever the box actually changes width. */
+function jumpWatch(u, draw) {
+  var was = 0;
+  function check() {
+    var w = u.stage.clientWidth || 0;
+    if (Math.abs(w - was) > 1) { was = w; draw(); }
+  }
+  if (window.ResizeObserver) new ResizeObserver(check).observe(u.stage);
+  window.addEventListener('resize', check);
+  [60, 180, 420, 900].forEach(function (ms) { setTimeout(check, ms); });
+}
+
+function jumpStage(u, port) {
+  var cv = u.cv, ctx = cv.getContext('2d');
+  u.stage.innerHTML = '';
+  u.stage.appendChild(cv);
+  return function () {
+    var dpr = window.devicePixelRatio || 1;
+    var W = u.stage.clientWidth || 640;
+    var H = port ? Math.round(W * 1.05)
+                 : Math.max(320, Math.min(470, Math.round(W * 0.42)));
+    cv.width = W * dpr; cv.height = H * dpr;
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    return { c: ctx, W: W, H: H };
+  };
+}
+
+/* On a wide screen the figure stands to the left of the traces; on a phone
+   it stands above them.  The traces are not decoration -- the point of both
+   slides is reading a number off one while the figure is at that instant --
+   so the phone keeps them and loses figure size instead. */
+function jumpLayout(S, port, nplots) {
+  var W = S.W, H = S.H;
+  if (!port) {
+    var figW = Math.min(440, W * 0.30);
+    var TOP = 24, GAP = 32, BOT = 24;
+    /* nplots is 2 on the kinetics slide, which is also the one that hangs
+       force labels off the figure, so it gets a little more room to the
+       right of the body */
+    return { fig: { x: 0, y: 0, w: figW, h: H - 16,
+                    anchor: nplots === 2 ? 0.34 : 0.5 },
+             px: figW + 72, pw: W - figW - 72 - 58, top: TOP, gap: GAP,
+             ph: Math.round((H - TOP - BOT - (nplots - 1) * GAP) / nplots),
+             foot: H - 7, footAlign: 'left', footX: 4, size: 13,
+             lx: figW - 6 };
+  }
+  var figH = Math.round(H * 0.42);
+  var TOPp = figH + 30, GAPp = 36, BOTp = 30;
+  return { fig: { x: 0, y: 0, w: W, h: figH,
+                  anchor: nplots === 2 ? 0.34 : 0.5 },
+           px: 74, pw: W - 74 - 20, top: TOPp, gap: GAPp,
+           ph: Math.round((H - TOPp - BOTp - (nplots - 1) * GAPp) / nplots),
+           foot: H - 8, footAlign: 'center', footX: W / 2, size: 13,
+           lx: Math.round(W * 0.62) };
+}
+
+
+/* ====================================================================== */
+/* 10.  KINEMATICS — his slide 7                                          */
+/* ====================================================================== */
+D.register('jumpkin', function (node) {
+  var port = D.portrait();
+  var u = build(node, {});
+  var J = DA && DA.jump;
+  if (!J) return;
+  var CM = jumpCom(J), dt = 1 / J.rate;
+  var st = { f: 0, playing: false, raf: 0, last: 0 };
+  var size = jumpStage(u, port);
+
+  function draw() {
+    var S = size(), c = S.c, W = S.W, H = S.H, K = C(), i;
+    var L = jumpLayout(S, port, 3), figW = L.fig.w;
+    var V = jumpView(J, L.fig.x, L.fig.y, figW, L.fig.h, L.fig.anchor);
+    jumpFloor(c, V, L.fig.x, figW);
+
+    /* where the centre of mass has been, and where it still has to go */
+    function cx(i) { return V.X(CM.mm(0, i)); }
+    function cy(i) { return V.Y(CM.mm(1, i)); }
+    c.save();
+    c.strokeStyle = K.ACC; c.globalAlpha = .22; c.lineWidth = 2;
+    c.beginPath();
+    for (i = 0; i < J.n; i++) (i ? c.lineTo : c.moveTo).call(c, cx(i), cy(i));
+    c.stroke();
+    c.globalAlpha = 1; c.lineWidth = 3;
+    c.beginPath();
+    for (i = 0; i <= st.f; i++) (i ? c.lineTo : c.moveTo).call(c, cx(i), cy(i));
+    c.stroke();
+    c.restore();
+
+    jumpBody(c, J, V, st.f, { color: K.INK, width: port ? 3.6 : 3.2 });
+    c.save();
+    c.fillStyle = K.ACC;
+    c.beginPath(); c.arc(cx(st.f), cy(st.f), 6, 0, 7); c.fill();
+    c.restore();
+    label(c, 'centre of mass', cx(st.f) + 11, cy(st.f) - 13,
+          { align: 'left', size: port ? 12 : 13, color: K.ACC, weight: 700,
+            plate: true });
+
+    /* the velocity it has at this instant, drawn on the figure */
+    var v = CM.v[st.f];
+    if (Math.abs(v) > 0.12) {
+      arrow(c, cx(st.f), cy(st.f), cx(st.f), cy(st.f) - v * 34,
+            { color: K.BLUE, width: 3, head: 10 });
+    }
+
+    var t = [];
+    for (i = 0; i < J.n; i++) t.push(i * dt);
+    var row = function (k) { return L.top + k * (L.ph + L.gap); };
+    jumpPlot(c, { x: L.px, y: row(0), w: L.pw, h: L.ph }, t, CM.h, st.f,
+             { title: port ? 'height of the centre of mass'
+                           : 'height of the centre of mass',
+               unit: ' m', color: K.ACC, lo: 0.6, hi: 1.5, size: L.size });
+    jumpPlot(c, { x: L.px, y: row(1), w: L.pw, h: L.ph }, t, CM.v, st.f,
+             { title: 'its vertical velocity', unit: ' m/s', color: K.BLUE,
+               lo: -3.6, hi: 3.2, zero: 0, size: L.size });
+    jumpPlot(c, { x: L.px, y: row(2), w: L.pw, h: L.ph }, t, CM.a, st.f,
+             { title: 'its vertical acceleration', unit: ' m/s²',
+               color: K.GRN, lo: -14, hi: 22, zero: 0, dp: 1, time: true,
+               size: L.size });
+    label(c, 'markers only — not one force on this slide', L.footX, L.foot,
+          { align: L.footAlign, size: port ? 11 : 12, color: K.MUT,
+            weight: 600 });
+  }
+
+  jumpControls(u, J, st, function () { draw(); say(); });
+  var rd = readout(u.ctl);
+  function say() {
+    var f = st.f, K = C();
+    var v = CM.v[f], a = CM.a[f];
+    var what = f >= J.land ? 'landing'
+             : f >= J.takeoff ? 'in the air'
+             : f < J.onset ? 'standing still'
+             : v < -0.15 ? 'the countermovement — going down'
+             : v < 0.15 && a > 2
+               ? 'the bottom of the dip — stopped, and already being '
+                 + 'accelerated upward'
+             : 'the push — going up, still on the floor';
+    rd.innerHTML = '<strong>' + fmt(f / J.rate, 2) + ' s</strong> — ' + what
+      + '. Height <strong>' + fmt(CM.h[f], 2) + ' m</strong>, velocity <strong>'
+      + minus(fmt(CM.v[f], 2)) + ' m/s</strong>, acceleration <strong>'
+      + minus(fmt(CM.a[f], 1)) + ' m/s²</strong>. '
+      + 'Every one of those came from the markers.';
+  }
+
+  jumpWatch(u, function () { draw(); });
+  draw(); say();
+  return { stop: function () {
+    st.playing = false; cancelAnimationFrame(st.raf); } };
+});
+
+
+/* ====================================================================== */
+/* 11.  KINETICS — his slide 8                                            */
+/* ====================================================================== */
+D.register('jumpkic', function (node) {
+  var port = D.portrait();
+  var u = build(node, {});
+  var J = DA && DA.jump;
+  if (!J) return;
+  var CM = jumpCom(J), dt = 1 / J.rate, g = 9.81;
+  var bw = [], i;
+  for (i = 0; i < J.n; i++) bw.push(J.grf.tot[i] / J.bw);
+  var st = { f: 0, playing: false, raf: 0, last: 0 };
+  var size = jumpStage(u, port);
+
+  /* the impulse the floor has delivered over and above holding him up --
+     the thing that becomes his take-off velocity */
+  var imp = [0];
+  for (i = 1; i < J.n; i++)
+    imp.push(imp[i - 1]
+             + ((J.grf.tot[i] + J.grf.tot[i - 1]) / 2 - J.bw) * dt);
+
+  function draw() {
+    var S = size(), c = S.c, W = S.W, H = S.H, K = C();
+    var L = jumpLayout(S, port, 2), figW = L.fig.w;
+    var V = jumpView(J, L.fig.x, L.fig.y, figW, L.fig.h, L.fig.anchor);
+    jumpFloor(c, V, L.fig.x, figW);
+    jumpBody(c, J, V, st.f, { color: K.INK, width: port ? 3.6 : 3.2 });
+
+    var cxp = V.X(CM.mm(0, st.f)), cyp = V.Y(CM.mm(1, st.f));
+    /* 3.4 body weights is a little over the biggest force in the trial, so
+       the longest arrow of the jump just fits the figure */
+    var FSC = (L.fig.h - 36) / (3.4 * J.bw);
+
+    /* his weight: always there, always the same, and always at the centre
+       of mass, which is why it is drawn from the dot and not from the feet */
+    arrow(c, cxp, cyp, cxp, cyp + J.bw * FSC,
+          { color: K.MUT, width: 3, head: 10 });
+    label(c, 'weight', cxp - 12, cyp + J.bw * FSC * 0.42,
+          { align: 'right', size: port ? 12 : 13, color: K.MUT, weight: 700,
+            plate: true });
+    label(c, fmt(J.bw, 0) + ' N', cxp - 12, cyp + J.bw * FSC * 0.42 + 17,
+          { align: 'right', size: port ? 12 : 13, color: K.MUT, weight: 700,
+            plate: true });
+
+    /* what the floor pushes back with, from the place it pushes from */
+    var F = J.grf.tot[st.f], fx = 2 * J.grf.fx[st.f];
+    var lx = L.fig.x + L.lx;
+    if (F > 8) {
+      var ox = V.X(J.grf.cx[st.f]), oy = V.floorY;
+      var ty = oy - F * FSC;
+      arrow(c, ox, oy, ox + fx * FSC, ty,
+            { color: K.BLUE, width: 4, head: 12 });
+      c.save(); c.fillStyle = K.BLUE;
+      c.beginPath(); c.arc(ox, oy, 4.5, 0, 7); c.fill(); c.restore();
+      label(c, 'ground reaction', lx, Math.max(13, ty - 4),
+            { align: 'right', size: port ? 12 : 13, color: K.BLUE,
+              weight: 700, plate: true });
+      label(c, fmt(F, 0) + ' N  ·  ' + fmt(F / J.bw, 2) + ' BW',
+            lx, Math.max(31, ty + 15),
+            { align: 'right', size: port ? 12 : 14, color: K.BLUE,
+              weight: 750, plate: true });
+    } else {
+      label(c, 'nothing is touching the floor',
+            L.fig.x + figW / 2, V.floorY - 16,
+            { size: port ? 12 : 13, color: K.MUT, weight: 650, plate: true });
+    }
+    c.save(); c.fillStyle = K.ACC;
+    c.beginPath(); c.arc(cxp, cyp, 5, 0, 7); c.fill(); c.restore();
+
+    var t = [];
+    for (i = 0; i < J.n; i++) t.push(i * dt);
+    jumpPlot(c, { x: L.px, y: L.top, w: L.pw, h: L.ph }, t, bw, st.f,
+             { title: 'ground reaction force, in body weights', unit: ' BW',
+               color: K.BLUE, lo: 0, hi: 3.4, zero: 1, fill: K.FILL,
+               size: L.size });
+    jumpPlot(c, { x: L.px, y: L.top + L.ph + L.gap, w: L.pw, h: L.ph },
+             t, CM.a, st.f,
+             { title: 'and the acceleration it produced', unit: ' m/s²',
+               color: K.GRN, lo: -14, hi: 22, zero: 0, dp: 1, time: true,
+               size: L.size });
+    label(c, port ? 'above the dashed line he speeds up'
+                  : 'above the dashed line he speeds up, below it he slows '
+                    + 'down',
+          L.footX, L.foot,
+          { align: L.footAlign, size: port ? 11 : 12, color: K.MUT,
+            weight: 600 });
+  }
+
+  jumpControls(u, J, st, function () { draw(); say(); });
+  var rd = readout(u.ctl);
+  function say() {
+    var f = st.f, F = J.grf.tot[f], net = F - J.bw;
+    var what = F < 8 ? 'nothing but gravity'
+             : F < J.bw ? 'less than his weight, so he is accelerating down'
+             : 'more than his weight, so he is accelerating up';
+    rd.innerHTML = '<strong>' + fmt(f / J.rate, 2) + ' s</strong> — the floor '
+      + 'pushes with <strong>' + fmt(F, 0) + ' N</strong> ('
+      + fmt(F / J.bw, 2) + ' body weights) against his <strong>'
+      + fmt(J.bw, 0) + ' N</strong>: ' + what + '. Net <strong>'
+      + minus(fmt(net, 0)) + ' N</strong> on <strong>' + fmt(J.mass, 1)
+      + ' kg</strong> is <strong>' + minus(fmt(net / J.mass, 1))
+      + ' m/s²</strong>, and the markers measured <strong>'
+      + minus(fmt(CM.a[f], 1)) + ' m/s²</strong>.';
+  }
+
+  jumpWatch(u, function () { draw(); });
+  draw(); say();
+  return { stop: function () {
+    st.playing = false; cancelAnimationFrame(st.raf); } };
+});
 
 window.IA = { triFromSSS: triFromSSS, triFromSAS: triFromSAS,
               triFromAAS: triFromAAS, triRight: triRight, triPoints: triPoints,
