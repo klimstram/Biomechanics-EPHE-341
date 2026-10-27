@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20261027a">
+<link rel="stylesheet" href="theme.css?v=20261027c">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -437,11 +437,11 @@ Read as a list these sound like the kind of advice nobody follows. The next slid
 <!-- 18 -->
 <section id="w-method">
   <h2>How This Course Works</h2>
-  <p class="subhead">The same eleven steps, run on one problem</p>
+  <p class="subhead">The same ten steps, run on one problem</p>
   <div class="iplot wide" data-widget="method"></div>
   <aside class="notes">Step 6 is where the problem is actually solved: of the three kinematics equations, two need a time that was never given. There is no decision to agonise over once you have written the givens down, which is the whole reason step 5 exists.
 
-Step 9 is the one to insist on. Every term, marks are lost to answers that could not possibly be right — negative masses, velocities faster than light, triangle sides longer than the triangle. Thirty seconds of "does this make sense" would have caught all of them. There is an example in this very deck, on a slide of mine, later.</aside>
+Step 9 is the one to insist on. Every term, marks are lost to answers that could not possibly be right — negative masses, velocities faster than light, triangle sides longer than the triangle. Thirty seconds of "does this make sense" would have caught all of them.</aside>
 </section>
 
 <!-- 19 -->
@@ -628,47 +628,104 @@ The subtraction point is the one worth adding to the slide, and it costs ten sec
 <!-- 27 -->
 <section class="roomy">
   <h2>Basic Math</h2>
-  <p class="subhead">Theorems, and the laws of exponents</p>
-  <div class="cols a top">
-    <div>
-      <p class="small">Based on the commutative, associative and distributive
-        properties, some basic theorems can be developed &mdash; the sixteen
-        operations with real numbers on source slide 24.</p>
-      <p class="small">And then the <strong>eight laws of exponents</strong>, which
-        are the ones you will actually use:</p>
-    </div>
-    <div>
-      <p class="eq">x<sup>0</sup> = 1 &nbsp;&nbsp;&nbsp;
-        x<sup>&minus;n</sup> = 1 / x<sup>n</sup></p>
-      <p class="eq">x<sup>m</sup>&middot;x<sup>n</sup> = x<sup>m+n</sup>
-        &nbsp;&nbsp;&nbsp; x<sup>m</sup> / x<sup>n</sup> = x<sup>m&minus;n</sup></p>
-      <p class="eq">(x<sup>m</sup>)<sup>n</sup> = x<sup>mn</sup>
-        &nbsp;&nbsp;&nbsp; x<sup>m/n</sup> = <sup>n</sup>&radic;(x<sup>m</sup>)</p>
-    </div>
+  <p class="subhead">Basic theorems</p>
+  <div class="lead">
+    <p class="small">Based on the commutative, associative and distributive
+      properties some basic theorems can be developed.</p>
   </div>
-  <div class="box">
-    <p class="small" style="margin:0">Every one of the twenty-four is checked on the
-      next slide rather than asserted &mdash; both sides evaluated, for any base and
-      any pair of powers you choose.</p>
-  </div>
-  <aside class="notes">Source slides 24 to 27 together. They are four slides because the laws would not fit on one of the source slides, not because they are four ideas.
+  <table class="theorems">
+    <tr><th colspan="7">Operations with real numbers</th></tr>
+    <tr><th></th><th>Property</th><th>Example</th><th class="gap"></th>
+      <th></th><th>Property</th><th>Example</th></tr>
+    <tr><td class="n">1</td><td>a − b = a + (−b)</td><td class="eg">2 − 7 = 2 + (−7)</td><td class="gap"></td><td class="n">9</td><td>(−a)(−b) = a · b</td><td class="eg">(−7)(−2) = 7 · 2</td></tr><tr><td class="n">2</td><td>a − (−b) = a + b</td><td class="eg">2 − (−7) = 2 + 7</td><td class="gap"></td><td class="n">10</td><td>a(1/b) = a/b</td><td class="eg">6(1/3) = 6/3</td></tr><tr><td class="n">3</td><td>(−1)(a) = −a</td><td class="eg">(−1)(7) = −7</td><td class="gap"></td><td class="n">11</td><td>−1/a = 1/−a</td><td class="eg">−1/4 = 1/−4</td></tr><tr><td class="n">4</td><td>a(b + c) = a · b + a · c</td><td class="eg">6(7 + 2) = 6 · 7 + 6 · 2</td><td class="gap"></td><td class="n">12</td><td>−a/−b = a/b</td><td class="eg">−4/−8 = 4/8</td></tr><tr><td class="n">5</td><td>a(b − c) = a · b − a · c</td><td class="eg">6(7 − 2) = 6 · 7 − 6 · 2</td><td class="gap"></td><td class="n">13</td><td>(1/a)(1/b) = 1/(a · b)</td><td class="eg">(1/2)(1/5) = 1/(2 · 5)</td></tr><tr><td class="n">6</td><td>−(a + b) = −a − b</td><td class="eg">−(7 + 2) = −7 − 2</td><td class="gap"></td><td class="n">14</td><td>a/b + c/d = (a · d + b · c)/(b · d)</td><td class="eg">1/2 + 3/4 = (1 · 4 + 3 · 2)/(2 · 4)</td></tr><tr><td class="n">7</td><td>−(a − b) = −a + b</td><td class="eg">−(7 − 2) = −7 + 2</td><td class="gap"></td><td class="n">15</td><td>(a/b)(c/d) = (a · c)/(b · d)</td><td class="eg">(1/2)(3/4) = (1 · 3)/(2 · 4)</td></tr><tr><td class="n">8</td><td>−(−a) = a</td><td class="eg">−(−7) = 7</td><td class="gap"></td><td class="n">16</td><td>(a/b)/(c/d) = (a/b)(d/c)</td><td class="eg">(1/2)/(3/4) = (1/2)(4/3)</td></tr>
+  </table>
+  <aside class="notes">Source slide 24, the sixteen operations with real numbers and an example of each.
 
-A moment of inertia is kg·m² and a radius of gyration is a square root, and you cannot do lecture 18 without law 5.</aside>
+Nobody memorises this table and nobody should. Every row is one of the three properties on the previous slides applied once; ask the room which property each of rows 4 to 7 is, and they will find it is the distributive one every time.</aside>
 </section>
 
 <!-- 28 -->
+<section class="roomy">
+  <h2>Basic Math</h2>
+  <p class="subhead">Laws of exponents</p>
+  <table class="laws">
+    <tr><td class="n">1</td><td class="law eq">c<sup>n</sup>&middot;c<sup>m</sup>
+        = c<sup>n+m</sup></td>
+      <td class="eq">2<sup>3</sup> &times; 2<sup>5</sup> = 2<sup>3+5</sup>
+        = 2<sup>8</sup><br>
+        2<sup>3</sup> &times; 2<sup>5</sup> = (2 &times; 2 &times; 2) &times;
+        (2 &times; 2 &times; 2 &times; 2 &times; 2) = 2<sup>8</sup></td></tr>
+    <tr><td class="n">2</td><td class="law eq">x<sup>0</sup> = 1</td>
+      <td class="eq">4<sup>0</sup> = 1</td></tr>
+    <tr><td class="n">3</td><td class="law eq">x<sup>&minus;n</sup> =
+        1/x<sup>n</sup></td>
+      <td class="eq">3<sup>&minus;2</sup> = 1/3<sup>2</sup></td></tr>
+    <tr><td class="n">4</td><td class="law eq"><span class="frac"><span>c<sup>m</sup></span><span class="den">c<sup>n</sup></span></span>
+        = c<sup>m&minus;n</sup></td>
+      <td class="eq"><span class="frac"><span>2<sup>7</sup></span><span class="den">2<sup>4</sup></span></span> =
+        <span class="frac"><span>2 &times; 2 &times; 2 &times; 2 &times; 2 &times; 2 &times; 2</span><span class="den">2 &times; 2 &times; 2 &times; 2</span></span> =
+        <span class="frac"><span>2 &times; 2 &times; 2</span><span class="den">1</span></span> = 2<sup>3</sup></td></tr>
+  </table>
+  <aside class="notes">Source slide 25, laws 1 to 4 with the worked examples.
+
+The written-out products are the point of the slide. Law 1 is not a rule to remember; it is counting the twos. Write 2³ × 2⁵ out longhand once and nobody ever adds the bases again.</aside>
+</section>
+
+<!-- 29 -->
+<section class="roomy">
+  <h2>Basic Math</h2>
+  <p class="subhead">Laws of exponents, continued</p>
+  <table class="laws">
+    <tr><td class="n">5</td><td class="law eq">(c<sup>n</sup>)<sup>m</sup> =
+        c<sup>n&times;m</sup> = c<sup>nm</sup></td>
+      <td class="eq">(5<sup>2</sup>)<sup>3</sup> = (5<sup>2</sup>) &times;
+        (5<sup>2</sup>) &times; (5<sup>2</sup>)<br>
+        = (5 &times; 5) &times; (5 &times; 5) &times; (5 &times; 5)<br>
+        = 5 &times; 5 &times; 5 &times; 5 &times; 5 &times; 5 =
+        5<sup>6</sup></td></tr>
+    <tr><td class="n">6</td><td class="law eq">(cd)<sup>n</sup> =
+        c<sup>n</sup>d<sup>n</sup></td>
+      <td class="eq">(2 &times; 3)<sup>4</sup> = (2 &times; 3) &times;
+        (2 &times; 3) &times; (2 &times; 3) &times; (2 &times; 3)<br>
+        = 2<sup>4</sup> &times; 3<sup>4</sup> =
+        2<sup>4</sup>3<sup>4</sup></td></tr>
+    <tr><td class="n">7</td><td class="law eq">(<span class="frac"><span>c</span><span class="den">d</span></span>)<sup>n</sup>
+        = <span class="frac"><span>c<sup>n</sup></span><span class="den">d<sup>n</sup></span></span></td>
+      <td class="eq">(<span class="frac"><span>3</span><span class="den">4</span></span>)<sup>5</sup> =
+        <span class="frac"><span>3</span><span class="den">4</span></span>&times;<span class="frac"><span>3</span><span class="den">4</span></span>&times;<span class="frac"><span>3</span><span class="den">4</span></span>&times;<span class="frac"><span>3</span><span class="den">4</span></span>&times;<span class="frac"><span>3</span><span class="den">4</span></span> =
+        <span class="frac"><span>3 &times; 3 &times; 3 &times; 3 &times; 3</span><span class="den">4 &times; 4 &times; 4 &times; 4 &times; 4</span></span> =
+        <span class="frac"><span>3<sup>5</sup></span><span class="den">4<sup>5</sup></span></span></td></tr>
+  </table>
+  <aside class="notes">Source slide 26, laws 5 to 7 with the worked examples.
+
+Law 5 is the one this course leans on. A moment of inertia is kg·m², a radius of gyration is a square root, and lecture 18 cannot be done without it.</aside>
+</section>
+
+<!-- 30 -->
+<section class="roomy">
+  <h2>Basic Math</h2>
+  <p class="subhead">Laws of exponents, continued</p>
+  <table class="laws">
+    <tr><td class="n">8</td><td class="law eq">x<sup>m/n</sup> =
+        <sup>n</sup>&radic;x<sup>m</sup></td>
+      <td class="eq">3<sup>4/2</sup> = &radic;3<sup>4</sup></td></tr>
+  </table>
+  <aside class="notes">Source slide 27, law 8.
+
+A fractional power is a root. 3 to the 4/2 is 3 squared, and the square root of 3 to the fourth is also 9 — work it both ways out loud. The next slide evaluates all eight laws and all sixteen theorems for any numbers you like.</aside>
+</section>
+
+<!-- 31 -->
 <section id="w-exponents">
   <h2>Basic Math</h2>
   <p class="subhead">The same twenty-four, evaluated</p>
   <div class="iplot wide" data-widget="exponents"></div>
-  <aside class="notes">Source slides 24 to 27, checked rather than asserted.
+  <aside class="notes">The sixteen theorems and the eight laws from the last four slides, checked rather than asserted.
 
-The sliders are the point of the figure. An identity you have watched hold for eight different bases is one you will believe at two in the morning. Change the base to 7 and the powers to 4 and 2 and watch every row stay true.
-
-And say plainly: all twenty-four are right. The review content is sound. There are exactly two errors in fifty-nine slides and they are both coming up.</aside>
+The sliders are the point of the figure. An identity you have watched hold for eight different bases is one you will believe at two in the morning. Change the base to 7 and the powers to 4 and 2 and watch every row stay true.</aside>
 </section>
 
-<!-- 29 -->
+<!-- 32 -->
 <section class="roomy">
   <h2>Basic Math</h2>
   <p class="subhead">Solving equations for one unknown</p>
@@ -694,78 +751,97 @@ And say plainly: all twenty-four are right. The review content is sound. There a
   <aside class="notes">Source slide 28, its example, its three lettered steps.</aside>
 </section>
 
-<!-- 30 -->
-<section>
+<!-- 33 -->
+<section class="roomy">
   <h2>Basic Math</h2>
   <p class="subhead">Solving equations for multiple unknowns</p>
-  <div class="cols c top">
+  <div class="cols a top">
     <div>
-      <p class="small">You need <strong>a number of equations equal to the
-        number of unknown values</strong>, each containing the variables.</p>
-      <p class="small"><strong>Example:</strong> 1) x + y = 3 &nbsp;
-        2) 2x + y = 4, find x and y</p>
-      <p class="eq small">1. isolate &nbsp; x = 3 &minus; y</p>
-      <p class="eq small">2. substitute into 2) &nbsp; 2(3 &minus; y) + y = 4</p>
-      <p class="eq small">3. solve &nbsp; 6 &minus; 2y + y = 4 &nbsp;&rarr;&nbsp;
-        y = 2</p>
-      <p class="eq">4. back-substitute &nbsp; x + 2 = 3 &nbsp;&rarr;&nbsp;
-        <strong>x = 1</strong></p>
+      <p class="small">When you have an equation with two or more variables of
+        unknown value, you need <strong>a number of equations equal to the
+        number of unknown values</strong> each containing the variables. With
+        the proper number of equations the following procedure can be used to
+        solve for the unknown values.</p>
+      <ol class="small">
+        <li>Isolate one variable by manipulating the equation.</li>
+        <li>Substitute the term in place of the isolated variable into a second
+          equation.</li>
+        <li>Solve for the other unknown value.</li>
+        <li>Back substitute the value of the second variable into the first
+          equation to solve for the first variable.</li>
+      </ol>
     </div>
-    <div class="figcol"><svg class="hifig" viewBox="-18 -8 330 250" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The lines x plus y equals 3 and 2x plus y equals 4 drawn on axes, crossing at the point x equals 1, y equals 2." opacity=".95"><path d="M40.0 212.0 L203.0 212.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M210.0 212.0 L203.0 215.6 L203.0 208.4 Z" fill="var(--muted)"/><path d="M56.0 228.0 L56.0 19.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M56.0 12.0 L59.6 19.0 L52.4 19.0 Z" fill="var(--muted)"/><text x="218.0" y="217.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">x</text><text x="50.0" y="4.0" text-anchor="end" font-size="12" font-weight="700" fill="var(--muted)">y</text><path d="M102.0 208.0 L102.0 216.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="102.0" y="232.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">1</text><path d="M148.0 208.0 L148.0 216.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="148.0" y="232.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">2</text><path d="M194.0 208.0 L194.0 216.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="194.0" y="232.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">3</text><path d="M52.0 166.0 L60.0 166.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="44.0" y="170.0" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--muted)">1</text><path d="M52.0 120.0 L60.0 120.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="44.0" y="124.0" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--muted)">2</text><path d="M52.0 74.0 L60.0 74.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="44.0" y="78.0" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--muted)">3</text><path d="M52.0 28.0 L60.0 28.0" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><text x="44.0" y="32.0" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--muted)">4</text><path d="M56.0 74.0 L196.3 214.3" fill="none" stroke="var(--brand)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><text x="203.2" y="184.4" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--brand)">x + y = 3</text><path d="M56.0 28.0 L150.3 216.6" fill="none" stroke="var(--good)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><text x="79.9" y="6.8" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--good)">2x + y = 4</text><circle cx="102.0" cy="120.0" r="6.5" fill="var(--accent)"/><text x="113.0" y="98.8" text-anchor="start" font-size="13" font-weight="750" fill="var(--accent)">x = 1,  y = 2</text></svg>
-      <p class="small mut" style="text-align:center;margin:0">two lines, one
-        crossing &mdash; that is what solving them together means</p>
+    <div>
+      <p class="small"><strong>Example:</strong> 1) x + y = 3 &nbsp;
+        2) 2x + y = 4 &nbsp; find x and y</p>
+      <p class="small" style="margin-bottom:.15em">1. Isolate one variable:</p>
+      <p class="eq small workblock">x = 3 &minus; y</p>
+      <p class="small" style="margin-bottom:.15em">2. Substitute into equation 2):</p>
+      <p class="eq small workblock">2(3 &minus; y) + y = 4</p>
+      <p class="small" style="margin-bottom:.15em">3. Solve for the other variable:</p>
+      <p class="eq small workblock">6 &minus; 2y + y = 4 &nbsp;&nbsp; y = 2</p>
+      <p class="small" style="margin-bottom:.15em">4. Back substitute to solve for
+        variable one:</p>
+      <p class="eq small workblock">x + 2 = 3 &nbsp;&nbsp; <strong>x = 1</strong></p>
     </div>
   </div>
-  <aside class="notes">Source slide 29, its example.
+  <aside class="notes">Source slide 29, its procedure and its example, word for word.
 
-This is the shape of every statics problem in lecture 19: three equations, three unknowns, and you never solve them simultaneously — you pick the one that has only one unknown in it and work from there.</aside>
+This is the shape of every statics problem in lecture 19: three equations, three unknowns, and you never solve them simultaneously — you pick the one that has only one unknown in it and work from there.
+
+The two lines crossing at (1, 2) are drawn on the figure after the quadratic.</aside>
 </section>
 
-<!-- 31 -->
+<!-- 34 -->
 <section>
   <h2>Basic Math</h2>
   <p class="subhead">Solving quadratic equations</p>
   <div class="cols c top">
     <div>
-      <p class="small">An equation of the form
-        <em>ax</em>&sup2; + <em>bx</em> + <em>c</em> = 0 is a
-        <strong>quadratic</strong>, and once solved yields <strong>two values
-        for x</strong>.</p>
-      <p class="eq">x = (&minus;b &plusmn; &radic;(b&sup2; &minus; 4ac)) / 2a</p>
-      <div class="callout small">
-        <p style="margin-bottom:0">Quadratics turn up the moment anything is
-          thrown: a projectile is at a given height <strong>twice</strong>, once
-          going up and once coming down, and the two roots are those two times.
-          That is why you cannot take the positive root and go home.</p>
-      </div>
+      <p class="small">When you have an equation in the form
+        <em>a</em>x&sup2; + <em>b</em>x + <em>c</em> = 0, where a, b and c are
+        real numbers, it is known as a <strong>quadratic equation</strong> and
+        once solved will yield two values for x. There are two values of x
+        because the equation will create a parabolic curve that will cross the
+        x-axis twice. This becomes clear if you graph a quadratic equation.</p>
+      <p class="small">If we graph the equation y = &minus;2x&sup2; + 5x &minus; 2,
+        we can see that this function crosses the x-axis twice, at
+        <strong>x = 1/2</strong> and at <strong>x = 2</strong>.</p>
+      <p class="small" style="margin-bottom:.1em">Now if we use the quadratic
+        equation to solve it &mdash; for an equation in the form
+        a&middot;x&sup2; + b&middot;x + c = 0, solve for x:</p>
+      <p class="eq">x = <span class="frac"><span>&minus;b &plusmn;
+        &radic;(b&sup2; &minus; 4&middot;a&middot;c)</span><span
+        class="den">2&middot;a</span></span></p>
+      <p class="small">We are left with two values of x: <strong>x = 1/2 and
+        x = 2</strong>. These are the same values shown above from graphing the
+        equation.</p>
     </div>
     <div class="figcol"><svg class="hifig" viewBox="-4 44 322 210" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The parabola y equals minus two x squared plus five x minus two, crossing the x axis at one half and at two." opacity=".95"><path d="M34.0 176.0 L294.1 176.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M301.1 176.0 L294.1 179.6 L294.1 172.4 Z" fill="var(--muted)"/><path d="M56.0 234.0 L56.0 71.0" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M56.0 64.0 L59.6 71.0 L52.4 71.0 Z" fill="var(--muted)"/><text x="309.7" y="181.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">x</text><path d="M34.5 358.2 L38.8 342.3 L43.1 326.9 L47.4 312.1 L51.7 297.8 L56.0 284.0 L60.3 270.8 L64.6 258.1 L68.9 245.9 L73.2 234.3 L77.5 223.2 L81.8 212.7 L86.1 202.7 L90.4 193.3 L94.7 184.4 L99.0 176.0 L103.3 168.2 L107.6 160.9 L111.9 154.1 L116.2 147.9 L120.5 142.2 L124.8 137.1 L129.1 132.5 L133.4 128.5 L137.7 125.0 L142.0 122.0 L146.3 119.6 L150.6 117.7 L154.9 116.3 L159.2 115.5 L163.5 115.2 L167.8 115.5 L172.1 116.3 L176.4 117.7 L180.7 119.6 L185.0 122.0 L189.3 125.0 L193.6 128.5 L197.9 132.5 L202.2 137.1 L206.5 142.2 L210.8 147.9 L215.1 154.1 L219.4 160.9 L223.7 168.2 L228.0 176.0 L232.3 184.4 L236.6 193.3 L240.9 202.7 L245.2 212.7 L249.5 223.2 L253.8 234.3 L258.1 245.9 L262.4 258.1 L266.7 270.8 L271.0 284.0 L275.3 297.8 L279.6 312.1 L283.9 326.9" fill="none" stroke="var(--brand)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="99.0" cy="176.0" r="6.5" fill="var(--accent)"/><circle cx="228.0" cy="176.0" r="6.5" fill="var(--accent)"/><text x="79.0" y="202.0" text-anchor="end" font-size="13" font-weight="750" fill="var(--accent)">x = ½</text><text x="248.0" y="202.0" text-anchor="start" font-size="13" font-weight="750" fill="var(--accent)">x = 2</text><text x="163.5" y="99.2" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--brand)">y = −2x² + 5x − 2</text><text x="163.5" y="99.2" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--muted)"></text></svg>
-      <p class="small mut" style="text-align:center;margin:0">the worked case,
-        drawn: it crosses at &frac12; and at 2</p>
+      <p class="small mut" style="text-align:center;margin:0">y = &minus;2x&sup2;
+        + 5x &minus; 2 crosses at &frac12; and at 2</p>
     </div>
   </div>
   <aside class="notes">Source slide 30.
 
-The projectile connection is worth making now rather than in week eight. It explains why a quadratic has two roots in a way that "that is what the formula gives" never will: the ball really is at two metres twice.
+Worth making the projectile connection now rather than in week eight. It explains why a quadratic has two roots in a way that "that is what the formula gives" never will: a ball thrown upward is at any given height twice, once going up and once coming down, and the two roots are those two times. That is why you cannot take the positive root and go home.
 
-Note the concluding line on the slide reads "x = ½ and x = 1". The next slide is where that gets looked at.</aside>
+The figure on the next slide works the formula through: a = −2, b = 5, c = −2, so x = (−5 ± 3)/−4, which is 0.5 or 2.</aside>
 </section>
 
-<!-- 32 -->
+<!-- 35 -->
 <section id="w-solver">
   <h2>Basic Math</h2>
   <p class="subhead">Three examples, with the answer drawn</p>
   <div class="iplot wide" data-widget="solver"></div>
-  <aside class="notes">Work the first two quickly; they both reproduce exactly.
+  <aside class="notes">The three equation types from the last three slides, with the answer drawn rather than only written: a point on a line, two lines crossing, and the two places a curve cuts the axis.
 
-Then stop on the quadratic, because this is one of the two errors in the deck. The slide graphs y = −2x² + 5x − 2, says in its own text that the curve crosses the axis at a half and at two, applies the formula correctly — and then the concluding line reads "x = ½ and x = 1".
+Work the first two quickly. Then stay on the quadratic and press through the steps: a = −2, b = 5, c = −2, the square root is √9 = 3, and (−5 ± 3)/−4 gives a half and two — the same two places the curve crosses.
 
-The roots are a half and two. The graph printed on the same slide, is right. Only the sentence under it is wrong.
-
-Do not make this a gotcha. Make it the lesson: the answer was drawn, and the drawing disagreed with the sentence. That is step 9 working. If you draw your answers you will catch your own slips the same way.</aside>
+That agreement is the lesson. Drawing the answer is not decoration; it is the check, and it is step 9 of the problem-solving method — check to see if the answer makes sense. A student who draws their answers catches their own slips the same way.</aside>
 </section>
 
-<!-- 33 -->
+<!-- 36 -->
 <section>
   <div class="section-slide">
     <h2>Trigonometry</h2>
@@ -775,7 +851,7 @@ Do not make this a gotcha. Make it the lesson: the answer was drawn, and the dra
   <aside class="notes">Source slide 31 is the divider. Add the justification: forces are vectors, vectors have directions, and the only way to add two of them is to break them into components. That is trigonometry, every week, from lecture 4 onward.</aside>
 </section>
 
-<!-- 34 -->
+<!-- 37 -->
 <section>
   <h2>Trigonometry</h2>
   <p class="subhead">Basic geometric laws</p>
@@ -785,17 +861,19 @@ Do not make this a gotcha. Make it the lesson: the answer was drawn, and the dra
     <li>When two lines are <strong>parallel</strong> they will never intersect.</li>
     <li>When two lines intersect the <strong>opposing angles are the same</strong>.</li>
     <li>When two lines intersect, the sum of the angles created by the intersection
-      will equal <strong>360&deg;</strong>.</li>
+      will equal <strong>360&deg;</strong> (i.e. &theta; + &theta; + &#981; +
+      &#981; = 360&deg;).</li>
     <li>When two lines intersect, the sum of the angles along one line created by
-      the intersection will equal <strong>180&deg;</strong>.</li>
+      the intersection will equal <strong>180&deg;</strong> (i.e. &theta; +
+      &#981; = 180&deg;).</li>
   </ol>
-  <div class="figrow"><svg class="hifig" viewBox="-4 16 648 172" style="width:94%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Five small diagrams: perpendicular lines, parallel lines, the opposite angles at a crossing, the four angles summing to 360 degrees and two angles on one line summing to 180." opacity=".95"><circle cx="14.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="14.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">1</text><path d="M16.0 104.0 L110.0 104.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M62.0 56.0 L62.0 150.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="66.0" y="92.0" width="12.0" height="12.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.6"/><text x="92.0" y="82.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--muted)">90°</text><text x="62.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">perpendicular</text><circle cx="142.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="142.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">2</text><path d="M144.0 86.0 L238.0 86.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M144.0 122.0 L238.0 122.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><text x="190.0" y="154.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">they never meet</text><text x="190.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">parallel</text><circle cx="270.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="270.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">3</text><path d="M274.0 60.0 L362.0 148.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M274.0 148.0 L362.0 60.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M341.0 91.8 A26.0 26.0 0 0 1 341.0 116.2" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><path d="M295.0 116.2 A26.0 26.0 0 0 1 295.0 91.8" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><text x="352.0" y="108.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">α</text><text x="284.0" y="108.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">α</text><text x="318.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">opposite angles match</text><circle cx="398.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="398.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">4</text><path d="M410.0 72.0 L482.0 136.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M410.0 136.0 L482.0 72.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M461.6 95.0 A18.0 18.0 0 0 1 461.6 113.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M455.0 119.6 A18.0 18.0 0 0 1 437.0 119.6" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M430.4 113.0 A18.0 18.0 0 0 1 430.4 95.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M437.0 88.4 A18.0 18.0 0 0 1 455.0 88.4" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="446.0" y="154.0" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--accent)">all four = 360°</text><text x="446.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">right round</text><circle cx="526.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="526.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">5</text><path d="M526.0 122.0 L622.0 122.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M574.0 122.0 L612.0 60.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M548.0 122.0 A26.0 26.0 0 0 1 560.2 100.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M591.0 94.9 A32.0 32.0 0 0 1 606.0 122.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="574.0" y="154.0" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--accent)">both = 180°</text><text x="574.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">along one line</text></svg></div>
-  <aside class="notes">Source slide 32, laws 1 to 5, its numbering. All five are correct.
+  <div class="figrow"><svg class="hifig" viewBox="-4 16 648 172" style="width:94%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Five small diagrams: perpendicular lines, parallel lines, the opposite angles at a crossing, the four angles summing to 360 degrees and two angles on one line summing to 180." opacity=".95"><circle cx="14.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="14.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">1</text><path d="M16.0 104.0 L110.0 104.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M62.0 56.0 L62.0 150.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="66.0" y="92.0" width="12.0" height="12.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.6"/><text x="92.0" y="82.0" text-anchor="start" font-size="11" font-weight="700" fill="var(--muted)">90°</text><text x="62.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">perpendicular</text><circle cx="142.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="142.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">2</text><path d="M144.0 86.0 L238.0 86.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M144.0 122.0 L238.0 122.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><text x="190.0" y="154.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">they never meet</text><text x="190.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">parallel</text><circle cx="270.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="270.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">3</text><path d="M274.0 60.0 L362.0 148.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M274.0 148.0 L362.0 60.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M341.0 91.8 A26.0 26.0 0 0 1 341.0 116.2" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><path d="M295.0 116.2 A26.0 26.0 0 0 1 295.0 91.8" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><text x="352.0" y="108.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">ϕ</text><text x="284.0" y="108.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">ϕ</text><text x="318.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">opposite angles match</text><circle cx="398.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="398.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">4</text><path d="M410.0 72.0 L482.0 136.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M410.0 136.0 L482.0 72.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M461.6 95.0 A18.0 18.0 0 0 1 461.6 113.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M455.0 119.6 A18.0 18.0 0 0 1 437.0 119.6" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M430.4 113.0 A18.0 18.0 0 0 1 430.4 95.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M437.0 88.4 A18.0 18.0 0 0 1 455.0 88.4" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="446.0" y="154.0" text-anchor="middle" font-size="10" font-weight="750" fill="var(--accent)">θ + θ + ϕ + ϕ = 360°</text><text x="446.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">right round</text><circle cx="526.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="526.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">5</text><path d="M526.0 122.0 L622.0 122.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M574.0 122.0 L612.0 60.0" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M548.0 122.0 A26.0 26.0 0 0 1 560.2 100.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M591.0 94.9 A32.0 32.0 0 0 1 606.0 122.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="574.0" y="154.0" text-anchor="middle" font-size="11" font-weight="750" fill="var(--accent)">θ + ϕ = 180°</text><text x="574.0" y="176.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">along one line</text></svg></div>
+  <aside class="notes">Source slide 32, laws 1 to 5, its numbering.
 
 Read them off the pictures rather than off the list. Numbers three, four and five are all the same crossing drawn three ways, and saying that out loud saves them memorising three rules.</aside>
 </section>
 
-<!-- 35 -->
+<!-- 38 -->
 <section>
   <h2>Trigonometry</h2>
   <p class="subhead">Basic geometric laws, continued</p>
@@ -805,9 +883,9 @@ Read them off the pictures rather than off the list. Numbers three, four and fiv
     <li>The intersection of three non-parallel lines will make a
       <strong>triangle</strong>.</li>
     <li>The sum of the interior angles of a triangle will always equal
-      <strong>180&deg;</strong>.</li>
+      <strong>180&deg;</strong> (i.e. &theta; + &#981; + &chi; = 180&deg;).</li>
   </ol>
-  <div class="figrow"><svg class="hifig" viewBox="-4 16 600 206" style="width:80%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three diagrams: a transversal across two parallel lines making a Z with two equal angles, three lines crossing to enclose a triangle, and a triangle whose three interior angles sum to 180." opacity=".95"><circle cx="16.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="16.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">6</text><path d="M20.0 72.0 L160.0 72.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.0 140.0 L160.0 140.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M132.0 48.0 L44.0 164.0" fill="none" stroke="var(--brand)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M138.0 72.0 A24.0 24.0 0 0 1 127.4 91.9" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><path d="M38.0 140.0 A24.0 24.0 0 0 1 48.6 120.1" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><text x="148.0" y="96.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">θ</text><text x="34.0" y="128.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">θ</text><text x="90.0" y="192.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">a Z, and the two angles match</text><circle cx="212.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="212.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">7</text><path d="M210.0 160.0 L372.0 160.0" fill="none" stroke="var(--muted)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M216.0 176.0 L314.0 44.0" fill="none" stroke="var(--muted)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M366.0 176.0 L268.0 44.0" fill="none" stroke="var(--muted)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M234.0 160 L348.0 160 L291.0 90.0 Z" fill="var(--brand)" opacity=".3"/><text x="291.0" y="192.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">three lines, one triangle</text><circle cx="408.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="408.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">8</text><path d="M426.0 160.0 L562.0 160.0 L488.0 54.0 L426.0 160.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M440.8 136.3 A28.0 28.0 0 0 1 454.0 160.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M534.0 160.0 A28.0 28.0 0 0 1 545.5 137.3" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M501.0 76.5 A26.0 26.0 0 0 1 473.5 75.6" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="494.0" y="192.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--accent)">α + β + γ = 180°, always</text></svg></div>
+  <div class="figrow"><svg class="hifig" viewBox="-4 16 600 206" style="width:80%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three diagrams: a transversal across two parallel lines making a Z with two equal angles, three lines crossing to enclose a triangle, and a triangle whose three interior angles sum to 180." opacity=".95"><circle cx="16.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="16.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">6</text><path d="M20.0 72.0 L160.0 72.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.0 140.0 L160.0 140.0" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M132.0 48.0 L44.0 164.0" fill="none" stroke="var(--brand)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M138.0 72.0 A24.0 24.0 0 0 1 127.4 91.9" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><path d="M38.0 140.0 A24.0 24.0 0 0 1 48.6 120.1" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><text x="148.0" y="96.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">θ</text><text x="34.0" y="128.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">θ</text><text x="90.0" y="192.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">a Z, and the two angles match</text><circle cx="212.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="212.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">7</text><path d="M210.0 160.0 L372.0 160.0" fill="none" stroke="var(--muted)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M216.0 176.0 L314.0 44.0" fill="none" stroke="var(--muted)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M366.0 176.0 L268.0 44.0" fill="none" stroke="var(--muted)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M234.0 160 L348.0 160 L291.0 90.0 Z" fill="var(--brand)" opacity=".3"/><text x="291.0" y="192.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">three lines, one triangle</text><circle cx="408.0" cy="34.0" r="11" fill="var(--chip)" stroke="var(--muted)" stroke-width="1.6"/><text x="408.0" y="38.5" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">8</text><path d="M426.0 160.0 L562.0 160.0 L488.0 54.0 L426.0 160.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M440.8 136.3 A28.0 28.0 0 0 1 454.0 160.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M534.0 160.0 A28.0 28.0 0 0 1 545.5 137.3" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M501.0 76.5 A26.0 26.0 0 0 1 473.5 75.6" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="494.0" y="192.0" text-anchor="middle" font-size="12.5" font-weight="750" fill="var(--accent)">θ + ϕ + χ = 180°</text></svg></div>
   <p class="small mut" style="text-align:center">The Z rule and the 180&deg;
     rule between them are how you find an angle you were never given &mdash;
     which is most of what free body diagrams ask you to do.</p>
@@ -816,48 +894,60 @@ Read them off the pictures rather than off the list. Numbers three, four and fiv
 Dwell on the Z. When a limb is at an angle and a force is vertical, the angle you need is almost never the one marked on the figure; it is a corresponding angle two steps away. Students who know the Z pattern find it in seconds and students who do not guess.</aside>
 </section>
 
-<!-- 36 -->
+<!-- 39 -->
 <section>
   <h2>Trigonometry</h2>
   <p class="subhead">Trigonometric functions of a right angle triangle</p>
   <div class="cols a top">
     <div>
-      <p class="eq">cos&theta; = adjacent / hypotenuse</p>
-      <p class="eq">sin&theta; = opposite / hypotenuse</p>
-      <p class="eq">tan&theta; = opposite / adjacent</p>
-      <p class="small"><strong>Pythagorean theorem</strong></p>
+      <p class="small" style="margin-bottom:.2em">Trigonometric functions for a
+        right angle triangle are as follows:</p>
+      <p class="eq" style="line-height:1.35">cos&theta; = adjacent / hypotenuse<br>
+        sin&theta; = opposite / hypotenuse<br>
+        tan&theta; = opposite / adjacent</p>
+      <p class="small" style="margin-bottom:.1em"><strong>Pythagorean
+        theorem</strong></p>
       <p class="eq">hypotenuse&sup2; = adjacent&sup2; + opposite&sup2;</p>
-      <p class="small mut">Which side is &ldquo;opposite&rdquo; and which is
-        &ldquo;adjacent&rdquo; is decided by <strong>where &theta; is</strong>,
-        not by the shape of the triangle. The graphs of all three, for every
-        &theta; from 0&deg; to 360&deg;, are on the next slide.</p>
     </div>
     <div class="figcol"><svg class="hifig" viewBox="20 40 340 266" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A right angle triangle with the angle theta marked at one corner and the three sides labelled adjacent, opposite and hypotenuse." opacity=".95"><path d="M40 196 L232 196 L232 62 Z" fill="var(--brand)" opacity=".28"/><path d="M40.0 196.0 L232.0 196.0 L232.0 62.0 L40.0 196.0" fill="none" stroke="var(--ink)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="216.0" y="180.0" width="16.0" height="16.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.6"/><path d="M76.0 170.8 A44.0 44.0 0 0 1 84.0 196.0" fill="none" stroke="var(--accent)" stroke-width="2.0" stroke-linecap="round"/><text x="96.0" y="186.0" text-anchor="middle" font-size="14" font-weight="750" fill="var(--accent)">θ</text><text x="136.0" y="216.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)">adjacent</text><text x="244.0" y="134.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">opposite</text><text x="116.0" y="112.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">hypotenuse</text><text x="40.0" y="254.0" text-anchor="start" font-size="12" font-weight="650" fill="var(--muted)">cosθ = adj / hyp</text><text x="40.0" y="272.0" text-anchor="start" font-size="12" font-weight="650" fill="var(--muted)">sinθ = opp / hyp</text><text x="40.0" y="290.0" text-anchor="start" font-size="12" font-weight="650" fill="var(--muted)">tanθ = opp / adj</text></svg></div>
   </div>
-  <aside class="notes">Source slide 34, the three definitions and the note about the graphs.
+  <p class="small" style="margin:.3em 0 .1em">Below is a graphical representation
+    of cosine, sine and tangent for values of &theta; from 0&deg; to 360&deg;
+    (&pi; = 180&deg;). These graphs can be memorized and used to estimate when a
+    calculator is not available. Notice that sine and cosine oscillate between
+    1 and &minus;1.</p>
+  <div class="figrow short"><svg class="hifig" viewBox="0 4 640 170" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The graphs of sine, cosine and tangent from 0 to 2 pi. Sine and cosine oscillate between 1 and minus 1; tangent runs off to infinity at pi over 2 and 3 pi over 2." opacity=".95"><path d="M18.0 78.0 L190.0 78.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M196.0 78.0 L190.0 81.1 L190.0 74.9 Z" fill="var(--muted)"/><path d="M26.0 138.0 L26.0 18.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M104.0 75.0 L104.0 81.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><text x="104.0" y="93.0" text-anchor="middle" font-size="10.5" font-weight="650" fill="var(--muted)">π</text><path d="M182.0 75.0 L182.0 81.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><text x="182.0" y="93.0" text-anchor="middle" font-size="10.5" font-weight="650" fill="var(--muted)">2π</text><text x="21.0" y="38.8" text-anchor="end" font-size="10" font-weight="650" fill="var(--muted)">1</text><text x="21.0" y="125.2" text-anchor="end" font-size="10" font-weight="650" fill="var(--muted)">−1</text><path d="M26.0 78.0 L26.6 76.9 L27.3 75.7 L27.9 74.6 L28.6 73.5 L29.2 72.4 L29.9 71.2 L30.6 70.1 L31.2 69.0 L31.9 67.9 L32.5 66.8 L33.1 65.7 L33.8 64.7 L34.5 63.6 L35.1 62.5 L35.8 61.5 L36.4 60.4 L37.0 59.4 L37.7 58.4 L38.4 57.4 L39.0 56.4 L39.6 55.4 L40.3 54.5 L41.0 53.5 L41.6 52.6 L42.2 51.7 L42.9 50.8 L43.5 49.9 L44.2 49.1 L44.9 48.3 L45.5 47.5 L46.1 46.7 L46.8 45.9 L47.5 45.2 L48.1 44.4 L48.8 43.7 L49.4 43.1 L50.1 42.4 L50.7 41.8 L51.4 41.2 L52.0 40.6 L52.6 40.0 L53.3 39.5 L53.9 39.0 L54.6 38.5 L55.2 38.1 L55.9 37.7 L56.6 37.3 L57.2 36.9 L57.8 36.6 L58.5 36.3 L59.1 36.0 L59.8 35.7 L60.5 35.5 L61.1 35.3 L61.8 35.2 L62.4 35.0 L63.0 34.9 L63.7 34.9 L64.3 34.8 L65.0 34.8 L65.7 34.8 L66.3 34.9 L66.9 34.9 L67.6 35.0 L68.2 35.2 L68.9 35.3 L69.5 35.5 L70.2 35.7 L70.8 36.0 L71.5 36.3 L72.2 36.6 L72.8 36.9 L73.4 37.3 L74.1 37.7 L74.8 38.1 L75.4 38.5 L76.0 39.0 L76.7 39.5 L77.3 40.0 L78.0 40.6 L78.7 41.2 L79.3 41.8 L80.0 42.4 L80.6 43.1 L81.2 43.7 L81.9 44.4 L82.5 45.2 L83.2 45.9 L83.9 46.7 L84.5 47.5 L85.2 48.3 L85.8 49.1 L86.4 49.9 L87.1 50.8 L87.8 51.7 L88.4 52.6 L89.0 53.5 L89.7 54.5 L90.4 55.4 L91.0 56.4 L91.6 57.4 L92.3 58.4 L92.9 59.4 L93.6 60.4 L94.2 61.5 L94.9 62.5 L95.5 63.6 L96.2 64.7 L96.8 65.7 L97.5 66.8 L98.2 67.9 L98.8 69.0 L99.5 70.1 L100.1 71.2 L100.8 72.4 L101.4 73.5 L102.0 74.6 L102.7 75.7 L103.3 76.9 L104.0 78.0 L104.7 79.1 L105.3 80.3 L106.0 81.4 L106.6 82.5 L107.2 83.6 L107.9 84.8 L108.6 85.9 L109.2 87.0 L109.8 88.1 L110.5 89.2 L111.2 90.3 L111.8 91.3 L112.5 92.4 L113.1 93.5 L113.8 94.5 L114.4 95.6 L115.0 96.6 L115.7 97.6 L116.4 98.6 L117.0 99.6 L117.6 100.6 L118.3 101.5 L119.0 102.5 L119.6 103.4 L120.2 104.3 L120.9 105.2 L121.5 106.1 L122.2 106.9 L122.9 107.7 L123.5 108.5 L124.1 109.3 L124.8 110.1 L125.5 110.8 L126.1 111.6 L126.8 112.3 L127.4 112.9 L128.1 113.6 L128.7 114.2 L129.4 114.8 L130.0 115.4 L130.7 116.0 L131.3 116.5 L131.9 117.0 L132.6 117.5 L133.2 117.9 L133.9 118.3 L134.6 118.7 L135.2 119.1 L135.8 119.4 L136.5 119.7 L137.1 120.0 L137.8 120.3 L138.4 120.5 L139.1 120.7 L139.8 120.8 L140.4 121.0 L141.1 121.1 L141.7 121.1 L142.3 121.2 L143.0 121.2 L143.7 121.2 L144.3 121.1 L144.9 121.1 L145.6 121.0 L146.2 120.8 L146.9 120.7 L147.6 120.5 L148.2 120.3 L148.9 120.0 L149.5 119.7 L150.1 119.4 L150.8 119.1 L151.5 118.7 L152.1 118.3 L152.8 117.9 L153.4 117.5 L154.1 117.0 L154.7 116.5 L155.3 116.0 L156.0 115.4 L156.7 114.8 L157.3 114.2 L157.9 113.6 L158.6 112.9 L159.2 112.3 L159.9 111.6 L160.5 110.8 L161.2 110.1 L161.9 109.3 L162.5 108.5 L163.2 107.7 L163.8 106.9 L164.4 106.1 L165.1 105.2 L165.8 104.3 L166.4 103.4 L167.0 102.5 L167.7 101.5 L168.4 100.6 L169.0 99.6 L169.7 98.6 L170.3 97.6 L170.9 96.6 L171.6 95.6 L172.2 94.5 L172.9 93.5 L173.6 92.4 L174.2 91.3 L174.8 90.3 L175.5 89.2 L176.2 88.1 L176.8 87.0 L177.4 85.9 L178.1 84.8 L178.8 83.6 L179.4 82.5 L180.0 81.4 L180.7 80.3 L181.3 79.1 L182.0 78.0" fill="none" stroke="var(--brand)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><text x="104.0" y="160.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">y = sin x</text><path d="M230.0 78.0 L402.0 78.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M408.0 78.0 L402.0 81.1 L402.0 74.9 Z" fill="var(--muted)"/><path d="M238.0 138.0 L238.0 18.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M316.0 75.0 L316.0 81.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><text x="316.0" y="93.0" text-anchor="middle" font-size="10.5" font-weight="650" fill="var(--muted)">π</text><path d="M394.0 75.0 L394.0 81.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><text x="394.0" y="93.0" text-anchor="middle" font-size="10.5" font-weight="650" fill="var(--muted)">2π</text><text x="233.0" y="38.8" text-anchor="end" font-size="10" font-weight="650" fill="var(--muted)">1</text><text x="233.0" y="125.2" text-anchor="end" font-size="10" font-weight="650" fill="var(--muted)">−1</text><path d="M238.0 34.8 L238.7 34.8 L239.3 34.9 L239.9 34.9 L240.6 35.0 L241.2 35.2 L241.9 35.3 L242.6 35.5 L243.2 35.7 L243.8 36.0 L244.5 36.3 L245.2 36.6 L245.8 36.9 L246.4 37.3 L247.1 37.7 L247.8 38.1 L248.4 38.5 L249.1 39.0 L249.7 39.5 L250.3 40.0 L251.0 40.6 L251.7 41.2 L252.3 41.8 L252.9 42.4 L253.6 43.1 L254.2 43.7 L254.9 44.4 L255.6 45.2 L256.2 45.9 L256.9 46.7 L257.5 47.5 L258.1 48.3 L258.8 49.1 L259.4 49.9 L260.1 50.8 L260.8 51.7 L261.4 52.6 L262.1 53.5 L262.7 54.5 L263.4 55.4 L264.0 56.4 L264.6 57.4 L265.3 58.4 L265.9 59.4 L266.6 60.4 L267.2 61.5 L267.9 62.5 L268.6 63.6 L269.2 64.7 L269.9 65.7 L270.5 66.8 L271.1 67.9 L271.8 69.0 L272.4 70.1 L273.1 71.2 L273.8 72.4 L274.4 73.5 L275.1 74.6 L275.7 75.7 L276.4 76.9 L277.0 78.0 L277.6 79.1 L278.3 80.3 L278.9 81.4 L279.6 82.5 L280.2 83.6 L280.9 84.8 L281.6 85.9 L282.2 87.0 L282.9 88.1 L283.5 89.2 L284.1 90.3 L284.8 91.3 L285.4 92.4 L286.1 93.5 L286.8 94.5 L287.4 95.6 L288.1 96.6 L288.7 97.6 L289.4 98.6 L290.0 99.6 L290.6 100.6 L291.3 101.5 L291.9 102.5 L292.6 103.4 L293.2 104.3 L293.9 105.2 L294.6 106.1 L295.2 106.9 L295.9 107.7 L296.5 108.5 L297.1 109.3 L297.8 110.1 L298.4 110.8 L299.1 111.6 L299.8 112.3 L300.4 112.9 L301.1 113.6 L301.7 114.2 L302.4 114.8 L303.0 115.4 L303.6 116.0 L304.3 116.5 L304.9 117.0 L305.6 117.5 L306.2 117.9 L306.9 118.3 L307.6 118.7 L308.2 119.1 L308.9 119.4 L309.5 119.7 L310.1 120.0 L310.8 120.3 L311.4 120.5 L312.1 120.7 L312.8 120.8 L313.4 121.0 L314.1 121.1 L314.7 121.1 L315.4 121.2 L316.0 121.2 L316.6 121.2 L317.3 121.1 L317.9 121.1 L318.6 121.0 L319.2 120.8 L319.9 120.7 L320.6 120.5 L321.2 120.3 L321.9 120.0 L322.5 119.7 L323.2 119.4 L323.8 119.1 L324.4 118.7 L325.1 118.3 L325.8 117.9 L326.4 117.5 L327.1 117.0 L327.7 116.5 L328.4 116.0 L329.0 115.4 L329.6 114.8 L330.3 114.2 L331.0 113.6 L331.6 112.9 L332.2 112.3 L332.9 111.6 L333.6 110.8 L334.2 110.1 L334.9 109.3 L335.5 108.5 L336.1 107.7 L336.8 106.9 L337.4 106.1 L338.1 105.2 L338.8 104.3 L339.4 103.4 L340.1 102.5 L340.7 101.5 L341.4 100.6 L342.0 99.6 L342.6 98.6 L343.3 97.6 L343.9 96.6 L344.6 95.6 L345.2 94.5 L345.9 93.5 L346.6 92.4 L347.2 91.3 L347.9 90.3 L348.5 89.2 L349.1 88.1 L349.8 87.0 L350.4 85.9 L351.1 84.8 L351.8 83.6 L352.4 82.5 L353.1 81.4 L353.7 80.3 L354.4 79.1 L355.0 78.0 L355.6 76.9 L356.3 75.7 L356.9 74.6 L357.6 73.5 L358.2 72.4 L358.9 71.2 L359.6 70.1 L360.2 69.0 L360.9 67.9 L361.5 66.8 L362.1 65.7 L362.8 64.7 L363.5 63.6 L364.1 62.5 L364.8 61.5 L365.4 60.4 L366.1 59.4 L366.7 58.4 L367.4 57.4 L368.0 56.4 L368.6 55.4 L369.3 54.5 L369.9 53.5 L370.6 52.6 L371.2 51.7 L371.9 50.8 L372.5 49.9 L373.2 49.1 L373.9 48.3 L374.5 47.5 L375.1 46.7 L375.8 45.9 L376.4 45.2 L377.1 44.4 L377.8 43.7 L378.4 43.1 L379.0 42.4 L379.7 41.8 L380.4 41.2 L381.0 40.6 L381.6 40.0 L382.3 39.5 L382.9 39.0 L383.6 38.5 L384.2 38.1 L384.9 37.7 L385.6 37.3 L386.2 36.9 L386.9 36.6 L387.5 36.3 L388.1 36.0 L388.8 35.7 L389.4 35.5 L390.1 35.3 L390.8 35.2 L391.4 35.0 L392.0 34.9 L392.7 34.9 L393.4 34.8 L394.0 34.8" fill="none" stroke="var(--brand)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><text x="316.0" y="160.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">y = cos x</text><path d="M442.0 78.0 L614.0 78.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M620.0 78.0 L614.0 81.1 L614.0 74.9 Z" fill="var(--muted)"/><path d="M450.0 138.0 L450.0 18.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M528.0 75.0 L528.0 81.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><text x="528.0" y="93.0" text-anchor="middle" font-size="10.5" font-weight="650" fill="var(--muted)">π</text><path d="M606.0 75.0 L606.0 81.0" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><text x="606.0" y="93.0" text-anchor="middle" font-size="10.5" font-weight="650" fill="var(--muted)">2π</text><path d="M450.0 78.0 L450.6 77.6 L451.3 77.3 L451.9 76.9 L452.6 76.6 L453.2 76.2 L453.9 75.9 L454.6 75.5 L455.2 75.1 L455.9 74.8 L456.5 74.4 L457.1 74.0 L457.8 73.6 L458.4 73.2 L459.1 72.8 L459.8 72.4 L460.4 72.0 L461.1 71.6 L461.7 71.1 L462.4 70.7 L463.0 70.2 L463.6 69.7 L464.3 69.2 L464.9 68.7 L465.6 68.2 L466.2 67.6 L466.9 67.1 L467.6 66.5 L468.2 65.8 L468.9 65.2 L469.5 64.5 L470.1 63.8 L470.8 63.0 L471.4 62.2 L472.1 61.3 L472.8 60.4 L473.4 59.4 L474.1 58.4 L474.7 57.2 L475.4 56.0 L476.0 54.6 L476.6 53.1 L477.3 51.5 L477.9 49.7 L478.6 47.7 L479.2 45.4 L479.9 42.8 L480.6 39.9 L481.2 36.5 L481.9 32.4 L482.5 27.6" fill="none" stroke="var(--brand)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M495.5 128.4 L496.1 123.6 L496.8 119.5 L497.4 116.1 L498.1 113.2 L498.8 110.6 L499.4 108.3 L500.1 106.3 L500.7 104.5 L501.4 102.9 L502.0 101.4 L502.6 100.0 L503.3 98.8 L503.9 97.6 L504.6 96.6 L505.2 95.6 L505.9 94.7 L506.6 93.8 L507.2 93.0 L507.9 92.2 L508.5 91.5 L509.1 90.8 L509.8 90.2 L510.4 89.5 L511.1 88.9 L511.8 88.4 L512.4 87.8 L513.0 87.3 L513.7 86.8 L514.4 86.3 L515.0 85.8 L515.6 85.3 L516.3 84.9 L517.0 84.4 L517.6 84.0 L518.2 83.6 L518.9 83.2 L519.5 82.8 L520.2 82.4 L520.9 82.0 L521.5 81.6 L522.1 81.2 L522.8 80.9 L523.5 80.5 L524.1 80.1 L524.8 79.8 L525.4 79.4 L526.0 79.1 L526.7 78.7 L527.4 78.4 L528.0 78.0 L528.6 77.6 L529.3 77.3 L530.0 76.9 L530.6 76.6 L531.2 76.2 L531.9 75.9 L532.5 75.5 L533.2 75.1 L533.9 74.8 L534.5 74.4 L535.1 74.0 L535.8 73.6 L536.5 73.2 L537.1 72.8 L537.8 72.4 L538.4 72.0 L539.0 71.6 L539.7 71.1 L540.4 70.7 L541.0 70.2 L541.6 69.7 L542.3 69.2 L543.0 68.7 L543.6 68.2 L544.2 67.6 L544.9 67.1 L545.5 66.5 L546.2 65.8 L546.9 65.2 L547.5 64.5 L548.1 63.8 L548.8 63.0 L549.5 62.2 L550.1 61.3 L550.8 60.4 L551.4 59.4 L552.0 58.4 L552.7 57.2 L553.4 56.0 L554.0 54.6 L554.6 53.1 L555.3 51.5 L556.0 49.7 L556.6 47.7 L557.2 45.4 L557.9 42.8 L558.5 39.9 L559.2 36.5 L559.9 32.4 L560.5 27.6" fill="none" stroke="var(--brand)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M573.5 128.4 L574.1 123.6 L574.8 119.5 L575.5 116.1 L576.1 113.2 L576.8 110.6 L577.4 108.3 L578.0 106.3 L578.7 104.5 L579.4 102.9 L580.0 101.4 L580.6 100.0 L581.3 98.8 L582.0 97.6 L582.6 96.6 L583.2 95.6 L583.9 94.7 L584.5 93.8 L585.2 93.0 L585.9 92.2 L586.5 91.5 L587.1 90.8 L587.8 90.2 L588.5 89.5 L589.1 88.9 L589.8 88.4 L590.4 87.8 L591.0 87.3 L591.7 86.8 L592.4 86.3 L593.0 85.8 L593.6 85.3 L594.3 84.9 L595.0 84.4 L595.6 84.0 L596.2 83.6 L596.9 83.2 L597.5 82.8 L598.2 82.4 L598.9 82.0 L599.5 81.6 L600.1 81.2 L600.8 80.9 L601.5 80.5 L602.1 80.1 L602.8 79.8 L603.4 79.4 L604.0 79.1 L604.7 78.7 L605.4 78.4 L606.0 78.0" fill="none" stroke="var(--brand)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M489.0 18.0 L489.0 138.0" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3"/><path d="M567.0 18.0 L567.0 138.0" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3"/><text x="528.0" y="160.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">y = tan x</text></svg></div>
+  <aside class="notes">Source slide 34, the three definitions, the Pythagorean theorem and the three graphs.
 
-The next figure is those three graphs — but there is no need to memorise them, because they are one point going round one circle.</aside>
+Which side is opposite and which is adjacent is decided by where θ is, not by the shape of the triangle — say that now, because it is the mistake on the first problem set.
+
+The next figure is where those three graphs come from: one point going round one circle.</aside>
 </section>
 
-<!-- 37 -->
+<!-- 40 -->
 <section id="w-unitcircle">
   <h2>Trigonometry</h2>
   <p class="subhead">Where those three graphs come from</p>
   <div class="iplot wide" data-widget="unitcircle"></div>
   <aside class="notes">Press Go round and let it run a full turn before saying anything. The height of the point is the sine. Its sideways distance is the cosine. The tangent is one divided by the other, which is why it blows up at 90 degrees — the radius is vertical and there is no sideways distance left to divide by.
 
-Then press the special angles. Source slide 35 is a table of five rows to memorise; those five rows are five places on this circle, and the table lights up as you pass each one. That is a much better thing to carry into an exam than a memorised table.</aside>
+Then press the special angles. The special-angle table on the next slide is five rows to memorise; those five rows are five places on this circle, and the table lights up as you pass each one.</aside>
 </section>
 
-<!-- 38 -->
+<!-- 41 -->
 <section>
   <h2>Trigonometry</h2>
   <p class="subhead">Special right angle triangle cases</p>
   <div class="cols b top">
     <div>
-      <p class="small">From the trigonometric functions and graphs for a right angle
-        triangle we can develop some special cases that can be memorised to help
-        solve trigonometry problems.</p>
+      <p class="small">From the trigonometric functions and graphs for a right
+        angle triangle we can develop some special cases that can be memorized
+        to help solve trigonometry problems.</p>
+      <div class="figcol" style="margin:.2em 0"><svg class="hifig" viewBox="8 26 250 132" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A right triangle with hypotenuse h and angle theta: the side opposite theta is h sine theta and the side next to it is h cosine theta." opacity=".95"><path d="M24 132 L190 132 L190 40 Z" fill="var(--brand)" opacity=".22"/><path d="M24.0 132.0 L190.0 132.0 L190.0 40.0 L24.0 132.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="177.0" y="119.0" width="13.0" height="13.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.5"/><path d="M57.2 113.6 A38.0 38.0 0 0 1 62.0 132.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="70.0" y="126.0" text-anchor="start" font-size="13" font-weight="750" fill="var(--accent)">θ</text><text x="98.0" y="76.0" text-anchor="middle" font-size="14" font-weight="750" fill="var(--ink)">h</text><text x="198.0" y="92.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">h sinθ</text><text x="107.0" y="152.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)">h cosθ</text></svg></div>
+      <p class="small">This triangle can be used to solve for any unknown side
+        if any side and angle is known.</p>
+    </div>
+    <div>
       <table>
         <tr><th>&theta;</th><th>sin&theta;</th><th>cos&theta;</th><th>tan&theta;</th></tr>
         <tr><td>0&deg;</td><td>0</td><td>1</td><td>0</td></tr>
@@ -866,19 +956,19 @@ Then press the special angles. Source slide 35 is a table of five rows to memori
         <tr><td>60&deg;</td><td>&radic;3/2</td><td>1/2</td><td>&radic;3</td></tr>
         <tr><td>90&deg;</td><td>1</td><td>0</td><td>&mdash;</td></tr>
       </table>
-    </div>
-    <div class="figcol"><svg class="hifig" viewBox="12 88 470 188" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The 30-60-90 and 45-45-90 triangles drawn to scale, both with a hypotenuse of one, with every side length written on it." opacity=".95"><path d="M30.0 212.0 L159.9 212.0 L159.9 137.0 Z" fill="var(--brand)" opacity=".28"/><path d="M30.0 212.0 L159.9 212.0 L159.9 137.0 L30.0 212.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="144.9" y="197.0" width="15.0" height="15.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="56.0" y="204.0" text-anchor="start" font-size="12" font-weight="750" fill="var(--accent)">30°</text><text x="133.9" y="167.0" text-anchor="end" font-size="12" font-weight="750" fill="var(--accent)">60°</text><text x="95.0" y="232.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)">√3/2</text><text x="169.9" y="174.5" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">1/2</text><text x="85.0" y="164.5" text-anchor="middle" font-size="13" font-weight="750" fill="var(--ink)">1</text><text x="95.0" y="254.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">30 · 60 · 90</text><path d="M300.0 212.0 L406.1 212.0 L406.1 105.9 Z" fill="var(--good)" opacity=".28"/><path d="M300.0 212.0 L406.1 212.0 L406.1 105.9 L300.0 212.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="391.1" y="197.0" width="15.0" height="15.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="326.0" y="202.0" text-anchor="start" font-size="12" font-weight="750" fill="var(--accent)">45°</text><text x="378.1" y="137.9" text-anchor="end" font-size="12" font-weight="750" fill="var(--accent)">45°</text><text x="353.0" y="232.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)">√2/2</text><text x="416.1" y="159.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">√2/2</text><text x="341.0" y="149.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--ink)">1</text><text x="353.0" y="254.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">45 · 45 · 90</text></svg>
-      <p class="small mut" style="text-align:center;margin:0">drawn to scale,
-        both with a hypotenuse of 1 &mdash; Example 1 is the first of
-        them</p>
+      <p class="small" style="margin:.4em 0 .2em">From the graphs of sine, cosine
+        and tangent we can determine some important values for specific values
+        of &theta; (above), and these values can be used to create special
+        triangles that can be memorized (below).</p>
+      <div class="figcol"><svg class="hifig" viewBox="12 88 470 188" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The 30-60-90 and 45-45-90 triangles drawn to scale, both with a hypotenuse of one, with every side length written on it." opacity=".95"><path d="M30.0 212.0 L159.9 212.0 L159.9 137.0 Z" fill="var(--brand)" opacity=".28"/><path d="M30.0 212.0 L159.9 212.0 L159.9 137.0 L30.0 212.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="144.9" y="197.0" width="15.0" height="15.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="56.0" y="204.0" text-anchor="start" font-size="12" font-weight="750" fill="var(--accent)">30°</text><text x="133.9" y="167.0" text-anchor="end" font-size="12" font-weight="750" fill="var(--accent)">60°</text><text x="95.0" y="232.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)">√3/2</text><text x="169.9" y="174.5" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">1/2</text><text x="85.0" y="164.5" text-anchor="middle" font-size="13" font-weight="750" fill="var(--ink)">1</text><text x="95.0" y="254.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">30 · 60 · 90</text><path d="M300.0 212.0 L406.1 212.0 L406.1 105.9 Z" fill="var(--good)" opacity=".28"/><path d="M300.0 212.0 L406.1 212.0 L406.1 105.9 L300.0 212.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="391.1" y="197.0" width="15.0" height="15.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="326.0" y="202.0" text-anchor="start" font-size="12" font-weight="750" fill="var(--accent)">45°</text><text x="378.1" y="137.9" text-anchor="end" font-size="12" font-weight="750" fill="var(--accent)">45°</text><text x="353.0" y="232.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)">√2/2</text><text x="416.1" y="159.0" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">√2/2</text><text x="341.0" y="149.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--ink)">1</text><text x="353.0" y="254.0" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--muted)">45 · 45 · 90</text></svg></div>
     </div>
   </div>
-  <aside class="notes">Source slide 35, its table, its two special triangles.
+  <aside class="notes">Source slide 35: the general triangle, the table, and the two special triangles.
 
-Every value in the table is right — the unit-circle figure checks all five rows against the circle it draws.</aside>
+The two special triangles are drawn to scale with a hypotenuse of 1, and the first one is Example 1 coming up — say so now and they will recognise it.</aside>
 </section>
 
-<!-- 39 -->
+<!-- 42 -->
 <section>
   <h2>Trigonometry</h2>
   <p class="subhead">Trigonometric functions of a non right angle triangle</p>
@@ -910,7 +1000,7 @@ The callout is the thing to teach. Students learn three boxes and then freeze be
 Say also that the right-angle formulas are not a third thing — they are these laws with one angle at 90 degrees. The next figure shows that happening.</aside>
 </section>
 
-<!-- 40 -->
+<!-- 43 -->
 <section id="w-triangle">
   <h2>Trigonometry</h2>
   <p class="subhead">One triangle, all three relations at once</p>
@@ -922,42 +1012,76 @@ Three things happen at once and all three are worth pointing at. The angles alwa
 Then press Make it right-angled. The cosine law's last term is 2ab·cos 90°, which is zero, so it has just turned into Pythagoras in front of them. The right-angle functions are not a separate rule to learn; they are this triangle with one corner square.</aside>
 </section>
 
-<!-- 41 -->
-<section class="roomy">
+<!-- 44 -->
+<section>
   <h2>Trigonometry</h2>
-  <p class="subhead">Example 1: right angle triangle &middot; Example 2: non-right</p>
+  <p class="subhead">Example 1: right angle triangle</p>
   <div class="cols a top">
     <div>
-      <p class="small"><strong>Example 1.</strong> A right angle triangle with a
-        hypotenuse of 1 m and an angle of 60&deg;. Find the other two sides.</p>
-      <p class="eq small">opposite = 1 &middot; sin 60&deg; = 0.87 m</p>
-      <p class="eq small">adjacent = 1 &middot; cos 60&deg; = 0.50 m</p>
+      <p class="small">Two of the angles of a triangle are 90&deg; and 30&deg;
+        and the length of the hypotenuse is 1 m. What is the value of the other
+        angle and what are the lengths of the other two sides?</p>
+      <p class="small">We know that the triangle is a right angle triangle because
+        one of its interior angles is 90&deg;. Draw a right angle triangle and
+        label it from the given information.</p>
+      <p class="small" style="margin-bottom:.1em">The sum of the interior angles
+        of a triangle will always equal 180&deg;. Therefore</p>
+      <p class="eq small workblock">&#981; + 30&deg; + 90&deg; = 180&deg;
+        &nbsp;&nbsp; <strong>&#981; = 60&deg;</strong></p>
     </div>
-    <div>
-      <p class="small"><strong>Example 2.</strong> A triangle with sides of 0.30 m
-        and 0.15 m and an angle of 22&deg; between them. Find the third side.</p>
-      <p class="eq small">c&sup2; = 0.30&sup2; + 0.15&sup2;
-        &minus; 2(0.30)(0.15)cos 22&deg;</p>
-    </div>
+    <div class="figcol"><svg class="hifig" viewBox="14 40 320 140" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A right triangle with hypotenuse 1, the angle 30 degrees at the base, the unknown angle phi at the top, and the opposite and adjacent sides labelled." opacity=".95"><path d="M30.0 150.0 L194.5 150.0 L194.5 55.0 Z" fill="var(--brand)" opacity=".22"/><path d="M30.0 150.0 L194.5 150.0 L194.5 55.0 L30.0 150.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="181.5" y="137.0" width="13.0" height="13.0" rx="0" fill="none" stroke="var(--muted)" stroke-width="1.5"/><path d="M69.8 127.0 A46.0 46.0 0 0 1 76.0 150.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="84.0" y="143.0" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--accent)">30°</text><path d="M194.5 85.0 A30.0 30.0 0 0 1 168.6 70.0" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="182.5" y="97.0" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">ϕ</text><text x="106.3" y="92.5" text-anchor="middle" font-size="14" font-weight="750" fill="var(--ink)">1</text><text x="204.5" y="106.5" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">opposite side</text><text x="112.3" y="170.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--muted)">adjacent side</text></svg></div>
   </div>
-  <aside class="notes">Source slides 37 and 38, kept together because the second is only interesting beside the first.
+  <p class="small" style="margin-bottom:.1em">We can use the trigonometric functions
+    for a right angle triangle and substitute the known values to solve for the
+    other two sides (note &theta; = 30&deg;):</p>
+  <p class="eq small workblock">opposite side = (hypotenuse) sin&theta; = 1/2 m =
+    <strong>0.5 m</strong></p>
+  <p class="eq small workblock">adjacent side = (hypotenuse) cos&theta; =
+    &radic;3/2 m = <strong>0.87 m</strong></p>
+  <p class="small mut">Notice that in this question we could have used one of the
+    special triangles discussed earlier.</p>
+  <aside class="notes">Source slide 37, its question and its working.
 
-Example 1 reproduces to the digit, and it is also one of the two special triangles from slide 35, which is worth pointing out.
-
-Example 2's printed answer is 0.3227 m. Work it on the board before you advance: the cosine law with those three givens gives 0.1705 m.</aside>
+Point back at the 30-60-90 triangle from the special-cases slide: the answer was on the slide before the question was asked. Recognising a special triangle is the fastest calculation in the course.</aside>
 </section>
 
-<!-- 42 -->
+<!-- 45 -->
+<section>
+  <h2>Trigonometry</h2>
+  <p class="subhead">Example 2: non-right angle triangle</p>
+  <div class="cols a top">
+    <div>
+      <p class="small">What is the value of side c, given the values for a
+        triangle are angle C = 22&deg;, side a = 0.30 m and side
+        b = 0.15 m?</p>
+      <p class="small">Draw a triangle and label it from the given information.
+        Then consult the trigonometric functions for a non-right angle triangle
+        to determine what function to use.</p>
+      <p class="small">Since we are trying to solve for side c and we have side
+        a, side b and angle C, we can use the <strong>cosine law</strong>.</p>
+    </div>
+    <div class="figcol"><svg class="hifig" viewBox="-10 16 270 122" style="width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The triangle with angle C of 22 degrees between side a of 0.30 metres and side b of 0.15 metres, drawn to scale; side c is the short side opposite C." opacity=".95"><path d="M115.2 94.7 L220.5 85.0 L40.0 40.0 Z" fill="var(--violet)" opacity=".22"/><path d="M40.0 40.0 L220.5 85.0 L115.2 94.7 L40.0 40.0" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M69.1 47.3 A30.0 30.0 0 0 1 64.3 57.6" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><text x="34.0" y="34.0" text-anchor="end" font-size="12.5" font-weight="750" fill="var(--accent)">22°</text><text x="34.0" y="52.0" text-anchor="end" font-size="12.5" font-weight="750" fill="var(--ink)">C</text><text x="109.2" y="110.7" text-anchor="end" font-size="12.5" font-weight="750" fill="var(--ink)">A</text><text x="228.5" y="90.0" text-anchor="start" font-size="12.5" font-weight="750" fill="var(--ink)">B</text><text x="136.2" y="52.5" text-anchor="start" font-size="12" font-weight="700" fill="var(--muted)">a = 0.30 m</text><text x="67.6" y="79.3" text-anchor="end" font-size="12" font-weight="700" fill="var(--muted)">b = 0.15 m</text><text x="167.9" y="111.8" text-anchor="middle" font-size="13" font-weight="750" fill="var(--accent)">c</text></svg></div>
+  </div>
+  <p class="eq small workblock">c&sup2; = a&sup2; + b&sup2; &minus; 2ab cos C</p>
+  <p class="eq small workblock">c&sup2; = 0.3&sup2; + 0.15&sup2; &minus;
+    2(0.3)(0.15) cos 22&deg; = 0.1125 &minus; 0.0834 = 0.0291 m&sup2;</p>
+  <p class="eq small workblock">c = &radic;0.0291 = <strong>0.1705 m</strong></p>
+  <aside class="notes">Source slide 38, its question and its working.
+
+The triangle is drawn to scale, and that is worth pointing at: with only 22 degrees between the two given sides, c has to come out shorter than the 0.30 m side, and it does. A to-scale sketch is the quickest check there is on a cosine-law answer.</aside>
+</section>
+
+<!-- 46 -->
 <section id="w-trigex">
   <h2>Trigonometry</h2>
   <p class="subhead">The same two examples, drawn to scale</p>
   <div class="iplot wide" data-widget="trigex"></div>
-  <aside class="notes">Example 2 is the other error in this deck, and it is the more important of the two because it is the only non-right-triangle worked example in the whole course.
+  <aside class="notes">The same two examples, both drawn to scale with the working beside them.
 
-Teach it with the picture, not the arithmetic. Drawn to scale, the answer is visibly shorter than the 0.30 m side, and the sketch on slide 38 shows exactly that. The dashed line on the figure is what 0.3227 m would measure: longer than every side of the triangle it is meant to close. That is step 9 again, and it takes one second.</aside>
+Example 1 is the 30-60-90 special triangle, so the drawing and the table agree to the digit. Example 2 is the only non-right-triangle worked example in the course, which is the reason to spend time on it: look at the picture before the arithmetic, and the answer has to be shorter than the 0.30 m side because the angle between the two given sides is only 22 degrees. The cosine law says 0.1705 m, and the drawing agrees.</aside>
 </section>
 
-<!-- 43 -->
+<!-- 47 -->
 <section>
   <div class="section-slide">
     <h2>Anatomical planes, axis and position</h2>
@@ -967,7 +1091,7 @@ Teach it with the picture, not the arithmetic. Drawn to scale, the answer is vis
   <aside class="notes">Divider. The point of this section is that "forward" is not a direction until you have said forward relative to what.</aside>
 </section>
 
-<!-- 44 -->
+<!-- 48 -->
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">Planes and axis system</p>
@@ -988,7 +1112,7 @@ Teach it with the picture, not the arithmetic. Drawn to scale, the answer is vis
 Flag why the sagittal plane gets all the attention: walking, running, jumping and lifting are all overwhelmingly sagittal, which is what makes two-dimensional analysis useful rather than lazy.</aside>
 </section>
 
-<!-- 45 -->
+<!-- 49 -->
 <section class="roomy">
   <h2>Planes and Axes</h2>
   <p class="subhead">Axis system</p>
@@ -1018,7 +1142,7 @@ Flag why the sagittal plane gets all the attention: walking, running, jumping an
 The plane/axis duality is the thing students find slippery, and the callout is the way through it: the axis a joint turns about is perpendicular to the plane the movement happens in.</aside>
 </section>
 
-<!-- 46 -->
+<!-- 50 -->
 <section class="roomy">
   <h2>Planes and Axes</h2>
   <p class="subhead">The three axes, one at a time</p>
@@ -1052,7 +1176,7 @@ The plane/axis duality is the thing students find slippery, and the callout is t
 Worth saying that this is not an arbitrary classroom convention: it is what comes out of the lab's own system, and the walking capture in the next figure is in exactly this frame.</aside>
 </section>
 
-<!-- 47 -->
+<!-- 51 -->
 <section id="w-axes3">
   <h2>Planes and Axes</h2>
   <p class="subhead">The same build-up, on somebody who is actually moving</p>
@@ -1067,7 +1191,7 @@ Then press Walk, and make the point source slides 47 to 49 make in words: the pl
 The body is a real walking capture, the same person the Forces deck uses.</aside>
 </section>
 
-<!-- 48 -->
+<!-- 52 -->
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">Joint axes move with the limb</p>
@@ -1084,7 +1208,7 @@ The body is a real walking capture, the same person the Forces deck uses.</aside
 Do it with your own arm in front of them. Flex the elbow with the arm hanging: sagittal. Abduct the shoulder to 90 degrees and flex the elbow again: the same joint action, now in the transverse plane. The axis went with the limb.</aside>
 </section>
 
-<!-- 49 -->
+<!-- 53 -->
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">And most real movement is in none of them</p>
@@ -1104,7 +1228,7 @@ This is the slide that stops the planes feeling like a tidy lie. Nothing outside
 The arm movement drawn here is the one a physiotherapist would call a diagonal pattern, and it was chosen so that the three shares come out equal: ninety degrees of flexion, ninety of adduction, ninety of internal rotation. There is no plane you can point at and call it the plane the movement is really in. Ask the room which one it is before you show the list.</aside>
 </section>
 
-<!-- 50 -->
+<!-- 54 -->
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">And the plane you watch from changes what you see</p>
@@ -1126,7 +1250,7 @@ The side camera is the point, and it is worse than "you see less". It reports th
 Connect it forwards. In lecture 20 there is a measured jump where the ground force leaves the sagittal plane by a third of a degree, which is what makes a planar analysis honest for that movement. Say that the question gets asked properly later; this is where it gets raised.</aside>
 </section>
 
-<!-- 51 -->
+<!-- 55 -->
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">Sagittal plane joint actions</p>
@@ -1140,7 +1264,7 @@ Connect it forwards. In lecture 20 there is a measured jump where the ground for
         and ankle. Flexion closes the angle at a joint, extension opens it, and
         hyperextension carries it past the anatomical position.</p>
   </div>
-  <div class="figrow"><svg class="hifig" viewBox="-26 0 1514 514" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three plates, each a figure in the position it starts from and the position it finishes in, with the joint marked and the movement arrowed and named"><image href="figs/panel_shoulder_flex.png" x="84.3" y="-0.0" width="301.3" height="452.0"/><path d="M159.5 173.8 A78.5 78.5 0 0 0 293.1 111.5" fill="none" stroke="var(--brand)" stroke-width="5.0" stroke-linecap="round"/><circle cx="214.9" cy="118.3" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="214.9" cy="118.3" r="3" fill="var(--accent)"/><path d="M292.6 105.0 L301.7 117.2 L285.6 118.6 Z" fill="var(--brand)"/><text x="341.2" y="116.7" text-anchor="start" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">flexion</text><path d="M154.9 169.2 L169.8 172.6 L158.4 184.0 Z" fill="var(--brand)"/><text x="127.8" y="213.3" text-anchor="end" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">extension</text><text x="235.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">shoulder</text><image href="figs/panel_hipknee_flex.png" x="580.3" y="-0.0" width="301.3" height="452.0"/><path d="M722.1 277.5 A66.2 66.2 0 0 0 755.1 268.4" fill="none" stroke="var(--brand)" stroke-width="5.0" stroke-linecap="round"/><circle cx="721.6" cy="211.3" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="721.6" cy="211.3" r="3" fill="var(--accent)"/><path d="M760.7 265.1 L753.6 278.6 L745.4 264.7 Z" fill="var(--brand)"/><text x="780.7" y="312.4" text-anchor="start" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">hip</text><path d="M734.5 358.1 A75.4 75.4 0 0 1 711.3 340.2" fill="none" stroke="var(--brand)" stroke-width="5.0" stroke-linecap="round"/><circle cx="768.1" cy="290.6" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="768.1" cy="290.6" r="3" fill="var(--accent)"/><path d="M707.0 335.3 L721.7 339.8 L709.5 350.4 Z" fill="var(--brand)"/><text x="674.2" y="377.1" text-anchor="end" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">knee</text><text x="731.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">hip and knee</text><image href="figs/panel_ankle.png" x="1001.0" y="0.0" width="452.0" height="452.0"/><path d="M1250.2 296.0 A76.2 76.2 0 0 1 1219.4 352.5" fill="none" stroke="var(--brand)" stroke-width="5.0" stroke-linecap="round"/><circle cx="1174.2" cy="291.2" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="1174.2" cy="291.2" r="3" fill="var(--accent)"/><path d="M1214.2 356.4 L1219.9 342.2 L1229.4 355.2 Z" fill="var(--brand)"/><text x="1249.8" y="395.9" text-anchor="start" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">plantar flexion</text><path d="M1250.6 289.5 L1257.9 303.0 L1241.8 302.0 Z" fill="var(--brand)"/><text x="1293.0" y="307.7" text-anchor="start" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">dorsiflexion</text><text x="1227.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">ankle</text></svg></div>
+  <div class="figrow plates"><svg class="hifig" viewBox="-26 0 1514 514" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three plates, each a figure in the position it starts from and the position it finishes in, with the joint marked and the movement arrowed and named"><image href="figs/panel_shoulder_flex.png" x="84.3" y="-0.0" width="301.3" height="452.0"/><path d="M159.5 173.8 A78.5 78.5 0 0 0 293.1 111.5" fill="none" stroke="var(--brand)" stroke-width="5.0" stroke-linecap="round"/><circle cx="214.9" cy="118.3" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="214.9" cy="118.3" r="3" fill="var(--accent)"/><path d="M292.6 105.0 L301.7 117.2 L285.6 118.6 Z" fill="var(--brand)"/><text x="341.2" y="116.7" text-anchor="start" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">flexion</text><path d="M154.9 169.2 L169.8 172.6 L158.4 184.0 Z" fill="var(--brand)"/><text x="127.8" y="213.3" text-anchor="end" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">extension</text><text x="235.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">shoulder</text><image href="figs/panel_hipknee_flex.png" x="580.3" y="-0.0" width="301.3" height="452.0"/><path d="M722.1 277.5 A66.2 66.2 0 0 0 755.1 268.4" fill="none" stroke="var(--brand)" stroke-width="5.0" stroke-linecap="round"/><circle cx="721.6" cy="211.3" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="721.6" cy="211.3" r="3" fill="var(--accent)"/><path d="M760.7 265.1 L753.6 278.6 L745.4 264.7 Z" fill="var(--brand)"/><text x="699.6" y="220.3" text-anchor="end" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">hip</text><path d="M734.5 358.1 A75.4 75.4 0 0 1 711.3 340.2" fill="none" stroke="var(--brand)" stroke-width="5.0" stroke-linecap="round"/><circle cx="768.1" cy="290.6" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="768.1" cy="290.6" r="3" fill="var(--accent)"/><path d="M707.0 335.3 L721.7 339.8 L709.5 350.4 Z" fill="var(--brand)"/><text x="790.1" y="299.6" text-anchor="start" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">knee</text><text x="731.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">hip and knee</text><image href="figs/panel_ankle.png" x="1001.0" y="0.0" width="452.0" height="452.0"/><path d="M1250.2 296.0 A76.2 76.2 0 0 1 1219.4 352.5" fill="none" stroke="var(--brand)" stroke-width="5.0" stroke-linecap="round"/><circle cx="1174.2" cy="291.2" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="1174.2" cy="291.2" r="3" fill="var(--accent)"/><path d="M1214.2 356.4 L1219.9 342.2 L1229.4 355.2 Z" fill="var(--brand)"/><text x="1249.8" y="395.9" text-anchor="start" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">plantar flexion</text><path d="M1250.6 289.5 L1257.9 303.0 L1241.8 302.0 Z" fill="var(--brand)"/><text x="1293.0" y="307.7" text-anchor="start" font-size="25" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">dorsiflexion</text><text x="1227.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">ankle</text></svg></div>
   <p class="small mut credit">Source: character rig: Mixamo (Adobe)</p>
   <aside class="notes">Source slides 50 to 54, which are five plates of the same list.
 
@@ -1149,7 +1273,7 @@ Have them do each one as you name it. Flexion and extension are the pair they al
 The ankle gets its own two words because it is the one joint where "flexion" is ambiguous, which is exactly why dorsiflexion and plantar flexion exist.</aside>
 </section>
 
-<!-- 52 -->
+<!-- 56 -->
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">Frontal plane joint actions</p>
@@ -1166,14 +1290,14 @@ The ankle gets its own two words because it is the one joint where "flexion" is 
         shoulder girdle, and <strong>lateral flexion</strong> of the trunk and
         neck.</p>
   </div>
-  <div class="figrow"><svg class="hifig" viewBox="-26 0 1514 514" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three plates, each a figure in the position it starts from and the position it finishes in, with the joint marked and the movement arrowed and named"><image href="figs/panel_shoulder_abd.png" x="61.2" y="-0.0" width="347.7" height="452.0"/><path d="M235.7 195.8 A83.9 83.9 0 0 1 177.2 90.2" fill="none" stroke="var(--good)" stroke-width="5.0" stroke-linecap="round"/><circle cx="257.5" cy="114.7" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="257.5" cy="114.7" r="3" fill="var(--accent)"/><path d="M179.1 84.0 L183.1 98.8 L167.6 94.1 Z" fill="var(--good)"/><text x="129.7" y="86.3" text-anchor="end" font-size="25" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">abduction</text><path d="M242.0 197.4 L227.4 201.9 L231.6 186.3 Z" fill="var(--good)"/><text x="224.2" y="247.7" text-anchor="middle" font-size="25" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">adduction</text><text x="235.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">shoulder</text><image href="figs/panel_hip_abd.png" x="557.2" y="-0.0" width="347.7" height="452.0"/><path d="M747.1 343.9 A132.6 132.6 0 0 1 672.9 321.2" fill="none" stroke="var(--good)" stroke-width="5.0" stroke-linecap="round"/><circle cx="747.1" cy="211.3" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="747.1" cy="211.3" r="3" fill="var(--accent)"/><path d="M667.5 317.6 L682.8 318.2 L673.8 331.5 Z" fill="var(--good)"/><text x="637.1" y="376.0" text-anchor="end" font-size="25" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">abduction</text><path d="M753.6 343.9 L740.6 351.9 L740.6 335.8 Z" fill="var(--good)"/><text x="747.1" y="408.1" text-anchor="middle" font-size="25" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">adduction</text><text x="731.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">hip</text><image href="figs/panel_trunk_bend.png" x="1053.2" y="-0.0" width="347.7" height="452.0"/><path d="M1206.3 115.1 A82.2 82.2 0 0 0 1175.5 121.1" fill="none" stroke="var(--good)" stroke-width="5.0" stroke-linecap="round"/><circle cx="1206.3" cy="197.3" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="1206.3" cy="197.3" r="3" fill="var(--accent)"/><path d="M1169.4 123.5 L1178.5 111.2 L1184.5 126.1 Z" fill="var(--good)"/><text x="1202.2" y="89.2" text-anchor="end" font-size="25" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">lateral flexion</text><text x="1227.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">trunk</text></svg></div>
+  <div class="figrow plates"><svg class="hifig" viewBox="-26 0 1514 514" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three plates, each a figure in the position it starts from and the position it finishes in, with the joint marked and the movement arrowed and named"><image href="figs/panel_shoulder_abd.png" x="61.2" y="-0.0" width="347.7" height="452.0"/><path d="M235.7 195.8 A83.9 83.9 0 0 1 177.2 90.2" fill="none" stroke="var(--good)" stroke-width="5.0" stroke-linecap="round"/><circle cx="257.5" cy="114.7" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="257.5" cy="114.7" r="3" fill="var(--accent)"/><path d="M179.1 84.0 L183.1 98.8 L167.6 94.1 Z" fill="var(--good)"/><text x="129.7" y="86.3" text-anchor="end" font-size="25" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">abduction</text><path d="M242.0 197.4 L227.4 201.9 L231.6 186.3 Z" fill="var(--good)"/><text x="224.2" y="247.7" text-anchor="middle" font-size="25" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">adduction</text><text x="235.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">shoulder</text><image href="figs/panel_hip_abd.png" x="557.2" y="-0.0" width="347.7" height="452.0"/><path d="M747.1 343.9 A132.6 132.6 0 0 1 672.9 321.2" fill="none" stroke="var(--good)" stroke-width="5.0" stroke-linecap="round"/><circle cx="747.1" cy="211.3" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="747.1" cy="211.3" r="3" fill="var(--accent)"/><path d="M667.5 317.6 L682.8 318.2 L673.8 331.5 Z" fill="var(--good)"/><text x="637.1" y="376.0" text-anchor="end" font-size="25" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">abduction</text><path d="M753.6 343.9 L740.6 351.9 L740.6 335.8 Z" fill="var(--good)"/><text x="747.1" y="408.1" text-anchor="middle" font-size="25" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">adduction</text><text x="731.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">hip</text><image href="figs/panel_trunk_bend.png" x="1053.2" y="-0.0" width="347.7" height="452.0"/><path d="M1206.3 115.1 A82.2 82.2 0 0 0 1175.5 121.1" fill="none" stroke="var(--good)" stroke-width="5.0" stroke-linecap="round"/><circle cx="1206.3" cy="197.3" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="1206.3" cy="197.3" r="3" fill="var(--accent)"/><path d="M1169.4 123.5 L1178.5 111.2 L1184.5 126.1 Z" fill="var(--good)"/><text x="1202.2" y="89.2" text-anchor="end" font-size="25" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">lateral flexion</text><text x="1227.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">trunk</text></svg></div>
   <p class="small mut credit">Source: character rig: Mixamo (Adobe)</p>
   <aside class="notes">Source slides 55 and 56.
 
 Abduction and adduction are the headline pair; the other four rows are the joints that have their own names for the same idea. Ulnar and radial deviation is the wrist, inversion and eversion the foot, elevation and depression the shoulder girdle.</aside>
 </section>
 
-<!-- 53 -->
+<!-- 57 -->
 <section>
   <h2>Planes and Axes</h2>
   <p class="subhead">Transverse plane joint actions</p>
@@ -1189,7 +1313,7 @@ Abduction and adduction are the headline pair; the other four rows are the joint
         <strong>rotation</strong> of the trunk and neck to the right and
         left.</p>
   </div>
-  <div class="figrow"><svg class="hifig" viewBox="-26 0 1514 514" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three plates, each a figure in the position it starts from and the position it finishes in, with the joint marked and the movement arrowed and named"><image href="figs/panel_shoulder_rot.png" x="9.0" y="0.0" width="452.0" height="452.0"/><path d="M141.6 103.2 A81.4 81.4 0 0 1 104.9 261.9" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="123.2" cy="182.5" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="123.2" cy="182.5" r="3" fill="var(--accent)"/><path d="M98.6 260.4 L113.1 255.5 L109.5 271.2 Z" fill="var(--violet)"/><text x="95.1" y="313.7" text-anchor="middle" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">internal</text><path d="M135.3 101.8 L149.7 96.9 L146.1 112.6 Z" fill="var(--violet)"/><text x="151.5" y="69.5" text-anchor="middle" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">external</text><text x="235.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">shoulder</text><image href="figs/panel_pronation.png" x="496.0" y="28.8" width="470.0" height="394.5"/><path d="M745.3 166.3 A42.9 42.9 0 0 0 709.5 161.4" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="722.1" cy="202.3" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="722.1" cy="202.3" r="3" fill="var(--accent)"/><path d="M703.2 163.3 L713.3 151.7 L718.0 167.1 Z" fill="var(--violet)"/><text x="699.0" y="136.5" text-anchor="middle" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">supination</text><path d="M750.8 169.8 L735.5 169.5 L744.2 156.0 Z" fill="var(--violet)"/><text x="769.4" y="145.4" text-anchor="start" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">pronation</text><text x="731.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">forearm</text><image href="figs/panel_trunk_rot.png" x="1001.0" y="0.0" width="452.0" height="452.0"/><path d="M1118.6 226.9 A106.1 106.1 0 0 1 1143.7 150.9" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="1224.5" cy="219.7" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="1224.5" cy="219.7" r="3" fill="var(--accent)"/><path d="M1147.9 145.9 L1145.6 161.1 L1133.3 150.6 Z" fill="var(--violet)"/><text x="1106.0" y="127.9" text-anchor="end" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">rotation</text><text x="1227.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">trunk</text></svg></div>
+  <div class="figrow plates"><svg class="hifig" viewBox="-26 0 1514 514" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three plates, each a figure in the position it starts from and the position it finishes in, with the joint marked and the movement arrowed and named"><image href="figs/panel_shoulder_rot.png" x="9.0" y="0.0" width="452.0" height="452.0"/><path d="M179.2 261.2 A63.8 63.8 0 0 1 302.5 294.3" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="240.8" cy="277.8" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="240.8" cy="277.8" r="3" fill="var(--accent)"/><path d="M300.8 300.6 L296.4 285.9 L312.0 290.1 Z" fill="var(--violet)"/><text x="346.2" y="313.6" text-anchor="start" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">internal</text><path d="M177.5 267.5 L173.1 252.8 L188.7 257.0 Z" fill="var(--violet)"/><text x="135.5" y="259.8" text-anchor="end" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">external</text><text x="235.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">shoulder</text><image href="figs/panel_pronation.png" x="496.0" y="28.8" width="470.0" height="394.5"/><path d="M716.7 166.3 A42.9 42.9 0 0 1 752.5 161.4" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="739.9" cy="202.3" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="739.9" cy="202.3" r="3" fill="var(--accent)"/><path d="M758.8 163.3 L744.0 167.1 L748.7 151.7 Z" fill="var(--violet)"/><text x="763.0" y="136.5" text-anchor="middle" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">supination</text><path d="M711.2 169.8 L717.8 156.0 L726.5 169.5 Z" fill="var(--violet)"/><text x="692.6" y="145.4" text-anchor="end" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">pronation</text><text x="731.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">forearm</text><image href="figs/panel_trunk_rot.png" x="1001.0" y="0.0" width="452.0" height="452.0"/><path d="M1335.4 226.9 A106.1 106.1 0 0 0 1310.3 150.9" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="1229.5" cy="219.7" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="1229.5" cy="219.7" r="3" fill="var(--accent)"/><path d="M1306.1 145.9 L1320.7 150.6 L1308.4 161.1 Z" fill="var(--violet)"/><text x="1348.0" y="127.9" text-anchor="start" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">rotation</text><text x="1227.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">trunk</text></svg></div>
   <p class="small mut credit">Source: character rig: Mixamo (Adobe)</p>
   <aside class="notes">Source slides 57 and 58.
 
@@ -1198,7 +1322,7 @@ Pronation and supination of the forearm is the one worth demonstrating, because 
 Horizontal abduction and adduction is the odd one: it only exists once the shoulder is already at 90 degrees, which is the wheel from slide 47 having been turned.</aside>
 </section>
 
-<!-- 54 -->
+<!-- 58 -->
 <section id="w-joints">
   <h2>Planes and Axes</h2>
   <p class="subhead">The same nine actions, moved through their range</p>
@@ -1208,10 +1332,10 @@ Horizontal abduction and adduction is the odd one: it only exists once the shoul
 
 Pick a plane, pick a joint, and drag. Two things are worth doing out loud. Press Move on the knee and let it run — the heel comes back toward the buttock, and a student who has drawn the knee bending the other way will see it immediately. Then take the hip to the end of its slider and point out that it stops at 85 degrees: that is a straight-leg raise, and the figure stops where a person stops, not where the drawing ran out.
 
-The character is posed from joint angles, and every direction on it was checked against a measured displacement rather than by eye — five of the twelve were the wrong way round when they were checked by eye alone.</aside>
+The character is posed from joint angles, and every direction on it was checked against a measured displacement rather than by eye.</aside>
 </section>
 
-<!-- 55 -->
+<!-- 59 -->
 <section class="roomy">
   <h2>Planes and Axes</h2>
   <p class="subhead">Joint actions and their planes and axes</p>
@@ -1237,7 +1361,7 @@ The character is posed from joint angles, and every direction on it was checked 
 This is the slide to photograph. Everything in the anatomy section is one row of it.</aside>
 </section>
 
-<!-- 56 -->
+<!-- 60 -->
 <section class="roomy">
   <h2>Planes and Axes</h2>
   <p class="subhead">What to take away</p>
@@ -1258,17 +1382,17 @@ This is the slide to photograph. Everything in the anatomy section is one row of
           joint turns about.</li>
         <li>The algebra is not the hard part of this course, but it is the part
           that costs marks. Fix it now.</li>
-        <li><strong>Draw the answer.</strong> Both of the errors in this lecture
-          would have been caught by one sketch.</li>
+        <li><strong>Draw the answer.</strong> A sketch is the quickest way to
+          check that an answer makes sense.</li>
       </ul>
     </div>
   </div>
   <aside class="notes">The six lines.
 
-If you say one of them twice, say the last. Both mistakes in fifty-nine slides — a quadratic's roots and a triangle's side — were visible in a drawing that was already on the slide. That is not a coincidence about this deck; it is how arithmetic errors behave.</aside>
+If you say one of them twice, say the last. An arithmetic slip almost always shows up in a drawing: a root where the curve does not cross the axis, a triangle side too long to close the triangle. Step 9 of the problem-solving method is the habit; a sketch is the tool.</aside>
 </section>
 
-<!-- 57 -->
+<!-- 61 -->
 <section class="roomy">
   <h2>Sources</h2>
   <p class="subhead">Where the measurements on these slides came from</p>
@@ -1285,7 +1409,7 @@ Worth thirty seconds on the first one. The walking stride and the jump are from 
 The second entry is the reason to be careful with the word "model": the running figure is a simulation, not a recording, and the slide it is on says so.</aside>
 </section>
 
-<!-- 58 -->
+<!-- 62 -->
 <section class="roomy">
   <h2>Planes and Axes</h2>
   <p class="subhead">Next</p>
@@ -1316,8 +1440,8 @@ And repeat the homework, because the gap between this lecture and the second one
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20261027a"></script>
-<script src="mobile.js?v=20261027a"></script>
+<script src="annotate.js?v=20261027c"></script>
+<script src="mobile.js?v=20261027c"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -1339,10 +1463,10 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="in1adata.js?v=20261027a"></script>
-<script src="deck-core.js?v=20261027a"></script>
-<script src="in1a.js?v=20261027a"></script>
-<script src="deck-tools.js?v=20261027a"></script>
-<script src="fit.js?v=20261027a"></script>
+<script src="in1adata.js?v=20261027c"></script>
+<script src="deck-core.js?v=20261027c"></script>
+<script src="in1a.js?v=20261027c"></script>
+<script src="deck-tools.js?v=20261027c"></script>
+<script src="fit.js?v=20261027c"></script>
 </body>
 </html>

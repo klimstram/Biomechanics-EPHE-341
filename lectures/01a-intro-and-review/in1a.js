@@ -11,23 +11,20 @@
    it sets up the anatomical planes and axes that every later lecture uses
    without re-explaining.
 
-   His review content is almost entirely right: sixteen theorems, eight laws
-   of exponents, the special-angle table, the sine and cosine laws, and three
-   equation examples all reproduce. Two things do not, and both are in the
-   lines a student copies. Slide 38's cosine-law example prints c = 0.3227 m
-   where the law gives 0.1705 — and his own drawing agrees with 0.1705.
-   Slide 30 concludes that the roots are ½ and 1 where his own graph, on the
-   same slide, shows ½ and 2.
+   The review content is evaluated rather than asserted: sixteen theorems,
+   eight laws of exponents, the special-angle table, the sine and cosine
+   laws, three equation examples and two trigonometry examples, each drawn
+   so that the answer can be checked against the picture.
 
    The figures here mostly measure rather than assert. The triangle is
    draggable and reports its own sides and angles; the exponent laws are
    evaluated on both sides; the quadratic's roots are read off the curve.
    And the anatomical planes are drawn on a measured walking body rather
-   than a diagram, because his slides 39 to 58 are twenty pictures of one
+   than a diagram, because source slides 39 to 58 are twenty pictures of one
    figure being turned by hand.
 
-   parts/selftest.js checks every number against his printed values and
-   against the Tutor's published answer bands.
+   parts/selftest.js checks every number in the worked examples against
+   the figures that draw them.
    ====================================================================== */
 (function () {
 'use strict';
@@ -325,7 +322,7 @@ function wrapLabel(c, txt, x, y, maxW, o) {
    `tri` is the only triangle solver in the deck. Give it any sufficient
    combination — two sides and the angle between them, two angles and a side,
    three sides — and it returns all six parts plus which law it used, which is
-   the thing his slides 34 to 36 are actually teaching: the law you reach for
+   the thing source slides 34 to 36 are actually teaching: the law you reach for
    is decided by what you were given, not by what you want.
    ====================================================================== */
 var DA = window.IN1A || null;
@@ -367,7 +364,7 @@ function triPoints(t) {
 }
 
 /* ---------------------------------------------------------------------
-   His eight laws of exponents, each evaluated on both sides.
+   The eight laws of exponents, each evaluated on both sides.
    --------------------------------------------------------------------- */
 function expoCheck(e) {
   var c = e.c, d = e.d, a = e.a, b = e.b, L, R;
@@ -385,7 +382,7 @@ function expoCheck(e) {
 }
 
 /* ---------------------------------------------------------------------
-   His three equation examples.
+   The three equation examples.
    --------------------------------------------------------------------- */
 function eqSolve(e) {
   if (e.kind === 'one') return { x: (2 * 11 - 7) / 3 };
@@ -399,8 +396,8 @@ function eqSolve(e) {
    The measured body, in three dimensions.
 
    x is the direction of travel, y is to the subject's left, z is up, which
-   is the axis system his slides 41 to 46 define -- so the figure can label
-   the axes with his own sentences rather than a translation of them.
+   is the axis system source slides 41 to 46 define -- so the figure can label
+   the axes with the lecture's own sentences rather than a translation of them.
    ====================================================================== */
 function bodyAt(p) {
   var B = DA && DA.body; if (!B) return null;
@@ -468,10 +465,10 @@ function dragTurn(cv, cam, redraw) {
 }
 
 /* ======================================================================
-   1. TRIANGLE — every trigonometry rule on his slides, on one figure
+   1. TRIANGLE — every trigonometry rule on source slides, on one figure
                                                             (anchor figure)
 
-   His slides 34 to 36 give three separate boxes: the right-angle functions,
+   Source slides 34 to 36 give three separate boxes: the right-angle functions,
    the sine law, and the cosine law.  Students learn them as three unrelated
    things and then cannot tell which to reach for.
 
@@ -489,7 +486,7 @@ function dragTurn(cv, cam, redraw) {
 D.register('triangle', function (node) {
   var port = D.portrait();
   var u = build(node, {});
-  /* world coordinates in metres, a triangle roughly the size of his examples */
+  /* world coordinates in metres, a triangle roughly the size of the worked examples */
   var S = { P: [[0.02, 0.03], [0.46, 0.05], [0.30, 0.34]], show: 'laws' };
   var drag = -1;
 
@@ -595,7 +592,7 @@ D.register('triangle', function (node) {
          ', and c measures ' + fmt(t.c, 3), K.BLUE]
       ];
     } else {
-      /* the right-angle case, which is what his slide 34 draws */
+      /* the right-angle case, which is what source slide 34 draws */
       var hyp = Math.max(t.a, t.b, t.c);
       var o, ad, th;
       if (Math.abs(t.C - 90) < 0.6) { o = t.a; ad = t.b; th = t.A; }
@@ -704,30 +701,25 @@ D.register('triangle', function (node) {
 });
 
 /* ======================================================================
-   2. TRIGEX — his two worked examples, drawn to scale
+   2. TRIGEX — the two worked trigonometry examples, drawn to scale
 
-   Example 1 reproduces exactly: 60°, 0.5 m, 0.87 m.
+   Example 1 is the right-angle triangle: 90° and 30° given, hypotenuse
+   1 m, so the third angle is 60°, the opposite side 0.5 m and the
+   adjacent side 0.87 m.  It is also the 30-60-90 special triangle.
 
-   Example 2 does not.  His slide gives angle C = 22°, a = 0.30 m and
-   b = 0.15 m and prints c = 0.3227 m; the cosine law gives 0.1705.  Nothing
-   obvious produces 0.3227 — not a sign slip (0.4427), not a calculator in
-   radians (0.45), not dropping the cosine term (0.3354).
+   Example 2 is the cosine law: angle C = 22°, a = 0.30 m, b = 0.15 m,
+   so c = 0.1705 m.
 
-   The figure's argument is the drawing rather than the arithmetic.  Both
-   triangles are drawn TO SCALE from his own givens, and his own sketch on
-   slide 38 shows a thin triangle whose base is clearly shorter than the
-   0.30 m side.  That is what 0.17 m looks like.  0.32 m would be the
-   longest side in the triangle, and his sketch is not that.
-
-   Then the Tutor's question 13 — the same method, different numbers, and
-   its published answer is right. So the method is taught correctly in one
-   place and worked wrongly in the other.
+   Both triangles are drawn TO SCALE from the givens, because the drawing
+   is the check: with only 22° between the two given sides, c has to come
+   out shorter than the 0.30 m side, and the picture shows it before the
+   arithmetic does.
    ====================================================================== */
 D.register('trigex', function (node) {
   var port = D.portrait();
   var u = build(node, {});
   if (!DA) return;
-  var EX = DA.his.trig, S = { i: 1 };
+  var EX = DA.lec.trig, S = { i: 1 };
 
   var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 660 : 400,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
@@ -772,7 +764,7 @@ D.register('trigex', function (node) {
       /* fit the box to the triangle this case actually makes, not to the
          widest of them -- a 22 degree triangle is a sliver and gets lost in
          a box sized for an equilateral one */
-      var xs = [P.A[0], P.B[0], P.C[0], 0, e.his.c];
+      var xs = [P.A[0], P.B[0], P.C[0]];
       var ys = [P.A[1], P.B[1], P.C[1]];
       var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
       var y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
@@ -785,16 +777,6 @@ D.register('trigex', function (node) {
       sideLab(c, sc2, P.A, P.B, 'c = ' + fmt(t.c, 4) + ' m', K.BLUE, P.C);
       label(c, 'C = ' + fmt(t.C, 0) + '°', sc2.X(P.C[0]), sc2.Y(P.C[1]) - 20,
             { size: 12, color: K.VIO, weight: 700, plate: true });
-      /* what his printed answer would look like, to the same scale */
-      if (e.n === 2) {
-        c.save(); c.strokeStyle = K.ACC; c.lineWidth = 2.6; c.setLineDash([6, 4]);
-        var yd = y0 - pad * 1.1;
-        c.beginPath(); c.moveTo(sc2.X(0), sc2.Y(yd));
-        c.lineTo(sc2.X(e.his.c), sc2.Y(yd)); c.stroke(); c.restore();
-        label(c, 'the printed 0.3227 m, to the same scale',
-              sc2.X(e.his.c / 2), sc2.Y(yd) + 15,
-              { size: 11, color: K.ACC, weight: 650, plate: true });
-      }
     }
     label(c, e.name, box.x + box.w / 2, box.y - 12,
           { size: 12, weight: 700, color: K.INK });
@@ -805,7 +787,7 @@ D.register('trigex', function (node) {
     py = wrapLabel(c, e.q, px, py + 26, pw,
                    { size: 12.5, align: 'left', weight: 650, color: K.INK }) + 18;
 
-    var lines, ans, his, ok;
+    var lines, chk;
     if (e.kind === 'right') {
       var r2 = q.right;
       lines = [
@@ -815,9 +797,7 @@ D.register('trigex', function (node) {
         fmt(e.ang, 0) + '° = ' + fmt(r2.opp, 3) + ' m',
         'adjacent = hypotenuse × cos θ = ' + fmt(e.hyp, 0) + ' × cos ' +
         fmt(e.ang, 0) + '° = ' + fmt(r2.adj, 4) + ' m'];
-      ans = fmt(r2.third, 0) + '°,  ' + fmt(r2.opp, 2) + ' m,  ' + fmt(r2.adj, 2) + ' m';
-      his = e.his.third + '°, ' + e.his.opp + ' m, ' + e.his.adj + ' m';
-      ok = Math.abs(r2.opp - e.his.opp) < 0.006 && Math.abs(r2.adj - e.his.adj) < 0.006;
+      chk = 'the 30-60-90 special triangle: opposite ½, adjacent √3/2';
     } else {
       var t2 = q.t;
       lines = [
@@ -829,9 +809,7 @@ D.register('trigex', function (node) {
         fmt(2 * e.a * e.b * Math.cos(e.C * RAD), 4) + ' = ' +
         fmt(t2.c * t2.c, 6),
         'c = ' + fmt(t2.c, 4) + ' m'];
-      ans = fmt(t2.c, 4) + ' m';
-      his = e.his.c + ' m';
-      ok = Math.abs(t2.c - e.his.c) < 0.002;
+      chk = 'check: c is shorter than a, as a 22° angle between a and b requires';
     }
     lines.forEach(function (ln, i) {
       wrapLabel(c, ln, px, py + 22 + i * (port ? 30 : 32), pw - 6,
@@ -840,21 +818,16 @@ D.register('trigex', function (node) {
                   color: i === lines.length - 1 ? K.ACC : K.MUT });
     });
     var ay = py + 22 + lines.length * (port ? 30 : 32) + 12;
-    label(c, ok ? 'the slide prints the same' : 'the slide prints ' + his,
-          px, ay, { size: 13, align: 'left', weight: 700,
-                    color: ok ? K.GRN : K.ACC });
+    wrapLabel(c, chk, px, ay, pw - 6, { size: 12.5, align: 'left', weight: 700,
+                                        color: K.GRN });
 
     var foot = e.n === 2
-      ? 'Look at the picture rather than the arithmetic. Drawn to the givens on the slide, ' +
-        'c comes out clearly shorter than the 0.30 m side — and the sketch on ' +
-        'slide 38 shows exactly that. The dashed line is what 0.3227 m would ' +
-        'measure; it is longer than every side of the triangle it is supposed to ' +
-        'close.'
-      : 'Both sides come straight off the definitions on slide 34, and this ' +
-        'is also one of the two special triangles on slide 35 — hypotenuse 1, ' +
-        'opposite ½, adjacent √3/2.';
-    wrapLabel(c, foot, ax.W / 2, ax.H - 10, ax.W - 30,
-              { size: 11.5, color: e.n === 2 ? K.ACC : K.MUT });
+      ? 'Look at the picture as well as the arithmetic. Drawn to the givens, c comes ' +
+        'out clearly shorter than the 0.30 m side, which is what the cosine law says.'
+      : 'Both sides come straight off the definitions of sine and cosine, and this ' +
+        'is also one of the two special triangles: hypotenuse 1, opposite ½, ' +
+        'adjacent √3/2.';
+    wrapLabel(c, foot, ax.W / 2, ax.H - 10, ax.W - 30, { size: 11.5, color: K.MUT });
   }
 
   u.ctl.className = 'ictls';
@@ -862,13 +835,12 @@ D.register('trigex', function (node) {
   keepOut(seg(row, [[0, 'Example 1'], [1, 'Example 2']], 1,
               function (v) { S.i = +v; draw(); }));
   var rd = readout(u.ctl);
-  rd.innerHTML = 'Example 1 reproduces to the digit. <b>Example 2 does not:</b> ' +
-    'the cosine law with those three givens gives <b>0.1705 m</b> where the slide ' +
-    'prints 0.3227 m. The useful part is not the correction, it is the check — ' +
-    'the eleventh step of problem solving is <i>"check to see if the answer ' +
-    'makes sense"</i>, and a side of 0.32 m cannot close a triangle whose other ' +
-    'two sides are 0.30 and 0.15 with only 22° between them. Drawing it to scale ' +
-    'catches the error in one second.';
+  rd.innerHTML = 'Both examples, drawn to scale. Example 1 is the 30-60-90 special ' +
+    'triangle, so the answers can be read straight off it. Example 2 uses the ' +
+    '<b>cosine law</b> and gives <b>c = 0.1705 m</b>. The ninth step of problem ' +
+    'solving is <i>"check to see if the answer makes sense"</i>, and a drawing to ' +
+    'scale is the quickest way to do it: with only 22° between the 0.30 m and ' +
+    '0.15 m sides, c must be shorter than 0.30 m.';
 
   node._draw = draw;
   draw();
@@ -895,18 +867,16 @@ function sideLab(c, sc, p, q, txt, col, away) {
 }
 
 /* ======================================================================
-   3. UNITCIRCLE — where the three graphs on his slide 34 come from
+   3. UNITCIRCLE — where the graphs of sine, cosine and tangent come from
 
-   His slide 34 prints the graphs of sine, cosine and tangent and says they
+   The lecture shows the graphs of sine, cosine and tangent and says they
    "can be memorized and used to estimate when a calculator is not
-   available".  They can, but they are much easier to remember once you have
-   seen that they are not three curves — they are one point going round one
-   circle, with its height, its sideways distance, and the ratio between
-   them plotted against the angle.
+   available".  They are easier to memorise once you have seen that they
+   are one point going round one circle, with its height, its sideways
+   distance, and the ratio between them plotted against the angle.
 
-   The special-angle table on his slide 35 is then not a list to learn but
-   five places on that circle, and the figure checks every entry of it
-   against the circle it came from.
+   The special-angle table is then five places on that circle, and the
+   figure lights up each row as the point reaches it.
    ====================================================================== */
 D.register('unitcircle', function (node) {
   var port = D.portrait();
@@ -916,7 +886,7 @@ D.register('unitcircle', function (node) {
   var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 700 : 404,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
-  var SPECIAL = DA ? DA.his.special : [];
+  var SPECIAL = DA ? DA.lec.special : [];
 
   function draw() {
     var K = C(), th = S.th, r = th * RAD;
@@ -988,10 +958,10 @@ D.register('unitcircle', function (node) {
               ax.H - a2.pb + 26, { size: 11.5, weight: 700 });
     });
 
-    /* --------------------- his slide 35, checked --------------------- */
+    /* ------------------- the special-angle table ------------------- */
     var ty = port ? 44 : ax.H - 134;
     var tx = port ? ax.W * 0.44 : 20, tw = port ? ax.W * 0.54 : fw - 30;
-    label(c, 'his slide 35, against the circle', tx + tw / 2, ty,
+    label(c, 'the special angles, on the circle', tx + tw / 2, ty,
           { size: 11.5, weight: 700, color: K.INK });
     var cols = port ? [0, 32, 100, 172] : [0, 58, 152, 246];
     var tsz = port ? 9 : 10, dsz = port ? 9.5 : 10.5;
@@ -1041,39 +1011,33 @@ D.register('unitcircle', function (node) {
   node._stop = function () { if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Go round'; } };
 
   var rd = readout(u.ctl);
-  rd.innerHTML = 'Sine, cosine and tangent are not three functions to memorise, ' +
-    'they are <b>one point going round one circle</b>. The height of the point is ' +
+  rd.innerHTML = 'Sine, cosine and tangent are easiest to remember as ' +
+    '<b>one point going round one circle</b>. The height of the point is ' +
     'the sine, its sideways distance is the cosine, and the tangent is one divided ' +
-    'by the other. Press the special angles and watch the slide 35 table light up a row ' +
-    'at a time — those five rows are five places on this circle, which is a great ' +
-    'deal easier than learning a table.';
+    'by the other. Press the special angles and watch the special-angle table light ' +
+    'up a row at a time: those five rows are five places on this circle.';
 
   node._draw = draw;
   draw();
 });
 
 /* ======================================================================
-   4. SOLVER — his three equation examples, with the answer drawn
+   4. SOLVER — the three equation examples, with the answer drawn
 
-   One unknown, two unknowns, and a quadratic: slides 28, 29 and 30.  The
-   first two reproduce exactly.  The third is where the deck has something
-   to say.
-
-   His slide 30 graphs y = −2x² + 5x − 2, states in its own text that the
-   curve crosses the x-axis at x = ½ and x = 2, applies the quadratic
-   formula correctly, and then concludes that the two values are "x = ½ and
-   x = 1".  The roots are ½ and 2.  His graph is right; the last line is
-   not, and the last line is the one a student copies.
+   One unknown, two unknowns, and a quadratic, in the order the lecture
+   works them.  The quadratic is y = −2x² + 5x − 2, which crosses the
+   x-axis at x = ½ and x = 2, and the quadratic formula gives the same
+   two values.
 
    So each case is drawn: the single value on a number line, the two
    equations as two lines crossing at the answer, and the quadratic as the
-   parabola with its roots marked where it actually cuts the axis.
+   parabola with its roots marked where it cuts the axis.
    ====================================================================== */
 D.register('solver', function (node) {
   var port = D.portrait();
   var u = build(node, {});
   if (!DA) return;
-  var EQ = DA.his.eqs, S = { i: 2, step: 99 };
+  var EQ = DA.lec.eqs, S = { i: 2, step: 99 };
 
   var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 660 : 410,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
@@ -1145,13 +1109,7 @@ D.register('solver', function (node) {
         label(c, 'x = ' + fmt(x, 1), c2.X(x), c2.Y(0) - 22,
               { size: 12.5, color: K.GRN, weight: 700, plate: true });
       });
-      /* and where his concluding line puts the second one */
-      c.save(); c.strokeStyle = K.ACC; c.lineWidth = 2; c.setLineDash([5, 4]);
-      c.beginPath(); c.moveTo(c2.X(1), c2.Y(-1.5)); c.lineTo(c2.X(1), c2.Y(1.5));
-      c.stroke(); c.restore();
-      label(c, 'his last line says x = 1', c2.X(1), c2.Y(1.2),
-            { size: 11, color: K.ACC, weight: 700, plate: true });
-      label(c, 'y = −2x² + 5x − 2, the curve the slide draws',
+      label(c, 'y = −2x² + 5x − 2',
             box.x + box.w / 2, box.y - 12, { size: 12, weight: 700, color: K.INK });
     }
 
@@ -1173,23 +1131,15 @@ D.register('solver', function (node) {
             : 'x = ' + fmt(r.roots[0], 1) + ' and x = ' + fmt(r.roots[1], 1);
     label(c, got, px, ay, { size: 16, align: 'left', weight: 700, color: K.ACC });
 
-    var bad = e.kind === 'quad';
-    label(c, bad ? 'the slide concludes x = ½ and x = 1'
-                 : 'the slide prints the same',
-          px, ay + 26, { size: 12, align: 'left', weight: 700,
-                         color: bad ? K.ACC : K.GRN });
-
-    wrapLabel(c, bad
-      ? 'The formula on the slide is right and it is applied right. Only the ' +
-        'concluding line is wrong — and the graph printed beside it cuts ' +
-        'the axis at ½ and 2. Reading the answer off the picture would have ' +
-        'caught it, which is step eleven: check to see if the answer makes ' +
-        'sense.'
-      : 'Every step is one of the properties from slides 20 to 24: whatever you do ' +
+    var quad = e.kind === 'quad';
+    wrapLabel(c, quad
+      ? 'The quadratic formula gives the two values, and the graph shows them: ' +
+        'the curve cuts the x-axis at ½ and at 2. Reading the answer off the ' +
+        'picture is step 9: check to see if the answer makes sense.'
+      : 'Every step is one of the properties of real numbers: whatever you do ' +
         'to one side you do to the other, and the distributive property is what ' +
         'lets you multiply a bracket out.',
-      ax.W / 2, ax.H - 10, ax.W - 30,
-      { size: 11.5, color: bad ? K.ACC : K.MUT });
+      ax.W / 2, ax.H - 10, ax.W - 30, { size: 11.5, color: K.MUT });
   }
 
   u.ctl.className = 'ictls';
@@ -1199,33 +1149,29 @@ D.register('solver', function (node) {
   var rd = readout(u.ctl);
   rd.innerHTML = 'Three equations, three shapes of answer: a point on a line, a ' +
     'crossing of two lines, and the two places a curve cuts the axis. Drawing the ' +
-    'answer is not decoration — it is the check. Slide 30 applies the ' +
-    'quadratic formula correctly and then writes down the wrong pair of roots, and ' +
-    'the graph printed on the same slide disagrees with the sentence underneath it.';
+    'answer is not decoration, it is the check: the quadratic formula gives ' +
+    '<b>x = ½ and x = 2</b>, and the parabola crosses the axis at exactly those two ' +
+    'places.';
 
   node._draw = draw;
   draw();
 });
 
 /* ======================================================================
-   5. EXPONENTS — his review content, evaluated rather than asserted
+   5. EXPONENTS — the review content, evaluated rather than asserted
 
-   Two tabs, because his slides 20 to 27 are two lists: sixteen theorems
-   about real numbers and eight laws of exponents.  A list of identities is
-   a hard thing to read and an easy thing to check, so the figure checks
-   them — both sides of every one, with the numbers the slide chose, and with the
-   base and the powers on sliders for the exponent laws so that they can be
-   watched holding for values he did not choose.
-
-   All twenty-four hold.  Saying so is worth a figure: after several
-   lectures of finding things to correct, it matters to be able to say
-   plainly when a source is clean.
+   Two tabs, because the review is two lists: sixteen theorems about real
+   numbers and eight laws of exponents.  A list of identities is a hard
+   thing to read and an easy thing to check, so the figure checks them —
+   both sides of every one, with the example numbers from the lecture, and
+   with the base and the powers on sliders for the exponent laws so that
+   they can be watched holding for any values.
    ====================================================================== */
 D.register('exponents', function (node) {
   var port = D.portrait();
   var u = build(node, {});
   if (!DA) return;
-  var EX = DA.his.expo, TH = DA.his.theorems;
+  var EX = DA.lec.expo, TH = DA.lec.theorems;
   var S = { tab: 'expo', base: 2, m: 3, n: 5 };
 
   var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 700 : 372,
@@ -1269,11 +1215,11 @@ D.register('exponents', function (node) {
               { size: 14, align: 'left', weight: 700,
                 color: live.ok ? K.GRN : K.ACC });
         if (!fixed.ok)
-          label(c, 'the printed example does not hold', x + 22, y + 60,
+          label(c, 'the example does not hold', x + 22, y + 60,
                 { size: 10.5, align: 'left', color: K.ACC, weight: 650 });
       });
       var all = EX.every(function (e) { return expoCheck(e).ok && liveLaw(e).ok; });
-      label(c, all ? 'all eight hold, with the printed numbers and with these'
+      label(c, all ? 'all eight hold, with the worked examples and with these'
                    : 'one of the eight does not hold',
             ax.W / 2, ax.H - 36,
             { size: 13, weight: 700, color: all ? K.GRN : K.ACC });
@@ -1303,8 +1249,8 @@ D.register('exponents', function (node) {
       label(c, allT ? 'all sixteen hold' : 'one of the sixteen does not',
             ax.W / 2, ax.H - 34,
             { size: 13, weight: 700, color: allT ? K.GRN : K.ACC });
-      wrapLabel(c, 'Slide 24 · both sides of every identity evaluated with the ' +
-        'numbers the slide chose',
+      wrapLabel(c, 'Both sides of every identity, evaluated with the example ' +
+        'numbers',
         ax.W / 2, ax.H - 12, ax.W - 30, { size: 11, color: K.MUT });
     }
   }
@@ -1333,10 +1279,10 @@ D.register('exponents', function (node) {
   sb.quiet(S.base); sm.quiet(S.m); sn.quiet(S.n);
 
   var rd = readout(u.ctl);
-  rd.innerHTML = 'Twenty-four identities, and every one of them holds — with the printed ' +
-    'numbers and with any others you slide to. That is worth saying out loud: the ' +
-    'review content is <b>right</b>, and the only two things this deck corrects in ' +
-    'fifty-nine slides are a quadratic’s roots and a cosine-law answer.';
+  rd.innerHTML = 'Twenty-four identities, and every one of them holds, with the ' +
+    'worked examples and with any other numbers you slide to. A list of rules is ' +
+    'hard to read and easy to check: <b>evaluate both sides</b>, and the rule ' +
+    'stops being something to memorise.';
 
   node._draw = draw;
   draw();
@@ -1345,21 +1291,21 @@ D.register('exponents', function (node) {
 /* ======================================================================
    6. AXES3 — the planes and the axes, on somebody who is actually moving
 
-   His slides 39 to 58 are twenty slides of one figure being turned by hand:
+   Source slides 39 to 58 are twenty slides of one figure being turned by hand:
    here is the sagittal plane, here is the frontal plane, here is where they
    intersect, here is what that axis measures.  Every one of those twenty
    pictures is this figure at a different camera angle, so one figure you
    can turn replaces all of them.
 
-   And the axis convention he defines on slides 41 to 46 — z where the
+   And the axis convention defined on slides 41 to 46 — z where the
    sagittal and frontal planes meet, measuring up and down; y where the
    frontal and transverse meet, measuring left and right; x where the
    sagittal and transverse meet, measuring front and back — is EXACTLY the
-   convention the measured capture uses, so the labels here are his
+   convention the measured capture uses, so the labels here are the lecture's
    sentences rather than a translation of them.
 
    The body is a real walking stride (the same one the Forces deck shows),
-   so his slides 47 to 50 — "joint axes move when the limbs are in a
+   so source slides 47 to 50 — "joint axes move when the limbs are in a
    different anatomical location" — can be demonstrated rather than stated:
    press Walk and watch the planes stay put while the limbs leave them.
    ====================================================================== */
@@ -1555,9 +1501,9 @@ D.register('axes3', function (node) {
 });
 
 /* ======================================================================
-   7. TOPICS — his slide 11, as a map of the course that now exists
+   7. TOPICS — source slide 11, as a map of the course that now exists
 
-   His slide 11 is two columns of topic names: the mechanics on the left,
+   Source slide 11 is two columns of topic names: the mechanics on the left,
    the special topics on the right.  Until this term that was a promise.
    Every one of those topics is now a deck, so the list can be the thing it
    was always trying to be — a way in.
@@ -1607,7 +1553,7 @@ D.register('topics', function (node) {
    Marc: "you could create a widget that moves this manequin in the
    positions that you set with buttons."
 
-   His slides 50 to 58 are nine plates of a figure in two positions with an
+   Source slides 50 to 58 are nine plates of a figure in two positions with an
    arrow between them, and a plate cannot be asked what happens in between.
    This can: choose a joint action and drag the figure through its whole
    range, in the plane that action happens in.
@@ -1616,10 +1562,9 @@ D.register('topics', function (node) {
    ahead of time into one horizontal strip per action — fifty thousand
    triangles and a skin solve per frame is not something to do in a slide's
    JavaScript.  Every angle on the strips was checked against a measured
-   displacement before it was drawn, because five of the twelve were the
-   wrong way round when they were checked by eye: the figure faces the
-   camera's right in a side view, and reading it the other way inverts the
-   verdict on every sagittal action at once.
+   displacement before it was drawn: the figure faces the camera's right
+   in a side view, and reading it the other way inverts every sagittal
+   action at once.
 
    The ranges are normal active range of motion, so the ends of the slider
    are the ends of the joint — the hip stops at 85 degrees because that is
@@ -1673,7 +1618,7 @@ D.register('joints', function (node) {
     var dx = (W - dw) / 2, dy = 4;
     ctx.drawImage(im, cur.w * frame, 0, cur.w, cur.h, dx, dy, dw, dh);
 
-    /* the angle, under the figure, in his own vocabulary */
+    /* the angle, under the figure, in the lecture's vocabulary */
     var a = cur.angles[frame];
     var nm = cur.label.split('↔');
     var which = a < 0 ? nm[0] : a > 0 ? nm[1] : 'anatomical position';
@@ -1759,18 +1704,16 @@ D.register('joints', function (node) {
 });
 
 /* ======================================================================
-   9. METHOD — his eleven steps, on one problem, all the way down
+   9. METHOD — the ten problem-solving steps, on one problem, all the way down
 
-   His slide 16 lists eleven steps for solving a biomechanics problem.  As a
-   list it reads like advice.  Run it once, slowly, on a real problem and it
-   turns into a procedure, and two of the steps earn their place loudly:
+   The lecture lists ten steps for solving a biomechanics problem, with a
+   note under step 6.  As a list it reads like advice.  Run it once,
+   slowly, on a real problem and it turns into a procedure, and two of the
+   steps earn their place loudly:
 
-     step 4, write down the formulas that contain what you want, which is
-       where the choice of equation actually happens;
-     step 10, check to see if the answer makes sense — the step that would
-       have caught the one error in this lecture, because a triangle cannot
-       have a 0.32 m side closing two sides of 0.30 m and 0.15 m with 22°
-       between them.
+     step 6, select the formula that contains the givens and the unknown,
+       which is where the choice of equation actually happens;
+     step 9, check to see if the answer makes sense.
 
    The problem is the Tutor's Basic Math question 1, because it is one the
    students will meet that evening.
@@ -1786,6 +1729,10 @@ D.register('method', function (node) {
 
   var VF = 14, A = 2, D0 = 8;
   var VI = Math.sqrt(VF * VF - 2 * A * D0);
+
+  /* the source numbers ten steps, with the return-to-step-1 note set
+     under step 6 rather than numbered */
+  function num(i) { return i < 6 ? String(i + 1) : i === 6 ? '!' : String(i); }
 
   var STEPS = [
     ['Read the problem carefully to understand what is asked.',
@@ -1847,7 +1794,7 @@ D.register('method', function (node) {
     label(c, 'a = 2 m/s²', sc.X(4), sc.Y(-1.4),
           { size: 12, color: K.MUT, weight: 650 });
 
-    /* the eleven steps */
+    /* the ten steps, and the note under step 6 */
     var px = port ? 16 : fw + 6, pw = port ? ax.W - 32 : ax.W - fw - 24;
     var py = port ? box.y + box.h + 30 : 34;
     var lh = port ? 24 : 28;
@@ -1855,10 +1802,10 @@ D.register('method', function (node) {
       var live = i <= S.step, now = i === S.step;
       var yy = py + i * lh;
       c.save(); c.globalAlpha = live ? 1 : 0.3;
-      label(c, String(i + 1), px, yy,
+      label(c, num(i), px + (i === 6 ? 14 : 0), yy,
             { size: 10.5, align: 'left', weight: 700,
               color: now ? K.ACC : K.MUT });
-      label(c, s[0], px + 18, yy,
+      label(c, s[0], px + (i === 6 ? 32 : 18), yy,
             { size: now ? 12 : 11.5, align: 'left',
               weight: now ? 700 : 600, color: now ? K.ACC : K.INK });
       c.restore();
@@ -1868,43 +1815,42 @@ D.register('method', function (node) {
        room for it -- the step list fills the right column by itself */
     var sx2 = 16, sw = port ? ax.W - 32 : fw - 28;
     var sy = port ? py + STEPS.length * lh + 18 : box.y + box.h + 30;
-    label(c, 'step ' + (S.step + 1), sx2, sy,
+    label(c, S.step === 6 ? 'step 6, if no formula works' : 'step ' + num(S.step), sx2, sy,
           { size: 11, align: 'left', weight: 700, color: K.ACC });
     wrapLabel(c, STEPS[S.step][1], sx2, sy + 24 + 34, sw,
               { size: 12.5, align: 'left', weight: 650, color: K.INK });
 
     var foot = S.step === 9
-      ? 'This is the step the one error in this lecture would not have survived. ' +
-        'Slide 38 prints a triangle side of 0.3227 m closing two sides of 0.30 m ' +
-        'and 0.15 m with 22° between them. Sketch it and the answer is obviously ' +
-        'too long; step ten catches it in a second.'
+      ? 'This is the step that catches slips. A speed, a mass or a triangle side ' +
+        'that cannot be right is usually obvious the moment you ask whether it ' +
+        'makes sense, and a quick sketch makes it more obvious still.'
       : S.step === 5
       ? 'This is where the real decision is made. Two of the three equations need ' +
         'a time that was never given; only the third does not. Choosing the ' +
         'formula IS the problem — the algebra afterwards is bookkeeping.'
-      : 'Slide 16, one step at a time, on the Tutor’s first Basic Math ' +
-        'question.';
+      : 'The problem-solving steps, one at a time, on the Tutor’s first Basic ' +
+        'Math question.';
     wrapLabel(c, foot, ax.W / 2, ax.H - 10, ax.W - 30,
               { size: 11.5, color: S.step === 9 || S.step === 5 ? K.ACC : K.MUT });
   }
 
   u.ctl.className = 'ictls g2';
   var ss = slider(u.ctl, 'Step', 0, STEPS.length - 1, 1, S.step,
-                  function (v) { return fmt(v + 1, 0) + ' of 11'; },
+                  function (v) { return v === 6 ? '6, note' : num(v) + ' of 10'; },
                   function (v) { S.step = Math.round(v); draw(); });
   ss.quiet(S.step);
   var rd = readout(u.ctl);
-  rd.innerHTML = 'Eleven steps, and the two that matter most are the ones that look ' +
+  rd.innerHTML = 'Ten steps, and the two that matter most are the ones that look ' +
     'like filler. <b>Step 6</b> is where the problem is actually solved: two of the ' +
     'three kinematics equations need a time nobody gave you, so there is only one ' +
-    'left and no choice to agonise over. <b>Step 10</b> is the one that catches ' +
-    'mistakes — including the one on slide 38.';
+    'left and no choice to agonise over. <b>Step 9</b>, check to see if the answer ' +
+    'makes sense, is the one that catches mistakes.';
 
   node._draw = draw;
   draw();
 });
 /* ======================================================================
-   10 and 11.  ONE MEASURED JUMP, TWICE — his slides 7 and 8
+   10 and 11.  ONE MEASURED JUMP, TWICE — source slides 7 and 8
 
    Marc: "can't you use some motion capture and force data that we have and
    make an animation that plays that shows either the kinematics on one
@@ -1913,7 +1859,7 @@ D.register('method', function (node) {
    So: the same trial, the same clock, the same figure, on both slides.
    Slide 7 plays it with the markers only — the path of the centre of mass,
    its height, its velocity and its acceleration, and nothing else, because
-   his definition of kinematics is "without regard to force".  Slide 8 plays
+   the lecture's definition of kinematics is "without regard to force".  Slide 8 plays
    the same two and a quarter seconds with the force plates switched on.
 
    The centre of mass is computed from the markers with Winter's segment
@@ -2174,7 +2120,7 @@ function jumpLayout(S, port, nplots) {
 
 
 /* ====================================================================== */
-/* 10.  KINEMATICS — his slide 7                                          */
+/* 10.  KINEMATICS — source slide 7                                          */
 /* ====================================================================== */
 D.register('jumpkin', function (node) {
   var port = D.portrait();
@@ -2268,7 +2214,7 @@ D.register('jumpkin', function (node) {
 
 
 /* ====================================================================== */
-/* 11.  KINETICS — his slide 8                                            */
+/* 11.  KINETICS — source slide 8                                            */
 /* ====================================================================== */
 D.register('jumpkic', function (node) {
   var port = D.portrait();
@@ -2281,8 +2227,8 @@ D.register('jumpkic', function (node) {
   var st = { f: 0, playing: false, raf: 0, last: 0 };
   var size = jumpStage(u, port);
 
-  /* the impulse the floor has delivered over and above holding him up --
-     the thing that becomes his take-off velocity */
+  /* the impulse the floor has delivered over and above holding the jumper up --
+     the thing that becomes the take-off velocity */
   var imp = [0];
   for (i = 1; i < J.n; i++)
     imp.push(imp[i - 1]
@@ -2300,7 +2246,7 @@ D.register('jumpkic', function (node) {
        the longest arrow of the jump just fits the figure */
     var FSC = (L.fig.h - 36) / (3.4 * J.bw);
 
-    /* his weight: always there, always the same, and always at the centre
+    /* body weight: always there, always the same, and always at the centre
        of mass, which is why it is drawn from the dot and not from the feet */
     arrow(c, cxp, cyp, cxp, cyp + J.bw * FSC,
           { color: K.MUT, width: 3, head: 10 });
