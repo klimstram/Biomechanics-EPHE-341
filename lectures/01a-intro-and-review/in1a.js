@@ -791,7 +791,7 @@ D.register('trigex', function (node) {
         var yd = y0 - pad * 1.1;
         c.beginPath(); c.moveTo(sc2.X(0), sc2.Y(yd));
         c.lineTo(sc2.X(e.his.c), sc2.Y(yd)); c.stroke(); c.restore();
-        label(c, 'his 0.3227 m, to the same scale',
+        label(c, 'the printed 0.3227 m, to the same scale',
               sc2.X(e.his.c / 2), sc2.Y(yd) + 15,
               { size: 11, color: K.ACC, weight: 650, plate: true });
       }
@@ -840,17 +840,17 @@ D.register('trigex', function (node) {
                   color: i === lines.length - 1 ? K.ACC : K.MUT });
     });
     var ay = py + 22 + lines.length * (port ? 30 : 32) + 12;
-    label(c, ok ? 'his slide prints the same' : 'his slide prints ' + his,
+    label(c, ok ? 'the slide prints the same' : 'the slide prints ' + his,
           px, ay, { size: 13, align: 'left', weight: 700,
                     color: ok ? K.GRN : K.ACC });
 
     var foot = e.n === 2
-      ? 'Look at the picture rather than the arithmetic. Drawn to his own givens, ' +
-        'c comes out clearly shorter than the 0.30 m side — and the sketch on his ' +
+      ? 'Look at the picture rather than the arithmetic. Drawn to the givens on the slide, ' +
+        'c comes out clearly shorter than the 0.30 m side — and the sketch on ' +
         'slide 38 shows exactly that. The dashed line is what 0.3227 m would ' +
         'measure; it is longer than every side of the triangle it is supposed to ' +
         'close.'
-      : 'Both sides come straight off the definitions on his slide 34, and this ' +
+      : 'Both sides come straight off the definitions on slide 34, and this ' +
         'is also one of the two special triangles on slide 35 — hypotenuse 1, ' +
         'opposite ½, adjacent √3/2.';
     wrapLabel(c, foot, ax.W / 2, ax.H - 10, ax.W - 30,
@@ -859,13 +859,13 @@ D.register('trigex', function (node) {
 
   u.ctl.className = 'ictls';
   var row = ctlRow(u.ctl);
-  keepOut(seg(row, [[0, 'His Example 1'], [1, 'His Example 2']], 1,
+  keepOut(seg(row, [[0, 'Example 1'], [1, 'Example 2']], 1,
               function (v) { S.i = +v; draw(); }));
   var rd = readout(u.ctl);
-  rd.innerHTML = 'His Example 1 reproduces to the digit. <b>Example 2 does not:</b> ' +
-    'the cosine law with his own three givens gives <b>0.1705 m</b> where the slide ' +
+  rd.innerHTML = 'Example 1 reproduces to the digit. <b>Example 2 does not:</b> ' +
+    'the cosine law with those three givens gives <b>0.1705 m</b> where the slide ' +
     'prints 0.3227 m. The useful part is not the correction, it is the check — ' +
-    'his own eleventh step of problem solving is <i>"check to see if the answer ' +
+    'the eleventh step of problem solving is <i>"check to see if the answer ' +
     'makes sense"</i>, and a side of 0.32 m cannot close a triangle whose other ' +
     'two sides are 0.30 and 0.15 with only 22° between them. Drawing it to scale ' +
     'catches the error in one second.';
@@ -1044,7 +1044,7 @@ D.register('unitcircle', function (node) {
   rd.innerHTML = 'Sine, cosine and tangent are not three functions to memorise, ' +
     'they are <b>one point going round one circle</b>. The height of the point is ' +
     'the sine, its sideways distance is the cosine, and the tangent is one divided ' +
-    'by the other. Press the special angles and watch his slide 35 light up a row ' +
+    'by the other. Press the special angles and watch the slide 35 table light up a row ' +
     'at a time — those five rows are five places on this circle, which is a great ' +
     'deal easier than learning a table.';
 
@@ -1151,7 +1151,7 @@ D.register('solver', function (node) {
       c.stroke(); c.restore();
       label(c, 'his last line says x = 1', c2.X(1), c2.Y(1.2),
             { size: 11, color: K.ACC, weight: 700, plate: true });
-      label(c, 'y = −2x² + 5x − 2, the curve he draws',
+      label(c, 'y = −2x² + 5x − 2, the curve the slide draws',
             box.x + box.w / 2, box.y - 12, { size: 12, weight: 700, color: K.INK });
     }
 
@@ -1174,16 +1174,16 @@ D.register('solver', function (node) {
     label(c, got, px, ay, { size: 16, align: 'left', weight: 700, color: K.ACC });
 
     var bad = e.kind === 'quad';
-    label(c, bad ? 'his slide concludes x = ½ and x = 1'
-                 : 'his slide prints the same',
+    label(c, bad ? 'the slide concludes x = ½ and x = 1'
+                 : 'the slide prints the same',
           px, ay + 26, { size: 12, align: 'left', weight: 700,
                          color: bad ? K.ACC : K.GRN });
 
     wrapLabel(c, bad
-      ? 'The formula on his slide is right and he applies it right. Only the ' +
-        'concluding line is wrong — and his own graph, printed beside it, cuts ' +
+      ? 'The formula on the slide is right and it is applied right. Only the ' +
+        'concluding line is wrong — and the graph printed beside it cuts ' +
         'the axis at ½ and 2. Reading the answer off the picture would have ' +
-        'caught it, which is his own step eleven: check to see if the answer makes ' +
+        'caught it, which is step eleven: check to see if the answer makes ' +
         'sense.'
       : 'Every step is one of the properties from slides 20 to 24: whatever you do ' +
         'to one side you do to the other, and the distributive property is what ' +
@@ -1199,7 +1199,7 @@ D.register('solver', function (node) {
   var rd = readout(u.ctl);
   rd.innerHTML = 'Three equations, three shapes of answer: a point on a line, a ' +
     'crossing of two lines, and the two places a curve cuts the axis. Drawing the ' +
-    'answer is not decoration — it is the check. His slide 30 applies the ' +
+    'answer is not decoration — it is the check. Slide 30 applies the ' +
     'quadratic formula correctly and then writes down the wrong pair of roots, and ' +
     'the graph printed on the same slide disagrees with the sentence underneath it.';
 
@@ -1213,7 +1213,7 @@ D.register('solver', function (node) {
    Two tabs, because his slides 20 to 27 are two lists: sixteen theorems
    about real numbers and eight laws of exponents.  A list of identities is
    a hard thing to read and an easy thing to check, so the figure checks
-   them — both sides of every one, with the numbers he chose, and with the
+   them — both sides of every one, with the numbers the slide chose, and with the
    base and the powers on sliders for the exponent laws so that they can be
    watched holding for values he did not choose.
 
@@ -1269,11 +1269,11 @@ D.register('exponents', function (node) {
               { size: 14, align: 'left', weight: 700,
                 color: live.ok ? K.GRN : K.ACC });
         if (!fixed.ok)
-          label(c, 'his own example does not hold', x + 22, y + 60,
+          label(c, 'the printed example does not hold', x + 22, y + 60,
                 { size: 10.5, align: 'left', color: K.ACC, weight: 650 });
       });
       var all = EX.every(function (e) { return expoCheck(e).ok && liveLaw(e).ok; });
-      label(c, all ? 'all eight hold, with his numbers and with these'
+      label(c, all ? 'all eight hold, with the printed numbers and with these'
                    : 'one of the eight does not hold',
             ax.W / 2, ax.H - 36,
             { size: 13, weight: 700, color: all ? K.GRN : K.ACC });
@@ -1303,8 +1303,8 @@ D.register('exponents', function (node) {
       label(c, allT ? 'all sixteen hold' : 'one of the sixteen does not',
             ax.W / 2, ax.H - 34,
             { size: 13, weight: 700, color: allT ? K.GRN : K.ACC });
-      wrapLabel(c, 'His slide 24 · both sides of every identity evaluated with the ' +
-        'numbers he chose',
+      wrapLabel(c, 'Slide 24 · both sides of every identity evaluated with the ' +
+        'numbers the slide chose',
         ax.W / 2, ax.H - 12, ax.W - 30, { size: 11, color: K.MUT });
     }
   }
@@ -1333,8 +1333,8 @@ D.register('exponents', function (node) {
   sb.quiet(S.base); sm.quiet(S.m); sn.quiet(S.n);
 
   var rd = readout(u.ctl);
-  rd.innerHTML = 'Twenty-four identities, and every one of them holds — with his ' +
-    'numbers and with any others you slide to. That is worth saying out loud: his ' +
+  rd.innerHTML = 'Twenty-four identities, and every one of them holds — with the printed ' +
+    'numbers and with any others you slide to. That is worth saying out loud: the ' +
     'review content is <b>right</b>, and the only two things this deck corrects in ' +
     'fifty-nine slides are a quadratic’s roots and a cosine-law answer.';
 
@@ -1486,7 +1486,7 @@ D.register('axes3', function (node) {
     /* --------------------------- the legend -------------------------- */
     var px = port ? 16 : fw + 10, pw = port ? ax.W - 32 : ax.W - fw - 26;
     var py = port ? box.y + box.h + 30 : 44;
-    label(c, 'his slides 39 to 46, in one figure', px, py,
+    label(c, 'slides 39 to 46, in one figure', px, py,
           { size: 12.5, align: 'left', weight: 700, color: K.INK });
     var cw = port ? ax.W * 0.5 : 0;
     PLANES.forEach(function (pl, i) {
@@ -1513,7 +1513,7 @@ D.register('axes3', function (node) {
     });
 
     wrapLabel(c, 'A measured walking stride · the planes are fixed in the room ' +
-      'and the body moves through them, which is his slides 47 to 50: the joint ' +
+      'and the body moves through them, which is slides 47 to 50: the joint ' +
       'axes go with the limbs, not with the diagram',
       ax.W / 2, ax.H - 10, ax.W - 30, { size: 11, color: K.MUT });
   }
@@ -1544,7 +1544,7 @@ D.register('axes3', function (node) {
 
   var rd = readout(u.ctl);
   rd.innerHTML = 'Three planes, three axes, and a real person walking through ' +
-    'them. The convention is his, off slides 41 to 46: <b>z</b> where sagittal and ' +
+    'them. The convention is the one defined on slides 41 to 46: <b>z</b> where sagittal and ' +
     'frontal meet, up and down; <b>y</b> where frontal and transverse meet, left ' +
     'and right; <b>x</b> where sagittal and transverse meet, front and back. Drag ' +
     'to turn it; press Walk and the planes stay put while the limbs swing out of ' +
@@ -1593,7 +1593,7 @@ D.register('topics', function (node) {
 
   var n = Object.keys(seen).length;
   var rd = readout(u.ctl);
-  rd.innerHTML = 'His slide 11, with the lectures attached. Every topic on that ' +
+  rd.innerHTML = 'Slide 11, with the lectures attached. Every topic on that ' +
     'list is now an interactive deck — <b>' + n + ' of them</b> — and ' +
     'this is the only slide in the course that can say so. That is the argument ' +
     'for converting the introduction last: a map is not much use until there is ' +
@@ -1882,7 +1882,7 @@ D.register('method', function (node) {
       ? 'This is where the real decision is made. Two of the three equations need ' +
         'a time that was never given; only the third does not. Choosing the ' +
         'formula IS the problem — the algebra afterwards is bookkeeping.'
-      : 'His slide 16, one step at a time, on the Tutor’s first Basic Math ' +
+      : 'Slide 16, one step at a time, on the Tutor’s first Basic Math ' +
         'question.';
     wrapLabel(c, foot, ax.W / 2, ax.H - 10, ax.W - 30,
               { size: 11.5, color: S.step === 9 || S.step === 5 ? K.ACC : K.MUT });
@@ -1898,7 +1898,7 @@ D.register('method', function (node) {
     'like filler. <b>Step 6</b> is where the problem is actually solved: two of the ' +
     'three kinematics equations need a time nobody gave you, so there is only one ' +
     'left and no choice to agonise over. <b>Step 10</b> is the one that catches ' +
-    'mistakes — including the one on his own slide 38.';
+    'mistakes — including the one on slide 38.';
 
   node._draw = draw;
   draw();
@@ -2133,7 +2133,7 @@ function jumpStage(u, port) {
   return function () {
     var dpr = window.devicePixelRatio || 1;
     var W = u.stage.clientWidth || 640;
-    var H = port ? Math.round(W * 1.05)
+    var H = port ? Math.round(W * 0.99)
                  : Math.max(320, Math.min(470, Math.round(W * 0.42)));
     cv.width = W * dpr; cv.height = H * dpr;
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
@@ -2347,8 +2347,8 @@ D.register('jumpkic', function (node) {
              { title: 'and the acceleration it produced', unit: ' m/s²',
                color: K.GRN, lo: -14, hi: 22, zero: 0, dp: 1, time: true,
                size: L.size });
-    label(c, port ? 'above the dashed line he speeds up'
-                  : 'above the dashed line he speeds up, below it he slows '
+    label(c, port ? 'above the dashed line it is speeding up'
+                  : 'above the dashed line the body is speeding up, below it, slowing '
                     + 'down',
           L.footX, L.foot,
           { align: L.footAlign, size: port ? 11 : 12, color: K.MUT,
@@ -2360,11 +2360,11 @@ D.register('jumpkic', function (node) {
   function say() {
     var f = st.f, F = J.grf.tot[f], net = F - J.bw;
     var what = F < 8 ? 'nothing but gravity'
-             : F < J.bw ? 'less than his weight, so he is accelerating down'
-             : 'more than his weight, so he is accelerating up';
+             : F < J.bw ? 'less than body weight, so the body is accelerating downward'
+             : 'more than body weight, so the body is accelerating upward';
     rd.innerHTML = '<strong>' + fmt(f / J.rate, 2) + ' s</strong> — the floor '
       + 'pushes with <strong>' + fmt(F, 0) + ' N</strong> ('
-      + fmt(F / J.bw, 2) + ' body weights) against his <strong>'
+      + fmt(F / J.bw, 2) + ' body weights) against a body weight of <strong>'
       + fmt(J.bw, 0) + ' N</strong>: ' + what + '. Net <strong>'
       + minus(fmt(net, 0)) + ' N</strong> on <strong>' + fmt(J.mass, 1)
       + ' kg</strong> is <strong>' + minus(fmt(net / J.mass, 1))
@@ -2376,6 +2376,258 @@ D.register('jumpkic', function (node) {
   draw(); say();
   return { stop: function () {
     st.playing = false; cancelAnimationFrame(st.raf); } };
+});
+/* ======================================================================
+   12.  WHAT BIOMECHANICS IS — one stride, both kinds of force
+
+   Marc: "on slide 4 instead of the image can you have a constant playing
+   motion cap and forces of a person walking."
+
+   So the slide that defines the subject now shows the subject being done.
+   One measured stride plays on a loop, and on it are the two things the
+   definition names:
+
+     EXTERNAL, and measured.  The ground reaction under the right foot,
+     drawn from the centre of pressure the plate reported, at the newtons
+     the plate reported.  Nothing here is modelled.
+
+     INTERNAL, and not measured.  The plantarflexor moment the ankle must
+     be producing to hold that force at that distance — (COP − ankle) × F,
+     computed live on every frame rather than stored, so what the slide
+     shows is the calculation being done.  No instrument in the room
+     measured it, and that is the point of the slide.
+
+   The figure walks on the spot: the pelvis is subtracted so one stride can
+   loop without the body jumping back across the floor, and the ground
+   ticks scroll underneath at the speed the body would have been moving.
+   The centre of pressure travels with the foot, which is what a planted
+   foot does when the camera follows the walker.
+
+   The Achilles estimate takes a 50 mm moment arm, which is a textbook
+   number and not a measurement; the readout says so.
+   ====================================================================== */
+D.register('walkloop', function (node) {
+  var port = D.portrait();
+  var u = build(node, {});
+  var B = DA && DA.body;
+  if (!B || !B.G) return;
+
+  var NJ = B.j.length, IX = {};
+  B.j.forEach(function (n, i) { IX[n] = i; });
+  var ACHILLES = 0.05;                       /* metres, assumed */
+  var BW = B.mass * 9.81;
+
+  /* ------------------------------------------------- reading the stride */
+  function at(name, f) {
+    var i = (f * NJ + IX[name]) * 3;
+    return [B.P[i] / 1000, B.P[i + 1] / 1000, B.P[i + 2] / 1000];
+  }
+  function grf(f) {
+    var i = f * 6;
+    return { F: [B.G[i], B.G[i + 1], B.G[i + 2]],
+             C: [B.G[i + 3] / 1000, B.G[i + 4] / 1000, B.G[i + 5] / 1000],
+             on: B.G[i + 2] > 25 };
+  }
+  /* the moment the plantarflexors must be making, from the measured force
+     and the measured ankle: M = (COP - ankle) x F, sagittal component */
+  function ankleM(f) {
+    var g = grf(f);
+    if (!g.on) return 0;
+    var a = at('ankR', f);
+    return -((g.C[2] - a[2]) * g.F[0] - (g.C[0] - a[0]) * g.F[2]);
+  }
+
+  var span = (function () {
+    var lo = 1e9, hi = -1e9, f, i;
+    for (f = 0; f < B.n; f++) {
+      var px = at('pelvis', f)[0];
+      for (i = 0; i < NJ; i++) {
+        var p = at(B.j[i], f);
+        if (p[2] < lo) lo = p[2];
+        if (p[2] > hi) hi = p[2];
+      }
+    }
+    return { lo: lo, hi: hi };
+  })();
+
+  /* ------------------------------------------------------------ the loop */
+  var f = 0, t0 = 0, raf = 0, live = true;
+  var PERIOD = (B.stride || 1.11) * 1000;
+
+  var cv = u.cv, ctx = cv.getContext('2d');
+  u.stage.innerHTML = '';
+  u.stage.appendChild(cv);
+
+  function draw() {
+    var dpr = window.devicePixelRatio || 1;
+    var W = u.stage.clientWidth || 640;
+    var H = port ? Math.round(W * 0.92)
+                 : Math.max(300, Math.min(400, Math.round(W * 0.42)));
+    cv.width = W * dpr; cv.height = H * dpr;
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    var c = ctx, K = C(), i;
+
+    var floorY = H - (port ? 46 : 40);
+    /* the figure is a narrow thing in a wide box, so on a wide screen it
+       stands in the left third and the numbers it produces fill the rest.
+       On a phone there is no room beside it, so the numbers go above and
+       the figure starts below them. */
+    var wide = !port && W > 560;
+    var head = wide ? 0 : 112;
+    var k = Math.min((floorY - head - 20) / (span.hi + 0.05), W / 2.3);
+    var px0 = at('pelvis', f)[0];
+    var cx = wide ? W * 0.26 : W * 0.5;
+    function X(x) { return cx + (x - px0) * k; }
+    function Y(z) { return floorY - z * k; }
+
+    /* the ground, with ticks that travel at the speed he is walking, so
+       that a figure walking on the spot still reads as going somewhere */
+    c.save();
+    c.strokeStyle = K.MUT; c.globalAlpha = .5; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(0, floorY); c.lineTo(W, floorY); c.stroke();
+    c.globalAlpha = .28; c.lineWidth = 1.5;
+    var step = 0.25;
+    var phase = ((-px0 / step) % 1 + 1) % 1;
+    for (i = -2; i < W / (step * k) + 2; i++) {
+      var tx = cx + (i + phase) * step * k - (W * 0 );
+      c.beginPath(); c.moveTo(tx, floorY); c.lineTo(tx, floorY + 9); c.stroke();
+    }
+    c.restore();
+
+    /* the body */
+    c.save();
+    c.lineCap = 'round';
+    for (i = 0; i < B.links.length; i++) {
+      var L = B.links[i], a = at(L[0], f), b = at(L[1], f);
+      var far = L[2] === 'l';              /* the far side, lighter */
+      c.strokeStyle = K.INK;
+      c.globalAlpha = far ? 0.3 : 1;
+      c.lineWidth = far ? 3 : (port ? 5 : 4.4);
+      c.beginPath(); c.moveTo(X(a[0]), Y(a[2])); c.lineTo(X(b[0]), Y(b[2]));
+      c.stroke();
+    }
+    c.globalAlpha = 1;
+    var hd = at('head', f), nk = at('neck', f);
+    var r = Math.max(5, Math.abs(Y(hd[2]) - Y(nk[2])) * 0.52);
+    c.fillStyle = K.INK;
+    c.beginPath(); c.arc(X(hd[0]), Y(hd[2]), r, 0, 7); c.fill();
+    c.restore();
+
+    /* ---- EXTERNAL: what the plate measured */
+    var g = grf(f), M = ankleM(f);
+    var ank = at('ankR', f), kne = at('kneeR', f), hee = at('heelR', f);
+    var FSC = (floorY - 30) / (1.45 * BW);
+    if (g.on) {
+      var ox = X(g.C[0]), oy = Y(0);
+      arrow(c, ox, oy, ox + g.F[0] * FSC, oy - g.F[2] * FSC,
+            { color: K.BLUE, width: port ? 4.5 : 4, head: 12 });
+      c.save(); c.fillStyle = K.BLUE;
+      c.beginPath(); c.arc(ox, oy, 4.5, 0, 7); c.fill(); c.restore();
+      label(c, fmt(g.F[2] / BW, 2) + ' BW',
+            ox + g.F[0] * FSC + 12, oy - g.F[2] * FSC + 2,
+            { align: 'left', size: port ? 12 : 14, color: K.BLUE,
+              weight: 750, plate: true });
+    }
+
+    /* ---- INTERNAL: what nothing measured */
+    if (g.on && M > 4) {
+      /* a line of action for the plantarflexors, up the back of the shank
+         from the heel, drawn at a thickness that follows the moment */
+      var ux = kne[0] - ank[0], uz = kne[2] - ank[2];
+      var n = Math.hypot(ux, uz) || 1;
+      var top = [hee[0] + ux / n * 0.30, hee[2] + uz / n * 0.30];
+      c.save();
+      c.strokeStyle = K.ACC; c.lineCap = 'round';
+      c.lineWidth = 2 + 7 * Math.min(1, M / 100);
+      c.globalAlpha = .9;
+      c.beginPath(); c.moveTo(X(hee[0]), Y(hee[2]));
+      c.lineTo(X(top[0]), Y(top[1])); c.stroke();
+      c.restore();
+      arrow(c, X(hee[0]), Y(hee[2]), X(top[0]), Y(top[1]),
+            { color: K.ACC, width: 2, head: 11 });
+      label(c, fmt(M / ACHILLES, 0) + ' N',
+            X(top[0]) + 12, Y(top[1]),
+            { align: 'left', size: port ? 12 : 13, color: K.ACC,
+              weight: 750, plate: true });
+    }
+
+    /* the two words the slide is about */
+    /* the panel: the same two forces, as numbers, changing as it walks */
+    var px = wide ? W * 0.50 : 8;
+    var ly = wide ? Math.round(H * 0.22) : 18;
+    var S1 = port ? 13 : 17, S2 = port ? 15 : 22;
+    label(c, 'the ground reaction — measured', px, ly,
+          { align: 'left', size: S1, color: K.BLUE, weight: 750 });
+    label(c, g.on ? fmt(g.F[2], 0) + ' N  ·  ' + fmt(g.F[2] / BW, 2)
+                    + ' body weights'
+                  : 'this foot is off the floor',
+          px, ly + S2 + 4,
+          { align: 'left', size: g.on ? S2 : S1, color: g.on ? K.INK : K.MUT,
+            weight: g.on ? 750 : 600 });
+
+    var ly2 = ly + S2 + 44;
+    label(c, 'the muscle that holds it — computed', px, ly2,
+          { align: 'left', size: S1, color: K.ACC, weight: 750 });
+    label(c, g.on && M > 4 ? fmt(M / ACHILLES, 0) + ' N down the Achilles'
+                           : 'not loaded just now',
+          px, ly2 + S2 + 4,
+          { align: 'left', size: g.on && M > 4 ? S2 : S1,
+            color: g.on && M > 4 ? K.INK : K.MUT,
+            weight: g.on && M > 4 ? 750 : 600 });
+    if (g.on && M > 4) {
+      label(c, fmt(M, 0) + ' N·m at the ankle, from a '
+            + fmt(Math.abs(g.C[0] - ank[0]) * 100, 0) + ' cm lever',
+            px, ly2 + S2 + S1 + 14,
+            { align: 'left', size: port ? 11.5 : 14, color: K.MUT,
+              weight: 600 });
+    }
+    label(c, 'nothing in the room measured the second one',
+          px, ly2 + S2 + S1 + (g.on && M > 4 ? 38 : 16),
+          { align: 'left', size: port ? 11.5 : 14, color: K.MUT,
+            weight: 600 });
+  }
+
+  /* ------------------------------------------------------------ readout */
+  var rd = readout(u.ctl);
+  function say() {
+    var g = grf(f);
+    rd.innerHTML = 'Both halves of the definition, on one stride. The '
+      + '<strong>external</strong> force is the one the plate under the '
+      + 'floor recorded, in newtons, at the point it recorded it. The '
+      + '<strong>internal</strong> one is what the plantarflexors must be '
+      + 'producing to hold that force out at that distance from the ankle '
+      + '\u2014 computed from the first, every frame, and measured by '
+      + 'nothing. Getting from one to the other is most of this course.';
+  }
+
+  /* --------------------------------------------------------------- play */
+  function tick(t) {
+    if (!live) return;
+    if (!t0) t0 = t;
+    var p = (((t - t0) / PERIOD) % 1 + 1) % 1;
+    var nf = Math.min(B.n - 1, Math.floor(p * B.n));
+    if (nf !== f) { f = nf; draw(); say(); }
+    raf = requestAnimationFrame(tick);
+  }
+
+  var was = 0;
+  function check() {
+    var w = u.stage.clientWidth || 0;
+    if (Math.abs(w - was) > 1) { was = w; draw(); }
+  }
+  if (window.ResizeObserver) new ResizeObserver(check).observe(u.stage);
+  window.addEventListener('resize', check);
+  [60, 180, 420, 900].forEach(function (ms) { setTimeout(check, ms); });
+
+  draw(); say();
+  raf = requestAnimationFrame(tick);
+  return { stop: function () { live = false; cancelAnimationFrame(raf); },
+           start: function () {
+             if (live) return;
+             live = true; t0 = 0; raf = requestAnimationFrame(tick);
+           } };
 });
 
 window.IA = { triFromSSS: triFromSSS, triFromSAS: triFromSAS,

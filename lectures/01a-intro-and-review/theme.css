@@ -1002,3 +1002,25 @@ html[data-portrait] .cols .figcol svg.hifig{ max-height:300px; }
 .reveal .slides section.roomy .box,
 .reveal .slides section.roomy .callout{ padding:.78em 1em; }
 html[data-portrait] .reveal .slides section.roomy{ font-size:1em; }
+
+
+/* ------------------------------------------------------------------
+   SOURCES
+
+   The decks are a public web page, so a figure built from somebody's
+   recording says so underneath itself, and the last slide carries the
+   full entry.  Both texts come out of in1adata.js's `cite` block, so
+   they cannot drift apart.
+   ------------------------------------------------------------------ */
+p.credit{ font-size:.62em; color:var(--muted); text-align:center;
+          margin:.35em 0 0; opacity:.9; }
+.figcol p.credit,.cols p.credit{ text-align:center; }
+table.sources{ width:100%; font-size:.66em; margin-top:.3em; }
+table.sources th{ width:11em; text-align:left; vertical-align:top;
+                  color:var(--ink-strong); font-weight:700; }
+table.sources td{ vertical-align:top; color:var(--muted);
+                  text-align:left !important; }
+table.sources a{ color:var(--brand); word-break:break-all; }
+html[data-portrait] table.sources th{ width:auto; display:block;
+                                      padding-bottom:0; }
+html[data-portrait] table.sources td{ display:block; padding-top:.1em; }
