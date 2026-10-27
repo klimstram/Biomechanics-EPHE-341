@@ -1012,9 +1012,12 @@ html[data-portrait] .reveal .slides section.roomy{ font-size:1em; }
    full entry.  Both texts come out of in1adata.js's `cite` block, so
    they cannot drift apart.
    ------------------------------------------------------------------ */
-p.credit{ font-size:.62em; color:var(--muted); text-align:center;
-          margin:.35em 0 0; opacity:.9; }
-.figcol p.credit,.cols p.credit{ text-align:center; }
+/* `.reveal` in front, or `.reveal .small` (0,2,0) outranks a bare
+   `p.credit` (0,1,1) and every credit renders at body-text size */
+.reveal p.credit{ font-size:.56em; color:var(--muted); text-align:center;
+                  margin:.3em 0 0; opacity:.9; line-height:1.3; }
+.reveal .figcol p.credit,.reveal .cols p.credit{ text-align:center; }
+html[data-portrait] .reveal p.credit{ font-size:.66em; }
 table.sources{ width:100%; font-size:.66em; margin-top:.3em; }
 table.sources th{ width:11em; text-align:left; vertical-align:top;
                   color:var(--ink-strong); font-weight:700; }

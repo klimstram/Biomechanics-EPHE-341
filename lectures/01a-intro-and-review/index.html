@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20261026c">
+<link rel="stylesheet" href="theme.css?v=20261027a">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -113,26 +113,34 @@ The second half of this lecture is a review, and it is worth saying explicitly t
 <section id="w-walk">
   <h2>Introduction</h2>
   <p class="subhead">What is Biomechanics?</p>
-  <div class="lead">
-    <div class="box accent">
-      <p class="small" style="margin:0">The study of the effects of
-        <strong>internal and external forces</strong> on the human body in
-        movement and rest. &nbsp;<strong>Bio</strong> &mdash; any biological
-        system. &nbsp;<strong>Mechanics</strong> (rigid body, fluid,
-        deformable body) &mdash; the branch of the physical sciences
-        concerned with the state of rest or motion of bodies that are
-        subjected to the action of forces.</p>
+  <div class="cols b top">
+    <div>
+      <div class="box accent">
+        <p class="small">The study of the effects of
+          <strong>internal and external forces</strong> on the human body in
+          movement and rest.</p>
+        <p class="small"><strong>Bio</strong> &mdash; any biological
+          system.</p>
+        <p class="small" style="margin-bottom:0"><strong>Mechanics</strong>
+          (rigid body, fluid, deformable body) &mdash; the branch of the
+          physical sciences concerned with the state of rest or motion of
+          bodies that are subjected to the action of forces.</p>
+      </div>
+    </div>
+    <div>
+      <div class="iplot" data-widget="walkloop"></div>
+      <p class="small mut credit">Source: One stride, SUSU-30, Walking1-2 — SUSU youth motion dataset · UVic · CC BY 4.0</p>
     </div>
   </div>
-  <div class="iplot" data-widget="walkloop"></div>
-  <p class="small mut credit">Source: One stride, SUSU-30, Walking1-2 — SUSU youth motion dataset · UVic · CC BY 4.0</p>
   <aside class="notes">The wording is the lecture's; the stride is a real one, playing.
 
-One measured stride on a loop, and both halves of the definition are on it. The blue arrow is the ground reaction the force plate actually recorded, drawn from the centre of pressure the plate actually reported. The red line is the plantarflexor pull that must be there to hold that force at that distance from the ankle, computed on every frame from the force and the ankle position, and measured by nothing.
+One measured stride on a loop, and both halves of the definition are on it. The blue arrow and the top graph are the ground reaction the force plate actually recorded, drawn from the centre of pressure the plate actually reported. The red line and the bottom graph are the Achilles pull that must be there to hold that force at that distance from the ankle — computed on every frame from the force and the ankle position, and measured by nothing.
 
-Point at the blue, then at the red, and say that the whole course is the business of getting from the first to the second. Lectures 19 and 20 are where that calculation is done properly.
+The two graphs are on the same newton scale on purpose. Point at the dashed body-weight line on each. The ground reaction barely clears it, peaking at about one and a quarter body weights in ordinary walking. The Achilles runs to nearly three. The inside of the body carries far larger forces than the outside of it, which is most of the reason this subject exists.
 
-Two numbers worth saying out loud. The ground reaction peaks near one and a quarter body weights in ordinary walking, which surprises people who expect one. And the Achilles figure runs to well over a thousand newtons at push-off, for a person walking across a room — the inside of the body carries far larger forces than the outside of it, which is most of the reason this subject exists.</aside>
+The Achilles curve sits at zero for the first part of stance. That is not an error: at heel strike the moment at the ankle is a dorsiflexor one, so the muscles on the front of the shin are doing that work, and a tendon can pull but cannot push.
+
+The 50 mm moment arm is a textbook figure, not a measurement. Say so if anyone asks; it is a good question.</aside>
 </section>
 
 <!-- 5 -->
@@ -1087,7 +1095,7 @@ Do it with your own arm in front of them. Flex the elbow with the arm hanging: s
       cardinal planes are a <strong>vocabulary</strong>, not a claim about
       what bodies do.</p>
   </div>
-  <div class="figrow"><svg class="hifig tall" viewBox="0 0 1130 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A figure with the arm in the position a diagonal movement starts from and the position it finishes in, the path of the hand drawn between them, and the three cardinal-plane components of the movement listed with their sizes"><image href="figs/swing.png" x="0.0" y="0.0" width="560.0" height="560.0"/><polyline points="152.5,83.5 125.8,96.7 103.4,122.7 86.3,159.8 75.4,204.4 71.4,252.1 75.0,297.9 86.3,336.9 105.1,364.5 131.0,377.8 163.0,375.3" fill="none" stroke="var(--accent)" stroke-width="5" stroke-dasharray="11 8" stroke-linecap="round"/><circle cx="152.5" cy="83.5" r="8" fill="var(--accent)" opacity=".55"/><path d="M173.0 374.5 L154.0 388.4 L152.1 363.7 Z" fill="var(--accent)"/><text x="152.5" y="61.5" text-anchor="middle" font-size="23" font-weight="700" fill="var(--muted)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">the hand starts here</text><text x="630.0" y="92.0" text-anchor="start" font-size="34" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">one movement</text><text x="630.0" y="130.0" text-anchor="start" font-size="26" font-weight="600" fill="var(--muted)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">and no plane has all of it</text><rect x="630.0" y="142.0" width="16" height="54" rx="5" fill="var(--brand)"/><text x="664.0" y="182.0" text-anchor="start" font-size="30" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">90° of flexion</text><text x="664.0" y="216.0" text-anchor="start" font-size="24" font-weight="600" fill="var(--muted)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">in the sagittal plane</text><rect x="630.0" y="246.0" width="16" height="54" rx="5" fill="var(--good)"/><text x="664.0" y="286.0" text-anchor="start" font-size="30" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">90° of adduction</text><text x="664.0" y="320.0" text-anchor="start" font-size="24" font-weight="600" fill="var(--muted)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">in the frontal plane</text><rect x="630.0" y="350.0" width="16" height="54" rx="5" fill="var(--violet)"/><text x="664.0" y="390.0" text-anchor="start" font-size="30" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">90° of internal rotation</text><text x="664.0" y="424.0" text-anchor="start" font-size="24" font-weight="600" fill="var(--muted)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">in the transverse plane</text><text x="630.0" y="496.0" text-anchor="start" font-size="27" font-weight="600" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">Name it by its three shares.</text><text x="630.0" y="532.0" text-anchor="start" font-size="27" font-weight="600" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">That is what the planes are for.</text></svg></div>
+  <div class="figrow"><svg class="hifig tall" viewBox="0 0 1130 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A figure with the arm in the position a diagonal movement starts from and the position it finishes in, the path of the hand drawn between them, and the three cardinal-plane components of the movement listed with their sizes"><image href="figs/swing.png" x="0.0" y="0.0" width="560.0" height="560.0"/><polyline points="152.5,91.8 125.8,103.9 103.4,125.6 86.3,154.8 75.4,188.5 71.4,223.1 75.0,254.7 86.3,279.7 105.1,295.3 131.0,299.8 163.0,293.0" fill="none" stroke="var(--accent)" stroke-width="5" stroke-dasharray="11 8" stroke-linecap="round"/><circle cx="152.5" cy="91.8" r="8" fill="var(--accent)" opacity=".55"/><path d="M172.8 290.9 L155.8 307.2 L150.6 282.9 Z" fill="var(--accent)"/><text x="152.5" y="69.8" text-anchor="middle" font-size="23" font-weight="700" fill="var(--muted)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">the hand starts here</text><text x="630.0" y="92.0" text-anchor="start" font-size="34" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">one movement</text><text x="630.0" y="130.0" text-anchor="start" font-size="26" font-weight="600" fill="var(--muted)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">and no plane has all of it</text><rect x="630.0" y="142.0" width="16" height="54" rx="5" fill="var(--brand)"/><text x="664.0" y="182.0" text-anchor="start" font-size="30" font-weight="700" fill="var(--brand)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">90° of flexion</text><text x="664.0" y="216.0" text-anchor="start" font-size="24" font-weight="600" fill="var(--muted)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">in the sagittal plane</text><rect x="630.0" y="246.0" width="16" height="54" rx="5" fill="var(--good)"/><text x="664.0" y="286.0" text-anchor="start" font-size="30" font-weight="700" fill="var(--good)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">90° of adduction</text><text x="664.0" y="320.0" text-anchor="start" font-size="24" font-weight="600" fill="var(--muted)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">in the frontal plane</text><rect x="630.0" y="350.0" width="16" height="54" rx="5" fill="var(--violet)"/><text x="664.0" y="390.0" text-anchor="start" font-size="30" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">90° of internal rotation</text><text x="664.0" y="424.0" text-anchor="start" font-size="24" font-weight="600" fill="var(--muted)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">in the transverse plane</text><text x="630.0" y="496.0" text-anchor="start" font-size="27" font-weight="600" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">Name it by its three shares.</text><text x="630.0" y="532.0" text-anchor="start" font-size="27" font-weight="600" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">That is what the planes are for.</text></svg></div>
   <p class="small mut credit">Source: character rig: Mixamo (Adobe)</p>
   <aside class="notes">Source slide 48.
 
@@ -1181,7 +1189,7 @@ Abduction and adduction are the headline pair; the other four rows are the joint
         <strong>rotation</strong> of the trunk and neck to the right and
         left.</p>
   </div>
-  <div class="figrow"><svg class="hifig" viewBox="-26 0 1514 514" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three plates, each a figure in the position it starts from and the position it finishes in, with the joint marked and the movement arrowed and named"><image href="figs/panel_shoulder_rot.png" x="9.0" y="0.0" width="452.0" height="452.0"/><path d="M141.6 103.2 A81.4 81.4 0 0 1 104.9 261.9" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="123.2" cy="182.5" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="123.2" cy="182.5" r="3" fill="var(--accent)"/><path d="M98.6 260.4 L113.1 255.5 L109.5 271.2 Z" fill="var(--violet)"/><text x="95.1" y="313.7" text-anchor="middle" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">internal</text><path d="M135.3 101.8 L149.7 96.9 L146.1 112.6 Z" fill="var(--violet)"/><text x="151.5" y="69.5" text-anchor="middle" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">external</text><text x="235.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">shoulder</text><image href="figs/panel_pronation.png" x="496.0" y="28.8" width="470.0" height="394.5"/><path d="M697.1 289.5 A49.8 49.8 0 0 0 760.2 286.6" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="726.9" cy="249.7" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="726.9" cy="249.7" r="3" fill="var(--accent)"/><path d="M765.0 282.3 L760.8 297.0 L750.0 285.0 Z" fill="var(--violet)"/><text x="789.9" y="323.1" text-anchor="start" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">supination</text><path d="M691.9 285.7 L707.1 287.0 L697.5 299.9 Z" fill="var(--violet)"/><text x="670.0" y="328.2" text-anchor="end" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">pronation</text><text x="731.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">forearm</text><image href="figs/panel_trunk_rot.png" x="1001.0" y="0.0" width="452.0" height="452.0"/><path d="M1118.6 226.9 A106.1 106.1 0 0 1 1143.7 150.9" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="1224.5" cy="219.7" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="1224.5" cy="219.7" r="3" fill="var(--accent)"/><path d="M1147.9 145.9 L1145.6 161.1 L1133.3 150.6 Z" fill="var(--violet)"/><text x="1106.0" y="127.9" text-anchor="end" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">rotation</text><text x="1227.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">trunk</text></svg></div>
+  <div class="figrow"><svg class="hifig" viewBox="-26 0 1514 514" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three plates, each a figure in the position it starts from and the position it finishes in, with the joint marked and the movement arrowed and named"><image href="figs/panel_shoulder_rot.png" x="9.0" y="0.0" width="452.0" height="452.0"/><path d="M141.6 103.2 A81.4 81.4 0 0 1 104.9 261.9" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="123.2" cy="182.5" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="123.2" cy="182.5" r="3" fill="var(--accent)"/><path d="M98.6 260.4 L113.1 255.5 L109.5 271.2 Z" fill="var(--violet)"/><text x="95.1" y="313.7" text-anchor="middle" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">internal</text><path d="M135.3 101.8 L149.7 96.9 L146.1 112.6 Z" fill="var(--violet)"/><text x="151.5" y="69.5" text-anchor="middle" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">external</text><text x="235.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">shoulder</text><image href="figs/panel_pronation.png" x="496.0" y="28.8" width="470.0" height="394.5"/><path d="M745.3 166.3 A42.9 42.9 0 0 0 709.5 161.4" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="722.1" cy="202.3" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="722.1" cy="202.3" r="3" fill="var(--accent)"/><path d="M703.2 163.3 L713.3 151.7 L718.0 167.1 Z" fill="var(--violet)"/><text x="699.0" y="136.5" text-anchor="middle" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">supination</text><path d="M750.8 169.8 L735.5 169.5 L744.2 156.0 Z" fill="var(--violet)"/><text x="769.4" y="145.4" text-anchor="start" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">pronation</text><text x="731.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">forearm</text><image href="figs/panel_trunk_rot.png" x="1001.0" y="0.0" width="452.0" height="452.0"/><path d="M1118.6 226.9 A106.1 106.1 0 0 1 1143.7 150.9" fill="none" stroke="var(--violet)" stroke-width="5.0" stroke-linecap="round"/><circle cx="1224.5" cy="219.7" r="9" fill="none" stroke="var(--accent)" stroke-width="4.5"/><circle cx="1224.5" cy="219.7" r="3" fill="var(--accent)"/><path d="M1147.9 145.9 L1145.6 161.1 L1133.3 150.6 Z" fill="var(--violet)"/><text x="1106.0" y="127.9" text-anchor="end" font-size="25" font-weight="700" fill="var(--violet)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">rotation</text><text x="1227.0" y="492.0" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" stroke="var(--surface-solid)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">trunk</text></svg></div>
   <p class="small mut credit">Source: character rig: Mixamo (Adobe)</p>
   <aside class="notes">Source slides 57 and 58.
 
@@ -1308,8 +1316,8 @@ And repeat the homework, because the gap between this lecture and the second one
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20261026c"></script>
-<script src="mobile.js?v=20261026c"></script>
+<script src="annotate.js?v=20261027a"></script>
+<script src="mobile.js?v=20261027a"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -1331,10 +1339,10 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="in1adata.js?v=20261026c"></script>
-<script src="deck-core.js?v=20261026c"></script>
-<script src="in1a.js?v=20261026c"></script>
-<script src="deck-tools.js?v=20261026c"></script>
-<script src="fit.js?v=20261026c"></script>
+<script src="in1adata.js?v=20261027a"></script>
+<script src="deck-core.js?v=20261027a"></script>
+<script src="in1a.js?v=20261027a"></script>
+<script src="deck-tools.js?v=20261027a"></script>
+<script src="fit.js?v=20261027a"></script>
 </body>
 </html>

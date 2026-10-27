@@ -2053,11 +2053,11 @@ function jumpPlot(c, box, t, y, f, o) {
   label(c, minus(fmt(lo, o.dp == null ? 2 : o.dp)), box.x - 6,
         box.y + box.h - 7,
         { align: 'right', size: 11.5, color: K.MUT, weight: 600 });
-  if (o.time) {
-    label(c, '0 s', box.x, box.y + box.h + 12,
+  if (o.time || o.xlab) {
+    var xl = o.xlab || ['0 s', fmt(t[t.length - 1], 2) + ' s'];
+    label(c, xl[0], box.x, box.y + box.h + 12,
           { align: 'left', size: 11.5, color: K.MUT, weight: 600 });
-    label(c, fmt(t[t.length - 1], 2) + ' s', box.x + box.w,
-          box.y + box.h + 12,
+    label(c, xl[1], box.x + box.w, box.y + box.h + 12,
           { align: 'right', size: 11.5, color: K.MUT, weight: 600 });
   }
   label(c, o.title, box.x, box.y - 9, { align: 'left', size: o.size || 13,
@@ -2381,11 +2381,12 @@ D.register('jumpkic', function (node) {
    12.  WHAT BIOMECHANICS IS — one stride, both kinds of force
 
    Marc: "on slide 4 instead of the image can you have a constant playing
-   motion cap and forces of a person walking."
+   motion cap and forces of a person walking", and then: "have the
+   animation on the right side of the page (larger) and with graphs of
+   internal and external force."
 
-   So the slide that defines the subject now shows the subject being done.
-   One measured stride plays on a loop, and on it are the two things the
-   definition names:
+   One measured stride plays on a loop, and beside it are the two things
+   the definition names, as they change through the stride:
 
      EXTERNAL, and measured.  The ground reaction under the right foot,
      drawn from the centre of pressure the plate reported, at the newtons
@@ -2393,18 +2394,22 @@ D.register('jumpkic', function (node) {
 
      INTERNAL, and not measured.  The plantarflexor moment the ankle must
      be producing to hold that force at that distance — (COP − ankle) × F,
-     computed live on every frame rather than stored, so what the slide
-     shows is the calculation being done.  No instrument in the room
+     computed on every frame rather than stored — and the Achilles force
+     that implies on a 50 mm moment arm.  No instrument in the room
      measured it, and that is the point of the slide.
+
+   The two graphs share ONE newton scale on purpose.  The internal force
+   runs at more than twice the external one at push-off, and a room sees
+   that from across the room only if the two curves are drawn to the same
+   axis.  Body weight is marked on both for the same reason.
+
+   The Achilles curve is clamped at zero: a tendon pulls and cannot push,
+   so early in stance, when the moment at the ankle is a dorsiflexor one,
+   the plantarflexors are simply not the muscles doing the work.
 
    The figure walks on the spot: the pelvis is subtracted so one stride can
    loop without the body jumping back across the floor, and the ground
    ticks scroll underneath at the speed the body would have been moving.
-   The centre of pressure travels with the foot, which is what a planted
-   foot does when the camera follows the walker.
-
-   The Achilles estimate takes a 50 mm moment arm, which is a textbook
-   number and not a measurement; the readout says so.
    ====================================================================== */
 D.register('walkloop', function (node) {
   var port = D.portrait();
@@ -2437,21 +2442,29 @@ D.register('walkloop', function (node) {
     return -((g.C[2] - a[2]) * g.F[0] - (g.C[0] - a[0]) * g.F[2]);
   }
 
+  /* the two curves, one value a frame */
+  var EXT = [], INT = [], PCT = [], f, i;
+  for (f = 0; f < B.n; f++) {
+    EXT.push(grf(f).on ? grf(f).F[2] : 0);
+    INT.push(Math.max(0, ankleM(f)) / ACHILLES);
+    PCT.push(100 * f / (B.n - 1));
+  }
+  var TOP = Math.max(Math.max.apply(null, EXT), Math.max.apply(null, INT));
+  var SCALE = Math.ceil(TOP * 1.08 / 250) * 250;      /* one axis for both */
+
   var span = (function () {
-    var lo = 1e9, hi = -1e9, f, i;
-    for (f = 0; f < B.n; f++) {
-      var px = at('pelvis', f)[0];
-      for (i = 0; i < NJ; i++) {
-        var p = at(B.j[i], f);
-        if (p[2] < lo) lo = p[2];
+    var hi = -1e9, ff, k;
+    for (ff = 0; ff < B.n; ff++)
+      for (k = 0; k < NJ; k++) {
+        var p = at(B.j[k], ff);
         if (p[2] > hi) hi = p[2];
       }
-    }
-    return { lo: lo, hi: hi };
+    return { hi: hi };
   })();
 
   /* ------------------------------------------------------------ the loop */
-  var f = 0, t0 = 0, raf = 0, live = true;
+  f = 0;
+  var t0 = 0, raf = 0, live = true;
   var PERIOD = (B.stride || 1.11) * 1000;
 
   var cv = u.cv, ctx = cv.getContext('2d');
@@ -2461,145 +2474,115 @@ D.register('walkloop', function (node) {
   function draw() {
     var dpr = window.devicePixelRatio || 1;
     var W = u.stage.clientWidth || 640;
-    var H = port ? Math.round(W * 0.92)
-                 : Math.max(300, Math.min(400, Math.round(W * 0.42)));
+    var H = port ? Math.round(W * 1.18)
+                 : Math.max(340, Math.min(520, Math.round(W * 0.69)));
     cv.width = W * dpr; cv.height = H * dpr;
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
-    var c = ctx, K = C(), i;
+    var c = ctx, K = C();
 
-    var floorY = H - (port ? 46 : 40);
-    /* the figure is a narrow thing in a wide box, so on a wide screen it
-       stands in the left third and the numbers it produces fill the rest.
-       On a phone there is no room beside it, so the numbers go above and
-       the figure starts below them. */
-    var wide = !port && W > 560;
-    var head = wide ? 0 : 112;
-    var k = Math.min((floorY - head - 20) / (span.hi + 0.05), W / 2.3);
+    /* on a wide box the figure stands on the left and the graphs fill the
+       right; on a phone the figure goes on top and the graphs below it */
+    var fig = port ? { x: 0, y: 0, w: W, h: Math.round(H * 0.46) }
+                   : { x: 0, y: 0, w: Math.round(W * 0.37), h: H - 8 };
+    var floorY = fig.y + fig.h - 34;
+    var k = Math.min((floorY - fig.y - 30) / (span.hi + 0.05),
+                     fig.w / 1.25);
     var px0 = at('pelvis', f)[0];
-    var cx = wide ? W * 0.26 : W * 0.5;
+    var cx = fig.x + fig.w * 0.5;
     function X(x) { return cx + (x - px0) * k; }
     function Y(z) { return floorY - z * k; }
 
-    /* the ground, with ticks that travel at the speed he is walking, so
-       that a figure walking on the spot still reads as going somewhere */
+    /* the ground, with ticks that travel at the walking speed, so that a
+       figure walking on the spot still reads as going somewhere */
     c.save();
     c.strokeStyle = K.MUT; c.globalAlpha = .5; c.lineWidth = 2;
-    c.beginPath(); c.moveTo(0, floorY); c.lineTo(W, floorY); c.stroke();
+    c.beginPath(); c.moveTo(fig.x + 4, floorY);
+    c.lineTo(fig.x + fig.w - 4, floorY); c.stroke();
     c.globalAlpha = .28; c.lineWidth = 1.5;
     var step = 0.25;
     var phase = ((-px0 / step) % 1 + 1) % 1;
-    for (i = -2; i < W / (step * k) + 2; i++) {
-      var tx = cx + (i + phase) * step * k - (W * 0 );
+    for (i = -2; i < fig.w / (step * k) + 2; i++) {
+      var tx = fig.x + (i + phase) * step * k;
+      if (tx < fig.x + 4 || tx > fig.x + fig.w - 4) continue;
       c.beginPath(); c.moveTo(tx, floorY); c.lineTo(tx, floorY + 9); c.stroke();
     }
     c.restore();
 
-    /* the body */
+    /* the body: near side solid, far side faint */
     c.save();
     c.lineCap = 'round';
     for (i = 0; i < B.links.length; i++) {
       var L = B.links[i], a = at(L[0], f), b = at(L[1], f);
-      var far = L[2] === 'l';              /* the far side, lighter */
+      var far = L[2] === 'l';
       c.strokeStyle = K.INK;
       c.globalAlpha = far ? 0.3 : 1;
-      c.lineWidth = far ? 3 : (port ? 5 : 4.4);
+      c.lineWidth = far ? 3.4 : (port ? 5 : 5.2);
       c.beginPath(); c.moveTo(X(a[0]), Y(a[2])); c.lineTo(X(b[0]), Y(b[2]));
       c.stroke();
     }
     c.globalAlpha = 1;
     var hd = at('head', f), nk = at('neck', f);
-    var r = Math.max(5, Math.abs(Y(hd[2]) - Y(nk[2])) * 0.52);
+    var r = Math.max(6, Math.abs(Y(hd[2]) - Y(nk[2])) * 0.5);
     c.fillStyle = K.INK;
     c.beginPath(); c.arc(X(hd[0]), Y(hd[2]), r, 0, 7); c.fill();
     c.restore();
 
     /* ---- EXTERNAL: what the plate measured */
     var g = grf(f), M = ankleM(f);
-    var ank = at('ankR', f), kne = at('kneeR', f), hee = at('heelR', f);
-    var FSC = (floorY - 30) / (1.45 * BW);
+    var FSC = (floorY - fig.y - 24) / SCALE;
     if (g.on) {
       var ox = X(g.C[0]), oy = Y(0);
       arrow(c, ox, oy, ox + g.F[0] * FSC, oy - g.F[2] * FSC,
-            { color: K.BLUE, width: port ? 4.5 : 4, head: 12 });
+            { color: K.BLUE, width: port ? 4.5 : 5, head: 13 });
       c.save(); c.fillStyle = K.BLUE;
-      c.beginPath(); c.arc(ox, oy, 4.5, 0, 7); c.fill(); c.restore();
-      label(c, fmt(g.F[2] / BW, 2) + ' BW',
-            ox + g.F[0] * FSC + 12, oy - g.F[2] * FSC + 2,
-            { align: 'left', size: port ? 12 : 14, color: K.BLUE,
-              weight: 750, plate: true });
+      c.beginPath(); c.arc(ox, oy, 5, 0, 7); c.fill(); c.restore();
     }
 
-    /* ---- INTERNAL: what nothing measured */
+    /* ---- INTERNAL: what nothing measured.  A line of action up the back
+       of the shank from the heel, drawn at a thickness that follows it. */
     if (g.on && M > 4) {
-      /* a line of action for the plantarflexors, up the back of the shank
-         from the heel, drawn at a thickness that follows the moment */
+      var ank = at('ankR', f), kne = at('kneeR', f), hee = at('heelR', f);
       var ux = kne[0] - ank[0], uz = kne[2] - ank[2];
-      var n = Math.hypot(ux, uz) || 1;
-      var top = [hee[0] + ux / n * 0.30, hee[2] + uz / n * 0.30];
+      var nn = Math.hypot(ux, uz) || 1;
+      var top = [hee[0] + ux / nn * 0.30, hee[2] + uz / nn * 0.30];
       c.save();
       c.strokeStyle = K.ACC; c.lineCap = 'round';
-      c.lineWidth = 2 + 7 * Math.min(1, M / 100);
+      c.lineWidth = 2 + 8 * Math.min(1, INT[f] / SCALE);
       c.globalAlpha = .9;
       c.beginPath(); c.moveTo(X(hee[0]), Y(hee[2]));
       c.lineTo(X(top[0]), Y(top[1])); c.stroke();
       c.restore();
       arrow(c, X(hee[0]), Y(hee[2]), X(top[0]), Y(top[1]),
-            { color: K.ACC, width: 2, head: 11 });
-      label(c, fmt(M / ACHILLES, 0) + ' N',
-            X(top[0]) + 12, Y(top[1]),
-            { align: 'left', size: port ? 12 : 13, color: K.ACC,
-              weight: 750, plate: true });
+            { color: K.ACC, width: 2, head: 12 });
     }
 
-    /* the two words the slide is about */
-    /* the panel: the same two forces, as numbers, changing as it walks */
-    var px = wide ? W * 0.50 : 8;
-    var ly = wide ? Math.round(H * 0.22) : 18;
-    var S1 = port ? 13 : 17, S2 = port ? 15 : 22;
-    label(c, 'the ground reaction — measured', px, ly,
-          { align: 'left', size: S1, color: K.BLUE, weight: 750 });
-    label(c, g.on ? fmt(g.F[2], 0) + ' N  ·  ' + fmt(g.F[2] / BW, 2)
-                    + ' body weights'
-                  : 'this foot is off the floor',
-          px, ly + S2 + 4,
-          { align: 'left', size: g.on ? S2 : S1, color: g.on ? K.INK : K.MUT,
-            weight: g.on ? 750 : 600 });
-
-    var ly2 = ly + S2 + 44;
-    label(c, 'the muscle that holds it — computed', px, ly2,
-          { align: 'left', size: S1, color: K.ACC, weight: 750 });
-    label(c, g.on && M > 4 ? fmt(M / ACHILLES, 0) + ' N down the Achilles'
-                           : 'not loaded just now',
-          px, ly2 + S2 + 4,
-          { align: 'left', size: g.on && M > 4 ? S2 : S1,
-            color: g.on && M > 4 ? K.INK : K.MUT,
-            weight: g.on && M > 4 ? 750 : 600 });
-    if (g.on && M > 4) {
-      label(c, fmt(M, 0) + ' N·m at the ankle, from a '
-            + fmt(Math.abs(g.C[0] - ank[0]) * 100, 0) + ' cm lever',
-            px, ly2 + S2 + S1 + 14,
-            { align: 'left', size: port ? 11.5 : 14, color: K.MUT,
-              weight: 600 });
+    /* ---- the two graphs, on one newton scale */
+    var gx, gy, gw, gh, gap = port ? 46 : 54;
+    if (port) {
+      gx = 64; gw = W - gx - 16;
+      gy = fig.y + fig.h + 34;
+      gh = Math.round((H - gy - 34 - gap) / 2);
+    } else {
+      gx = fig.x + fig.w + 58; gw = W - gx - 10;
+      gy = 34;
+      gh = Math.round((H - gy - 34 - gap) / 2);
     }
-    label(c, 'nothing in the room measured the second one',
-          px, ly2 + S2 + S1 + (g.on && M > 4 ? 38 : 16),
-          { align: 'left', size: port ? 11.5 : 14, color: K.MUT,
-            weight: 600 });
-  }
+    var sz = port ? 12.5 : 13.5;
+    jumpPlot(c, { x: gx, y: gy, w: gw, h: gh }, PCT, EXT, f,
+             { title: 'external · ground reaction, measured',
+               unit: ' N', color: K.BLUE, lo: 0, hi: SCALE, zero: BW,
+               dp: 0, size: sz });
+    jumpPlot(c, { x: gx, y: gy + gh + gap, w: gw, h: gh }, PCT, INT, f,
+             { title: 'internal · Achilles, computed',
+               unit: ' N', color: K.ACC, lo: 0, hi: SCALE, zero: BW,
+               dp: 0, size: sz, xlab: ['0', '100% of the stride'] });
 
-  /* ------------------------------------------------------------ readout */
-  var rd = readout(u.ctl);
-  function say() {
-    var g = grf(f);
-    rd.innerHTML = 'Both halves of the definition, on one stride. The '
-      + '<strong>external</strong> force is the one the plate under the '
-      + 'floor recorded, in newtons, at the point it recorded it. The '
-      + '<strong>internal</strong> one is what the plantarflexors must be '
-      + 'producing to hold that force out at that distance from the ankle '
-      + '\u2014 computed from the first, every frame, and measured by '
-      + 'nothing. Getting from one to the other is most of this course.';
+    /* what the dashed line is, said once */
+    label(c, 'body weight', gx + gw - 4, gy + gh * (1 - BW / SCALE) - 9,
+          { align: 'right', size: port ? 11 : 12.5, color: K.MUT,
+            weight: 650, plate: true });
   }
 
   /* --------------------------------------------------------------- play */
@@ -2608,7 +2591,7 @@ D.register('walkloop', function (node) {
     if (!t0) t0 = t;
     var p = (((t - t0) / PERIOD) % 1 + 1) % 1;
     var nf = Math.min(B.n - 1, Math.floor(p * B.n));
-    if (nf !== f) { f = nf; draw(); say(); }
+    if (nf !== f) { f = nf; draw(); }
     raf = requestAnimationFrame(tick);
   }
 
@@ -2621,7 +2604,7 @@ D.register('walkloop', function (node) {
   window.addEventListener('resize', check);
   [60, 180, 420, 900].forEach(function (ms) { setTimeout(check, ms); });
 
-  draw(); say();
+  draw();
   raf = requestAnimationFrame(tick);
   return { stop: function () { live = false; cancelAnimationFrame(raf); },
            start: function () {
