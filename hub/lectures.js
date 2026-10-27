@@ -38,6 +38,20 @@ window.EPHE341_LECTURES = [
            ['the planes, on somebody walking', 'w-axes3'],
            ['every joint action, moved', 'w-joints']] },
 
+  { n: '1b', title: 'Linear kinematics review',
+    path: 'lectures/01b-linear-kinematics-review',
+    blurb: 'Position and coordinate systems, distance and displacement, adding vectors, ' +
+           'speed and velocity, and acceleration over the 100 m.',
+    slides: 100, widgets: 7, updated: '2026-10-27',
+    handout: 'handout.pdf',
+    live: [['distance against displacement, lap by lap', 'w-track'],
+           ['any two positions on the field', 'w-field'],
+           ['tip to tail, in any order', 'w-tiptotail'],
+           ['one vector into its components', 'w-resolve'],
+           ['three vectors, added by components', 'w-vecsum'],
+           ['speed against velocity', 'w-trackv'],
+           ['the 100 m, in shorter and shorter sections', 'w-bolt']] },
+
   { n: '2', title: 'Sensors and data acquisition',
     path: 'lectures/02-sensors-and-data-acquisition',
     blurb: 'How a physical quantity becomes a number on a disk.',
@@ -211,7 +225,6 @@ window.EPHE341_LECTURES = [
            ['the same method on a measured jump, in 2D and 3D', 'w-jump']] },
 
   /* ---- still PowerPoint ---- */
-  { n: '1b', title: 'Linear kinematics review' },
   /* Work, energy and power was '8' here, clashing with projectile motion, and
      is now lecture 9 above. Everything from angular kinematics on has shifted
      by one so the converted decks stay sequential \u2014 these numbers no longer
