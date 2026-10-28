@@ -1,1 +1,4 @@
 .DS_Store
+
+# review mode: your notes and Claude's replies stay on your computer
+lectures/*/review/

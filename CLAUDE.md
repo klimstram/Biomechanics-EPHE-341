@@ -4,7 +4,7 @@ Read this before touching anything in this repo. It is the handoff for any agent
 (Claude or otherwise) picking up the work of converting Marc Klimstra's EPHE 341
 Biomechanics PowerPoint lectures (UVic) into reveal.js decks.
 
-Last updated 2026-10-27 (after lecture 1b).
+Last updated 2026-10-27 (after lecture 1b and review mode).
 
 ---
 
@@ -167,6 +167,52 @@ goes up. Validate with `node -e "new Function(src)"`.
 
 ---
 
+## 3a. Review mode: how Marc gives feedback (lecture 1b so far)
+
+`review.js` sits in the deck folder and is loaded by `index.html` after `fit.js`.
+It does nothing unless the page has `?review` in its address **and** is opened
+from Marc's own computer (`file://` or localhost). On the published site it is
+inert, so students cannot open it. It also never sends anything anywhere.
+
+**What Marc does:** opens the deck from the repo folder with
+`index.html?review`. Then he clicks an element and picks one of: Edit text,
+Move / resize, Request change, or "Box + note" for an area of the slide. He
+clicks **Send to Claude**, which saves `review-<deck>-<YYYY-MM-DD-HHMM>.json`
+to his Downloads. His notes persist in localStorage, keyed
+`ephe341-review:<deck folder>`.
+
+**What the agent does when asked to "work through the review":**
+
+1. Find the newest `review-<deck>-*.json`, in `~/Downloads` (request folder
+   access) or in `lectures/<deck>/review/`. Copy it into
+   `lectures/<deck>/review/`, which is git-ignored, so nothing in it is ever
+   published.
+2. For each item (`items[]`):
+   - `where.slide` is the 1-based slide number, with `where.heading` and
+     `where.notes` ("Source slide N…") to find it in the slide builders.
+   - `target.path` is a structural path from the `<section>`. It counts
+     `.slide-body` children as the section's own, e.g. `div:2/p:0`. The
+     element is also identified by `target.text`, `target.label`
+     (figure aria-label), `target.widget` and `target.src`.
+   - **text:** replace `before` with `after` in the source. Keep Marc's
+     wording exactly as typed.
+   - **move:** `before`/`after` are boxes in slide units (1280 × 720) and
+     `scale` is the resize. Reproduce the *look* through the layout (column
+     split, figure caps, order). Do not use absolute positioning. Then check
+     portrait and print.
+   - **request / box:** `note` is the request. `box` is the area in slide
+     units; screenshot that slide to see it. An `answer` field is Marc's
+     reply to an earlier question.
+3. Rebuild, verify (§4), bump `?v=`, write the deck to the repo.
+4. Write `lectures/<deck>/review/replies.js` (git-ignored) as
+   `window.EPHE341_REPLIES = { deck, updated, items: { "<item id>": { status:
+   "done"|"question"|"notdone", reply: "…", at: "<ISO time>" } } };`.
+   Keep replies from earlier rounds and give each new reply a new `at`.
+   Review mode loads that file and shows each reply on its item: done items
+   grey out, questions get a "?" pin and an Answer box, and answers come back
+   in the next export.
+5. Tell Marc in chat what was done, item by item, in brief.
+
 ## 4. Verification before handing anything over
 
 1. Widget self-test (lecture 1a: `stest.py` runs `selftest.js`, currently
@@ -249,6 +295,9 @@ plus `-revision`/`-audit` notes) and these cross-cutting ones:
 - Other decks have not had the attribution pass (per-figure credits + Sources
   slide) or the full voice pass. Lecture 1a is the pattern.
 - `fit.js` print/scroll-view selector fix is only in lectures 11, 14–20, 1a.
+- Review mode (`review.js`) is only in 1b. To add it to another deck, copy
+  `review.js`, add `<script src="review.js?v=…"></script>` after `fit.js`,
+  and bump `?v=`. `.gitignore` already covers `lectures/*/review/`.
 - `app.webmanifest` in decks 2–12 still says "Impulse and Friction".
 - Publisher figures in lectures 14–19 are waiting on Marc's decision.
 - Section-title cards in 1a and 1b overflow by 2–7 px at large viewports (cosmetic).
