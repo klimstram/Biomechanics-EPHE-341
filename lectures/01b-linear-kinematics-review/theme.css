@@ -1096,3 +1096,78 @@ html[data-portrait] .figrow svg.hifig,
 html[data-portrait] .figrow.big svg.hifig{ max-height:none; }
 
 svg.hifig.tallfig{ max-height:560px !important; }
+
+/* ===================================================================
+   Review round 1 (28 Oct): math, animated figures, consistent layout
+   =================================================================== */
+
+/* ---- math is TeX, typeset by KaTeX at build time (katex/katex.min.css).
+   One size relative to the text it sits in; a line of working is a block. */
+.reveal .katex{ font-size:.98em; }
+.reveal .katex-display{ margin:.2em 0; }
+.workblock{ margin:0 0 .55em 1.2em; }
+.workblock .tl{ margin:0 0 .22em 0; line-height:1.25; }
+.workblock .tl.ans{ margin-top:.1em; }
+.workblock.eqb{ margin:.2em 0 .5em 0; }
+.wtitle{ margin:0 0 .15em 0 !important; }
+.reveal .cols.tri .wtitle,.reveal .cols.tri .workblock{ font-size:.8em; }
+.reveal .cols.tri .workblock{ margin-left:0; }
+.wcenter{ text-align:center; font-size:.84em; margin-top:.35em; }
+.wcenter .workblock{ display:inline-block; text-align:left; margin:0; }
+/* the click-through working: KaTeX puts no opacity of its own on anything,
+   so the reveal fragment fade works on it as it does on text */
+.reveal .workblock.fragment,.reveal .workblock .tl.fragment{ transition:opacity .35s ease; }
+
+/* ---- the trig ratios as buttons; each lights its two sides */
+.trigbtns{ display:flex; justify-content:center; gap:.7em; margin:.5em auto 0; font-size:.72em; }
+.trigb{ font:inherit; color:var(--ink); background:var(--chip); border:1.5px solid var(--rule);
+  border-radius:.5em; padding:.35em 1.1em; cursor:pointer; transition:border-color .2s, background .2s; }
+.trigb:hover{ border-color:var(--brand); }
+.trigb.on{ border-color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, var(--chip)); }
+svg.hl [data-side]{ opacity:.22; transition:opacity .25s; }
+svg.hl [data-side].on,svg.hl [data-side="theta"]{ opacity:1; }
+svg.hl [data-side].on path[fill="none"]{ stroke:var(--accent); stroke-width:3.2px; }
+svg.hl [data-side].on path:not([fill="none"]){ fill:var(--accent); }
+svg.hl [data-side].on text{ fill:var(--accent); }
+
+/* ---- animated figures (parts/_anim.js).  What prints is the figure as
+   drawn; the pieces that only exist while it plays are data-hide. */
+svg [data-hide]{ display:none; }
+svg.anim-on [data-hide]{ display:inline; }
+svg.anim-on [data-static]{ display:none; }
+svg[data-anim]{ cursor:pointer; }
+svg[data-anim="box3d"],svg[data-anim="polar"]{ cursor:default; touch-action:none; }
+svg [data-drag]{ cursor:grab; }
+svg [data-drag]:active{ cursor:grabbing; }
+.anim-hint{ font-size:.5em; color:var(--muted); text-align:center; margin-top:.25em; }
+.reveal .pdf-page .anim-hint{ display:none; }
+
+/* ---- the A, B, C sequence: one top band and one scale, so the figure is
+   in the same place and the same size on every slide it appears on */
+.abc-top{ height:262px; }
+.abc-top.short{ height:124px; }
+.figrow.abcrow{ margin-top:.4em; }
+.figrow.abcrow svg.hifig.abcfig{ display:inline-block; max-height:none; }
+html[data-portrait] .abc-top{ height:auto; }
+ul.tnote{ margin-top:72px; }
+html[data-portrait] ul.tnote{ margin-top:.6em; }
+
+/* ---- TeX over a canvas: the layer is the canvas's own size, positions are
+   in per cent and type in container units, so it scales with the canvas */
+.itexw{ position:relative; width:100%; margin:0 auto; container-type:inline-size; }
+.itexw canvas{ display:block; margin:0 auto; }
+.itexl{ position:absolute; inset:0; pointer-events:none; }
+.itexl > div{ position:absolute; white-space:nowrap; line-height:1; }
+.itexl .katex{ font-size:1em !important; }
+
+/* the newest row of a growing spreadsheet, and its point */
+svg .knew text, svg circle.knew{ fill:var(--accent); }
+/* slide 30: the x and the y working side by side; slides 72-73: the
+   working beside the triangle rather than under it */
+.cols.wpair{ grid-template-columns:1fr 1fr; gap:.6em; align-items:start; }
+.cols.wpair .workblock{ margin-left:0; }
+.cols.sumpair{ grid-template-columns:1fr 1fr; align-items:center; margin-top:.4em; }
+.cols.sumpair .wcenter{ text-align:left; margin-top:0; }
+.cols.tight30 .workblock{ margin-bottom:.3em; }
+.cols.tight30 .workblock .tl{ margin-bottom:.1em; }
+.cols.tight30 p.small{ margin:.25em 0; }

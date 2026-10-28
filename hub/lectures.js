@@ -42,7 +42,7 @@ window.EPHE341_LECTURES = [
     path: 'lectures/01b-linear-kinematics-review',
     blurb: 'Position and coordinate systems, distance and displacement, adding vectors, ' +
            'speed and velocity, and acceleration over the 100 m.',
-    slides: 100, widgets: 7, updated: '2026-10-27',
+    slides: 100, widgets: 7, updated: '2026-10-28',
     handout: 'handout.pdf',
     live: [['distance against displacement, lap by lap', 'w-track'],
            ['any two positions on the field', 'w-field'],

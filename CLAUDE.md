@@ -4,7 +4,7 @@ Read this before touching anything in this repo. It is the handoff for any agent
 (Claude or otherwise) picking up the work of converting Marc Klimstra's EPHE 341
 Biomechanics PowerPoint lectures (UVic) into reveal.js decks.
 
-Last updated 2026-10-27 (after lecture 1b and review mode).
+Last updated 2026-10-28 (after the first review-mode round on lecture 1b).
 
 ---
 
@@ -46,7 +46,7 @@ app.webmanifest     set name/short_name for each new deck
 | hub n | folder | state |
 |---|---|---|
 | 1a | 01a-intro-and-review | done, 62 slides, 12 widgets. Consistency pass vs original done 2026-10-27 |
-| 1b | 01b-linear-kinematics-review | done 2026-10-27: 100 slides (92 source + 7 widget slides + Sources), 7 widgets |
+| 1b | 01b-linear-kinematics-review | done 2026-10-27: 100 slides (92 source + 7 widget slides + Sources), 7 widgets. Review round 1 (27 items) done 2026-10-28, `?v=20261028a` |
 | 2–12, 14–20 | 02-… to 20-… | done |
 | 13 | tools/work-loop-simulator | Virtual Muscle Lab port |
 | 22, 23 | — | 2015 duplicates of projectile motion and signals; not planned |
@@ -213,10 +213,51 @@ to his Downloads. His notes persist in localStorage, keyed
    in the next export.
 5. Tell Marc in chat what was done, item by item, in brief.
 
+**Round 1 on 1b (2026-10-28) set these patterns; reuse them for other decks:**
+
+- **Math is LaTeX (KaTeX 0.16.11).** Slide math is typeset at build time:
+  the builders write `<tex-i>…</tex-i>` (helpers `T`, `TL`, `W` in
+  `slides/tex.py`), and `mkindex.py` pipes every one through `texr.js`
+  (node + the `katex` npm package) into KaTeX HTML, so the page needs only
+  `katex/katex.min.css` and the woff2 fonts. Those ship in the deck folder
+  (`katex/`, with KaTeX's MIT `LICENSE`), so it works offline, on file://
+  and in print. `katex/katex.min.js` is loaded too, only for widget
+  working, which `texLayer(u, ax)` in `parts/_head.js` lays over the canvas
+  in container units. Tables of values stay plain text. Use sin/cos/tan,
+  not SIN/COS/TAN.
+- **Animated figures keep the slide's own SVG.** An `<svg data-anim="name">`
+  is handed to `AN[name]` in `parts/_anim.js` when its slide opens and put
+  back when it closes. What prints is the drawn figure; pieces that exist
+  only while playing are `data-hide`, and a drawn frame replaced by a live
+  one is `data-static` next to a `data-live` group. Animators: `pointlight`,
+  `along` (route + optional trace, count, end reveal), `grow`
+  (spreadsheet rows `data-k`, plot paths `data-grow`, optional rotatable
+  3D), `polar`, `imagewalk` (COM from Dempster/Winter segment
+  fractions), `box3d` (drag), `mocap`, `comp` (vector components grow from
+  the tail or slide to the tip). Click a figure to replay it. The
+  SOH-CAH-TOA buttons (`.trigbtns` → `svg[data-fig="tri"] [data-side]`)
+  live there too.
+- **Figure label sizes are one band.** `fontaudit.py` measures every SVG
+  label on the built deck. `slides/tscale.json` maps each figure's
+  aria-label (first 40 characters) to a factor that puts its typical label
+  near 19.5 px, and `F()` in `svg.py` applies it, also as `data-ts` for text
+  drawn live. Changing a figure's size changes its labels, so re-run the
+  audit. Body text on a figure slide is `.small` (25.2 px) and must not be
+  zoomed down by `fit.js`: fix the overflow, don't accept the zoom. Use
+  `F(mh=…)` (an inline max-height) to cap a figure. Note that `tallfig` is
+  `!important`.
+- **A sequence that reuses a figure gets a fixed band.** On the A, B, C
+  slides, `.abc-top` (262 px for the row, `.short` 124 px for single
+  vectors) holds the card. The figure height is set from its viewBox
+  (`ABC_PX`), so the figure sits in the same place at the same size.
+- Character renders for 1b (`figs/leg_swing.png`, `body_sil.png`,
+  `segment.png`) come from `osim/figs1b.py`. Joint pixel positions are in
+  `slides/figs1b.json`.
+
 ## 4. Verification before handing anything over
 
 1. Widget self-test (lecture 1a: `stest.py` runs `selftest.js`, currently
-   130/130).
+   130/130; lecture 1b: 83/83, including the animated figures).
 2. Layout at 1280×720, 1600×900, 1920×1080 and portrait 430×932: no slide
    content overflowing its box, console clean, no image aspect drift.
 3. Print: `index.html?print-pdf`, export the handout at
@@ -282,7 +323,8 @@ plus `-revision`/`-audit` notes) and these cross-cutting ones:
   and reported to Marc: slides 39–40, tip-to-tail resultant 6.5 km → 6.2 km
   (it is 6.24 km at 7.5°, which the slide's "8°" already matches); slides
   70–73, E-W sum 426.6 km → 426.5 km (375.0 + 296.0 − 244.5), so
-  C = 682.2 → 682.1 km (α stays 51.3°).
+  C = 682.2 → 682.1 km (α stays 51.3°); slide 16, image axes labelled Y
+  across and X down → x across, y down, as the slide's own caption says.
 - 1b content that is in the deck but differs from the source, by necessity:
   every photo and screenshot (football broadcast, phone GPS app, stock
   objects, mocap and GPS figures from elsewhere, Galileo portrait, Bolt press
