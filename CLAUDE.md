@@ -167,7 +167,7 @@ goes up. Validate with `node -e "new Function(src)"`.
 
 ---
 
-## 3a. Review mode: how Marc gives feedback (lecture 1b so far)
+## 3a. Review mode: how Marc gives feedback (every deck)
 
 `review.js` sits in the deck folder and is loaded by `index.html` after `fit.js`.
 It does nothing unless the page has `?review` in its address **and** is opened
@@ -197,7 +197,11 @@ to his Downloads. His notes persist in localStorage, keyed
    - **text:** replace `before` with `after` in the source. Keep Marc's
      wording exactly as typed.
    - **move:** `before`/`after` are boxes in slide units (1280 × 720) and
-     `scale` is the resize. Reproduce the *look* through the layout (column
+     `scale` is the resize, always one factor (the shape is kept). For text,
+     headings and tables a corner drag is a font-size change instead:
+     `font: {factor, fromPx, toPx}`, with `scale` 1. A moved element gets
+     `rv-moved` (animation:none), because most decks' `liftIn` entrance
+     animation fills forwards and would otherwise pin transform to none. Reproduce the *look* through the layout (column
      split, figure caps, order). Do not use absolute positioning. Then check
      portrait and print.
    - **request / box:** `note` is the request. `box` is the area in slide
@@ -337,7 +341,9 @@ plus `-revision`/`-audit` notes) and these cross-cutting ones:
 - Other decks have not had the attribution pass (per-figure credits + Sources
   slide) or the full voice pass. Lecture 1a is the pattern.
 - `fit.js` print/scroll-view selector fix is only in lectures 11, 14–20, 1a.
-- Review mode (`review.js`) is only in 1b. To add it to another deck, copy
+- Review mode (`review.js`, `?v=20261028c`) is in every deck (added to 02–20 on 2026-10-28). One identical
+  file per deck folder: change it in one place and copy it to all 20, bumping `?v=` in each
+  `index.html`. To add it to a new deck, copy
   `review.js`, add `<script src="review.js?v=…"></script>` after `fit.js`,
   and bump `?v=`. `.gitignore` already covers `lectures/*/review/`.
 - `app.webmanifest` in decks 2–12 still says "Impulse and Friction".

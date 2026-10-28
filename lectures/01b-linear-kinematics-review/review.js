@@ -9,7 +9,9 @@
    table, an image, a drawn figure, a widget — and choose:
 
      Edit text        type the new wording straight onto the slide
-     Move / resize    drag it, pull the corner to resize it
+     Move / resize    drag it; pull a corner to resize it.  Figures,
+                      images and widgets keep their shape; text changes
+                      font size instead of being stretched
      Request change   a note pinned to that element
    or draw a box anywhere on the slide and pin a note to the box.
 
@@ -89,6 +91,9 @@ css.textContent = [
   '.rv-pop textarea{width:100%;box-sizing:border-box;min-height:84px;margin:8px 0;font:inherit;padding:6px;border:1px solid #c9c6bf;border-radius:6px}',
   '.rv-frame{position:fixed;z-index:2147482999;border:2px solid #c2410c;box-sizing:border-box;cursor:move;background:rgba(194,65,12,.06)}',
   '.rv-h{position:absolute;width:14px;height:14px;background:#c2410c;border:2px solid #fff;border-radius:3px}',
+  /* an entrance animation that fills forwards (liftIn in most decks) pins
+     transform to none, which would swallow the move; a moved element drops it */
+  '.rv-moved{animation:none !important}',
   '.rv-h.br{right:-8px;bottom:-8px;cursor:nwse-resize}.rv-h.tl{left:-8px;top:-8px;cursor:nwse-resize}',
   '.rv-h.tr{right:-8px;top:-8px;cursor:nesw-resize}.rv-h.bl{left:-8px;bottom:-8px;cursor:nesw-resize}',
   '.rv-boxdraw{position:fixed;z-index:2147482998;border:2px dashed #6d28d9;background:rgba(109,40,217,.08);pointer-events:none}',
@@ -449,17 +454,26 @@ function moveResize(n) {
   /* the transform is applied in the element's own CSS pixels; reveal's
      scale and fit.js's zoom sit between those and the screen */
   var cssW = n.offsetWidth || n.clientWidth || r.width;
-  var eff = r.width / (cssW || r.width) || 1;
   var cur = parseT(n);
+  /* screen px per CSS px of the element's parent: the element's own scale
+     is taken out, since translate() is applied before it */
+  var eff = r.width / ((cssW || r.width) * (cur.sx || 1)) || 1;
+  var txt = isTexty(n);
+  if (txt && n.getAttribute('data-rv-fs0') == null) {
+    n.setAttribute('data-rv-fs0', parseFloat(getComputedStyle(n).fontSize).toFixed(2));
+    n.setAttribute('data-rv-fsi', n.style.fontSize || '');
+  }
   mv = { n: n, sec: sec, g0: geomUntransformed(n, sec, cur), eff: eff, t: cur,
-         start: null, r0: r };
+         start: null, r0: r, text: txt };
   frame = el('div', 'rv-frame rv-ui');
   ['tl', 'tr', 'bl', 'br'].forEach(function (k) { var h = el('div', 'rv-h ' + k); h.dataset.k = k; frame.appendChild(h); });
   document.body.appendChild(frame);
   syncFrame();
   var help = el('div', 'rv-pop rv-ui');
   help.innerHTML = '<h4>Move / resize · slide ' + (slideIndex(sec) + 1) + '</h4>' +
-    '<div class="rv-what">Drag to move, drag a corner to resize (Shift keeps the shape). ' +
+    '<div class="rv-what">Drag to move. ' + (txt ? 'Drag a corner to make the text larger or smaller ' +
+    '(it changes the font size; the words reflow, they are not stretched). '
+    : 'Drag a corner to resize; it keeps its shape. ') +
     'This shows the look you want; Claude makes it work on phones and in print too.</div>';
   var row = el('div', 'rv-row');
   var ok = el('button', 'rv-btn go', 'Done');
@@ -472,7 +486,7 @@ function moveResize(n) {
   help.style.left = '12px'; help.style.top = '64px';
   ok.onclick = function () { endFrame(true); };
   no.onclick = function () { endFrame(false); };
-  rs.onclick = function () { mv.t = { dx: 0, dy: 0, sx: 1, sy: 1 }; applyT(n, mv.t); syncFrame(); };
+  rs.onclick = function () { mv.t = { dx: 0, dy: 0, sx: 1, sy: 1 }; if (mv.text) mv.t.fs = 1; applyT(n, mv.t); syncFrame(); };
   frame.addEventListener('pointerdown', function (e) {
     e.preventDefault(); e.stopPropagation();
     frame.setPointerCapture(e.pointerId);
@@ -485,14 +499,20 @@ function moveResize(n) {
     var t = JSON.parse(JSON.stringify(s.t));
     if (s.k === 'move') { t.dx = s.t.dx + dx / mv.eff; t.dy = s.t.dy + dy / mv.eff; }
     else {
+      /* one factor from the drag along the corner's diagonal, so the shape
+         is always kept: no separate x and y stretch */
       var W = s.r.width, Hh = s.r.height;
-      var sxk = s.k.indexOf('r') >= 0 ? (W + dx) / W : (W - dx) / W;
-      var syk = s.k.indexOf('b') >= 0 ? (Hh + dy) / Hh : (Hh - dy) / Hh;
-      if (e.shiftKey) { var m = Math.abs(sxk - 1) > Math.abs(syk - 1) ? sxk : syk; sxk = syk = m; }
-      sxk = Math.max(0.15, sxk); syk = Math.max(0.15, syk);
-      t.sx = s.t.sx * sxk; t.sy = s.t.sy * syk;
-      if (s.k.indexOf('l') >= 0) t.dx = s.t.dx + dx / mv.eff;
-      if (s.k.indexOf('t') >= 0) t.dy = s.t.dy + dy / mv.eff;
+      var ux = s.k.indexOf('r') >= 0 ? dx : -dx, uy = s.k.indexOf('b') >= 0 ? dy : -dy;
+      var m = Math.max(0.2, Math.min(5, 1 + (ux * W + uy * Hh) / (W * W + Hh * Hh)));
+      if (mv.text) {
+        /* text: a font-size change, from the size it had when you opened it */
+        t.fs = Math.max(0.4, Math.min(3, (s.t.fs || 1) * m));
+        t.sx = t.sy = 1;
+      } else {
+        t.sx = t.sy = s.t.sx * m;
+        if (s.k.indexOf('l') >= 0) t.dx = s.t.dx + W * (1 - m) / mv.eff;
+        if (s.k.indexOf('t') >= 0) t.dy = s.t.dy + Hh * (1 - m) / mv.eff;
+      }
     }
     mv.t = t; applyT(n, t); syncFrame();
   });
@@ -506,10 +526,24 @@ function parseT(n) {
 function applyT(n, t) {
   var base = n.getAttribute('data-rv-t0') || '';
   n.style.transformOrigin = '0 0';
+  n.classList.add('rv-moved');
   n.style.transform = (base ? base + ' ' : '') +
     'translate(' + t.dx.toFixed(1) + 'px,' + t.dy.toFixed(1) + 'px) scale(' +
     t.sx.toFixed(3) + ',' + t.sy.toFixed(3) + ')';
+  if (t.fs != null && n.getAttribute('data-rv-fs0') != null) {
+    n.style.fontSize = Math.abs(t.fs - 1) < 0.005 ? (n.getAttribute('data-rv-fsi') || '')
+      : (+n.getAttribute('data-rv-fs0') * t.fs).toFixed(1) + 'px';
+  }
   n.setAttribute('data-rv-move', JSON.stringify(t));
+}
+function isTexty(n) {
+  var k = kindOf(n);
+  return (k === 'text' || k === 'heading' || k === 'table') &&
+         !n.querySelector('svg, canvas, img, .iplot');
+}
+function unmove(n) { n.classList.remove('rv-moved'); }
+function restoreFont(n) {
+  if (n.getAttribute('data-rv-fs0') != null) n.style.fontSize = n.getAttribute('data-rv-fsi') || '';
 }
 function geomUntransformed(n, sec, t) {
   var keep = n.style.transform;
@@ -536,18 +570,23 @@ function endFrame(keep) {
   })[0];
   var t = mv.t;
   var moved = Math.abs(t.dx) > 0.5 || Math.abs(t.dy) > 0.5 || Math.abs(t.sx - 1) > 0.005 ||
-              Math.abs(t.sy - 1) > 0.005;
+              Math.abs(t.sy - 1) > 0.005 || (t.fs != null && Math.abs(t.fs - 1) > 0.005);
   if (!keep) {
     applyT(n, old ? old.t : { dx: 0, dy: 0, sx: 1, sy: 1 });
-    if (!old) { n.style.transform = n.getAttribute('data-rv-t0') || ''; n.removeAttribute('data-rv-move'); }
+    if (!old) { n.style.transform = n.getAttribute('data-rv-t0') || ''; n.removeAttribute('data-rv-move'); restoreFont(n); unmove(n); }
   } else if (!moved) {
     if (old) ST.items.splice(ST.items.indexOf(old), 1);
     n.style.transform = n.getAttribute('data-rv-t0') || ''; n.removeAttribute('data-rv-move');
+    restoreFont(n); unmove(n);
     save();
   } else {
     var it = old || itemFor('move', sec, n);
     it.t = t; it.before = mv.g0; it.after = geom(n, sec);
     it.scale = { w: +(t.sx).toFixed(3), h: +(t.sy).toFixed(3) };
+    if (t.fs != null && Math.abs(t.fs - 1) > 0.005) {
+      var f0 = +n.getAttribute('data-rv-fs0');
+      it.font = { factor: +t.fs.toFixed(3), fromPx: +f0.toFixed(1), toPx: +(f0 * t.fs).toFixed(1) };
+    } else delete it.font;
     it.at = new Date().toISOString();
     if (!old) ST.items.push(it);
     save(); toast('Move / resize recorded.');
@@ -708,6 +747,10 @@ function reapply() {
     var n = fromPath(i.target.path, sec); if (!n) return;
     if (i.type === 'move' && i.t) {
       if (n.getAttribute('data-rv-t0') == null) n.setAttribute('data-rv-t0', n.style.transform || '');
+      if (i.t.fs != null && n.getAttribute('data-rv-fs0') == null) {
+        n.setAttribute('data-rv-fs0', parseFloat(getComputedStyle(n).fontSize).toFixed(2));
+        n.setAttribute('data-rv-fsi', n.style.fontSize || '');
+      }
       applyT(n, i.t);
     }
     if (i.type === 'text' && n.innerText.trim() === i.before) n.innerText = i.after;
@@ -764,7 +807,8 @@ function exportFile() {
     howToRead: 'Each item names its slide (1-based) and, where there is one, the element it is ' +
       'about: a structural path from the slide section (fit.js .slide-body children count as the ' +
       'section\'s own), its kind, text and label. Geometry is in slide units (1280 x 720). ' +
-      'text: before/after wording. move: before/after boxes and the scale. request: a note on an ' +
+      'text: before/after wording. move: before/after boxes and the scale (one factor, shape kept); ' +
+      'for text, font = the font-size change (factor, fromPx, toPx). request: a note on an ' +
       'element. box: a note on a boxed area of the slide.',
     items: ST.items.filter(function (i) { return i.status !== 'done'; })
   };
