@@ -490,7 +490,7 @@ D.register('triangle', function (node) {
   var S = { P: [[0.02, 0.03], [0.46, 0.05], [0.30, 0.34]], show: 'laws' };
   var drag = -1;
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 700 : 392,
+  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 700 : 362,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
   var sc = null;
@@ -539,7 +539,7 @@ D.register('triangle', function (node) {
       var o = t.pts[3 - z[2] - z[3]];
       var dx = mx - sc.X(o[0]), dy = my - sc.Y(o[1]), m = Math.hypot(dx, dy) || 1;
       label(c, z[0] + ' = ' + fmt(z[1], 3), mx + dx / m * 24, my + dy / m * 24,
-            { size: 12.5, color: z[4], weight: 700, plate: true });
+            { size: port ? 12.5 : 17, color: z[4], weight: 700, plate: true });
     });
 
     /* the three angles, with a right-angle tick where one is square */
@@ -558,8 +558,8 @@ D.register('triangle', function (node) {
       c.restore();
       var am = (a1 + a2) / 2 + (ccw ? Math.PI : 0);
       label(c, z[0] + ' = ' + fmt(z[1], 1) + '°',
-            sc.X(P[0]) + Math.cos(am) * 44, sc.Y(P[1]) + Math.sin(am) * 44,
-            { size: 12, color: square ? K.VIO : z[3], weight: 700, plate: true });
+            sc.X(P[0]) + Math.cos(am) * 52, sc.Y(P[1]) + Math.sin(am) * 52,
+            { size: port ? 12 : 16, color: square ? K.VIO : z[3], weight: 700, plate: true });
       /* the handle */
       c.save();
       c.fillStyle = K.PLATE; c.strokeStyle = z[3]; c.lineWidth = 2.4;
@@ -567,7 +567,7 @@ D.register('triangle', function (node) {
       c.restore();
     });
     label(c, 'drag any corner', box.x + box.w / 2, box.y + box.h - 6,
-          { size: 11, color: K.MUT, weight: 650 });
+          { size: port ? 11 : 14, color: K.MUT, weight: 650 });
 
     /* ------------------------- the three laws ------------------------ */
     var px = port ? 16 : fw + 14, pw = port ? ax.W - 32 : ax.W - fw - 30;
@@ -617,9 +617,9 @@ D.register('triangle', function (node) {
     }
     rows.forEach(function (r, i) {
       var yy = py + i * (port ? 68 : 98);
-      label(c, r[0], px, yy, { size: 12, align: 'left', weight: 700, color: r[2] });
-      wrapLabel(c, r[1], px, yy + (port ? 42 : 50), pw - 6,
-                { size: 12, align: 'left', color: K.MUT });
+      label(c, r[0], px, yy, { size: port ? 12 : 17, align: 'left', weight: 750, color: r[2] });
+      wrapLabel(c, r[1], px, yy + (port ? 42 : 56), pw - 6,
+                { size: port ? 12 : 16, align: 'left', color: K.INK });
     });
 
     var msg = sq
@@ -630,7 +630,7 @@ D.register('triangle', function (node) {
         'want: two angles and a side → the sine law; two sides and the angle ' +
         'between them → the cosine law; a right angle → either, or sin, cos and tan.';
     wrapLabel(c, msg, ax.W / 2, ax.H - 10, ax.W - 30,
-              { size: 11.5, color: sq ? K.VIO : K.MUT });
+              { size: port ? 11.5 : 14.5, color: sq ? K.VIO : K.MUT });
   }
 
   /* ----------------------------- dragging --------------------------- */
@@ -676,7 +676,7 @@ D.register('triangle', function (node) {
   keepOut(seg(row, [['laws', 'The sine and cosine laws'],
                     ['right', 'The right-angle functions']], 'laws',
               function (v) { S.show = v; draw(); }));
-  var row2 = ctlRow(u.ctl);
+  var row2 = row;
   var b1 = el('button', 'ibtn', 'Make it right-angled');
   b1.setAttribute('data-unsafe', '1');
   b1.addEventListener('click', function () {
@@ -692,9 +692,7 @@ D.register('triangle', function (node) {
   var rd = readout(u.ctl);
   rd.innerHTML = 'One triangle, three laws, all true at once. Drag a corner: the ' +
     'three sine-law ratios stay equal to each other while every one of them ' +
-    'changes, and the cosine law reproduces the side you can measure. <b>Which ' +
-    'law you reach for is decided by what you were given</b> — two angles and a ' +
-    'side, the sine law; two sides and the angle between them, the cosine law.';
+    'changes, and the cosine law reproduces the side you can measure.';
 
   node._draw = draw;
   draw();
@@ -883,7 +881,7 @@ D.register('unitcircle', function (node) {
   var u = build(node, {});
   var S = { th: 30 }, timer = null;
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 700 : 404,
+  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 700 : 392,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
   var SPECIAL = DA ? DA.lec.special : [];
@@ -892,11 +890,11 @@ D.register('unitcircle', function (node) {
     var K = C(), th = S.th, r = th * RAD;
     var sn = Math.sin(r), cs = Math.cos(r), tn = Math.tan(r);
     ax.clear();
-    var fw = port ? ax.W : ax.W * 0.34;
+    var fw = port ? ax.W : ax.W * 0.42;
 
     /* ------------------------- the unit circle ----------------------- */
     var box = port ? { x: 6, y: 26, w: ax.W * 0.40, h: 178 }
-                   : { x: 10, y: 26, w: fw - 20, h: ax.H - 150 };
+                   : { x: 10, y: 10, w: fw - 20, h: ax.H - 196 };
     var sc = new Scene(c, box).fit(-1.25, -1.25, 1.25, 1.25, 8);
     c.save(); c.strokeStyle = K.GRID; c.lineWidth = 1.2;
     c.beginPath(); c.moveTo(sc.X(-1.2), sc.Y(0)); c.lineTo(sc.X(1.2), sc.Y(0));
@@ -916,23 +914,23 @@ D.register('unitcircle', function (node) {
     c.stroke(); c.restore();
     c.save(); c.strokeStyle = K.VIO; c.lineWidth = 1.8;
     c.beginPath(); c.arc(sc.X(0), sc.Y(0), 26, 0, -r, true); c.stroke(); c.restore();
-    label(c, fmt(th, 0) + '°', port ? box.x + 24 : sc.X(0) + 40,
-          port ? box.y + 14 : sc.Y(0) - 18,
-          { size: 12.5, color: K.VIO, weight: 700, plate: true });
+    label(c, fmt(th, 0) + '°', port ? box.x + 24 : sc.X(0) + 46 * Math.cos(r / 2),
+          port ? box.y + 14 : sc.Y(0) - 46 * Math.sin(r / 2),
+          { size: port ? 12.5 : 16, color: K.VIO, weight: 700, plate: true });
     c.save(); c.fillStyle = K.INK;
     c.beginPath(); c.arc(sc.X(cs), sc.Y(sn), 5.5, 0, 7); c.fill(); c.restore();
-    label(c, 'cos = ' + fmt(cs, 3), sc.X(cs / 2), sc.Y(0) + 16,
-          { size: 11, color: K.GRN, weight: 700, plate: true });
-    label(c, 'sin = ' + fmt(sn, 3), sc.X(cs) + (port ? -40 : 42), sc.Y(sn / 2),
-          { size: 11, color: K.ACC, weight: 700, plate: true });
+    label(c, 'cos = ' + fmt(cs, 3), sc.X(cs / 2), sc.Y(0) + 18,
+          { size: port ? 11 : 15, color: K.GRN, weight: 700, plate: true });
+    label(c, 'sin = ' + fmt(sn, 3), sc.X(cs) + (port ? -40 : 58), sc.Y(sn / 2),
+          { size: port ? 11 : 15, color: K.ACC, weight: 700, plate: true });
     if (!port)
-      label(c, 'radius 1', sc.X(cs * 0.45) - 26, sc.Y(sn * 0.45) - 12,
-            { size: 10.5, color: K.MUT, weight: 650, plate: true });
+      label(c, 'radius 1', sc.X(cs * 0.62) - 30 * sn - 10, sc.Y(sn * 0.62) - 30 * cs,
+            { size: 14, color: K.MUT, weight: 650, plate: true });
 
     /* ---------------------------- the graphs ------------------------- */
     var px = port ? 0 : fw;
-    var top = port ? box.y + box.h + 30 : 32;
-    var gh = port ? (ax.H - top - 176) / 3 : (ax.H - 160) / 3;
+    var top = port ? box.y + box.h + 30 : 26;
+    var gh = port ? (ax.H - top - 176) / 3 : (ax.H - 26 - 48 - 66) / 3;
     [['sin θ', Math.sin, K.ACC, -1.2, 1.2],
      ['cos θ', Math.cos, K.GRN, -1.2, 1.2],
      ['tan θ', Math.tan, K.BLUE, -3.2, 3.2]].forEach(function (z, gi) {
@@ -952,21 +950,23 @@ D.register('unitcircle', function (node) {
       if (Math.abs(v) <= Math.abs(z[4])) a2.dots([[th, v]], { color: z[2], r: 5 });
       label(c, z[0] + '  =  ' + (Math.abs(v) > 60 ? 'off the scale' : fmt(v, 3)),
             a2.pl + 6, gy + 10,
-            { size: 12, align: 'left', weight: 700, color: z[2], plate: true });
+            { size: port ? 12 : 16, align: 'left', weight: 700, color: z[2], plate: true });
       if (gi === 2)
         label(c, 'the angle θ, in degrees', (a2.pl + ax.W - a2.pr) / 2,
-              ax.H - a2.pb + 26, { size: 11.5, weight: 700 });
+              ax.H - a2.pb + 30, { size: port ? 11.5 : 15, weight: 700 });
     });
 
     /* ------------------- the special-angle table ------------------- */
-    var ty = port ? 44 : ax.H - 134;
-    var tx = port ? ax.W * 0.44 : 20, tw = port ? ax.W * 0.54 : fw - 30;
+    /* Marc, 28 Oct: the table was too small to read.  It now has the lower
+       left of the figure to itself, at the size of the graph labels. */
+    var ty = port ? 44 : ax.H - 168;
+    var tx = port ? ax.W * 0.44 : 14, tw = port ? ax.W * 0.54 : fw - 24;
     label(c, 'the special angles, on the circle', tx + tw / 2, ty,
-          { size: 11.5, weight: 700, color: K.INK });
-    var cols = port ? [0, 32, 100, 172] : [0, 58, 152, 246];
-    var tsz = port ? 9 : 10, dsz = port ? 9.5 : 10.5;
+          { size: port ? 11.5 : 16, weight: 750, color: K.INK });
+    var cols = port ? [0, 32, 100, 172] : [0, 58, 182, 306];
+    var tsz = port ? 9 : 15, dsz = port ? 9.5 : 15.5;
     SPECIAL.forEach(function (row, i) {
-      var yy = ty + 20 + i * 16;
+      var yy = ty + (port ? 20 : 30) + i * (port ? 16 : 27);
       var deg = row[0];
       var live = Math.abs(((th - deg) % 360 + 360) % 360) < 1.5;
       c.save(); c.globalAlpha = live ? 1 : 0.72;
@@ -984,11 +984,7 @@ D.register('unitcircle', function (node) {
       c.restore();
     });
 
-    wrapLabel(c, 'One point, one circle · its height is the sine, its sideways ' +
-      'distance the cosine, and the slope of the radius the tangent · which is ' +
-      'why tan blows up at 90°, where the radius is vertical and has no sideways ' +
-      'distance left to divide by',
-      ax.W / 2, ax.H - 10, ax.W - 30, { size: 11, color: K.MUT });
+    /* the old caption under the figure said what the readout says */
   }
 
   u.ctl.className = 'ictls g2';
@@ -997,9 +993,10 @@ D.register('unitcircle', function (node) {
                   function (v) { S.th = v; draw(); });
   sl.quiet(S.th);
   var row = ctlRow(u.ctl);
+  row.classList.add('half');
   keepOut(seg(row, [[0, '0°'], [30, '30°'], [45, '45°'], [60, '60°'], [90, '90°']],
               30, function (v) { S.th = +v; sl.quiet(S.th); draw(); }));
-  var pb = playBtn(u.ctl, '▶ Go round');
+  var pb = playBtn(row, '▶ Go round');
   pb.setAttribute('data-unsafe', '1');
   pb.addEventListener('click', function () {
     if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Go round'; return; }
@@ -1011,11 +1008,9 @@ D.register('unitcircle', function (node) {
   node._stop = function () { if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Go round'; } };
 
   var rd = readout(u.ctl);
-  rd.innerHTML = 'Sine, cosine and tangent are easiest to remember as ' +
-    '<b>one point going round one circle</b>. The height of the point is ' +
-    'the sine, its sideways distance is the cosine, and the tangent is one divided ' +
-    'by the other. Press the special angles and watch the special-angle table light ' +
-    'up a row at a time: those five rows are five places on this circle.';
+  rd.innerHTML = 'Sine, cosine and tangent are <b>one point going round one circle</b>: ' +
+    'its height is the sine, its sideways distance the cosine, and the tangent one ' +
+    'divided by the other. Press the special angles to light the table up a row at a time.';
 
   node._draw = draw;
   draw();
@@ -1174,7 +1169,7 @@ D.register('exponents', function (node) {
   var EX = DA.lec.expo, TH = DA.lec.theorems;
   var S = { tab: 'expo', base: 2, m: 3, n: 5 };
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 700 : 372,
+  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 860 : 310,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
 
@@ -1187,71 +1182,60 @@ D.register('exponents', function (node) {
     return expoCheck(q);
   }
 
+  /* Text sizes: Marc, 28 Oct, "the equations are very small".  The laws now
+     sit four across and two down so that each gets room to be read from the
+     back of the room. */
   function draw() {
     var K = C();
     ax.clear();
 
     if (S.tab === 'expo') {
-      var colw = port ? ax.W - 32 : (ax.W - 60) / 2;
-      var nleft = port ? EX.length : 4;
+      var ncol = port ? 1 : 4, colw = port ? ax.W - 30 : (ax.W - 30) / 4;
+      var rowh = port ? 96 : 122;
       EX.forEach(function (e, i) {
-        var col = i < nleft ? 0 : 1;
-        var row = i - col * nleft;
-        var x = 24 + col * (colw + 12);
-        var y = 40 + row * (port ? 72 : 72);
+        var col = i % ncol, row = Math.floor(i / ncol);
+        var x = 16 + col * colw;
+        var y = 30 + row * rowh;
         var fixed = expoCheck(e), live = liveLaw(e);
-        label(c, String(e.n), x, y,
-              { size: 12, align: 'left', weight: 700, color: K.MUT });
-        label(c, e.law, x + 22, y,
-              { size: 14, align: 'left', weight: 700, color: K.INK });
-        label(c, e.eg, x + 22, y + 21,
-              { size: 11.5, align: 'left', weight: 600, color: K.MUT });
-        var lhs = live.L, rhs = live.R;
-        var txt = fmtSmart(lhs) + '  =  ' + fmtSmart(rhs);
-        label(c, txt, x + 22, y + 42,
-              { size: 12, align: 'left', weight: 700,
-                color: live.ok ? K.GRN : K.ACC });
-        label(c, live.ok ? '✓' : '✗', x + 4, y + 42,
-              { size: 14, align: 'left', weight: 700,
-                color: live.ok ? K.GRN : K.ACC });
+        label(c, String(e.n), x, y, { size: 16, align: 'left', weight: 700, color: K.MUT });
+        label(c, e.law, x + 24, y, { size: 21, align: 'left', weight: 750, color: K.INK });
+        label(c, e.eg, x + 24, y + 30, { size: 17, align: 'left', weight: 600, color: K.MUT });
+        var txt = fmtSmart(live.L) + ' = ' + fmtSmart(live.R);
+        label(c, live.ok ? '✓' : '✗', x + 2, y + 60,
+              { size: 19, align: 'left', weight: 750, color: live.ok ? K.GRN : K.ACC });
+        label(c, txt, x + 24, y + 60,
+              { size: 18, align: 'left', weight: 750, color: live.ok ? K.GRN : K.ACC });
         if (!fixed.ok)
-          label(c, 'the example does not hold', x + 22, y + 60,
-                { size: 10.5, align: 'left', color: K.ACC, weight: 650 });
+          label(c, 'the example does not hold', x + 24, y + 86,
+                { size: 14, align: 'left', color: K.ACC, weight: 650 });
       });
       var all = EX.every(function (e) { return expoCheck(e).ok && liveLaw(e).ok; });
       label(c, all ? 'all eight hold, with the worked examples and with these'
                    : 'one of the eight does not hold',
-            ax.W / 2, ax.H - 36,
-            { size: 13, weight: 700, color: all ? K.GRN : K.ACC });
-      wrapLabel(c, 'The sliders change the base and the two powers · law 2 has no ' +
-        'power to change and law 8 needs a whole root, so those two ignore them',
-        ax.W / 2, ax.H - 12, ax.W - 30, { size: 11, color: K.MUT });
+            ax.W / 2, ax.H - 42, { size: 17, weight: 750, color: all ? K.GRN : K.ACC });
+      label(c, 'law 2 has no power to change and law 8 needs a whole root, so those ' +
+        'two ignore the sliders', ax.W / 2, ax.H - 14, { size: 14, color: K.MUT });
 
     } else {
-      var cw = port ? ax.W - 32 : (ax.W - 70) / 2;
+      var cw = port ? ax.W - 24 : (ax.W - 50) / 2;
       var per = Math.ceil(TH.length / (port ? 1 : 2));
       TH.forEach(function (t, i) {
         var col = i < per ? 0 : 1;
-        var x = 26 + col * (cw + 18);
-        var y = 40 + (i - col * per) * (port ? 30 : 26);
+        var x = 16 + col * (cw + 18);
+        var y = 22 + (i - col * per) * (port ? 44 : 31);
         var ok = Math.abs(t.lhs - t.rhs) < 1e-9;
-        label(c, (i + 1) + '.', x, y,
-              { size: 10.5, align: 'left', weight: 650, color: K.MUT });
-        label(c, t.law, x + 24, y,
-              { size: 11.5, align: 'left', weight: 650, color: K.INK });
-        label(c, t.eg, x + (port ? 210 : cw * 0.46), y,
-              { size: 11, align: 'left', weight: 600, color: K.MUT });
-        label(c, ok ? '✓' : '✗', x + cw - 10, y,
-              { size: 12, align: 'right', weight: 700,
-                color: ok ? K.GRN : K.ACC });
+        label(c, (i + 1) + '.', x, y, { size: 15, align: 'left', weight: 650, color: K.MUT });
+        label(c, t.law, x + 30, y, { size: 17, align: 'left', weight: 700, color: K.INK });
+        label(c, t.eg, port ? x + 30 : x + cw * 0.5, port ? y + 20 : y,
+              { size: 16, align: 'left', weight: 600, color: K.MUT });
+        label(c, ok ? '✓' : '✗', x + cw - 6, y,
+              { size: 18, align: 'right', weight: 750, color: ok ? K.GRN : K.ACC });
       });
       var allT = TH.every(function (t) { return Math.abs(t.lhs - t.rhs) < 1e-9; });
       label(c, allT ? 'all sixteen hold' : 'one of the sixteen does not',
-            ax.W / 2, ax.H - 34,
-            { size: 13, weight: 700, color: allT ? K.GRN : K.ACC });
-      wrapLabel(c, 'Both sides of every identity, evaluated with the example ' +
-        'numbers',
-        ax.W / 2, ax.H - 12, ax.W - 30, { size: 11, color: K.MUT });
+            ax.W / 2, ax.H - 36, { size: 17, weight: 750, color: allT ? K.GRN : K.ACC });
+      wrapLabel(c, 'Both sides of every identity, evaluated with the example numbers',
+        ax.W / 2, ax.H - 12, ax.W - 30, { size: 14, color: K.MUT });
     }
   }
 
@@ -1262,7 +1246,7 @@ D.register('exponents', function (node) {
     return (Math.round(v * 1e6) / 1e6).toString();
   }
 
-  u.ctl.className = 'ictls';
+  u.ctl.className = 'ictls g3';
   var row = ctlRow(u.ctl);
   keepOut(seg(row, [['expo', 'The eight laws of exponents'],
                     ['thm', 'The sixteen theorems']], 'expo',
@@ -1318,7 +1302,7 @@ D.register('axes3', function (node) {
   var cam = { az: -0.95, el: 0.18 };
   var timer = null;
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 680 : 386,
+  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 680 : 424,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
 
@@ -1340,8 +1324,8 @@ D.register('axes3', function (node) {
     var K = C(), P = bodyAt(S.p);
     if (!P) return;
     ax.clear();
-    var fw = port ? ax.W : ax.W * 0.60;
-    var box = { x: 8, y: 20, w: fw - 16, h: port ? ax.H * 0.46 : ax.H - 92 };
+    var fw = port ? ax.W : ax.W * 0.56;
+    var box = { x: 8, y: 6, w: fw - 16, h: port ? ax.H * 0.46 : ax.H - 34 };
     var o = bodyOrigin(P);
 
     /* a fixed scale so the body does not breathe as it walks */
@@ -1426,48 +1410,51 @@ D.register('axes3', function (node) {
     c.restore();
 
     label(c, fmt(S.p * 100, 0) + ' % of the stride · drag to turn',
-          box.x + box.w / 2, box.y + box.h + 14,
-          { size: 11, color: K.MUT, weight: 650 });
+          box.x + box.w / 2, box.y + box.h + 16,
+          { size: port ? 11 : 15, color: K.MUT, weight: 650 });
 
     /* --------------------------- the legend -------------------------- */
     var px = port ? 16 : fw + 10, pw = port ? ax.W - 32 : ax.W - fw - 26;
-    var py = port ? box.y + box.h + 30 : 44;
+    /* Marc, 28 Oct: larger, and the text beside it larger */
+    var F1 = port ? 12 : 18, F2 = port ? 10.5 : 15;
+    var py = port ? box.y + box.h + 30 : 22;
     label(c, 'slides 39 to 46, in one figure', px, py,
-          { size: 12.5, align: 'left', weight: 700, color: K.INK });
+          { size: port ? 12.5 : 18, align: 'left', weight: 750, color: K.INK });
     var cw = port ? ax.W * 0.5 : 0;
     PLANES.forEach(function (pl, i) {
-      var yy = py + 26 + i * 34;
+      var yy = py + (port ? 26 : 38) + i * (port ? 34 : 48);
       if (port) { px = 16; }
       c.save(); c.strokeStyle = K[pl[3]]; c.lineWidth = 4;
       c.beginPath(); c.moveTo(px, yy); c.lineTo(px + 18, yy); c.stroke(); c.restore();
       label(c, pl[1], px + 26, yy,
-            { size: 12, align: 'left', weight: 700, color: K[pl[3]] });
-      label(c, pl[2], px + 26, yy + 15,
-            { size: 10.5, align: 'left', color: K.MUT, weight: 600 });
+            { size: F1, align: 'left', weight: 700, color: K[pl[3]] });
+      label(c, pl[2], px + 26, yy + (port ? 15 : 21),
+            { size: F2, align: 'left', color: K.MUT, weight: 600 });
     });
     AXES.forEach(function (A, i) {
-      var yy = port ? py + 26 + i * 52 : py + 140 + i * 46;
+      var yy = port ? py + 26 + i * 52 : py + 186 + i * 68;
       if (port) px = 16 + cw;
       c.save(); c.strokeStyle = K[A[5]]; c.lineWidth = 4;
       c.beginPath(); c.moveTo(px, yy); c.lineTo(px + 18, yy); c.stroke(); c.restore();
       label(c, A[2], px + 26, yy,
-            { size: 12, align: 'left', weight: 700, color: K[A[5]] });
-      label(c, A[3], px + 26, yy + 15,
-            { size: 10.5, align: 'left', color: K.MUT, weight: 600 });
-      label(c, A[4], px + 26, yy + 29,
-            { size: 10.5, align: 'left', color: K.MUT, weight: 600 });
+            { size: F1, align: 'left', weight: 700, color: K[A[5]] });
+      label(c, A[3], px + 26, yy + (port ? 15 : 21),
+            { size: F2, align: 'left', color: K.MUT, weight: 600 });
+      label(c, A[4], px + 26, yy + (port ? 29 : 41),
+            { size: F2, align: 'left', color: K.MUT, weight: 600 });
     });
 
-    wrapLabel(c, 'A measured walking stride · the planes are fixed in the room ' +
-      'and the body moves through them, which is slides 47 to 50: the joint ' +
-      'axes go with the limbs, not with the diagram',
-      ax.W / 2, ax.H - 10, ax.W - 30, { size: 11, color: K.MUT });
+    if (port)
+      wrapLabel(c, 'A measured walking stride · the planes are fixed in the room ' +
+        'and the body moves through them, which is slides 47 to 50: the joint ' +
+        'axes go with the limbs, not with the diagram',
+        ax.W / 2, ax.H - 10, ax.W - 30, { size: 11, color: K.MUT });
   }
 
   dragTurn(u.cv, cam, draw);
 
   u.ctl.className = 'ictls g2';
-  var sp = slider(u.ctl, 'Where in the stride', 0, 1, 1 / (B.n - 1), S.p,
+  var sp = slider(u.ctl, 'The stride', 0, 1, 1 / (B.n - 1), S.p,
                   function (v) { return fmt(v * 100, 0) + ' %'; },
                   function (v) { S.p = v; draw(); });
   sp.quiet(S.p);
@@ -1476,7 +1463,7 @@ D.register('axes3', function (node) {
                     ['frontal', 'Frontal'], ['transverse', 'Transverse'],
                     ['z', 'z'], ['y', 'y'], ['x', 'x']], 'all',
               function (v) { S.show = v; draw(); }));
-  var pb = playBtn(u.ctl, '▶ Walk');
+  var pb = playBtn(row, '▶ Walk');
   pb.setAttribute('data-unsafe', '1');
   pb.addEventListener('click', function () {
     if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; return; }
@@ -1488,13 +1475,8 @@ D.register('axes3', function (node) {
   });
   node._stop = function () { if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; } };
 
-  var rd = readout(u.ctl);
-  rd.innerHTML = 'Three planes, three axes, and a real person walking through ' +
-    'them. The convention is the one defined on slides 41 to 46: <b>z</b> where sagittal and ' +
-    'frontal meet, up and down; <b>y</b> where frontal and transverse meet, left ' +
-    'and right; <b>x</b> where sagittal and transverse meet, front and back. Drag ' +
-    'to turn it; press Walk and the planes stay put while the limbs swing out of ' +
-    'them.';
+  /* no readout under this one (Marc, 28 Oct: a larger figure); the legend
+     beside it says what it shows, and the speaker notes the rest */
 
   node._draw = draw;
   draw();
@@ -1537,13 +1519,7 @@ D.register('topics', function (node) {
   u.stage.appendChild(wrap);
   u.stage.classList.add('topicstage');
 
-  var n = Object.keys(seen).length;
-  var rd = readout(u.ctl);
-  rd.innerHTML = 'Slide 11, with the lectures attached. Every topic on that ' +
-    'list is now an interactive deck — <b>' + n + ' of them</b> — and ' +
-    'this is the only slide in the course that can say so. That is the argument ' +
-    'for converting the introduction last: a map is not much use until there is ' +
-    'something to map.';
+  /* no caption under the grid (Marc, 28 Oct): the links say it */
 
   node._draw = function () {};
 });
@@ -1551,34 +1527,36 @@ D.register('topics', function (node) {
    8. JOINTS — pick an action, move the body through it
 
    Marc: "you could create a widget that moves this manequin in the
-   positions that you set with buttons."
+   positions that you set with buttons."  And on 28 Oct: "This should
+   relate to the previous slides and show the relevant movements of each
+   joint."
 
-   Source slides 50 to 58 are nine plates of a figure in two positions with an
-   arrow between them, and a plate cannot be asked what happens in between.
-   This can: choose a joint action and drag the figure through its whole
-   range, in the plane that action happens in.
+   So the widget has exactly the twenty actions of the six plate slides
+   before it, in the same order, under the same names, seen from the same
+   side.  Choose a plane, choose a joint, and drag the figure through its
+   whole range; the bar under the figure is the plate's arc unrolled, with
+   the anatomical position marked where the two names meet.
 
    The figure is a rigged character posed from the joint angles, rendered
-   ahead of time into one horizontal strip per action — fifty thousand
-   triangles and a skin solve per frame is not something to do in a slide's
-   JavaScript.  Every angle on the strips was checked against a measured
-   displacement before it was drawn: the figure faces the camera's right
-   in a side view, and reading it the other way inverts every sagittal
-   action at once.
+   ahead of time into one horizontal strip per action, with the anatomical
+   position always one of the frames.  Every direction on the strips was
+   checked against a measured displacement before it was drawn.
 
    The ranges are normal active range of motion, so the ends of the slider
-   are the ends of the joint — the hip stops at 85 degrees because that is
-   a straight-leg raise, not because the picture ran out.
+   are the ends of the joint.
    ====================================================================== */
 D.register('joints', function (node) {
   var port = D.portrait();
   var u = build(node, {});
   if (!DA || !DA.joints || !DA.joints.length) return;
   var J = DA.joints;
+  node.querySelector('.iwrap').classList.add('ijoints');
 
-  /* --------------------------------------------------- what is on screen */
   var cur = J[0], frame = 0, playing = false, dir = 1, raf = 0;
   var imgs = {}, ready = {};
+  var PC = function () {
+    return { sagittal: C().BLUE, frontal: C().GRN, transverse: C().VIO }[cur.plane];
+  };
 
   function load(m, then) {
     if (imgs[m.key]) { then && then(); return; }
@@ -1588,71 +1566,87 @@ D.register('joints', function (node) {
     imgs[m.key] = im;
   }
 
-  /* the stage is an image, not a plot: let it have the whole box */
-  var cv = u.cv;
-  var ctx = cv.getContext('2d');
-  var box = el('div', 'jointstage');
-  u.stage.innerHTML = '';
-  u.stage.appendChild(cv);
+  var cv = u.cv, ctx = cv.getContext('2d');
 
   function draw() {
     var dpr = window.devicePixelRatio || 1;
-    var W = u.stage.clientWidth || 600;
-    /* the slide gives the stage about 430 units once the heading, the three
-       control rows and the readout have taken theirs; asking for more just
-       makes fit.js shrink the whole slide */
-    var H = port ? Math.round(W * 1.2)
-                 : Math.max(300, Math.min(430, Math.round(W * 0.40)));
+    var W = u.stage.clientWidth || 520;
+    /* the stage has the left half of the slide to itself; the height is
+       what is left under the heading once the credit line has its row */
+    var H = port ? Math.round(W * 0.92) : 476;
     cv.width = W * dpr; cv.height = H * dpr;
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
+    var bar = 86;
     var im = imgs[cur.key];
     if (!im || !ready[cur.key]) {
-      label(ctx, 'drawing…', W / 2, H / 2, { color: C().MUT, size: 13 });
-      return;
+      label(ctx, 'drawing…', W / 2, (H - bar) / 2, { color: C().MUT, size: 15 });
+    } else {
+      var k = Math.min(W * 0.96 / cur.w, (H - bar - 4) / cur.h);
+      var dw = cur.w * k, dh = cur.h * k;
+      ctx.drawImage(im, cur.w * frame, 0, cur.w, cur.h, (W - dw) / 2, 0, dw, dh);
     }
-    var k = Math.min(W * 0.62 / cur.w, (H - 52) / cur.h);
-    var dw = cur.w * k, dh = cur.h * k;
-    var dx = (W - dw) / 2, dy = 4;
-    ctx.drawImage(im, cur.w * frame, 0, cur.w, cur.h, dx, dy, dw, dh);
 
-    /* the angle, under the figure, in the lecture's vocabulary */
+    /* the range as a bar: the lo name at the left end, the hi name at the
+       right, and a tick where the anatomical position is */
+    var a = cur.angles[frame], col = PC();
+    var x0 = Math.max(20, W * 0.08), x1 = W - x0, yb = H - bar + 26;
+    var X = function (v) { return x0 + (x1 - x0) * (v - cur.lo) / (cur.hi - cur.lo); };
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = C().GRID; ctx.lineWidth = 8;
+    ctx.beginPath(); ctx.moveTo(x0, yb); ctx.lineTo(x1, yb); ctx.stroke();
+    ctx.strokeStyle = col; ctx.lineWidth = 8;
+    ctx.beginPath(); ctx.moveTo(X(0), yb); ctx.lineTo(X(a), yb); ctx.stroke();
+    ctx.fillStyle = C().INK;
+    ctx.fillRect(X(0) - 1.5, yb - 14, 3, 28);
+    ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(X(a), yb, 10, 0, 2 * Math.PI); ctx.fill();
+    ctx.restore();
+    var fs = port ? 14 : 17;
+    if (cur.lo < 0)
+      label(ctx, cur.names[0], x0, yb + 30, { size: fs, align: 'left', weight: 700,
+                                              color: a < 0 ? col : C().MUT });
+    label(ctx, cur.names[1], x1, yb + 30, { size: fs, align: 'right', weight: 700,
+                                            color: a > 0 ? col : C().MUT });
+    label(ctx, '0°', X(0), yb - 26, { size: fs - 1, color: C().INK, weight: 700 });
+    show();
+  }
+
+  /* what the figure is doing, in the lecture's words */
+  function show() {
     var a = cur.angles[frame];
-    var nm = cur.label.split('↔');
-    var which = a < 0 ? nm[0] : a > 0 ? nm[1] : 'anatomical position';
-    var yy = dy + dh + 14;
-    label(ctx, cur.joint + ' · ' + which.trim(), W / 2, yy,
-          { size: port ? 15 : 18, weight: 750 });
-    label(ctx, (a === 0 ? '0' : minus(String(Math.abs(a)))) + '°',
-          W / 2, yy + 22, { size: port ? 14 : 17, color: C().ACC,
-                            weight: 750 });
+    var which = a < 0 ? cur.names[0] : a > 0 ? cur.names[1] : 'the anatomical position';
+    rd.innerHTML = '<span class="jname">' + cur.joint + '</span>' +
+      '<span class="jact" style="color:' + (a ? PC() : '') + '">' + which +
+      (a ? ' &nbsp;' + minus(String(Math.abs(a))) + '°' : '') + '</span>' +
+      '<span class="hint">' + (cur.lo < 0 ? cur.names[0] + ' to ' + Math.abs(cur.lo) +
+      '°, ' : '') + cur.names[1] + ' to ' + cur.hi + '°; seen ' +
+      ({ right: 'from the side', front: 'from the front',
+         above: 'from above' }[cur.view]) + '</span>';
   }
 
   /* ------------------------------------------------------------ controls */
   var planes = [['sagittal', 'Sagittal'], ['frontal', 'Frontal'],
                 ['transverse', 'Transverse']];
   var plane = 'sagittal';
-  var r1 = ctlRow(u.ctl);
-  keepOut(seg(r1, planes, plane, function (p) { plane = p; fillChips(); }));
-
-  var r2 = ctlRow(u.ctl);
-  var chipHost = el('div', '');
-  r2.appendChild(chipHost);
-
+  keepOut(seg(u.ctl, planes, plane, function (p) { plane = p; fillChips(); }));
+  var chipHost = el('div', 'jchips');
+  u.ctl.appendChild(chipHost);
+  var rd = readout(u.ctl);
+  rd.classList.add('jread');
   var r3 = ctlRow(u.ctl);
-  var sl = slider(r3, 'through the range', 0, J[0].n - 1, 1, 0,
-                  function (v) { return cur.angles[v] + '°'; },
+  var sl = slider(r3, 'Range', 0, J[0].n - 1, 1, 0,
+                  function (v) { return Math.abs(cur.angles[v]) + '°'; },
                   function (v) { frame = Math.round(v); draw(); });
   var play = playBtn(r3, '▶ Move');
-
-  var rd = readout(u.ctl);
 
   function fillChips() {
     chipHost.innerHTML = '';
     var items = J.filter(function (m) { return m.plane === plane; })
-                 .map(function (m) { return [m.key, m.joint]; });
+                 .map(function (m) { return [m.key, m.chip || m.joint]; });
     keepOut(chips(chipHost, items, items[0][0], function (k) { pick(k); }));
     pick(items[0][0]);
   }
@@ -1661,12 +1655,7 @@ D.register('joints', function (node) {
     for (var i = 0; i < J.length; i++) if (J[i].key === k) cur = J[i];
     sl.input.max = cur.n - 1;
     frame = cur.zero;
-    sl.set(frame);
-    rd.innerHTML = '<strong>' + cur.joint + '</strong> — ' +
-      cur.label + '. Normal range ' + minus(cur.lo + '°') + ' to ' +
-      minus(cur.hi + '°') + ', seen ' +
-      ({ right: 'from the side', front: 'from the front',
-         above: 'from above' }[cur.view]) + '.';
+    sl.quiet(frame);
     load(cur, draw);
     draw();
   }
@@ -1674,13 +1663,13 @@ D.register('joints', function (node) {
   play.addEventListener('click', function () {
     playing = !playing;
     play.innerHTML = playing ? '⏸ Pause' : '▶ Move';
-    if (playing) step();
+    if (playing) { last = 0; step(); }
   });
 
   var last = 0;
   function step(t) {
     if (!playing) return;
-    if (!last || t - last > 95) {
+    if (!last || t - last > 80) {
       last = t || 0;
       frame += dir;
       if (frame >= cur.n - 1) { frame = cur.n - 1; dir = -1; }
@@ -1692,6 +1681,7 @@ D.register('joints', function (node) {
   }
 
   window.addEventListener('resize', draw);
+  node._draw = draw;          /* the theme toggle repaints through this */
   fillChips();
 
   /* preload the rest quietly once the first one is up, so pressing a chip
@@ -1700,7 +1690,9 @@ D.register('joints', function (node) {
     J.forEach(function (m) { load(m); });
   }, 400);
 
-  return { stop: function () { playing = false; cancelAnimationFrame(raf); } };
+  return { stop: function () {
+    playing = false; cancelAnimationFrame(raf); play.innerHTML = '▶ Move';
+  } };
 });
 
 /* ======================================================================
@@ -1719,135 +1711,69 @@ D.register('joints', function (node) {
    students will meet that evening.
    ====================================================================== */
 D.register('method', function (node) {
+  /* The steps themselves are text in the slide (an <ol class="msteps"> next
+     to this figure) so that they can be edited like any other text; this
+     draws the diagram, which is step 3, and moves the highlight down the
+     list.  Click a step, or use the slider. */
   var port = D.portrait();
   var u = build(node, {});
   var S = { step: 10 };
+  var sec = node.closest('section');
+  var list = sec ? sec.querySelector('ol.msteps') : null;
+  var items = list ? Array.prototype.slice.call(list.children) : [];
+  var feet = sec ? Array.prototype.slice.call(sec.querySelectorAll('.mfoot')) : [];
+  var N = items.length || 11;
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 640 : 400,
+  var ax = new Axes(u.cv, { w: port ? 460 : 560, h: port ? 230 : 250,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
-
   var VF = 14, A = 2, D0 = 8;
   var VI = Math.sqrt(VF * VF - 2 * A * D0);
-
-  /* the source numbers ten steps, with the return-to-step-1 note set
-     under step 6 rather than numbered */
-  function num(i) { return i < 6 ? String(i + 1) : i === 6 ? '!' : String(i); }
-
-  var STEPS = [
-    ['Read the problem carefully to understand what is asked.',
-     'A sprinter is travelling at 14 m/s after accelerating at 2 m/s² over ' +
-     '8 m. How fast was she going when she started?'],
-    ['Write down what is to be determined.',
-     'the initial velocity, Vᵢ'],
-    ['When helpful, draw a diagram.',
-     'a straight line, 8 m long, with Vᵢ at one end and 14 m/s at the other'],
-    ['Identify and write down helpful formulas related to the variable.',
-     'Vƒ = Vᵢ + at   ·   d = Vᵢt + ½at²   ·   ' +
-     'Vƒ² = Vᵢ² + 2ad'],
-    ['Write down all the given information relevant to those formulas.',
-     'Vƒ = 14 m/s, a = 2 m/s², d = 8 m — and no time at all'],
-    ['Select the formula that contains the givens and the unknown.',
-     'the first two both need t, which we do not have. Only the third does not: ' +
-     'Vƒ² = Vᵢ² + 2ad'],
-    ['If no workable formula can be found, return to step 1.',
-     'not needed here — but this is the step that saves you when the first ' +
-     'formula you reach for has two unknowns in it'],
-    ['Write it out and substitute the known quantities.',
-     '14² = Vᵢ² + 2(2)(8)'],
-    ['Use basic algebra to solve for the unknown.',
-     'Vᵢ² = 196 − 32 = 164,  Vᵢ = √164 = ' + VI.toFixed(4)],
-    ['Check to see if the answer makes sense.',
-     'she sped up over the 8 m, so Vᵢ must be less than 14 — and ' +
-     fmt(VI, 2) + ' is. A negative answer, or one above 14, would mean an ' +
-     'arithmetic slip, not a fast sprinter.'],
-    ['Box the answer and check the units.',
-     'Vᵢ = ' + fmt(VI, 2) + ' m/s. √(m²/s²) is m/s, so the ' +
-     'units come out right too.']
-  ];
 
   function draw() {
     var K = C();
     ax.clear();
-    var fw = port ? ax.W : ax.W * 0.40;
-
-    /* the little picture, which is step 3 */
-    var box = { x: 12, y: 40, w: fw - 24, h: port ? 150 : 190 };
+    var box = { x: 12, y: 10, w: ax.W - 24, h: ax.H - 20 };
     var sc = new Scene(c, box).fit(-1.6, -2.2, 9.6, 2.6, 10);
-    c.save(); c.strokeStyle = K.INK; c.lineWidth = 3; c.lineCap = 'round';
-    c.beginPath(); c.moveTo(sc.X(0), sc.Y(0)); c.lineTo(sc.X(8), sc.Y(0));
-    c.stroke();
-    c.lineWidth = 1.6;
+    c.save(); c.strokeStyle = K.INK; c.lineWidth = 3.4; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(sc.X(0), sc.Y(0)); c.lineTo(sc.X(8), sc.Y(0)); c.stroke();
+    c.lineWidth = 1.8;
     c.beginPath(); c.moveTo(sc.X(0), sc.Y(-0.5)); c.lineTo(sc.X(0), sc.Y(0.5));
     c.moveTo(sc.X(8), sc.Y(-0.5)); c.lineTo(sc.X(8), sc.Y(0.5)); c.stroke();
     c.restore();
-    label(c, 'd = 8 m', sc.X(4), sc.Y(0) - 16, { size: 12, weight: 700, plate: true });
-    arrow(c, sc.X(0.4), sc.Y(1.3), sc.X(2.4), sc.Y(1.3),
-          { color: K.ACC, width: 2.6, head: 10 });
-    label(c, S.step >= 8 ? 'Vᵢ = ' + fmt(VI, 2) + ' m/s' : 'Vᵢ = ?',
-          sc.X(1.4), sc.Y(1.3) - 16,
-          { size: 12.5, color: K.ACC, weight: 700 });
-    arrow(c, sc.X(5.0), sc.Y(1.3), sc.X(7.8), sc.Y(1.3),
-          { color: K.GRN, width: 3.2, head: 11 });
-    label(c, 'Vƒ = 14 m/s', sc.X(6.4), sc.Y(1.3) - 16,
-          { size: 12.5, color: K.GRN, weight: 700 });
-    label(c, 'a = 2 m/s²', sc.X(4), sc.Y(-1.4),
-          { size: 12, color: K.MUT, weight: 650 });
-
-    /* the ten steps, and the note under step 6 */
-    var px = port ? 16 : fw + 6, pw = port ? ax.W - 32 : ax.W - fw - 24;
-    var py = port ? box.y + box.h + 30 : 34;
-    var lh = port ? 24 : 28;
-    STEPS.forEach(function (s, i) {
-      var live = i <= S.step, now = i === S.step;
-      var yy = py + i * lh;
-      c.save(); c.globalAlpha = live ? 1 : 0.3;
-      label(c, num(i), px + (i === 6 ? 14 : 0), yy,
-            { size: 10.5, align: 'left', weight: 700,
-              color: now ? K.ACC : K.MUT });
-      label(c, s[0], px + (i === 6 ? 32 : 18), yy,
-            { size: now ? 12 : 11.5, align: 'left',
-              weight: now ? 700 : 600, color: now ? K.ACC : K.INK });
-      c.restore();
+    label(c, 'd = 8 m', sc.X(4), sc.Y(0) - 20, { size: 19, weight: 700, plate: true });
+    arrow(c, sc.X(0.4), sc.Y(1.3), sc.X(2.4), sc.Y(1.3), { color: K.ACC, width: 3, head: 12 });
+    label(c, S.step >= 8 ? 'Vᵢ = ' + fmt(VI, 2) + ' m/s' : 'Vᵢ = ?', sc.X(1.4), sc.Y(1.3) - 22,
+          { size: 19, color: K.ACC, weight: 700 });
+    arrow(c, sc.X(5.0), sc.Y(1.3), sc.X(7.8), sc.Y(1.3), { color: K.GRN, width: 3.6, head: 13 });
+    label(c, 'Vƒ = 14 m/s', sc.X(6.4), sc.Y(1.3) - 22, { size: 19, color: K.GRN, weight: 700 });
+    label(c, 'a = 2 m/s²', sc.X(4), sc.Y(-1.4), { size: 18, color: K.MUT, weight: 650 });
+  }
+  function show() {
+    items.forEach(function (li, i) {
+      li.classList.toggle('cur', i === S.step);
+      li.classList.toggle('later', i > S.step);
     });
-
-    /* what the current step actually says, under the diagram where there is
-       room for it -- the step list fills the right column by itself */
-    var sx2 = 16, sw = port ? ax.W - 32 : fw - 28;
-    var sy = port ? py + STEPS.length * lh + 18 : box.y + box.h + 30;
-    label(c, S.step === 6 ? 'step 6, if no formula works' : 'step ' + num(S.step), sx2, sy,
-          { size: 11, align: 'left', weight: 700, color: K.ACC });
-    wrapLabel(c, STEPS[S.step][1], sx2, sy + 24 + 34, sw,
-              { size: 12.5, align: 'left', weight: 650, color: K.INK });
-
-    var foot = S.step === 9
-      ? 'This is the step that catches slips. A speed, a mass or a triangle side ' +
-        'that cannot be right is usually obvious the moment you ask whether it ' +
-        'makes sense, and a quick sketch makes it more obvious still.'
-      : S.step === 5
-      ? 'This is where the real decision is made. Two of the three equations need ' +
-        'a time that was never given; only the third does not. Choosing the ' +
-        'formula IS the problem — the algebra afterwards is bookkeeping.'
-      : 'The problem-solving steps, one at a time, on the Tutor’s first Basic ' +
-        'Math question.';
-    wrapLabel(c, foot, ax.W / 2, ax.H - 10, ax.W - 30,
-              { size: 11.5, color: S.step === 9 || S.step === 5 ? K.ACC : K.MUT });
+    /* the note under the figure: step 6 (index 5) and step 9 (index 9) have
+       their own; everything else gets the general one */
+    var key = S.step === 5 ? '5' : S.step === 9 ? '9' : '';
+    feet.forEach(function (p) { p.classList.toggle('on', p.getAttribute('data-at') === key); });
+    draw();
   }
 
-  u.ctl.className = 'ictls g2';
-  var ss = slider(u.ctl, 'Step', 0, STEPS.length - 1, 1, S.step,
-                  function (v) { return v === 6 ? '6, note' : num(v) + ' of 10'; },
-                  function (v) { S.step = Math.round(v); draw(); });
+  u.ctl.className = 'ictls';
+  var ss = slider(u.ctl, 'Step', 0, N - 1, 1, S.step,
+                  function (v) { var li = items[v]; return li ? li.getAttribute('data-num') : String(v); },
+                  function (v) { S.step = Math.round(v); show(); });
   ss.quiet(S.step);
-  var rd = readout(u.ctl);
-  rd.innerHTML = 'Ten steps, and the two that matter most are the ones that look ' +
-    'like filler. <b>Step 6</b> is where the problem is actually solved: two of the ' +
-    'three kinematics equations need a time nobody gave you, so there is only one ' +
-    'left and no choice to agonise over. <b>Step 9</b>, check to see if the answer ' +
-    'makes sense, is the one that catches mistakes.';
+  items.forEach(function (li, i) {
+    li.addEventListener('click', function () {
+      S.step = i; ss.quiet(i); show();
+    });
+  });
 
   node._draw = draw;
-  draw();
+  show();
 });
 /* ======================================================================
    10 and 11.  ONE MEASURED JUMP, TWICE — source slides 7 and 8
@@ -2565,4 +2491,29 @@ window.IA = { triFromSSS: triFromSSS, triFromSAS: triFromSAS,
               bodyAt: bodyAt, bodyOrigin: bodyOrigin, proj: proj,
               planeQuad: planeQuad, RAD: RAD, DEG: DEG };
 D.boot();
+})();
+
+/* ======================================================================
+   The running skeleton on slide 5 is a CSS sprite; a click pauses it and
+   plays it again.  It runs only while its slide is showing.
+   ====================================================================== */
+(function () {
+  function sync() {
+    var cur = window.Reveal && Reveal.getCurrentSlide();
+    Array.prototype.forEach.call(document.querySelectorAll('.runsprite'), function (r) {
+      if (!r._wired) {
+        r._wired = true;
+        r.addEventListener('click', function () { r.classList.toggle('paused'); r._user = r.classList.contains('paused'); });
+        r.addEventListener('keydown', function (e) {
+          if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); r.click(); }
+        });
+      }
+      var here = cur && cur.contains(r);
+      r.classList.toggle('paused', !here || !!r._user);
+    });
+  }
+  if (window.Reveal) {
+    if (Reveal.isReady && Reveal.isReady()) sync(); else Reveal.on('ready', sync);
+    Reveal.on('slidechanged', sync);
+  }
 })();

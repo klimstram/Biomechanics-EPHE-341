@@ -4,7 +4,7 @@ Read this before touching anything in this repo. It is the handoff for any agent
 (Claude or otherwise) picking up the work of converting Marc Klimstra's EPHE 341
 Biomechanics PowerPoint lectures (UVic) into reveal.js decks.
 
-Last updated 2026-10-28 (after the first review-mode round on lecture 1b).
+Last updated 2026-10-28 (after the first review-mode rounds on lectures 1b and 1a).
 
 ---
 
@@ -45,7 +45,7 @@ app.webmanifest     set name/short_name for each new deck
 
 | hub n | folder | state |
 |---|---|---|
-| 1a | 01a-intro-and-review | done, 62 slides, 12 widgets. Consistency pass vs original done 2026-10-27 |
+| 1a | 01a-intro-and-review | done, 65 slides, 12 widgets. Consistency pass vs original done 2026-10-27. Review round 1 (25 items) done 2026-10-28, `?v=20261028a` |
 | 1b | 01b-linear-kinematics-review | done 2026-10-27: 100 slides (92 source + 7 widget slides + Sources), 7 widgets. Review round 1 (27 items) done 2026-10-28, `?v=20261028a` |
 | 2–12, 14–20 | 02-… to 20-… | done |
 | 13 | tools/work-loop-simulator | Virtual Muscle Lab port |
@@ -258,10 +258,40 @@ to his Downloads. His notes persist in localStorage, keyed
   `segment.png`) come from `osim/figs1b.py`. Joint pixel positions are in
   `slides/figs1b.json`.
 
+**Round 1 on 1a (2026-10-28) added these:**
+
+- **Joint actions are twenty plates, one per action** (McGinnis figures
+  6.19 to 6.21): six slides, two per plane, with the plane's text split
+  across the pair. `osim/plates2.py` holds one ACTIONS list that renders
+  both the plates (`figs/plate_<key>.png`, lo position pale, hi solid) and
+  the widget strips (`figs/j_<key>.png`, 13 frames, the anatomical position
+  always one of them). It writes the pivot and the limb tip at neutral, lo
+  and hi in plate pixels. `slides/figs1d.py` reads them and draws the arcs
+  from the anatomical position (open dot), so no arc is placed by hand.
+  Pronation is a roll and shoulder rotation is seen end-on, so those two
+  have fixed arcs (`SPECIAL`). Each plate is its own SVG in a
+  `.platerow` flex row (each plate's share of the width is proportional to
+  its own width, so heights match), which lets them wrap two to a row in
+  portrait.
+- **The joints widget is the plates moving**: the same twenty actions, names
+  and views (`IN1A.joints`, with a `chip` name each). A self-test checks
+  that every widget action has its plate and vice versa.
+- **Editable text, not canvas text**: the slide 18 method steps are an HTML
+  `<ol class="msteps">`. The canvas draws only the problem diagram, so
+  review mode can edit the steps.
+- Slide 5 is a CSS sprite (`figs/os_run_strip.webp`, 41 frames) of the
+  OpenSim Hamner model running its own trial (`subject02_running_ik.mot`,
+  frames 393 to 433). `_sprite.js` pauses it off-slide. Slide 9's numbers are
+  measured off frame 396.
+- **Portrait testing trap**: at 430 px wide reveal switches to its scroll
+  view, where `Reveal.slide(i)` does not move the page. Screenshot with
+  `Reveal.getSlides()[i].scrollIntoView()`. `check.py`'s portrait sweep
+  checks only what is in view, so look at the portrait pages yourself.
+
 ## 4. Verification before handing anything over
 
 1. Widget self-test (lecture 1a: `stest.py` runs `selftest.js`, currently
-   130/130; lecture 1b: 83/83, including the animated figures).
+   177/177; lecture 1b: 83/83, including the animated figures).
 2. Layout at 1280×720, 1600×900, 1920×1080 and portrait 430×932: no slide
    content overflowing its box, console clean, no image aspect drift.
 3. Print: `index.html?print-pdf`, export the handout at

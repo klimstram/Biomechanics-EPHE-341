@@ -977,6 +977,15 @@ html[data-portrait] .figrow svg.hifig.tall{ max-height:none; }
 /* a row of small graphs under a block of text: keep it to a strip */
 /* the three joint-action plates: leave room for the credit line under them */
 .figrow.plates svg.hifig{ max-height:50vh; width:auto; max-width:100%; }
+.figrow .platerow{ display:flex; gap:14px; align-items:flex-end; margin:0 auto;
+                   max-width:calc(50vh * var(--pr)); }
+.figrow .platerow svg.hifig.plates2{ display:block; min-width:0; width:100%; height:auto;
+                   max-height:none; }
+html[data-portrait] .figrow .platerow{ flex-wrap:wrap; max-width:none; justify-content:center;
+                   gap:10px 4%; }
+html[data-portrait] .figrow .platerow svg.hifig.plates2{ flex:0 0 48% !important; }
+/* source slide 49: the two cameras, short enough that its text stays full size */
+.figrow svg.hifig.tall.tv{ max-height:40vh; }
 html[data-portrait] .figrow.plates svg.hifig{ max-height:none; width:100%; }
 .figrow.short svg.hifig{ max-height:34vh; width:auto !important; max-width:100%; }
 html[data-portrait] .figrow.short svg.hifig{ max-height:none; width:100% !important; }
@@ -1059,3 +1068,88 @@ html[data-portrait] .reveal table.theorems{ font-size:.5em; }
 .reveal table.laws td.law{ border:1.6px solid var(--ink); border-radius:4px; }
 .reveal table.laws tr + tr td{ border-top:1px solid var(--hair); }
 html[data-portrait] .reveal table.laws td.law{ white-space:normal; }
+
+/* ---- slide 18: the ten steps as text (review round 1, 28 Oct) */
+.cols.method{ grid-template-columns:.78fr 1.22fr; gap:1.2em; align-items:start; }
+ol.msteps{ list-style:none; margin:0; padding:0; font-size:.68em; line-height:1.24; }
+ol.msteps li{ position:relative; padding:.16em 0 .16em 2.1em; cursor:pointer; color:var(--ink);
+  transition:opacity .2s, color .2s; }
+ol.msteps li::before{ content:attr(data-num); position:absolute; left:0; width:1.6em; text-align:right;
+  font-weight:750; color:var(--muted); }
+ol.msteps li.mnote{ padding-left:3.1em; font-style:italic; }
+ol.msteps li.mnote::before{ width:2.6em; }
+ol.msteps li.later{ opacity:.35; }
+ol.msteps li.cur{ color:var(--accent); font-weight:700; }
+ol.msteps li.cur::before{ color:var(--accent); }
+ol.msteps .mwork{ display:none; font-weight:600; color:var(--ink); font-size:.94em; margin-top:.15em;
+  padding:.3em .55em; background:var(--chip); border-left:3px solid var(--accent); border-radius:0 6px 6px 0; }
+ol.msteps li.cur .mwork{ display:block; }
+.mfoot{ display:none; margin:.5em 0 0; color:var(--muted); }
+.mfoot.on{ display:block; }
+.mfoot[data-at="5"].on,.mfoot[data-at="9"].on{ color:var(--accent); font-weight:650; }
+.mread{ margin-top:.5em; }
+.reveal .pdf-page ol.msteps li.later{ opacity:1; }
+html[data-portrait] .cols.method{ grid-template-columns:1fr; }
+/* three sliders on one row, so the figure above them can be larger */
+.ictls.g3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:.18em 1.2em; }
+.ictls.g3 .ictl{ grid-template-columns:6.2em 1fr 2.2em; gap:.45em; }
+.ictls.g3 > .iread,.ictls.g3 > .icalc-chips,.ictls.g3 > .ictl-row,.ictls.g3 > .iseg{ grid-column:1 / -1; }
+html[data-portrait] .ictls.g3{ grid-template-columns:1fr; }
+.ictls.g2 > .ictl-row.half{ grid-column:auto; justify-content:flex-start; }
+html[data-portrait] .ictls.g2 > .ictl-row.half{ grid-column:1 / -1; }
+
+/* ---- slide 5: the OpenSim model running (a 41-frame sprite, 60 Hz) */
+.runsprite{ position:relative; width:min(100%, 290px); aspect-ratio:256 / 360; margin:0 auto;
+  background:url(figs/os_run_strip.webp?v=1) 0 0 / 4100% 100% no-repeat;
+  animation:runstride .6833s steps(41) infinite; cursor:pointer; }
+.runsprite.paused{ animation-play-state:paused; }
+.runsprite .floor{ position:absolute; left:4%; right:4%; top:96.3%; height:2px; background:var(--muted); opacity:.5; }
+@keyframes runstride{ from{ background-position-x:0%; } to{ background-position-x:102.5%; } }
+@media (prefers-reduced-motion:reduce){ .runsprite{ animation-play-state:paused; } }
+.reveal .pdf-page .runsprite{ animation:none; background-position-x:40%; }
+html[data-portrait] .runsprite{ width:min(70%, 300px); }
+
+/* slide 9: the annotated runner gets most of the width */
+.cols.runcols{ grid-template-columns:.62fr 1.38fr; gap:1em; }
+html[data-portrait] .cols.runcols{ grid-template-columns:1fr; }
+.cols.runcols .figcol svg.runann{ max-height:none; width:100%; }
+
+/* source slides 50 to 58, the joints widget: the figure on the left, the
+   choices and what the figure is doing on the right (Marc, 28 Oct) */
+.iwrap.ijoints{ display:grid; grid-template-columns:1.12fr 1fr; gap:0 1.6em;
+                align-items:center; }
+.ijoints .ictls{ font-size:.86em; gap:.6em; }
+.ijoints .jchips .icalc-chips{ justify-content:flex-start; }
+.ijoints .iseg{ align-self:flex-start; }
+.ijoints .ictl-row{ justify-content:flex-start; }
+.ijoints .ictl-row .ictl{ flex:1; }
+.ijoints .jread{ text-align:left; min-height:5.2em; }
+.ijoints .jread .jname{ display:block; font-size:1.25em; font-weight:800;
+                        color:var(--ink-strong); }
+.ijoints .jread .jact{ display:block; font-size:1.12em; font-weight:750; }
+html[data-portrait] .iwrap.ijoints{ grid-template-columns:1fr; }
+.ijoints .ictl{ grid-template-columns:3.8em 1fr 3.4em; }
+
+/* source slide 59, Table 6.2: each plane in its own colour, the actions as
+   pills (Marc, 28 Oct: "Can this table look nicer?") */
+.reveal table.actions{ width:100%; border-collapse:separate; border-spacing:0 .4em;
+               font-size:.62em; margin-top:.2em; }
+.reveal table.actions th{ text-align:left; font-size:.82em; color:var(--muted);
+                  font-weight:700; letter-spacing:.02em; border:0; padding:0 .6em; }
+.reveal table.actions td{ vertical-align:middle; border:0; padding:.45em .6em;
+                  background:var(--surface); text-align:left; }
+.reveal table.actions td:first-child{ border-radius:10px 0 0 10px; width:9.4em;
+                              border-left:7px solid var(--pc); }
+.reveal table.actions td:last-child{ border-radius:0 10px 10px 0; line-height:1.9; }
+.reveal table.actions tr.sag{ --pc:var(--brand); }
+.reveal table.actions tr.fro{ --pc:var(--good); }
+.reveal table.actions tr.tra{ --pc:var(--violet); }
+.reveal table.actions .plane{ font-weight:800; color:var(--pc); font-size:1.08em; }
+.reveal table.actions td.axis{ width:9em; font-weight:650; color:var(--ink-strong); }
+.reveal table.actions .act{ display:inline-block; padding:.02em .62em; margin:.12em .14em;
+                    border-radius:99px; line-height:1.55; white-space:nowrap;
+                    background:color-mix(in srgb, var(--pc) 13%, transparent);
+                    border:1.5px solid color-mix(in srgb, var(--pc) 45%, transparent); }
+html[data-portrait] .reveal table.actions td:first-child,
+html[data-portrait] .reveal table.actions td.axis{ width:auto; }
+html[data-portrait] .reveal table.actions .act{ white-space:normal; }

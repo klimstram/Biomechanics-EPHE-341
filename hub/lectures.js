@@ -27,7 +27,7 @@ window.EPHE341_LECTURES = [
     path: 'lectures/01a-intro-and-review',
     blurb: 'What biomechanics is, how the course runs, and the mathematics and anatomy the ' +
            'rest of the term assumes.',
-    slides: 62, widgets: 12, updated: '2026-10-27',
+    slides: 65, widgets: 12, updated: '2026-10-28',
     handout: 'handout.pdf',
     live: [['one stride, and both kinds of force', 'w-walk'],
            ['the whole course, as a map', 'w-topics'],
