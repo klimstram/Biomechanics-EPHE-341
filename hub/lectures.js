@@ -27,7 +27,7 @@ window.EPHE341_LECTURES = [
     path: 'lectures/01a-intro-and-review',
     blurb: 'What biomechanics is, how the course runs, and the mathematics and anatomy the ' +
            'rest of the term assumes.',
-    slides: 65, widgets: 12, updated: '2026-10-28',
+    slides: 64, widgets: 16, updated: '2026-11-07',
     handout: 'handout.pdf',
     live: [['one stride, and both kinds of force', 'w-walk'],
            ['the whole course, as a map', 'w-topics'],
@@ -36,6 +36,7 @@ window.EPHE341_LECTURES = [
            ['twenty-four identities, checked', 'w-exponents'],
            ['one triangle, all three relations', 'w-triangle'],
            ['the planes, on somebody walking', 'w-axes3'],
+           ['one elbow, two planes', 'w-jointaxis'],
            ['every joint action, moved', 'w-joints']] },
 
   { n: '1b', title: 'Linear kinematics review',

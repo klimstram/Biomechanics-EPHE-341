@@ -123,6 +123,34 @@ html[data-theme="dark"] .reveal-viewport{
 .cols.a{ grid-template-columns:1.05fr .95fr; }
 .cols.b{ grid-template-columns:.8fr 1.2fr; }
 .cols.c{ grid-template-columns:1.25fr .75fr; }
+.cols.tri{ grid-template-columns:1fr 1fr 1.1fr; gap:1em; }
+.bookfig{ margin:.6em auto 0; width:100%; text-align:center; }
+.reveal .bookfig > svg{ width:178px; max-width:100%; height:auto; display:inline-block; }
+.pdf-page .bookfig > svg{ width:150px; }
+.pdf-page .iplot.figin, .pdf-page .iplot.wide.figin{ width:98px; }
+.pdf-page .topicmap{ gap:6px 8px; }
+.pdf-page .tgroup{ padding:5px 7px 6px; }
+.pdf-page .tghead{ margin-bottom:2px; }
+.pdf-page .tghead .tgn{ font-size:.80em; }
+.pdf-page .tghead .tgs{ font-size:.62em; }
+.pdf-page .tgroup .topiclink{ padding:2px 6px; }
+.pdf-page .tgroup .topiclink .tname{ font-size:.70em; }
+.pdf-page .tgroup .topiclink .tdeck{ font-size:.55em; }
+/* a figure that sits inside a text column: fixed width, so fit.js's
+   scale-and-widen cannot make it grow as the slide shrinks */
+.iplot.figin, .iplot.wide.figin{ width:420px; max-width:100%; margin:.2em auto 0; }
+.iplot.figin .ictls{ font-size:.62em; gap:.2em; }
+.iplot.figin .iseg{ flex-wrap:nowrap; }
+.iplot.figin .iseg-b{ padding:.2em .5em; font-size:.92em; }
+.iplot.figin .ictl-row{ justify-content:center; }
+.iplot.figin + p.credit{ font-size:.52em; }
+html[data-portrait] .iplot.figin, html[data-portrait] .iplot.wide.figin{ max-width:none; }
+/* fit.js scales a body down and widens it to compensate, so a canvas at
+   width:100% grows as it shrinks.  Cap it and the loop cannot start. */
+.cols.tri .iplot, .cols.tri .iplot.wide{ max-width:430px; margin:0 auto; }
+html[data-portrait] .cols.tri{ grid-template-columns:1fr; }
+html[data-portrait] .cols.tri .iplot, html[data-portrait] .cols.tri .iplot.wide{
+  max-width:none; }
 .cols.top{ align-items:start; }
 .stack{ display:grid; gap:.5em; }
 .center{ text-align:center; }
@@ -939,6 +967,35 @@ html[data-portrait] .cols .fig.cap.tight img{ max-height:300px; }
   .topicgrid { grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:6px; }
   .topiclink { padding:7px 9px; }
 }
+/* the same links, grouped into the blocks the term is built from */
+.topicmap {
+  display:grid; gap:12px 14px;
+  grid-template-columns:repeat(3, 1fr);
+  align-items:stretch; text-align:left;
+}
+.tgroup {
+  border:1px solid var(--grid); border-radius:11px; background:var(--panel);
+  border-top:3px solid var(--tg, var(--acc));
+  padding:10px 12px 12px;
+}
+.tghead { display:flex; align-items:baseline; gap:.5em; margin:0 0 6px; }
+.tghead .tgn { font-weight:750; font-size:.80em; color:var(--tg, var(--ink)); }
+.tghead .tgs { font-size:.63em; color:var(--mut); }
+.tgroup .topiclink {
+  background:transparent; border:1px solid transparent; border-radius:7px;
+  padding:5px 8px; gap:0;
+}
+.tgroup .topiclink:hover, .tgroup .topiclink:focus-visible {
+  border-color:var(--tg, var(--acc)); background:var(--chip); transform:none;
+}
+.tgroup .topiclink .tname { font-size:.82em; }
+.tgroup .topiclink .tdeck { font-size:.64em; }
+.tghead .tgn { font-size:.88em; }
+.tghead .tgs { font-size:.68em; }
+@media (max-width:700px) {
+  .topicmap { grid-template-columns:1fr 1fr; gap:8px; }
+}
+html[data-portrait] .topicmap { grid-template-columns:1fr 1fr; gap:7px; }
 
 
 /* ============================================================
@@ -1099,7 +1156,7 @@ html[data-portrait] .ictls.g3{ grid-template-columns:1fr; }
 html[data-portrait] .ictls.g2 > .ictl-row.half{ grid-column:1 / -1; }
 
 /* ---- slide 5: the OpenSim model running (a 41-frame sprite, 60 Hz) */
-.runsprite{ position:relative; width:min(100%, 290px); aspect-ratio:256 / 360; margin:0 auto;
+.runsprite{ position:relative; width:min(100%, 350px); aspect-ratio:256 / 360; margin:0 auto;
   background:url(figs/os_run_strip.webp?v=1) 0 0 / 4100% 100% no-repeat;
   animation:runstride .6833s steps(41) infinite; cursor:pointer; }
 .runsprite.paused{ animation-play-state:paused; }
@@ -1112,7 +1169,7 @@ html[data-portrait] .runsprite{ width:min(70%, 300px); }
 /* slide 9: the annotated runner gets most of the width */
 .cols.runcols{ grid-template-columns:.62fr 1.38fr; gap:1em; }
 html[data-portrait] .cols.runcols{ grid-template-columns:1fr; }
-.cols.runcols .figcol svg.runann{ max-height:none; width:100%; }
+.cols .figcol svg.runann{ max-height:none; width:100%; }
 
 /* source slides 50 to 58, the joints widget: the figure on the left, the
    choices and what the figure is doing on the right (Marc, 28 Oct) */
@@ -1153,3 +1210,27 @@ html[data-portrait] .iwrap.ijoints{ grid-template-columns:1fr; }
 html[data-portrait] .reveal table.actions td:first-child,
 html[data-portrait] .reveal table.actions td.axis{ width:auto; }
 html[data-portrait] .reveal table.actions .act{ white-space:normal; }
+
+/* the table as the chooser, beside the figure it drives */
+.reveal table.actions.pickable .act[data-j]{ cursor:pointer;
+  transition:background .12s, border-color .12s, color .12s; }
+.reveal table.actions.pickable .act[data-j]:hover,
+.reveal table.actions.pickable .act[data-j]:focus-visible{
+  background:color-mix(in srgb, var(--pc) 30%, transparent);
+  border-color:var(--pc); outline:none; }
+.reveal table.actions.pickable .act[data-j].on{
+  background:var(--pc); border-color:var(--pc); color:#fff; font-weight:700; }
+.reveal table.actions.pickable .act.noj{ opacity:.5; }
+.jointslide .iwrap.ijoints{ grid-template-columns:.8fr 1.5fr; gap:0 1.2em; }
+.jointslide table.actions{ font-size:.52em; margin:0 0 .45em; }
+.jointslide table.actions td{ padding:.35em .5em; }
+.jointslide table.actions td:first-child{ width:8.2em; }
+.jointslide table.actions td.axis{ width:8em; }
+.jointslide .ijoints .jread{ min-height:3.2em; }
+.jointslide .ijoints .jread .jname{ display:inline; }
+.jointslide .ijoints .jread .jact{ display:inline; }
+.jointslide .ijoints .jread .jname::after{ content:' \00a0'; }
+.jointslide .ijoints .ictls{ gap:.45em; font-size:.82em; }
+.jointslide .jstagectl{ display:flex; flex-direction:column; gap:.4em;
+  margin-top:.2em; font-size:.82em; }
+html[data-portrait] .jointslide .iwrap.ijoints{ grid-template-columns:1fr; }

@@ -719,7 +719,7 @@ D.register('trigex', function (node) {
   if (!DA) return;
   var EX = DA.lec.trig, S = { i: 1 };
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 660 : 400,
+  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 660 : 440,
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
 
@@ -754,9 +754,9 @@ D.register('trigex', function (node) {
       sideLab(c, sc, B, Cp, fmt(r.opp, 3) + ' m', K.ACC, A);
       sideLab(c, sc, A, B, fmt(r.adj, 3) + ' m', K.GRN, Cp);
       label(c, fmt(e.ang, 0) + '°', sc.X(0.07), sc.Y(0.022),
-            { size: 12, color: K.BLUE, weight: 700 });
+            { size: 16, color: K.BLUE, weight: 700 });
       label(c, fmt(r.third, 0) + '°', sc.X(r.adj - 0.05), sc.Y(r.opp - 0.06),
-            { size: 12, color: K.BLUE, weight: 700 });
+            { size: 16, color: K.BLUE, weight: 700 });
     } else {
       var t = q.t, P = triPoints(t);
       /* fit the box to the triangle this case actually makes, not to the
@@ -773,17 +773,21 @@ D.register('trigex', function (node) {
       sideLab(c, sc2, P.B, P.C, 'a = ' + fmt(t.a, 2) + ' m', K.ACC, P.A);
       sideLab(c, sc2, P.A, P.C, 'b = ' + fmt(t.b, 2) + ' m', K.GRN, P.B);
       sideLab(c, sc2, P.A, P.B, 'c = ' + fmt(t.c, 4) + ' m', K.BLUE, P.C);
-      label(c, 'C = ' + fmt(t.C, 0) + '°', sc2.X(P.C[0]), sc2.Y(P.C[1]) - 20,
-            { size: 12, color: K.VIO, weight: 700, plate: true });
+      label(c, 'C = ' + fmt(t.C, 0) + '°', sc2.X(P.C[0]), sc2.Y(P.C[1]) - 24,
+            { size: 16, color: K.VIO, weight: 700, plate: true });
     }
-    label(c, e.name, box.x + box.w / 2, box.y - 12,
-          { size: 12, weight: 700, color: K.INK });
+    label(c, e.name, box.x + box.w / 2, box.y - 14,
+          { size: 17, weight: 700, color: K.INK });
 
     /* ---------------------------- the working ------------------------ */
     var px = port ? 16 : fw + 14, pw = port ? ax.W - 32 : ax.W - fw - 30;
     var py = port ? box.y + box.h + 36 : 40;
-    py = wrapLabel(c, e.q, px, py + 26, pw,
-                   { size: 12.5, align: 'left', weight: 650, color: K.INK }) + 18;
+    /* wrapLabel hangs its block upward from the y it is given, so the y we
+       pass is the bottom of the question however many lines it takes */
+    var qBot = py + (port ? 40 : 62);
+    wrapLabel(c, e.q, px, qBot, pw,
+              { size: 17, align: 'left', weight: 650, color: K.INK });
+    py = qBot + 14;
 
     var lines, chk;
     if (e.kind === 'right') {
@@ -810,13 +814,13 @@ D.register('trigex', function (node) {
       chk = 'check: c is shorter than a, as a 22° angle between a and b requires';
     }
     lines.forEach(function (ln, i) {
-      wrapLabel(c, ln, px, py + 22 + i * (port ? 30 : 32), pw - 6,
-                { size: i === lines.length - 1 ? 13.5 : 11.8, align: 'left',
+      wrapLabel(c, ln, px, py + 24 + i * (port ? 30 : 40), pw - 6,
+                { size: i === lines.length - 1 ? 18.5 : 16.5, align: 'left',
                   weight: i === lines.length - 1 ? 700 : 600,
                   color: i === lines.length - 1 ? K.ACC : K.MUT });
     });
-    var ay = py + 22 + lines.length * (port ? 30 : 32) + 12;
-    wrapLabel(c, chk, px, ay, pw - 6, { size: 12.5, align: 'left', weight: 700,
+    var ay = py + 24 + lines.length * (port ? 30 : 40) + 14;
+    wrapLabel(c, chk, px, ay, pw - 6, { size: 17, align: 'left', weight: 700,
                                         color: K.GRN });
 
     var foot = e.n === 2
@@ -825,7 +829,7 @@ D.register('trigex', function (node) {
       : 'Both sides come straight off the definitions of sine and cosine, and this ' +
         'is also one of the two special triangles: hypotenuse 1, opposite ½, ' +
         'adjacent √3/2.';
-    wrapLabel(c, foot, ax.W / 2, ax.H - 10, ax.W - 30, { size: 11.5, color: K.MUT });
+    wrapLabel(c, foot, ax.W / 2, ax.H - 10, ax.W - 30, { size: 15.5, color: K.MUT });
   }
 
   u.ctl.className = 'ictls';
@@ -860,8 +864,8 @@ function poly3(c, sc, P, K) {
 function sideLab(c, sc, p, q, txt, col, away) {
   var mx = (sc.X(p[0]) + sc.X(q[0])) / 2, my = (sc.Y(p[1]) + sc.Y(q[1])) / 2;
   var dx = mx - sc.X(away[0]), dy = my - sc.Y(away[1]), m = Math.hypot(dx, dy) || 1;
-  label(c, txt, mx + dx / m * 22, my + dy / m * 22,
-        { size: 11.5, color: col, weight: 700, plate: true });
+  label(c, txt, mx + dx / m * 26, my + dy / m * 26,
+        { size: 16, color: col, weight: 700, plate: true });
 }
 
 /* ======================================================================
@@ -1298,11 +1302,33 @@ D.register('axes3', function (node) {
   var u = build(node, {});
   if (!DA) return;
   var B = DA.body;
-  var S = { p: 0.0, show: 'all' };
+  /* Marc, 7 Nov: the same figure on the three slides that build the planes
+     and axes up, each opening on what its own slide is about.  'full' is
+     slide 51, the one with the stride and the walk. */
+  var MODE = node.getAttribute('data-mode') || 'full';
+  var LEG = node.getAttribute('data-legend') || 'full';
+  var MEET = { z: ['sagittal', 'frontal'], y: ['frontal', 'transverse'],
+               x: ['sagittal', 'transverse'] };
+  var START = { full: 'all', planes: 'planes', meet: 'meet-z', axes: 'axes' };
+  var S = { p: 0.0, show: node.getAttribute('data-show') || START[MODE] || 'all' };
+
+  function planeOn(name) {
+    if (S.show === 'all' || S.show === 'planes') return true;
+    if (S.show === name) return true;
+    if (S.show.indexOf('meet-') === 0)
+      return MEET[S.show.slice(5)].indexOf(name) >= 0;
+    return false;
+  }
+  function axisOn(name) {
+    if (S.show === 'all' || S.show === 'axes') return true;
+    if (S.show === name) return true;
+    return S.show === 'meet-' + name;
+  }
   var cam = { az: -0.95, el: 0.18 };
   var timer = null;
 
-  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 680 : 424,
+  var ax = new Axes(u.cv, { w: port ? 460 : (+node.getAttribute('data-w') || 1040),
+                            h: port ? 680 : (+node.getAttribute('data-h') || 424),
                             padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
   var c = ax.c;
 
@@ -1324,7 +1350,8 @@ D.register('axes3', function (node) {
     var K = C(), P = bodyAt(S.p);
     if (!P) return;
     ax.clear();
-    var fw = port ? ax.W : ax.W * 0.56;
+    var fw = port ? ax.W
+             : ax.W * (LEG === 'none' ? 1 : MODE === 'full' ? 0.56 : 0.62);
     var box = { x: 8, y: 6, w: fw - 16, h: port ? ax.H * 0.46 : ax.H - 34 };
     var o = bodyOrigin(P);
 
@@ -1353,7 +1380,7 @@ D.register('axes3', function (node) {
     /* the planes, painted back to front */
     var quads = [];
     PLANES.forEach(function (pl) {
-      if (S.show !== 'all' && S.show !== pl[0]) return;
+      if (!planeOn(pl[0])) return;
       var Q = planeQuad(pl[0], o, 0.46);
       var d = Q.reduce(function (s, p) { return s + dep(p); }, 0) / 4;
       quads.push({ Q: Q, col: K[pl[3]], d: d, name: pl[1], sub: pl[2] });
@@ -1396,7 +1423,7 @@ D.register('axes3', function (node) {
 
     /* the three axes through the origin */
     AXES.forEach(function (A) {
-      if (S.show !== 'all' && S.show !== A[0]) return;
+      if (!axisOn(A[0])) return;
       var L = 0.92;
       var p0 = [o[0] - A[1][0] * L, o[1] - A[1][1] * L, o[2] - A[1][2] * L];
       var p1 = [o[0] + A[1][0] * L, o[1] + A[1][1] * L, o[2] + A[1][2] * L];
@@ -1409,40 +1436,45 @@ D.register('axes3', function (node) {
     c.beginPath(); c.arc(sx(o), sy(o), 5, 0, 7); c.fill(); c.restore();
     c.restore();
 
-    label(c, fmt(S.p * 100, 0) + ' % of the stride · drag to turn',
+    label(c, MODE === 'full'
+             ? fmt(S.p * 100, 0) + ' % of the stride · drag to turn'
+             : 'drag to turn',
           box.x + box.w / 2, box.y + box.h + 16,
           { size: port ? 11 : 15, color: K.MUT, weight: 650 });
 
     /* --------------------------- the legend -------------------------- */
-    var px = port ? 16 : fw + 10, pw = port ? ax.W - 32 : ax.W - fw - 26;
+    var px = port ? 16 : fw + 10;
     /* Marc, 28 Oct: larger, and the text beside it larger */
     var F1 = port ? 12 : 18, F2 = port ? 10.5 : 15;
     var py = port ? box.y + box.h + 30 : 22;
-    label(c, 'slides 39 to 46, in one figure', px, py,
+    if (LEG === 'none') return;
+    var TITLE = { full: 'slides 39 to 46, in one figure',
+                  planes: 'the three planes',
+                  meet: 'an axis is where two planes meet',
+                  axes: 'the three axes' };
+    label(c, TITLE[MODE] || TITLE.full, px, py,
           { size: port ? 12.5 : 18, align: 'left', weight: 750, color: K.INK });
-    var cw = port ? ax.W * 0.5 : 0;
-    PLANES.forEach(function (pl, i) {
-      var yy = py + (port ? 26 : 38) + i * (port ? 34 : 48);
-      if (port) { px = 16; }
-      c.save(); c.strokeStyle = K[pl[3]]; c.lineWidth = 4;
+    var yy = py + (port ? 26 : 38);
+    function key(col, name, l1, l2) {
+      c.save(); c.strokeStyle = col; c.lineWidth = 4;
       c.beginPath(); c.moveTo(px, yy); c.lineTo(px + 18, yy); c.stroke(); c.restore();
-      label(c, pl[1], px + 26, yy,
-            { size: F1, align: 'left', weight: 700, color: K[pl[3]] });
-      label(c, pl[2], px + 26, yy + (port ? 15 : 21),
+      label(c, name, px + 26, yy, { size: F1, align: 'left', weight: 700, color: col });
+      label(c, l1, px + 26, yy + (port ? 15 : 21),
             { size: F2, align: 'left', color: K.MUT, weight: 600 });
-    });
-    AXES.forEach(function (A, i) {
-      var yy = port ? py + 26 + i * 52 : py + 186 + i * 68;
-      if (port) px = 16 + cw;
-      c.save(); c.strokeStyle = K[A[5]]; c.lineWidth = 4;
-      c.beginPath(); c.moveTo(px, yy); c.lineTo(px + 18, yy); c.stroke(); c.restore();
-      label(c, A[2], px + 26, yy,
-            { size: F1, align: 'left', weight: 700, color: K[A[5]] });
-      label(c, A[3], px + 26, yy + (port ? 15 : 21),
-            { size: F2, align: 'left', color: K.MUT, weight: 600 });
-      label(c, A[4], px + 26, yy + (port ? 29 : 41),
-            { size: F2, align: 'left', color: K.MUT, weight: 600 });
-    });
+      if (l2) label(c, l2, px + 26, yy + (port ? 29 : 41),
+                    { size: F2, align: 'left', color: K.MUT, weight: 600 });
+      yy += (port ? (l2 ? 48 : 34) : (l2 ? 68 : 48));
+    }
+    if (LEG !== 'none') {
+      PLANES.forEach(function (pl) {
+        if (planeOn(pl[0])) key(K[pl[3]], pl[1], pl[2], LEG === 'short' ? null : null);
+      });
+      AXES.forEach(function (A) {
+        if (axisOn(A[0]))
+          key(K[A[5]], A[2], LEG === 'short' ? '' : A[3],
+              LEG === 'short' ? null : A[4]);
+      });
+    }
 
     if (port)
       wrapLabel(c, 'A measured walking stride · the planes are fixed in the room ' +
@@ -1454,26 +1486,37 @@ D.register('axes3', function (node) {
   dragTurn(u.cv, cam, draw);
 
   u.ctl.className = 'ictls g2';
-  var sp = slider(u.ctl, 'The stride', 0, 1, 1 / (B.n - 1), S.p,
-                  function (v) { return fmt(v * 100, 0) + ' %'; },
-                  function (v) { S.p = v; draw(); });
-  sp.quiet(S.p);
+  var SEGS = {
+    full: [['all', 'Everything'], ['sagittal', 'Sagittal'], ['frontal', 'Frontal'],
+           ['transverse', 'Transverse'], ['z', 'z'], ['y', 'y'], ['x', 'x']],
+    planes: [['planes', 'All three'], ['sagittal', 'Sagittal'],
+             ['frontal', 'Frontal'], ['transverse', 'Transverse']],
+    meet: [['meet-z', 'z'], ['meet-y', 'y'], ['meet-x', 'x']],
+    axes: [['axes', 'All three'], ['z', 'z'], ['y', 'y'], ['x', 'x']]
+  };
+  var sp = null;
+  if (MODE === 'full') {
+    sp = slider(u.ctl, 'The stride', 0, 1, 1 / (B.n - 1), S.p,
+                function (v) { return fmt(v * 100, 0) + ' %'; },
+                function (v) { S.p = v; draw(); });
+    sp.quiet(S.p);
+  }
   var row = ctlRow(u.ctl);
-  keepOut(seg(row, [['all', 'Everything'], ['sagittal', 'Sagittal'],
-                    ['frontal', 'Frontal'], ['transverse', 'Transverse'],
-                    ['z', 'z'], ['y', 'y'], ['x', 'x']], 'all',
+  keepOut(seg(row, SEGS[MODE] || SEGS.full, S.show,
               function (v) { S.show = v; draw(); }));
-  var pb = playBtn(row, '▶ Walk');
-  pb.setAttribute('data-unsafe', '1');
-  pb.addEventListener('click', function () {
-    if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; return; }
-    pb.textContent = '❚❚ Pause';
-    timer = setInterval(function () {
-      S.p = (S.p + 1 / (B.n - 1)) % 1.0001; if (S.p > 1) S.p = 0;
-      sp.quiet(S.p); draw();
-    }, 70);
-  });
-  node._stop = function () { if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; } };
+  if (MODE === 'full') {
+    var pb = playBtn(row, '▶ Walk');
+    pb.setAttribute('data-unsafe', '1');
+    pb.addEventListener('click', function () {
+      if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; return; }
+      pb.textContent = '❚❚ Pause';
+      timer = setInterval(function () {
+        S.p = (S.p + 1 / (B.n - 1)) % 1.0001; if (S.p > 1) S.p = 0;
+        sp.quiet(S.p); draw();
+      }, 70);
+    });
+    node._stop = function () { if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Walk'; } };
+  }
 
   /* no readout under this one (Marc, 28 Oct: a larger figure); the legend
      beside it says what it shows, and the speaker notes the rest */
@@ -1500,20 +1543,63 @@ D.register('topics', function (node) {
   if (!DA) return;
   var T = DA.topics;
 
-  /* a grid of links rather than a canvas: these are navigation, and
-     navigation should be real anchors that a keyboard can reach */
-  var wrap = el('div', 'topicgrid');
+  /* Marc, 7 Nov: the same links, read as a map of the term rather than a
+     flat list.  The blocks are the course's own vocabulary -- the two the
+     slides just defined, kinematics and kinetics, then the analysis that
+     uses both, the tools that measure it, and the muscle underneath. */
+  var GROUPS = [
+    ['Kinematics', 'describing movement', 'BLUE',
+     ['Linear Kinematics', 'Basic Calculus', 'Angular Kinematics',
+      'General Kinematics', 'Projectile motion']],
+    ['Linear kinetics', 'what causes movement in a line', 'ACC',
+     ['Force', 'Friction', 'Impulse Momentum', 'Work / Energy', 'Power']],
+    ['Angular kinetics', 'what causes turning', 'VIO',
+     ['Moment of Force / Torque', 'Anthropometry', 'Moment of Inertia']],
+    ['Analysis', 'the whole body at once', 'GRN',
+     ['Static Equilibrium', 'Dynamic Equilibrium', '3D Forces and Moments',
+      'Gait analysis']],
+    ['Measurement', 'the instruments and their signals', 'ORG',
+     ['Current measurement tools', 'Signals', 'Force measurement',
+      '3D motion analysis']],
+    ['Muscle', 'where the force comes from', 'GRN',
+     ['Electromyography', 'Mechanical properties of muscle']]
+  ];
+
+  var deckOf = {};
+  T.forEach(function (t) { deckOf[t[0]] = t[1]; });
+
+  /* every topic in the data is on the map, and nothing on the map is
+     invented: the self-test reads these two counts */
+  var placed = 0;
+  GROUPS.forEach(function (g) { placed += g[3].length; });
+  node._topicCount = placed;
+  node._topicTotal = T.length;
+
+  /* links rather than a canvas: these are navigation, and navigation
+     should be real anchors that a keyboard can reach */
+  var wrap = el('div', 'topicmap');
   var seen = {};
-  T.forEach(function (t) {
-    var a = document.createElement('a');
-    a.className = 'topiclink';
-    a.href = '../' + t[1] + '/index.html';
-    a.innerHTML = '<span class="tname">' + t[0] + '</span>' +
-                  '<span class="tdeck">' + t[1].replace(/^\d+-/, '').replace(/-/g, ' ') +
-                  '</span>';
-    if (seen[t[1]]) a.classList.add('dup');
-    seen[t[1]] = 1;
-    wrap.appendChild(a);
+  GROUPS.forEach(function (g) {
+    var box = el('div', 'tgroup');
+    box.style.setProperty('--tg', C()[g[2]]);
+    var h = el('div', 'tghead');
+    h.innerHTML = '<span class="tgn">' + g[0] + '</span>' +
+                  '<span class="tgs">' + g[1] + '</span>';
+    box.appendChild(h);
+    g[3].forEach(function (name) {
+      var deck = deckOf[name];
+      if (!deck) return;
+      var a = document.createElement('a');
+      a.className = 'topiclink';
+      a.href = '../' + deck + '/index.html';
+      a.innerHTML = '<span class="tname">' + name + '</span>' +
+                    '<span class="tdeck">' + deck.replace(/^\d+-/, '').replace(/-/g, ' ') +
+                    '</span>';
+      if (seen[deck]) a.classList.add('dup');
+      seen[deck] = 1;
+      box.appendChild(a);
+    });
+    wrap.appendChild(box);
   });
   u.stage.innerHTML = '';
   u.stage.appendChild(wrap);
@@ -1554,6 +1640,10 @@ D.register('joints', function (node) {
 
   var cur = J[0], frame = 0, playing = false, dir = 1, raf = 0;
   var imgs = {}, ready = {};
+  /* Marc, 7 Nov: Table 6.2 is on this slide, and pressing an action in it
+     moves the figure into that action.  The table is written in the slide
+     so it stays ordinary editable text; the widget only adopts it. */
+  var tbl = node.querySelector('table.actions');
   var PC = function () {
     return { sagittal: C().BLUE, frontal: C().GRN, transverse: C().VIO }[cur.plane];
   };
@@ -1568,15 +1658,28 @@ D.register('joints', function (node) {
 
   var cv = u.cv, ctx = cv.getContext('2d');
 
+  /* one box for every action, so the figure cannot change size when the
+     action or the frame changes: the strips are all the same frame size,
+     and taking the largest keeps that true if one ever is not */
+  var MW = 0, MH = 0;
+  J.forEach(function (m) { MW = Math.max(MW, m.w); MH = Math.max(MH, m.h); });
+
   function draw() {
-    var dpr = window.devicePixelRatio || 1;
+    /* reveal paints the whole deck through a transform, so a canvas sized
+       by devicePixelRatio alone is resampled a second time on a large
+       screen and goes soft.  Size the backing store by what the figure
+       actually occupies in device pixels. */
+    var rs = (window.Reveal && Reveal.getScale) ? (Reveal.getScale() || 1) : 1;
+    var dpr = Math.min(4, (window.devicePixelRatio || 1) * rs);
     var W = u.stage.clientWidth || 520;
     /* the stage has the left half of the slide to itself; the height is
        what is left under the heading once the credit line has its row */
-    var H = port ? Math.round(W * 0.92) : 476;
-    cv.width = W * dpr; cv.height = H * dpr;
+    var H = port ? Math.round(W * 0.92) : (tbl ? 452 : 476);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.clearRect(0, 0, W, H);
 
     var bar = 86;
@@ -1584,7 +1687,7 @@ D.register('joints', function (node) {
     if (!im || !ready[cur.key]) {
       label(ctx, 'drawing…', W / 2, (H - bar) / 2, { color: C().MUT, size: 15 });
     } else {
-      var k = Math.min(W * 0.96 / cur.w, (H - bar - 4) / cur.h);
+      var k = Math.min(W * 0.96 / MW, (H - bar - 4) / MH);
       var dw = cur.w * k, dh = cur.h * k;
       ctx.drawImage(im, cur.w * frame, 0, cur.w, cur.h, (W - dw) / 2, 0, dw, dh);
     }
@@ -1632,32 +1735,76 @@ D.register('joints', function (node) {
   var planes = [['sagittal', 'Sagittal'], ['frontal', 'Frontal'],
                 ['transverse', 'Transverse']];
   var plane = 'sagittal';
-  keepOut(seg(u.ctl, planes, plane, function (p) { plane = p; fillChips(); }));
+  /* with the table on the slide the three plane rows ARE the plane
+     control, so the segmented one would say the same thing twice */
+  var segRow = null;
+  if (tbl) { u.ctl.appendChild(tbl); tbl.classList.add('pickable'); }
+  else segRow = keepOut(seg(u.ctl, planes, plane,
+                            function (p) { plane = p; fillChips(); }));
   var chipHost = el('div', 'jchips');
   u.ctl.appendChild(chipHost);
   var rd = readout(u.ctl);
   rd.classList.add('jread');
-  var r3 = ctlRow(u.ctl);
+  /* with the table in the control column, the range and the Move button
+     go under the figure instead: the column is already full, and the bar
+     they drive is drawn on the canvas */
+  var ctlHost = u.ctl;
+  if (tbl) { ctlHost = el('div', 'ictls jstagectl'); u.stage.appendChild(ctlHost); }
+  var r3 = ctlRow(ctlHost);
   var sl = slider(r3, 'Range', 0, J[0].n - 1, 1, 0,
                   function (v) { return Math.abs(cur.angles[v]) + '°'; },
                   function (v) { frame = Math.round(v); draw(); });
   var play = playBtn(r3, '▶ Move');
 
-  function fillChips() {
+  function fillChips(want) {
     chipHost.innerHTML = '';
     var items = J.filter(function (m) { return m.plane === plane; })
                  .map(function (m) { return [m.key, m.chip || m.joint]; });
-    keepOut(chips(chipHost, items, items[0][0], function (k) { pick(k); }));
-    pick(items[0][0]);
+    var start = want && items.some(function (it) { return it[0] === want; })
+              ? want : items[0][0];
+    keepOut(chips(chipHost, items, start, function (k) { pick(k); }));
+    pick(start);
   }
 
-  function pick(k) {
+  function pick(k, end) {
     for (var i = 0; i < J.length; i++) if (J[i].key === k) cur = J[i];
     sl.input.max = cur.n - 1;
-    frame = cur.zero;
+    frame = end === 'lo' ? 0 : end === 'hi' ? cur.n - 1 : cur.zero;
+    /* an end with no range of its own (shoulder adduction, say) is the
+       anatomical position, so stop there rather than at the far end */
+    if (end === 'lo' && cur.lo === 0) frame = cur.zero;
+    if (end === 'hi' && cur.hi === 0) frame = cur.zero;
     sl.quiet(frame);
     load(cur, draw);
     draw();
+  }
+
+  /* pressing an action in the table: set the plane, the joint and the end */
+  function fromTable(el2) {
+    var k = el2.getAttribute('data-j'), end = el2.getAttribute('data-e');
+    if (!k) return;
+    var m = null, i;
+    for (i = 0; i < J.length; i++) if (J[i].key === k) m = J[i];
+    if (!m) return;
+    plane = m.plane;
+    if (segRow) Array.prototype.forEach.call(segRow.children, function (b) {
+      b.classList.toggle('on', b.textContent.trim().toLowerCase() === plane);
+    });
+    fillChips(k);
+    pick(k, end);
+    if (tbl) Array.prototype.forEach.call(tbl.querySelectorAll('.act'),
+      function (x) { x.classList.toggle('on', x === el2); });
+  }
+  if (tbl) {
+    tbl.addEventListener('click', function (e) {
+      var t = e.target.closest ? e.target.closest('.act[data-j]') : null;
+      if (t) fromTable(t);
+    });
+    tbl.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var t = e.target.closest ? e.target.closest('.act[data-j]') : null;
+      if (t) { e.preventDefault(); fromTable(t); }
+    });
   }
 
   play.addEventListener('click', function () {
@@ -1681,6 +1828,9 @@ D.register('joints', function (node) {
   }
 
   window.addEventListener('resize', draw);
+  /* and again once reveal has settled on its new scale, so the backing
+     store matches the size the figure is actually painted at */
+  if (window.Reveal && Reveal.on) Reveal.on('resize', function () { draw(); });
   node._draw = draw;          /* the theme toggle repaints through this */
   fillChips();
 
@@ -1693,6 +1843,195 @@ D.register('joints', function (node) {
   return { stop: function () {
     playing = false; cancelAnimationFrame(raf); play.innerHTML = '▶ Move';
   } };
+});
+
+
+/* ======================================================================
+   8b. JOINTAXIS — the elbow's axis going with the limb
+
+   Marc, 7 Nov: "Can we show a bit better how the joint axis moves when the
+   joint moves?"  The two static elbows this replaces could only show the
+   two ends.  Raise the shoulder here and the wheel -- the plane the elbow
+   moves in -- leaves the sagittal plane and arrives in the transverse one,
+   carrying its hub with it, and in between it is in neither, which is the
+   point the next slide makes in words.
+   ====================================================================== */
+D.register('jointaxis', function (node) {
+  var port = D.portrait();
+  var u = build(node, {});
+  var S = { ab: 0, fl: 60 };
+  var cam = { az: -1.02, el: 0.22 };
+  var timer = null, dir = 1;
+
+  var ax = new Axes(u.cv, { w: port ? 460 : 1040, h: port ? 640 : 430,
+                            padl: 0, padr: 0, padt: 0, padb: 0, fluid: true });
+  var c = ax.c;
+
+  var L1 = 0.30, L2 = 0.28, R = 0.17;          /* upper arm, forearm, wheel */
+
+  function add(a, b) { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; }
+  function mul(a, k) { return [a[0] * k, a[1] * k, a[2] * k]; }
+  /* Rodrigues: turn v about the unit axis a by t radians */
+  function rot(v, a, t) {
+    var ct = Math.cos(t), st = Math.sin(t);
+    var dot = a[0] * v[0] + a[1] * v[1] + a[2] * v[2];
+    var cx = [a[1] * v[2] - a[2] * v[1], a[2] * v[0] - a[0] * v[2],
+              a[0] * v[1] - a[1] * v[0]];
+    return [v[0] * ct + cx[0] * st + a[0] * dot * (1 - ct),
+            v[1] * ct + cx[1] * st + a[1] * dot * (1 - ct),
+            v[2] * ct + cx[2] * st + a[2] * dot * (1 - ct)];
+  }
+
+  /* the arm, from the two angles */
+  function pose() {
+    var t = S.ab * RAD;
+    var up = [0, Math.sin(t), -Math.cos(t)];          /* the upper arm */
+    var axis = [0, Math.cos(t), Math.sin(t)];         /* the elbow's own axis */
+    var E = mul(up, L1);
+    var fo = rot(up, axis, -S.fl * RAD);              /* the forearm, flexed */
+    return { up: up, axis: axis, E: E, W: add(E, mul(fo, L2)), t: t };
+  }
+
+  function draw() {
+    var K = C(), P = pose();
+    ax.clear();
+    var fw = port ? ax.W : ax.W * 0.58;
+    var box = { x: 8, y: 6, w: fw - 16, h: port ? ax.H * 0.52 : ax.H - 30 };
+    var O = [0, 0.20, -0.16], SP = Math.min(box.w - 20, box.h - 20) / 0.98;
+    var cx = box.x + box.w / 2, cy = box.y + box.h / 2;
+    function sx(p) { return cx + proj([p[0] - O[0], p[1] - O[1], p[2] - O[2]], cam)[0] * SP; }
+    function sy(p) { return cy - proj([p[0] - O[0], p[1] - O[1], p[2] - O[2]], cam)[1] * SP; }
+
+    c.save(); c.beginPath(); c.rect(box.x, box.y, box.w, box.h); c.clip();
+
+    /* a trunk and a head, so the arm belongs to somebody */
+    var T0 = [0, -0.12, 0.06], T1 = [0, -0.12, -0.52];
+    c.save(); c.strokeStyle = K.MUT; c.globalAlpha = 0.5;
+    c.lineWidth = 16; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(sx(T0), sy(T0)); c.lineTo(sx(T1), sy(T1)); c.stroke();
+    c.restore();
+    var HD = [0, -0.12, 0.20];
+    c.save(); c.fillStyle = K.PLATE; c.strokeStyle = K.MUT; c.globalAlpha = 0.7;
+    c.lineWidth = 2.5;
+    c.beginPath(); c.arc(sx(HD), sy(HD), SP * 0.075, 0, 7); c.fill(); c.stroke();
+    c.restore();
+
+    /* the two cardinal planes through the elbow, so the wheel can be seen
+       to arrive in one of them */
+    var near = S.ab < 12 ? 'sagittal' : S.ab > 78 ? 'transverse' : '';
+    [['sagittal', K.BLUE], ['transverse', K.ORG]].forEach(function (pl) {
+      var Q = planeQuad(pl[0], P.E, 0.24), on = near === pl[0];
+      c.save();
+      c.fillStyle = pl[1]; c.globalAlpha = on ? 0.10 : 0.045;
+      c.beginPath();
+      Q.forEach(function (p, i) { if (i) c.lineTo(sx(p), sy(p)); else c.moveTo(sx(p), sy(p)); });
+      c.closePath(); c.fill();
+      c.globalAlpha = on ? 0.6 : 0.22; c.strokeStyle = pl[1];
+      c.lineWidth = on ? 2 : 1.1; c.stroke(); c.restore();
+    });
+
+    /* the wheel: the plane the elbow moves in, drawn at the elbow */
+    var e1 = rot([1, 0, 0], P.axis, 0), e2 = [0, 0, 0];
+    /* two unit vectors perpendicular to the axis */
+    e1 = [1, 0, 0];
+    var d = e1[0] * P.axis[0] + e1[1] * P.axis[1] + e1[2] * P.axis[2];
+    e1 = [e1[0] - P.axis[0] * d, e1[1] - P.axis[1] * d, e1[2] - P.axis[2] * d];
+    var m1 = Math.hypot(e1[0], e1[1], e1[2]); e1 = mul(e1, 1 / m1);
+    e2 = [P.axis[1] * e1[2] - P.axis[2] * e1[1],
+          P.axis[2] * e1[0] - P.axis[0] * e1[2],
+          P.axis[0] * e1[1] - P.axis[1] * e1[0]];
+    c.save();
+    c.strokeStyle = K.ACC; c.lineWidth = 3.4; c.globalAlpha = 0.95;
+    c.beginPath();
+    for (var k = 0; k <= 72; k++) {
+      var psi = k / 72 * 2 * Math.PI;
+      var p = add(P.E, add(mul(e1, R * Math.cos(psi)), mul(e2, R * Math.sin(psi))));
+      if (k) c.lineTo(sx(p), sy(p)); else c.moveTo(sx(p), sy(p));
+    }
+    c.stroke();
+    c.globalAlpha = 0.10; c.fillStyle = K.ACC; c.fill();
+    c.restore();
+
+    /* the limbs */
+    function bone(a, b, w, col) {
+      c.save(); c.strokeStyle = col; c.lineWidth = w; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(sx(a), sy(a)); c.lineTo(sx(b), sy(b)); c.stroke();
+      c.restore();
+    }
+    bone([0, 0, 0], P.E, 12, K.INK);
+    bone(P.E, P.W, 10, K.INK);
+    pin(c, sx([0, 0, 0]), sy([0, 0, 0]), 5);
+    pin(c, sx(P.W), sy(P.W), 4);
+
+    /* the hub: the axis itself, through the elbow and out both sides */
+    var h0 = add(P.E, mul(P.axis, -R * 1.5)), h1 = add(P.E, mul(P.axis, R * 1.5));
+    arrow(c, sx(h0), sy(h0), sx(h1), sy(h1), { color: K.VIO, width: 3.2, head: 10 });
+    pin(c, sx(P.E), sy(P.E), 5, { fill: K.VIO, color: K.VIO });
+
+    c.restore();
+    label(c, 'drag to turn', box.x + box.w / 2, box.y + box.h - 2,
+          { size: port ? 11 : 14, color: K.MUT, weight: 650 });
+
+    /* ---------------------------- the key --------------------------- */
+    var px = port ? 16 : fw + 8, py = port ? box.y + box.h + 26 : 30;
+    var F1 = port ? 12 : 17, F2 = port ? 10.5 : 14.5;
+    label(c, 'one elbow, one action', px, py,
+          { size: port ? 12.5 : 18, align: 'left', weight: 750, color: K.INK });
+    py += port ? 24 : 34;
+    c.save(); c.strokeStyle = K.ACC; c.lineWidth = 4;
+    c.beginPath(); c.moveTo(px, py); c.lineTo(px + 18, py); c.stroke(); c.restore();
+    label(c, 'the wheel', px + 26, py, { size: F1, align: 'left', weight: 700, color: K.ACC });
+    label(c, 'the plane the elbow moves in', px + 26, py + (port ? 15 : 21),
+          { size: F2, align: 'left', color: K.MUT, weight: 600 });
+    py += port ? 40 : 56;
+    c.save(); c.strokeStyle = K.VIO; c.lineWidth = 4;
+    c.beginPath(); c.moveTo(px, py); c.lineTo(px + 18, py); c.stroke(); c.restore();
+    label(c, 'the hub', px + 26, py, { size: F1, align: 'left', weight: 700, color: K.VIO });
+    label(c, 'the axis it turns about', px + 26, py + (port ? 15 : 21),
+          { size: F2, align: 'left', color: K.MUT, weight: 600 });
+    py += port ? 44 : 62;
+
+    var say = S.ab < 12
+      ? ['arm at the side', 'the wheel is in the sagittal plane', K.BLUE]
+      : S.ab > 78
+      ? ['arm out to the side', 'the wheel is in the transverse plane', K.ORG]
+      : ['on the way up', 'the wheel is in neither cardinal plane', K.MUT];
+    label(c, say[0] + ' · ' + fmt(S.ab, 0) + '°', px, py,
+          { size: F1, align: 'left', weight: 750, color: K.INK });
+    label(c, say[1], px, py + (port ? 16 : 23),
+          { size: F2, align: 'left', weight: 700, color: say[2] });
+    label(c, 'Move the limb and the wheel moves with it. So does the hub.',
+          px, py + (port ? 34 : 50),
+          { size: F2, align: 'left', color: K.MUT, weight: 600 });
+  }
+
+  dragTurn(u.cv, cam, draw);
+
+  u.ctl.className = 'ictls g2';
+  var s1 = slider(u.ctl, 'Shoulder abduction', 0, 90, 1, S.ab,
+                  function (v) { return fmt(v, 0) + '°'; },
+                  function (v) { S.ab = v; draw(); });
+  var s2 = slider(u.ctl, 'Elbow flexion', 0, 130, 1, S.fl,
+                  function (v) { return fmt(v, 0) + '°'; },
+                  function (v) { S.fl = v; draw(); });
+  var row = ctlRow(u.ctl);
+  var pb = playBtn(row, '▶ Raise the arm');
+  pb.setAttribute('data-unsafe', '1');
+  pb.addEventListener('click', function () {
+    if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Raise the arm'; return; }
+    pb.textContent = '❚❚ Pause';
+    timer = setInterval(function () {
+      S.ab += dir * 2;
+      if (S.ab >= 90) { S.ab = 90; dir = -1; } else if (S.ab <= 0) { S.ab = 0; dir = 1; }
+      s1.quiet(S.ab); draw();
+    }, 60);
+  });
+  node._stop = function () {
+    if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ Raise the arm'; }
+  };
+
+  node._draw = draw;
+  draw();
 });
 
 /* ======================================================================
