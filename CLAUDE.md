@@ -18,7 +18,11 @@ index.html              the hub (front page)
 hub/hub.css             hub styling
 hub/lectures.js         the hub's data model: one entry per lecture   <- edited often
 lectures/NN-short-name/ one self-contained reveal.js deck per lecture
-tools/work-loop-simulator/   port of the Virtual Muscle Lab (Marc is a co-author)
+tools/tutor/            the Biomechanics Tutor (plain JS; the course copy is now
+                        the source of record, the Tutor repo keeps only the Shiny app)
+tools/work-loop/        the Virtual Muscle Lab as a plain page (Marc is a co-author)
+tools/work-loop-simulator/   the same three widgets inside a reveal.js deck; superseded
+                        by tools/work-loop/ on 2026-11-07, kept until Marc says to delete
 README.md               publishing + how to add a lecture
 .nojekyll               publish files untouched
 ```
@@ -49,7 +53,7 @@ app.webmanifest     set name/short_name for each new deck
 | 1b | 01b-linear-kinematics-review | done 2026-10-27. Review round 1 (27 items) 2026-10-28. Review round 2 (5 items) 2026-11-07: **103 slides, 8 widgets**, `?v=20261107a` (Bolt sequence rebuilt: displacement → velocity → the three acceleration problems → `secant` widget) |
 | 2 | 02-sensors-and-data-acquisition | done. Review round 1 (10 items) 2026-11-07, `?v=20261107a`: **every image is now our own SVG** (`assets/d_*.svg`, 28 files); the 29 lifted photos were deleted. 41 slides, 27 widget instances |
 | 3–12, 14–20 | 03-… to 20-… | done |
-| 13 | tools/work-loop-simulator | Virtual Muscle Lab port |
+| 13 | tools/work-loop | Virtual Muscle Lab, plain-JS page (2026-11-07) |
 | 22, 23 | — | 2015 duplicates of projectile motion and signals; not planned |
 
 Numbering trap: from angular kinematics on, **repo lecture N = PowerPoint
@@ -316,8 +320,14 @@ to his Downloads. His notes persist in localStorage, keyed
   equations were pasted as images.
 - Data: `SUSU_youth_motion_dataset_public_release_v2/`, `Data_2_Share/`,
   `opensim-models-master/`, `Subject15/`, `Subject16/` (connected folders).
-- Companion apps: `Biomechanics-Tutor/` (Shiny app; grades with zero tolerance,
-  so enter the rounded value it expects).
+- Companion apps: `~/Documents/GitHub/biomech tutor/Biomechanics-Tutor/` — the
+  Shiny app (grades with zero tolerance, so enter the rounded value it
+  expects) and its `Master_questions.csv`. **The plain-JS Tutor that used to
+  live in that repo's `web/` is now `tools/tutor/` in THIS repo and that copy
+  is the one to edit** (Marc, 2026-11-07). The two are no longer kept in step:
+  a CSV change has to be made in `tools/tutor/Master_questions.csv`, followed
+  by `python3 update-questions.py` in that folder, and the Shiny app needs its
+  own re-export to see it.
 
 ### Build sources
 The decks in this repo are **built outputs**. For lecture 1b the generators
@@ -387,3 +397,17 @@ plus `-revision`/`-audit` notes) and these cross-cutting ones:
 - **fit.js over-shrinks a slide whose widget sits inside a text column**: it measures the body at full width, then scales and widens it, and does not iterate. Give such a figure a fixed pixel width (`.figin` in 1a) and `data-nowarm`, or the min-height prewarm reserves sticks at the pre-shrink height. The print path needs its own `.pdf-page` caps.
 - Every lecture in the hub's list is now a deck except 13 (VML, a tool page)
   and the 2015 duplicates 22 and 23.
+- **`tools/work-loop-simulator/` is superseded and waiting to be deleted.**
+  `tools/work-loop/` is the same three widgets (`vml.js` is the same file plus
+  a responsive figure height) with reveal.js, `fit.js`, `mobile.js`,
+  `annotate.js` and `deck-tools.js` taken out — 400 KB against 2.7 MB. The
+  hub points at the new one; the old folder is kept only so Marc can compare.
+  Its `vml.js` is no longer the source of record.
+- **`tools/tutor/` ships `instructor.js`**, which reaches the course Supabase
+  store with a key the instructor types in. The page is not linked from the
+  menu and the key is what protects it, but the file is on a public site, so
+  treat the Supabase row-level security as the real boundary. `sync.js`'s
+  key is the publishable one and is public by design.
+- The tutor's figures in `tools/tutor/www/Images/` were re-encoded losslessly
+  on the way in (14.0 MB → 11.0 MB, every one pixel-identical). Re-run that
+  pass if a batch of new figures is added.

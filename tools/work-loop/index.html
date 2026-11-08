@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Work loop simulator — EPHE 341</title>
+<meta name="description" content="The Virtual Muscle Lab, running in the browser: drive a muscle through a length-change cycle and read the work loop it traces out.">
+<meta name="theme-color" content="#a6192e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Work loop">
+<link rel="stylesheet" href="base.css?v=20261107a">
+<link rel="stylesheet" href="work-loop.css?v=20261107a">
+<script>
+/* theme and page width before first paint, so nothing flashes and the
+   widgets are built for the layout they will actually be drawn in */
+(function () {
+  var r = document.documentElement, t = 'light';
+  try { t = localStorage.getItem('ephe341-theme') || 'light'; } catch (e) {}
+  r.setAttribute('data-theme', t);
+  window.DECK_PORTRAIT = window.innerWidth < 860;
+  if (window.DECK_PORTRAIT) r.setAttribute('data-portrait', '');
+})();
+</script>
+</head>
+<body class="vml-app" data-home="../../index.html">
+
+<div class="wl-root">
+
+  <header class="vml-banner">
+    <div class="vml-banner-l">
+      <!-- Drop the official mark into icons/ as utah.svg or utah.png and it
+           replaces the wordmark on its own — no code change. Use a reversed
+           (white) version: the banner is U of U red. -->
+      <img class="vml-logo" src="icons/utah.svg" alt="University of Utah"
+           onerror="if(this.dataset.try){this.remove();}else{this.dataset.try=1;this.src='icons/utah.png';}">
+      <span class="vml-inst">University of Utah</span>
+      <h1>Virtual Muscle Lab</h1>
+      <nav class="vml-pages" aria-label="Views">
+        <button class="vml-pg on" type="button" data-pg="0" data-tab="fvp">Force, Velocity, Power</button>
+        <button class="vml-pg" type="button" data-pg="0" data-tab="loop">Interactive Workloop</button>
+        <button class="vml-pg" type="button" data-pg="0" data-tab="fv">Force–Velocity</button>
+        <button class="vml-pg vml-pg-sep" type="button" data-pg="1">Modelled</button>
+        <button class="vml-pg" type="button" data-pg="2">Measured</button>
+      </nav>
+    </div>
+    <div class="vml-banner-r">
+      <!-- reversed wordmark: the banner is U of U red in both themes -->
+      <img class="vml-logo" src="icons/uvic-dark.png" alt="University of Victoria">
+      <a class="vml-bbtn vml-ico vml-home" href="../../index.html"
+         title="Back to the course page" aria-label="Back to the course page"><svg
+         viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5L12 3.5l8.5 7"/><path
+         d="M5.6 9v10.5h12.8V9"/><path d="M9.8 19.5v-6h4.4v6"/></svg></a>
+      <button class="vml-bbtn vml-theme" type="button" title="Light or dark">Light</button>
+      <button class="vml-bbtn vml-ico vml-info" type="button" aria-haspopup="dialog"
+              title="About this page" aria-label="About this page">&#9432;</button>
+    </div>
+  </header>
+
+  <main class="wl-pages">
+
+    <section class="vml-page on" data-pg="0" aria-label="The model">
+      <div class="iplot wide" data-widget="vml"></div>
+    </section>
+
+    <section class="vml-page" data-pg="1" aria-label="A modelled pedal stroke">
+      <div class="iplot wide" data-widget="cyclist"></div>
+    </section>
+
+    <section class="vml-page" data-pg="2" aria-label="A measured pedal stroke">
+      <div class="iplot wide" data-widget="measured"></div>
+    </section>
+
+  </main>
+
+</div>
+
+<div id="vml-about" role="dialog" aria-modal="true" aria-labelledby="vml-about-h">
+  <div class="card">
+    <h2 id="vml-about-h">About the Virtual Muscle Lab</h2>
+    <p>Developed by <strong>Jim Martin</strong>, <strong>Jenna Link</strong> and
+       <strong>Marc Klimstra</strong> — University of Utah and University of Victoria.</p>
+    <p>A Thelen-type muscle model driven through a sinusoidal length cycle. The same
+       cycle is computed under four conditions so you can see what each property costs:
+       force–velocity alone, plus force–length, plus the real time it takes to switch on
+       and off, and all three together.</p>
+    <p>This is the EPHE 341 build, which runs entirely in the browser. The original is at
+       <a href="https://jimmartinutah.github.io/VML/" target="_blank"
+          rel="noopener">jimmartinutah.github.io/VML</a>.</p>
+    <button type="button" id="vml-about-x">Close</button>
+  </div>
+</div>
+
+<script src="wl-core.js?v=20261107a"></script>
+<script src="vml.js?v=20261107a"></script>
+<script>
+/* ======================================================================
+   The page: three panels, a banner that switches between them, a theme
+   switch and an about box. This is all reveal.js was doing here, minus
+   the slide deck it was doing it inside.
+   ====================================================================== */
+(function () {
+'use strict';
+var root = document.documentElement;
+var pages = [].slice.call(document.querySelectorAll('.wl-root section.vml-page'));
+var cur = 0;
+
+function all(sel) { return [].slice.call(document.querySelectorAll(sel)); }
+
+/* data-home stays the one place the course-page path is written */
+var home = document.body.getAttribute('data-home');
+all('.vml-home').forEach(function (a) { if (home) a.setAttribute('href', home); else a.remove(); });
+
+function themeLabel() {
+  var t = root.getAttribute('data-theme') === 'light' ? 'Dark' : 'Light';
+  all('.vml-theme').forEach(function (b) { b.textContent = t; });
+}
+themeLabel();
+
+/* if the Utah mark is there, the typographic wordmark steps aside — the mark
+   carries its own. The image may already have finished loading by the time
+   this runs, in which case 'load' never fires again, so check as well. */
+function markLoaded() { all('.vml-banner-l .vml-inst').forEach(function (w) { w.style.display = 'none'; }); }
+all('.vml-banner-l .vml-logo').forEach(function (img) {
+  img.addEventListener('load', markLoaded);
+  if (img.complete && img.naturalWidth) markLoaded();
+});
+
+/* ---- the about box ---- */
+var box = document.getElementById('vml-about');
+function show(on) { box.classList.toggle('show', on); }
+box.addEventListener('click', function (e) { if (e.target === box) show(false); });
+document.getElementById('vml-about-x').addEventListener('click', function () { show(false); });
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && box.classList.contains('show')) show(false);
+});
+
+/* ---- which panel is showing ----
+   A hidden panel has no width, so a widget built or redrawn while it is
+   hidden sizes its canvas to nothing. Showing one therefore ends with the
+   layout event the widgets already listen for. */
+var TABS = ['fvp', 'loop', 'fv'];
+function tabStrip() { return pages[0].querySelectorAll('.vml-tabs .iseg-b'); }
+function liveTab() {
+  var strip = tabStrip();
+  for (var i = 0; i < strip.length; i++) if (strip[i].classList.contains('on')) return TABS[i];
+  return TABS[0];
+}
+function paint() {
+  var t = liveTab();
+  all('.vml-pg').forEach(function (b) {
+    var onPage = +b.getAttribute('data-pg') === cur;
+    var tab = b.getAttribute('data-tab');
+    b.classList.toggle('on', onPage && (!tab || tab === t));
+  });
+}
+function goto(n) {
+  if (n === cur || !pages[n]) { paint(); return; }
+  var from = pages[cur], to = pages[n];
+  from.classList.remove('on');
+  to.classList.add('on');
+  cur = n;
+  if (location.hash !== '#' + n) {
+    try { history.replaceState(null, '', '#' + n); } catch (e) {}
+  }
+  window.dispatchEvent(new CustomEvent('wl-page', { detail: { from: from, to: to } }));
+  window.dispatchEvent(new Event('ephe341-layout'));
+  paint();
+}
+
+document.addEventListener('click', function (e) {
+  var t = e.target.closest ? e.target.closest('.vml-theme,.vml-info,.vml-pg') : null;
+  if (!t) return;
+  if (t.classList.contains('vml-info')) { show(true); return; }
+  if (t.classList.contains('vml-pg')) {
+    goto(+t.getAttribute('data-pg'));
+    /* The model page's three views live in the banner; the widget still owns
+       them — its own tab strip is hidden — so press the button it built. */
+    var tab = t.getAttribute('data-tab');
+    if (tab) {
+      var b = tabStrip()[TABS.indexOf(tab)];
+      if (b && !b.classList.contains('on')) b.click();
+    }
+    paint();
+    return;
+  }
+  var th = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  root.setAttribute('data-theme', th);
+  try { localStorage.setItem('ephe341-theme', th); } catch (err) {}
+  themeLabel();
+  window.dispatchEvent(new Event('ephe341-theme'));   /* the figures repaint themselves */
+});
+
+/* turning a phone changes the coordinate box every figure was built for */
+var wasPortrait = !!window.DECK_PORTRAIT, rz;
+window.addEventListener('resize', function () {
+  clearTimeout(rz);
+  rz = setTimeout(function () {
+    var p = window.innerWidth < 860;
+    if (p === wasPortrait) return;
+    wasPortrait = window.DECK_PORTRAIT = p;
+    if (p) root.setAttribute('data-portrait', ''); else root.removeAttribute('data-portrait');
+    window.DECK.reboot();
+    paint();
+  }, 180);
+});
+
+window.addEventListener('hashchange', function () {
+  var n = parseInt(location.hash.slice(1), 10);
+  if (n >= 0 && n < pages.length) goto(n);
+});
+
+/* vml.js boots the widgets itself as it loads, at the end of the body —
+   calling boot() again here would build every one of them a second time. */
+var start = parseInt(location.hash.slice(1), 10);
+if (start > 0 && start < pages.length) goto(start);
+paint();
+setTimeout(paint, 600);
+
+/* works offline after the first visit: see sw.js */
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+})();
+</script>
+</body>
+</html>

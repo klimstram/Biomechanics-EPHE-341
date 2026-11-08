@@ -1,0 +1,91 @@
+/* ============================================================
+   EPHE 341 — Work loop simulator: the page itself.
+
+   base.css carries the lecture decks' tokens, widget controls and the
+   Virtual Muscle Lab chrome. This file is everything reveal.js and fit.js
+   used to do: a reset, a root that fills the window, and three panels one
+   of which is showing. Nothing is scaled — the figure is rebuilt at the
+   width it actually has, which is what the widget always preferred.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body.vml-app {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter,
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+}
+html[data-theme="dark"] body.vml-app {
+  background: radial-gradient(120% 90% at 50% 0%, var(--bg-2) 0%, var(--bg) 62%);
+  background-attachment: fixed;
+}
+
+/* The deck set its type on .reveal at 30px and sized every control in em
+   from there. Keeping that number keeps the app looking exactly as it did
+   inside the slide. */
+.wl-root {
+  display: flex;
+  flex-direction: column;
+  gap: .3em;
+  padding: 9px 12px 14px;
+  max-width: 2100px;
+  margin: 0 auto;
+}
+
+/* the banner is authored once and stays at the top of the window */
+.wl-root > .vml-banner {
+  position: sticky;
+  top: 6px;
+  z-index: 20;
+  flex: 0 0 auto;
+}
+
+.wl-pages { display: block; }
+.wl-root section.vml-page { display: none; }
+.wl-root section.vml-page.on { display: flex; }
+
+/* fit.js used to shrink an over-tall slide; here the page simply scrolls,
+   and a figure never has to be squeezed to make room for a control. */
+.wl-root .iplot { margin: 0; }
+
+/* The figure wants every pixel of width it can get; a slider does not. On a
+   wide screen the two pedal-stroke pages have no sidebar to hold their
+   controls in, so hold them in the middle instead of stretching a track
+   across 1700 px. */
+.cyc-wrap .ictls, .cyc-wrap .ictl-row { max-width: 1040px; margin-left: auto; margin-right: auto; }
+html[data-portrait] .cyc-wrap .ictls, html[data-portrait] .cyc-wrap .ictl-row { max-width: none; }
+
+/* A phone stacks the sidebar under the figure (base.css does that through
+   html[data-portrait]) and the banner drops to the title and its buttons. */
+html[data-portrait] .wl-root { padding: 6px 8px 12px; font-size: 27px; }
+html[data-portrait] .wl-root > .vml-banner { top: 0; border-radius: 0; margin: -6px -8px 0; }
+
+/* On a phone the banner's view links give way to the widget's own tab strip
+   (base.css), and three touch-sized tabs are wider than the screen. The deck
+   had reveal's scroll view to scale that away; here the strip scrolls
+   sideways on its own and nothing else is allowed to widen the page. */
+html[data-portrait] .vml-tabs { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+html[data-portrait] .vml-tabs::-webkit-scrollbar { display: none; }
+html[data-portrait] .vml-tabs .iseg-b { font-size: .84em; padding: .5em .7em; }
+html[data-portrait] .wl-root section.vml-page,
+html[data-portrait] .wl-root .iplot,
+html[data-portrait] .wl-root .iwrap,
+html[data-portrait] .wl-root .istage { min-width: 0; max-width: 100%; }
+html[data-portrait] .wl-root .istage canvas { max-width: 100%; }
+html[data-portrait] .ditable-wrap, html[data-portrait] .wl-root .ditable { max-width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-root *, .wl-root *::before, .wl-root *::after {
+    animation-duration: .001ms !important; transition-duration: .001ms !important;
+  }
+}
+
+/* The metrics table keeps two columns on a phone (base.css hides the rest);
+   at the deck's portrait size those two still ran off a 414 px screen. */
+html[data-portrait] .ditable.vml { font-size: .58em; }
+html[data-portrait] .ditable.vml th, html[data-portrait] .ditable.vml td { padding: .24em .35em; }
+html[data-portrait] .ditable.vml tr th:first-child { width: auto; }
