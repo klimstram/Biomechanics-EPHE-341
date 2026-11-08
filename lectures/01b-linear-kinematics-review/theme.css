@@ -1074,16 +1074,28 @@ ul.steps{ list-style:none; padding-left:0; }
 ul.steps li{ position:relative; padding-left:1.6em; margin:.45em 0; }
 ul.steps li::before{ content:''; position:absolute; left:0; top:.32em; width:.75em;
   height:.75em; border:2px solid var(--brand); }
-.reveal table.vtable{ font-size:.66em; margin:.4em 0; }
+.reveal table.vtable{ font-size:.66em; margin:.4em 0; border-collapse:collapse; }
 .reveal table.vtable th, .reveal table.vtable td{ border:1.5px solid var(--brand);
   padding:.28em .9em; text-align:center; min-width:7.5em; }
 .reveal table.vtable td:first-child{ text-align:left; min-width:3em; }
+.reveal table.vtable tr:last-child td{ border-bottom:1.5px solid var(--brand) !important; }
+.vside{ display:flex; gap:.7em; align-items:flex-start; }
+/* Marc, 7 Nov: the component table on every slide of the worked example,
+   filling in as each vector is solved; the row solved on this slide is lit */
+.reveal table.vtable.mini{ font-size:.5em; margin:0 0 2px; }
+.reveal table.vtable.mini th, .reveal table.vtable.mini td{ padding:.16em .55em; min-width:5.2em;
+  border-width:1.2px; }
+.reveal table.vtable.mini td:first-child{ min-width:2.6em; }
+.reveal table.vtable.mini tr.new td{ background:color-mix(in srgb, var(--accent) 16%, transparent);
+  font-weight:750; }
+html[data-portrait] .vside{ flex-direction:column-reverse; align-items:flex-end; }
 .reveal table.trig3{ font-size:.6em; margin:.5em auto; }
 .reveal table.trig3 td{ border:1.5px solid var(--rule); padding:.4em 1.6em; text-align:center; }
 .reveal table.ktable{ font-size:.6em; margin:.5em auto; }
 .reveal table.ktable th, .reveal table.ktable td{ border:1px solid var(--rule);
   padding:.3em .9em; text-align:center; }
-.reveal table.ktable td.blank{ background:var(--ink); min-width:4.5em; }
+.reveal table.ktable td.blank{ min-width:4.5em;
+  background:repeating-linear-gradient(135deg, var(--chip) 0 6px, transparent 6px 12px); }
 .reveal table.ktable.splits{ font-size:.52em; }
 .reveal table.sheet{ font-size:.56em; }
 .reveal table.sheet td{ text-align:right; padding:.14em .55em; }
@@ -1171,3 +1183,9 @@ svg .knew text, svg circle.knew{ fill:var(--accent); }
 .cols.tight30 .workblock{ margin-bottom:.3em; }
 .cols.tight30 .workblock .tl{ margin-bottom:.1em; }
 .cols.tight30 p.small{ margin:.25em 0; }
+
+/* the velocity slide of the Bolt build is a column of working beside two
+   graphs; in the printed handout the graphs give way a little */
+.pdf-page #bolt-v-fig svg{ max-height:330px !important; }
+.pdf-page .boltv p.small{ margin:.25em 0; }
+.pdf-page .boltv .workblock .tl{ margin:.05em 0; }

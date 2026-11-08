@@ -11,7 +11,7 @@ deck-tools.js     the toolbar along the bottom
 annotate.js       writing on the slides
 fit.js            keeps every slide inside its own page, on screen and in print
 reveal/           reveal.js 5.2.1, vendored
-assets/           the photographs and diagrams lifted from the original deck
+assets/           our own SVG drawings (d_*.svg), redrawn 2026-11-07; nothing third-party
 handout.pdf       a printed copy
 ```
 

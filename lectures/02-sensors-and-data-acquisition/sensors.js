@@ -295,7 +295,7 @@ D.register('ohms', function (node, d) {
     ax.clear();
 
     /* ---- the circuit: a source, two leads and the gauge ---- */
-    var x0 = 40, x1 = CW - 40, yTop = 78, yBot = CH - 96;
+    var x0 = 40, x1 = CW - 40, yTop = 104, yBot = CH - 56;
     c.save();
     c.strokeStyle = K.INK; c.lineWidth = 2; c.lineJoin = 'round';
 
@@ -320,35 +320,69 @@ D.register('ohms', function (node, d) {
 
     /* top and bottom leads */
     c.strokeStyle = K.INK; c.lineWidth = 2;
-    var gx0 = x0 + 118, gx1 = x1 - 118;
+    var gx0 = x0 + 50, gx1 = x1 - 50;
     c.beginPath(); c.moveTo(x0, yTop); c.lineTo(gx0, yTop); c.stroke();
     c.beginPath(); c.moveTo(gx1, yTop); c.lineTo(x1, yTop);
     c.lineTo(x1, yBot); c.lineTo(x0, yBot); c.stroke();
 
-    /* ---- the gauge itself: a folded foil whose zig-zag stretches ---- */
+    /* ---- the gauge itself, drawn as on the slide before: a blue foil
+       folded back and forth on a pale backing, with a pad at each end.
+       Marc, 7 Nov: make it look like that gauge.  Stretch it and every run
+       gets longer and thinner; squash it and they get shorter and fatter. ---- */
     var stretched = strain > 2, squeezed = strain < -2;
-    var col = Math.abs(strain) < 2 ? K.MUT : (stretched ? K.ACC : K.BLUE);
-    var gw = gx1 - gx0;
-    var amp = 15 * (1 - 0.45 * (strain / 1200));        /* thinner when stretched */
-    var n = 9;
-    c.strokeStyle = col; c.lineWidth = 3.4 * (1 - 0.35 * (strain / 1200));
-    c.lineCap = 'round'; c.lineJoin = 'round';
+    var kk = strain / 1200;                          /* -1 .. 1 */
+    var FOIL = '#2f37d8', BACK = '#ddd9b3';
+    var gcx = (gx0 + gx1) / 2, runs = 9, pitch = 10.5;
+    var runL = 180 * (1 + 0.22 * kk), lw = 5.6 * (1 - 0.38 * kk);
+    var gh = runs * pitch + 10, gwB = runL + 64;
+    var gL = gcx - runL / 2, gR = gcx + runL / 2, gTop = yTop - (runs - 1) * pitch / 2;
+    c.fillStyle = BACK;
+    c.beginPath(); c.rect(gcx - gwB / 2, yTop - gh / 2 - 6, gwB, gh + 12); c.fill();
+    c.strokeStyle = FOIL; c.lineWidth = lw; c.lineJoin = 'miter'; c.lineCap = 'butt';
     c.beginPath();
-    for (i = 0; i <= n * 2; i++) {
-      var xx = gx0 + gw * i / (n * 2);
-      var yy = yTop + ((i % 2) ? -amp : amp) * 0.62;
-      i ? c.lineTo(xx, yy) : c.moveTo(xx, yy);
+    c.moveTo(gL, gTop);
+    for (i = 0; i < runs; i++) {
+      var yy = gTop + i * pitch, right = i % 2 === 0;
+      c.lineTo(right ? gR : gL, yy);
+      if (i < runs - 1) c.lineTo(right ? gR : gL, yy + pitch);
     }
     c.stroke();
+    /* the two pads, and the leads into them */
+    var padW = 26, padH = 34;
+    c.fillStyle = FOIL;
+    c.fillRect(gL - padW - 2, gTop - padH / 2, padW, padH);
+    c.fillRect(gR + 2, gTop + (runs - 1) * pitch - padH / 2, padW, padH);
+    c.fillRect(gL - 4, gTop - lw / 2, 6, lw);
+    c.fillRect(gR - 2, gTop + (runs - 1) * pitch - lw / 2, 6, lw);
+    c.strokeStyle = K.INK; c.lineWidth = 2; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(gx0, yTop); c.lineTo(gL - padW - 2, yTop);
+    c.lineTo(gL - padW - 2, gTop); c.stroke();
+    c.beginPath(); c.moveTo(gR + padW + 2, gTop + (runs - 1) * pitch);
+    c.lineTo(gR + padW + 2, yTop); c.lineTo(gx1, yTop); c.stroke();
+    /* the strain, as the arrows on the slide before */
+    if (stretched || squeezed) {
+      var ay = yTop, off = gwB / 2 + 10, len = 12 + 14 * Math.abs(kk);
+      c.fillStyle = FOIL;
+      [-1, 1].forEach(function (s) {
+        var x0 = gcx + s * off, x1 = x0 + s * len * (stretched ? 1 : -1);
+        c.save(); c.strokeStyle = FOIL; c.lineWidth = 2.4;
+        c.beginPath(); c.moveTo(x0, ay - 22); c.lineTo(x1, ay - 22); c.stroke();
+        c.beginPath(); c.moveTo(x1 + s * (stretched ? 6 : -6), ay - 22);
+        c.lineTo(x1, ay - 27); c.lineTo(x1, ay - 17); c.closePath(); c.fill();
+        c.restore();
+      });
+    }
+    var col = Math.abs(strain) < 2 ? K.MUT : (stretched ? K.ACC : K.BLUE);
+    var amp = gh / 2 + 6;
     c.fillStyle = col;
     c.font = '700 13px ui-sans-serif,system-ui,sans-serif';
     c.textAlign = 'center'; c.textBaseline = 'bottom';
-    c.fillText('strain gauge  R = ' + S.R.toFixed(3) + ' Ω', (gx0 + gx1) / 2, yTop - 26);
+    c.fillText('strain gauge  R = ' + S.R.toFixed(3) + ' Ω', gcx, yTop - amp - 8);
     c.font = '600 12px ui-sans-serif,system-ui,sans-serif';
     c.fillStyle = K.MUT; c.textBaseline = 'top';
     c.fillText(stretched ? 'stretched — longer and thinner'
              : (squeezed ? 'squashed — shorter and fatter' : 'unstrained'),
-               (gx0 + gx1) / 2, yTop + 24);
+               gcx, yTop + amp + 6);
 
     /* ---- current, drawn as beads moving along the wire ---- */
     var beads = Math.max(3, Math.round(S.I / 1.4));
@@ -358,18 +392,18 @@ D.register('ohms', function (node, d) {
       c.beginPath(); c.arc(x0 + (gx0 - x0) * f, yTop, 3.2, 0, 7); c.fill();
     }
     c.font = '700 12.5px ui-sans-serif,system-ui,sans-serif';
-    c.fillStyle = K.GRN; c.textAlign = 'left'; c.textBaseline = 'bottom';
-    c.fillText('I = ' + S.I.toFixed(2) + ' mA', x0 + 16, yTop - 10);
+    c.fillStyle = K.GRN; c.textAlign = 'left'; c.textBaseline = 'top';
+    c.fillText('I = ' + S.I.toFixed(2) + ' mA', x0 + 12, yTop + 10);
 
     /* ---- the voltage across the gauge, as a labelled span ---- */
-    var vy = yTop + 58;
+    var vy = yTop + amp + 34, vL = gL - padW - 2, vR = gR + padW + 2;
     c.strokeStyle = K.VIO; c.lineWidth = 1.4; c.setLineDash([4, 3]);
-    c.beginPath(); c.moveTo(gx0, yTop + amp); c.lineTo(gx0, vy); c.stroke();
-    c.beginPath(); c.moveTo(gx1, yTop + amp); c.lineTo(gx1, vy); c.stroke();
+    c.beginPath(); c.moveTo(vL, yTop + amp); c.lineTo(vL, vy); c.stroke();
+    c.beginPath(); c.moveTo(vR, yTop + amp); c.lineTo(vR, vy); c.stroke();
     c.setLineDash([]);
     c.lineWidth = 2;
-    c.beginPath(); c.moveTo(gx0, vy); c.lineTo(gx1, vy); c.stroke();
-    [[gx0, 1], [gx1, -1]].forEach(function (e) {
+    c.beginPath(); c.moveTo(vL, vy); c.lineTo(vR, vy); c.stroke();
+    [[vL, 1], [vR, -1]].forEach(function (e) {
       c.beginPath(); c.moveTo(e[0], vy);
       c.lineTo(e[0] + e[1] * 9, vy - 4); c.lineTo(e[0] + e[1] * 9, vy + 4);
       c.closePath(); c.fillStyle = K.VIO; c.fill();
@@ -377,7 +411,7 @@ D.register('ohms', function (node, d) {
     c.fillStyle = K.VIO;
     c.font = '700 13.5px ui-sans-serif,system-ui,sans-serif';
     c.textAlign = 'center'; c.textBaseline = 'top';
-    c.fillText('V = ' + S.V.toFixed(4) + ' V', (gx0 + gx1) / 2, vy + 7);
+    c.fillText('V = ' + S.V.toFixed(4) + ' V', (vL + vR) / 2, vy + 7);
     c.restore();
 
     /* ---- the arithmetic ---- */
@@ -1719,8 +1753,10 @@ D.register('daqchain', function (node, d) {
   var lit = Math.max(1, Math.min(CHAIN.length, parseInt(d.stage || CHAIN.length, 10)));
   /* Seven boxes in a row need width. On a phone the chain runs down the slide
      instead, which is the same diagram read top to bottom. */
-  var DOWN = D.portrait();
-  var CW = DOWN ? 480 : 1000, CH = DOWN ? 620 : 190;
+  /* Marc, 7 Nov: on the objectives slide the chain is larger, run down the
+     empty column beside the text -- the phone layout, at the height given */
+  var DOWN = D.portrait() || d.down === '1';
+  var CW = DOWN ? 480 : 1000, CH = DOWN ? (+d.h || 620) : 190;
   var ax = new Axes(cv, { w: CW, h: CH, padl: 0, padr: 0, padt: 0, padb: 0,
                           fluid: false,
                           xmin: 0, xmax: CW, ymin: CH, ymax: 0 });
@@ -1728,16 +1764,20 @@ D.register('daqchain', function (node, d) {
   function drawDown() {
     var K = C(), c = ax.c, i;
     ax.clear();
-    var n = CHAIN.length, gap = 12, bh = (CH - 56 - gap * (n - 1)) / n;
+    /* the box being introduced carries two lines, so it gets the room for
+       them and the others share what is left */
+    var n = CHAIN.length, gap = 10, nowH = 50;
+    var bh = (CH - 56 - gap * (n - 1) - nowH) / (n - 1);
     var bx = 8, bw = CW - 16, top = 34;
+    function boxY(i) { return top + i * (bh + gap) + (i > lit - 1 ? nowH - bh : 0); }
     c.fillStyle = K.MUT; c.font = '600 12.5px ui-sans-serif,system-ui,sans-serif';
     c.textAlign = 'left'; c.textBaseline = 'bottom';
     c.fillText('a physical quantity', bx, top - 8);
     for (i = 0; i < n; i++) {
-      var y = top + i * (bh + gap), on = i < lit, now = i === lit - 1;
+      var y = boxY(i), on = i < lit, now = i === lit - 1, hh = now ? nowH : bh;
       if (i < n - 1) {
         c.strokeStyle = i < lit - 1 ? K.BLUE : K.PANEL; c.lineWidth = 2;
-        c.beginPath(); c.moveTo(bx + bw / 2, y + bh); c.lineTo(bx + bw / 2, y + bh + gap); c.stroke();
+        c.beginPath(); c.moveTo(bx + bw / 2, y + hh); c.lineTo(bx + bw / 2, y + hh + gap); c.stroke();
       }
       c.save();
       c.globalAlpha = on ? 1 : .44;
@@ -1746,8 +1786,8 @@ D.register('daqchain', function (node, d) {
       c.lineWidth = now ? 2.2 : 1.4;
       var r = 9;
       c.beginPath();
-      c.moveTo(bx + r, y); c.arcTo(bx + bw, y, bx + bw, y + bh, r);
-      c.arcTo(bx + bw, y + bh, bx, y + bh, r); c.arcTo(bx, y + bh, bx, y, r);
+      c.moveTo(bx + r, y); c.arcTo(bx + bw, y, bx + bw, y + hh, r);
+      c.arcTo(bx + bw, y + hh, bx, y + hh, r); c.arcTo(bx, y + hh, bx, y, r);
       c.arcTo(bx, y, bx + bw, y, r); c.closePath();
       c.fill(); c.stroke();
       c.fillStyle = now ? K.ACC : (on ? K.INK : K.MUT);
@@ -1756,16 +1796,16 @@ D.register('daqchain', function (node, d) {
       var label = CHAIN[i].t + (CHAIN[i].t2 ? ' ' + CHAIN[i].t2 : '');
       /* the box being introduced carries its one-line explanation inside it,
          where there is width for it — beside it there would not be */
-      c.fillText(label, bx + 14, y + bh / 2 + (now ? -10 : 0));
+      c.fillText(label, bx + 14, y + hh / 2 + (now ? -10 : 0));
       if (now) {
         c.fillStyle = K.MUT; c.font = '600 12.5px ui-sans-serif,system-ui,sans-serif';
-        c.fillText(CHAIN[i].s, bx + 14, y + bh / 2 + 11);
+        c.fillText(CHAIN[i].s, bx + 14, y + hh / 2 + 11);
       }
       c.restore();
     }
     c.fillStyle = K.MUT; c.font = '600 12.5px ui-sans-serif,system-ui,sans-serif';
     c.textAlign = 'left'; c.textBaseline = 'top';
-    c.fillText('numbers on a disk', bx, top + n * (bh + gap) - gap + 8);
+    c.fillText('numbers on a disk', bx, boxY(n - 1) + (lit === n ? nowH : bh) + 8);
   }
 
   function draw() {

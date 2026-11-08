@@ -804,3 +804,8 @@ html[data-portrait] .isp-tab th.lab{ width:7.4em; }
   }
   html[data-portrait] #uvic-badge{ top:calc(10px + env(safe-area-inset-top)); }
 }
+
+/* slide 2's signal chain: Chrome moves a block that would cross the bottom
+   of a printed page onto the next sheet, where the page clip hides it. In
+   print it is held short enough to stay on its own page. */
+@media print{ svg.daqv{ max-height:300px; width:auto !important; margin:0 auto; } }

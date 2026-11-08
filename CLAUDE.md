@@ -46,8 +46,9 @@ app.webmanifest     set name/short_name for each new deck
 | hub n | folder | state |
 |---|---|---|
 | 1a | 01a-intro-and-review | done, **64 slides, 16 widgets**. Consistency pass vs original done 2026-10-27. Review round 1 (25 items) done 2026-10-28. Review round 2 (17 items) done 2026-11-07, `?v=20261107a` |
-| 1b | 01b-linear-kinematics-review | done 2026-10-27: 100 slides (92 source + 7 widget slides + Sources), 7 widgets. Review round 1 (27 items) done 2026-10-28, `?v=20261028a` |
-| 2–12, 14–20 | 02-… to 20-… | done |
+| 1b | 01b-linear-kinematics-review | done 2026-10-27. Review round 1 (27 items) 2026-10-28. Review round 2 (5 items) 2026-11-07: **103 slides, 8 widgets**, `?v=20261107a` (Bolt sequence rebuilt: displacement → velocity → the three acceleration problems → `secant` widget) |
+| 2 | 02-sensors-and-data-acquisition | done. Review round 1 (10 items) 2026-11-07, `?v=20261107a`: **every image is now our own SVG** (`assets/d_*.svg`, 28 files); the 29 lifted photos were deleted. 41 slides, 27 widget instances |
+| 3–12, 14–20 | 03-… to 20-… | done |
 | 13 | tools/work-loop-simulator | Virtual Muscle Lab port |
 | 22, 23 | — | 2015 duplicates of projectile motion and signals; not planned |
 
@@ -380,6 +381,8 @@ plus `-revision`/`-audit` notes) and these cross-cutting ones:
 - Publisher figures in lectures 14–19 are waiting on Marc's decision.
 - Section-title cards in 1a and 1b overflow by 2–7 px at large viewports (cosmetic).
 - **Lecture 1a round 2 (2026-11-07)** left two things open with Marc: the McGinnis cover (a drawn stand-in ships; he asked for the real cover, which the no-publisher-images rule excludes, so the file has to come from him), and the resolution of the `joints` strips (320×460 a frame, enlarged about 3× on a Retina screen; re-rendering at 2× needs the Mixamo rig, which is not in this repo).
+- **Chrome's PDF export moves a block that would cross the bottom of a page onto the next sheet**, where the `.pdf-page` clip hides it, so an overflowing figure vanishes from the handout entirely instead of being cut off. Found on deck 02 slide 2 (2026-11-07); many of the older decks' pre-existing print overflows (deck 02 has 17) may be hiding content the same way. Check the rendered handout pages, not just the overflow numbers.
+- **Duplicate attributes break an SVG file silently**: a generator that sets `stroke-linecap` and also passes it in an extra-attributes string makes an invalid file that renders as a broken image. Validate generated SVGs with an XML parser.
 - **Canvas widgets must size their backing store by `devicePixelRatio × Reveal.getScale()`**, not by dpr alone: reveal paints the deck through a transform, so a dpr-only canvas is resampled twice and goes soft on a large screen. `joints` was fixed on 2026-11-07; the other decks' widgets still have the old sizing.
 - **fit.js over-shrinks a slide whose widget sits inside a text column**: it measures the body at full width, then scales and widens it, and does not iterate. Give such a figure a fixed pixel width (`.figin` in 1a) and `data-nowarm`, or the min-height prewarm reserves sticks at the pre-shrink height. The print path needs its own `.pdf-page` caps.
 - Every lecture in the hub's list is now a deck except 13 (VML, a tool page)

@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="reveal/dist/reset.css">
 <link rel="stylesheet" href="reveal/dist/reveal.css">
 <link rel="stylesheet" href="reveal/dist/theme/white.css" id="reveal-base">
-<link rel="stylesheet" href="theme.css?v=20260930">
+<link rel="stylesheet" href="theme.css?v=20261107a">
 <script>
 /* set the theme before first paint so nothing flashes */
 (function(){
@@ -43,7 +43,7 @@
     <div class="course">Biomechanics · EPHE 341</div>
     <h1>Sensors and Data Acquisition</h1>
     <div class="rule"></div>
-    <p class="sub">How a physical quantity becomes a number on a disk — and what is lost on the way.</p>
+    <p class="sub">How a physical quantity becomes data.</p>
   </div>
 </section>
 
@@ -74,12 +74,10 @@
     <div>
       <p class="small muted">Everything in this lecture is one chain. A physical thing happens; a sensor turns it
          into a voltage; a run of electronics turns that voltage into numbers; software turns the numbers back into
-         units you can write in a paper.</p>
-      <p class="small muted">We will build this up one box at a time, and at each box ask the same question:
-         <strong>what does this step throw away?</strong></p>
+         units you can analyze.</p>
+      <div class="figrow" style="margin:.4em auto 0;max-width:470px"><svg class="hifig daqv" viewBox="0 0 470 410" style="width:100%;height:auto;display:block" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The signal chain, top to bottom: sensor, break-out box, multiplexer, amplifier, sample-and-hold, A/D converter, storage and software"><text x="6" y="16" font-size="12.5" font-weight="600" fill="var(--muted)">a physical quantity</text><rect x="6" y="26" width="458" height="34" rx="9" fill="color-mix(in srgb, var(--brand) 6%, transparent)" stroke="var(--brand)" stroke-width="1.4"/><text x="20" y="48" font-size="15" font-weight="700" fill="var(--ink)">sensor</text><path d="M235 60 L235 69" stroke="var(--brand)" stroke-width="2"/><rect x="6" y="69" width="458" height="34" rx="9" fill="color-mix(in srgb, var(--brand) 6%, transparent)" stroke="var(--brand)" stroke-width="1.4"/><text x="20" y="91" font-size="15" font-weight="700" fill="var(--ink)">break-out box</text><path d="M235 103 L235 112" stroke="var(--brand)" stroke-width="2"/><rect x="6" y="112" width="458" height="34" rx="9" fill="color-mix(in srgb, var(--brand) 6%, transparent)" stroke="var(--brand)" stroke-width="1.4"/><text x="20" y="134" font-size="15" font-weight="700" fill="var(--ink)">multiplexer</text><path d="M235 146 L235 155" stroke="var(--brand)" stroke-width="2"/><rect x="6" y="155" width="458" height="34" rx="9" fill="color-mix(in srgb, var(--brand) 6%, transparent)" stroke="var(--brand)" stroke-width="1.4"/><text x="20" y="177" font-size="15" font-weight="700" fill="var(--ink)">amplifier</text><path d="M235 189 L235 198" stroke="var(--brand)" stroke-width="2"/><rect x="6" y="198" width="458" height="34" rx="9" fill="color-mix(in srgb, var(--brand) 6%, transparent)" stroke="var(--brand)" stroke-width="1.4"/><text x="20" y="220" font-size="15" font-weight="700" fill="var(--ink)">sample-and-hold</text><path d="M235 232 L235 241" stroke="var(--brand)" stroke-width="2"/><rect x="6" y="241" width="458" height="34" rx="9" fill="color-mix(in srgb, var(--brand) 6%, transparent)" stroke="var(--brand)" stroke-width="1.4"/><text x="20" y="263" font-size="15" font-weight="700" fill="var(--ink)">A/D converter</text><path d="M235 275 L235 284" stroke="var(--brand)" stroke-width="2"/><rect x="6" y="284" width="458" height="48" rx="9" fill="color-mix(in srgb, var(--brand) 22%, transparent)" stroke="var(--accent)" stroke-width="2.2"/><text x="20" y="303" font-size="15" font-weight="700" fill="var(--accent)">storage + software</text><text x="20" y="322" font-size="12.5" font-weight="600" fill="var(--muted)">written down, then worked on</text><text x="6" y="349" font-size="12.5" font-weight="600" fill="var(--muted)">numbers on a disk</text></svg></div>
     </div>
   </div>
-  <div class="iplot wide portrait-hide" data-widget="daqchain" data-stage="7" style="margin-top:.5em"></div>
   <aside class="notes">In this lecture we are going to discuss some basic concepts that will be really helpful to understand biomechanics technology and methodology.
 I will cover aspects of sensors and data acquisition.
 On this page I have included some important terms to look out for during this lecture series.</aside>
@@ -96,9 +94,9 @@ On this page I have included some important terms to look out for during this le
      <em class="key">voltage</em>.</p>
   <div class="whitecard" style="margin-top:.4em">
   <div class="imgrow">
-    <div class="fig photo"><img src="assets/s03_2.png" alt="Force platform coordinate diagram" style="max-height:26vh"><figcaption>force plate — force to volts</figcaption></div>
-    <div class="fig photo"><img src="assets/s03_4.png" alt="EMG electrodes on an arm wired to an amplifier" style="max-height:26vh"><figcaption>EMG — muscle activity to volts</figcaption></div>
-    <div class="fig photo"><img src="assets/s03_9.jpg" alt="Digital camera" style="max-height:26vh"><figcaption>camera — light to pixels</figcaption></div>
+    <div class="fig photo"><img src="assets/d_forceplate_axes.svg" alt="A force plate with its x, y and z axes and a force applied at a point on it" style="max-height:26vh"><figcaption>force plate — force to volts</figcaption></div>
+    <div class="fig photo"><img src="assets/d_emg.svg" alt="EMG electrodes on an arm, wired to an amplifier" style="max-height:26vh"><figcaption>EMG — muscle activity to volts</figcaption></div>
+    <div class="fig photo"><img src="assets/d_camera.svg" alt="A camera" style="max-height:26vh"><figcaption>camera — light to pixels</figcaption></div>
   </div>
   </div>
   <aside class="notes">In science and engineering we are often dealing with sensors — devices that measure a physical quantity and convert it to a form that can be read by an observer or stored to be evaluated later.
@@ -112,11 +110,11 @@ Examples in biomechanics: cameras that measure light and convert it into digital
      electronic signal, usually measured in <strong>volts</strong> (electrical potential).</p>
   <div class="whitecard">
   <div class="sensorgrid">
-    <figure><img src="assets/s04_11.png" alt="S-beam load cell"><figcaption><b>Strain gauge</b>converts force along one axis to volts</figcaption></figure>
-    <figure><img src="assets/s04_15.jpg" alt="Rotary potentiometer"><figcaption><b>Potentiometer</b>converts angular displacement to volts</figcaption></figure>
-    <figure><img src="assets/s04_25.png" alt="Force platform"><figcaption><b>Force platform</b>converts force along three axes to volts</figcaption></figure>
-    <figure><img src="assets/s04_17.jpg" alt="Motion capture cameras with ring lights"><figcaption><b>Motion capture</b>converts light to volts</figcaption></figure>
-    <figure><img src="assets/s04_1026.png" alt="Xsens inertial measurement unit"><figcaption><b>IMU</b>converts accelerations to volts</figcaption></figure>
+    <figure><img src="assets/d_loadcell.svg" alt="An S-beam load cell with a force pulling on each end"><figcaption><b>Strain gauge</b>converts force along one axis to volts</figcaption></figure>
+    <figure><img src="assets/d_potentiometer.svg" alt="A rotary potentiometer: turn the shaft, read the resistance across three terminals"><figcaption><b>Potentiometer</b>converts angular displacement to volts</figcaption></figure>
+    <figure><img src="assets/d_forceplatform.svg" alt="A force platform"><figcaption><b>Force platform</b>converts force along three axes to volts</figcaption></figure>
+    <figure><img src="assets/d_mocapcam.svg" alt="A motion capture camera with a ring of infrared strobes around its lens"><figcaption><b>Motion capture</b>converts light to volts</figcaption></figure>
+    <figure><img src="assets/d_imu.svg" alt="An inertial measurement unit with its x, y and z axes"><figcaption><b>IMU</b>converts accelerations to volts</figcaption></figure>
   </div>
   </div>
   <p class="tiny muted center">When necessary I may go into greater detail on how each sensor works — but for now all
@@ -136,8 +134,8 @@ Examples in biomechanics: cameras that measure light and convert it into digital
          will be applied.</p>
     </div>
     <div class="whitecard"><div class="imgrow">
-      <div class="fig photo"><img src="assets/s05_8.png" alt="Four strain gauge resistors bonded to a beam" style="max-height:30vh"></div>
-      <div class="fig photo"><img src="assets/s05_10.png" alt="Strain gauge resistor foil pattern" style="max-height:34vh"><figcaption>strain gauge resistor</figcaption></div>
+      <div class="fig photo"><img src="assets/d_beam4.svg" alt="Four strain gauge resistors bonded to a beam, with a force applied to its end" style="max-height:30vh"></div>
+      <div class="fig photo"><img src="assets/d_gauge.svg" alt="A strain gauge: one long conductor folded back and forth on a backing, with two terminal pads" style="max-height:34vh"><figcaption>strain gauge resistor</figcaption></div>
     </div></div>
   </div>
 </section>
@@ -156,7 +154,7 @@ Examples in biomechanics: cameras that measure light and convert it into digital
          the current has a harder time getting through: resistance goes <strong>up</strong>. Squash it and
          resistance goes <strong>down</strong>.</p>
     </div>
-    <div class="whitecard"><div class="fig photo"><img src="assets/s05_10.png" alt="Strain gauge resistor foil pattern" style="max-height:30vh"></div></div>
+    <div class="whitecard"><div class="fig photo"><img src="assets/d_gauge.svg" alt="A strain gauge: one long conductor folded back and forth on a backing, with two terminal pads" style="max-height:30vh"></div></div>
   </div>
 </section>
 
@@ -185,7 +183,7 @@ Worth saying out loud: 1200 µε is a big strain for metal, and it moves 120 Ω 
          electrical resistance to flow <strong>increases</strong>. In <strong>C</strong>, if the gauge is in
          <strong>compression</strong> the resistance <strong>decreases</strong>.</p>
     </div>
-    <div class="whitecard"><div class="fig photo"><img src="assets/s07_6.png" alt="Strain gauge at rest, in tension, and in compression" style="max-height:56vh"></div></div>
+    <div class="whitecard"><div class="fig photo"><img src="assets/d_gauge3.svg" alt="A strain gauge at rest, in tension where its path narrows and lengthens, and in compression where it thickens and shortens" style="max-height:56vh"></div></div>
   </div>
 </section>
 
@@ -216,8 +214,8 @@ Measurement devices typically emit a voltage for a change in some variable of in
          the higher the resolution, the smaller the interval.</p>
     </div>
     <div class="whitecard"><div class="imgrow">
-      <div class="fig photo"><img src="assets/s10_6.jpg" alt="Analog wall clock" style="max-height:30vh"><figcaption>analog clock</figcaption></div>
-      <div class="fig photo"><img src="assets/s10_8.jpg" alt="Digital alarm clock" style="max-height:24vh"><figcaption>digital clock</figcaption></div>
+      <div class="fig photo"><img src="assets/d_clock_analog.svg" alt="An analog clock" style="max-height:30vh"><figcaption>analog clock</figcaption></div>
+      <div class="fig photo"><img src="assets/d_clock_digital.svg" alt="A digital clock" style="max-height:24vh"><figcaption>digital clock</figcaption></div>
     </div></div>
   </div>
   <aside class="notes">An analog clock displays the time for each instant; the hands sweep continuously around the face.
@@ -424,9 +422,9 @@ Worth saying out loud: every force number in every paper you will read this term
   <div class="iplot wide" data-widget="daqchain" data-stage="1"></div>
   <div class="cols b top" style="margin-top:.4em">
     <div class="whitecard"><div class="imgrow">
-      <div class="fig photo"><img src="assets/s22_62.png" alt="Strain gauge sensing unit" style="max-height:11vh"><figcaption>1. sensing unit</figcaption></div>
-      <div class="fig photo"><img src="assets/s22_3.png" alt="Power supply" style="max-height:11vh"><figcaption>2. power supply</figcaption></div>
-      <div class="fig photo"><img src="assets/s22_19.png" alt="Operational amplifier chip" style="max-height:11vh"><figcaption>3. op-amp</figcaption></div>
+      <div class="fig photo"><img src="assets/d_beam4.svg" alt="Four strain gauge resistors bonded to a beam" style="max-height:11vh"><figcaption>1. sensing unit</figcaption></div>
+      <div class="fig photo"><img src="assets/d_powersupply.svg" alt="A plug-in power supply" style="max-height:11vh"><figcaption>2. power supply</figcaption></div>
+      <div class="fig photo"><img src="assets/d_opamp.svg" alt="An operational amplifier chip" style="max-height:11vh"><figcaption>3. op-amp</figcaption></div>
     </div></div>
     <div>
       <p class="small">A sensor normally includes:</p>
@@ -452,7 +450,7 @@ Worth saying out loud: every force number in every paper you will read this term
          volts. Convenient — but the sampling rate, the range and the resolution were all decided by somebody else,
          before you switched it on.</p>
     </div>
-    <div class="fig photo"><img src="assets/s23_2050.jpg" alt="Short range wireless communication technologies" style="max-height:48vh"></div>
+    <div class="fig photo"><img src="assets/d_wireless.svg" alt="Short-range wireless technologies: Bluetooth, Wi-Fi, ZigBee, ANT+, NFC, RFID, infrared, UWB, Z-Wave and cellular" style="max-height:48vh"></div>
   </div>
 </section>
 
@@ -464,8 +462,8 @@ Worth saying out loud: every force number in every paper you will read this term
   <p class="lead" style="margin-top:.5em">Each sensor gets a terminal on a <strong>break-out box</strong>, and
      everything leaves on one cable.</p>
   <div class="whitecard"><div class="imgrow">
-    <div class="fig photo"><img src="assets/s25_3074.jpg" alt="Biomechanics laboratory with force plates and cameras" style="max-height:30vh"><figcaption>a wired lab — every one of those cables ends up in a break-out box</figcaption></div>
-    <div class="fig photo"><img src="assets/s25_43010.jpg" alt="BNC break-out box with twenty-four connectors" style="max-height:30vh"><figcaption>the break-out box itself — one terminal per sensor</figcaption></div>
+    <div class="fig photo"><img src="assets/d_lab.svg" alt="A biomechanics laboratory with force plates and cameras, every cable running to a break-out box" style="max-height:30vh"><figcaption>a wired lab — every one of those cables ends up in a break-out box</figcaption></div>
+    <div class="fig photo"><img src="assets/d_breakout.svg" alt="A BNC break-out box with rows of connectors" style="max-height:30vh"><figcaption>the break-out box itself — one terminal per sensor</figcaption></div>
   </div></div>
 </section>
 
@@ -483,7 +481,7 @@ Worth saying out loud: every force number in every paper you will read this term
         <li>Provides a means of attaching the sensors to the DAQ system <strong>without soldering</strong>.</li>
       </ul>
     </div>
-    <div class="fig photo"><img src="assets/s25_43010.jpg" alt="BNC break-out box with sixteen connectors" style="max-height:44vh"></div>
+    <div class="fig photo"><img src="assets/d_breakout.svg" alt="A BNC break-out box with rows of connectors" style="max-height:44vh"></div>
   </div>
 </section>
 
@@ -644,8 +642,8 @@ The lesson is that all three have to be right. Getting two of the three is a bad
            signal</strong>.</p>
       </div>
       <div class="imgrow" style="margin-top:.6em">
-        <div class="fig photo"><img src="assets/s35_17.png" alt="Signal within range" style="max-height:18vh"><figcaption>within range</figcaption></div>
-        <div class="fig photo"><img src="assets/s35_18.png" alt="Signal clipped at the limits" style="max-height:18vh"><figcaption>clipped</figcaption></div>
+        <div class="fig photo"><img src="assets/d_wave_ok.svg" alt="A signal inside the A/D range" style="max-height:18vh"><figcaption>within range</figcaption></div>
+        <div class="fig photo"><img src="assets/d_wave_clip.svg" alt="A signal clipped flat at the limits of the A/D range" style="max-height:18vh"><figcaption>clipped</figcaption></div>
       </div>
     </div>
     <div class="iplot" data-widget="adclimits" data-focus="range" data-only="gain"></div>
@@ -682,7 +680,7 @@ More information on the binary system is in White (2006), but an understanding o
   <h2>Analog-to-digital converter</h2>
   <h3>Resolution — the size of one step</h3>
   <div class="cols b top">
-    <div class="fig photo"><img src="assets/s37_12.png" alt="A/D range divided into 4096 divisions between -5 and +5 volts" style="max-height:52vh"></div>
+    <div class="fig photo"><img src="assets/d_adc_steps.svg" alt="The A/D range from minus 5 to plus 5 volts divided into 4096 equal steps" style="max-height:52vh"></div>
     <div>
       <p class="small">An A/D’s range is divided into a specific number of <strong>equal steps</strong>. The number
          of steps that divides the range is called the <em class="key">resolution</em>.</p>
@@ -714,7 +712,7 @@ More information on the binary system is in White (2006), but an understanding o
         <p class="small" style="margin:0">The ideal gain is one that <strong>maximizes the range</strong> of the
            A/D, but that <strong>doesn’t result in clipping</strong>.</p>
       </div>
-      <div class="fig photo" style="margin-top:.6em"><img src="assets/s38_11.png" alt="Amplified and unamplified signal against the A/D range" style="max-height:26vh"></div>
+      <div class="fig photo" style="margin-top:.6em"><img src="assets/d_amp_range.svg" alt="A small signal using only a few steps of the A/D range, and the same signal amplified to fill most of it" style="max-height:26vh"></div>
     </div>
   </div>
   <aside class="notes">Drop the bits to 4 so the steps are visible, then raise the gain from ×1: the same signal crosses more steps, so more of the A/D's vocabulary is being used to describe it. Keep going and it clips — that is the upper bound on the answer.
@@ -733,7 +731,7 @@ Note: an unamplified signal is usually much smaller than the example shown here;
          Whatever the A/D threw away is gone for good: no amount of processing puts back a sample that was never
          taken, or a step that was too coarse.</p>
     </div>
-    <div class="fig photo"><img src="assets/s40_10.png" alt="Magnetic bits stored on a disk platter" style="max-height:46vh"></div>
+    <div class="fig photo"><img src="assets/d_disk.svg" alt="Bits written as magnetised patches on a turning disk" style="max-height:46vh"></div>
   </div>
 </section>
 
@@ -743,11 +741,11 @@ Note: an unamplified signal is usually much smaller than the example shown here;
   <h3>The whole chain</h3>
   <div class="iplot wide" data-widget="daqchain" data-stage="7"></div>
   <div class="imgrow" style="margin-top:.8em">
-    <div class="fig photo"><img src="assets/s25_43010.jpg" alt="Break-out box" style="max-height:17vh"></div>
-    <div class="fig photo"><img src="assets/s39_5126.png" alt="Laptop running acquisition software" style="max-height:17vh"></div>
-    <div class="fig photo"><img src="assets/s41_1048.png" alt="Excel" style="max-height:13vh"></div>
-    <div class="fig photo"><img src="assets/s41_4098.jpg" alt="Python" style="max-height:13vh"></div>
-    <div class="fig photo"><img src="assets/s41_163.png" alt="MATLAB" style="max-height:13vh"></div>
+    <div class="fig photo"><img src="assets/d_breakout.svg" alt="A BNC break-out box with rows of connectors" style="max-height:17vh"></div>
+    <div class="fig photo"><img src="assets/d_laptop.svg" alt="A laptop showing three recorded signals" style="max-height:17vh"></div>
+    <div class="fig photo"><img src="assets/d_sw_sheet.svg" alt="A spreadsheet" style="max-height:13vh"></div>
+    <div class="fig photo"><img src="assets/d_sw_script.svg" alt="A program" style="max-height:13vh"></div>
+    <div class="fig photo"><img src="assets/d_sw_plot.svg" alt="A plot" style="max-height:13vh"></div>
   </div>
   <p class="tiny muted center">Sensor → break-out box → multiplexer → amplifier → sample-and-hold → A/D →
      storage and analysis software.</p>
@@ -775,10 +773,10 @@ Note: an unamplified signal is usually much smaller than the example shown here;
         <li>Excel <span class="muted">(Microsoft)</span></li>
       </ul>
       <div class="imgrow" style="margin-top:.6em">
-        <img src="assets/s41_4098.jpg" alt="Python" style="max-height:12vh">
-        <img src="assets/s41_163.png" alt="MATLAB" style="max-height:12vh">
-        <img src="assets/s41_1048.png" alt="Excel" style="max-height:12vh">
-        <img src="assets/s41_1052.gif" alt="R" style="max-height:12vh">
+        <img src="assets/d_sw_script.svg" alt="A program" style="max-height:12vh">
+        <img src="assets/d_sw_plot.svg" alt="A plot" style="max-height:12vh">
+        <img src="assets/d_sw_sheet.svg" alt="A spreadsheet" style="max-height:12vh">
+        <img src="assets/d_sw_blocks.svg" alt="A block diagram" style="max-height:12vh">
       </div>
     </div>
   </div>
@@ -805,8 +803,8 @@ Note: an unamplified signal is usually much smaller than the example shown here;
 <script src="reveal/plugin/notes/notes.js"></script>
 <script src="reveal/plugin/search/search.js"></script>
 <script src="reveal/plugin/zoom/zoom.js"></script>
-<script src="annotate.js?v=20260930"></script>
-<script src="mobile.js?v=20260930"></script>
+<script src="annotate.js?v=20261107a"></script>
+<script src="mobile.js?v=20261107a"></script>
 <script>
 /* DECK_GEOM comes from mobile.js: {} on a desktop, a 720 × 1080 portrait
    slide on a phone held upright. Merging it here means the first layout is
@@ -828,11 +826,11 @@ Reveal.initialize(Object.assign({
   plugins: [ RevealNotes, RevealSearch, RevealZoom ]
 }, window.DECK_GEOM || {}));
 </script>
-<script src="deck-core.js?v=20260930"></script>
-<script src="sensors.js?v=20260930"></script>
-<script src="deck-tools.js?v=20261005"></script>
-<script src="fit.js?v=20260930"></script>
+<script src="deck-core.js?v=20261107a"></script>
+<script src="sensors.js?v=20261107a"></script>
+<script src="deck-tools.js?v=20261107a"></script>
+<script src="fit.js?v=20261107a"></script>
 <!-- review mode: inert unless opened from your own computer with ?review -->
-<script src="review.js?v=20261028c"></script>
+<script src="review.js?v=20261107a"></script>
 </body>
 </html>
